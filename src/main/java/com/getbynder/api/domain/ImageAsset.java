@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 /**
  *
- * Technology is the devil
- *
  * @author daniel.sequeira
  */
 public class ImageAsset implements Serializable {

@@ -4,8 +4,6 @@ import org.json.JSONObject;
 
 /**
  *
- * Technology is the devil
- *
  * @author daniel.sequeira
  */
 public class Category {

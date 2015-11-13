@@ -1,7 +1,9 @@
 package com.getbynder.api;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import org.json.JSONObject;
 import com.getbynder.api.domain.ImageAsset;
 import com.getbynder.api.domain.UserAccessData;
 
+import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
@@ -29,16 +32,11 @@ public final class Utils {
         //prevent instantiation
     }
 
-    public static URI createLoginURI(final String url, final String path, final List<BasicNameValuePair> params) throws URISyntaxException {
-
-        String scheme = BynderProperties.getInstance().getProperty("URI_SCHEME");
-
-        int pos = url.indexOf("//") + 2;
-        String host = url.substring(pos);
+    public static URI createLoginURI(final URL url, final String relativePath, final List<BasicNameValuePair> params) throws URISyntaxException {
 
         URIBuilder builder = new URIBuilder();
 
-        builder.setScheme(scheme).setHost(host).setPath(path);
+        builder.setScheme(url.getProtocol()).setHost(url.getHost()).setPath(url.getPath().concat(relativePath));
 
         for(BasicNameValuePair pair : params) {
             builder.setParameter(pair.getName(), pair.getValue());
@@ -47,33 +45,41 @@ public final class Utils {
         return builder.build();
     }
 
-    public static String getOAuthHeaderFromUrl(final String url) {
+    public static String getOAuthHeaderFromUrl(final URL url) {
+
+        String query = url.getQuery();
+
+        List<BasicNameValuePair> queryPairs = new ArrayList<>();
+
+        String[] pairs = query.split("&");
+
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            //the value needs to be decoded because the method OAuth.toHeaderElement will encode it again
+            queryPairs.add(new BasicNameValuePair(pair.substring(0, idx), OAuth.percentDecode(pair.substring(idx + 1))));
+        }
 
         StringBuilder oauthHeader = new StringBuilder("OAuth ");
 
-        String[] params = url.split("&");
-
-        for(int i=0; i<params.length; i++) {
-
-            if(i == 0) {
-                String temp = params[i].substring(params[i].indexOf("?")+1);
-
-                oauthHeader.append(temp.substring(0, temp.indexOf("=")+1));
-                oauthHeader.append("\"");
-                oauthHeader.append(temp.substring(temp.indexOf("=")+1));
-                oauthHeader.append("\",");
-            } else {
-                oauthHeader.append(params[i].substring(0, params[i].indexOf("=")+1));
-                oauthHeader.append("\"");
-                oauthHeader.append(params[i].substring(params[i].indexOf("=")+1));
-                oauthHeader.append("\",");
-            }
+        for(BasicNameValuePair nvPair : queryPairs) {
+            oauthHeader.append(OAuth.toHeaderElement(nvPair.getName(), nvPair.getValue())).append(",");
         }
 
-        //delete the last comma
         oauthHeader.deleteCharAt(oauthHeader.length()-1);
 
         return oauthHeader.toString();
+    }
+
+    public static String createOAuthHeader(final String consumerKey, final String consumerSecret, final UserAccessData userAccessData, final String url) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+
+        // create a consumer object and configure it with the access token and token secret obtained from the service provider
+        OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
+        consumer.setTokenWithSecret(userAccessData.getTokenKey(), userAccessData.getTokenSecret());
+
+        // sign the request and return the encoded url
+        String inputUrl = consumer.sign(url);
+
+        return getOAuthHeaderFromUrl(new URL(inputUrl));
     }
 
     public static List<ImageAsset> createImageAssetListFromJSONArray(final JSONArray responseJsonArray) {
@@ -102,17 +108,5 @@ public final class Utils {
         }
 
         return bynderImageAssets;
-    }
-
-    public static String createOAuthHeader(final String consumerKey, final String consumerSecret, final UserAccessData userAccessData, final String url) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
-
-        // create a consumer object and configure it with the access token and token secret obtained from the service provider
-        OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-        consumer.setTokenWithSecret(userAccessData.getTokenKey(), userAccessData.getTokenSecret());
-
-        // sign the request
-        String inputUrl = consumer.sign(url);
-
-        return getOAuthHeaderFromUrl(inputUrl);
     }
 }

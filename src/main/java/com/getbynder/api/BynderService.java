@@ -2,8 +2,10 @@ package com.getbynder.api;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +73,7 @@ public class BynderService {
         params.add(new BasicNameValuePair("password", password));
 
         // create an HTTP request to a protected resource
-        URI loginUri = Utils.createLoginURI(baseUrl, LOGIN_PATH, params);
+        URI loginUri = Utils.createLoginURI(new URL(baseUrl), LOGIN_PATH, params);
 
         HttpPost request = new HttpPost(loginUri);
 
@@ -110,7 +112,7 @@ public class BynderService {
         return new UserAccessData(responseObj);
     }
 
-    public List<Category> getCategories() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, UnsupportedEncodingException {
+    public List<Category> getCategories() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, UnsupportedEncodingException, MalformedURLException {
 
         String apiGetCategoriesUrl = baseUrl+CATEGORIES_PATH;
 
@@ -134,7 +136,7 @@ public class BynderService {
         return categories;
     }
 
-    public List<ImageAsset> getImageAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
+    public List<ImageAsset> getImageAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
         String apiGetImageAssetsUrl = baseUrl+IMAGE_ASSETS_PATH;
 
@@ -152,7 +154,7 @@ public class BynderService {
         return Utils.createImageAssetListFromJSONArray(responseJsonArray);
     }
 
-    public List<ImageAsset> getImageAssets(final int limit, final int offset) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
+    public List<ImageAsset> getImageAssets(final int limit, final int offset) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
         StringBuilder stringBuilder = new StringBuilder(baseUrl+IMAGE_ASSETS_PATH);
         stringBuilder.append("&limit=");
@@ -176,7 +178,7 @@ public class BynderService {
         return Utils.createImageAssetListFromJSONArray(responseJsonArray);
     }
 
-    public int getImageAssetCount() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
+    public int getImageAssetCount() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
         String apiGetImageAssetsUrl = baseUrl+IMAGE_ASSETS_PATH;
 

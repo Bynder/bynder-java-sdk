@@ -1,5 +1,6 @@
 package com.getbynder.api;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public final class Utils {
         //prevent instantiation
     }
 
-    public static String getLoginUri(final String url, final String... params) {
+    public static String getLoginURI(final String url, final String... params) throws UnsupportedEncodingException {
 
         StringBuilder loginUri = new StringBuilder(url);
         loginUri.append("?");
@@ -38,7 +39,7 @@ public final class Utils {
             }
 
             String value = params[i + 1];
-            loginUri.append(OAuth.percentEncode(params[i]) + "=" + value);
+            loginUri.append(OAuth.percentEncode(params[i]).concat("=").concat(OAuth.percentEncode(value)));
         }
 
         return loginUri.toString();
@@ -83,8 +84,8 @@ public final class Utils {
         String url = "";
         String thumbnailUrl = "";
 
-        for(Object object : responseJsonArray){
-            JSONObject responseJsonObj = new JSONObject(object.toString());
+        for(int i = 0; i < responseJsonArray.length(); i++){
+            JSONObject responseJsonObj = responseJsonArray.getJSONObject(i);
 
             id = responseJsonObj.get("id").toString();
             title = responseJsonObj.get("name").toString();

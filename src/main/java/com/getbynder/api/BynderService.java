@@ -40,28 +40,24 @@ import oauth.signpost.exception.OAuthMessageSignerException;
  */
 public class BynderService {
 
-    private static final String LOGIN_PATH = "users/login/";
-    private static final String CATEGORIES_PATH = "categories/";
-    private static final String IMAGE_ASSETS_PATH = "media/?type=image";
+    private static final String LOGIN_PATH = BynderProperties.getInstance().getProperty("LOGIN_PATH");
+    private static final String CATEGORIES_PATH = BynderProperties.getInstance().getProperty("CATEGORIES_PATH");
+    private static final String IMAGE_ASSETS_PATH = BynderProperties.getInstance().getProperty("IMAGE_ASSETS_PATH");
 
-    private static final String CONSUMER_KEY = "9F770A57-71DD-4EB0-AD4F8FEACBFB3F55";
-    private static final String CONSUMER_SECRET = "xwbg1098";
-    private static final String ACCESS_TOKEN = "553D7FCD-625D-4690-8D5533787EA36282";
-    private static final String ACCESS_TOKEN_SECRET = "284F5ED19214EA8E51EE046BBBF507E9F34C28A7";
+    private static final String CONSUMER_KEY = BynderProperties.getInstance().getProperty("CONSUMER_KEY");
+    private static final String CONSUMER_SECRET = BynderProperties.getInstance().getProperty("CONSUMER_SECRET");
+    private static final String ACCESS_TOKEN = BynderProperties.getInstance().getProperty("ACCESS_TOKEN");
+    private static final String ACCESS_TOKEN_SECRET = BynderProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET");
 
     private final String baseUrl;
-    private final String username;
-    private final String password;
     private final UserAccessData userAccessData;
 
     public BynderService(final String baseUrl, final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException {
         this.baseUrl = baseUrl;
-        this.username = username;
-        this.password = password;
-        this.userAccessData = getUserAccessData();
+        this.userAccessData = getUserAccessData(username, password);
     }
 
-    public UserAccessData getUserAccessData() throws OAuthMessageSignerException, OAuthExpectationFailedException,
+    public UserAccessData getUserAccessData(final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException,
     OAuthCommunicationException, ClientProtocolException, IOException {
 
         // create a consumer object and configure it with the access token and token secret obtained from the service provider
@@ -69,7 +65,7 @@ public class BynderService {
         consumer.setTokenWithSecret(ACCESS_TOKEN, ACCESS_TOKEN_SECRET);
 
         // create an HTTP request to a protected resource
-        String loginUri = Utils.getLoginUri(baseUrl+LOGIN_PATH, "consumerId", CONSUMER_KEY, "username", username, "password", password);
+        String loginUri = Utils.getLoginURI(baseUrl+LOGIN_PATH, "consumerId", CONSUMER_KEY, "username", username, "password", password);
         HttpPost request = new HttpPost(loginUri);
 
         // sign the request

@@ -12,8 +12,6 @@ import com.getbynder.api.domain.ImageAsset;
 
 /**
  *
- * Technology is the devil
- *
  * @author daniel.sequeira
  */
 public class BynderServiceTest {

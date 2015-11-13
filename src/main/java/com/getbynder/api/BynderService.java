@@ -2,8 +2,9 @@ package com.getbynder.api;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
@@ -52,28 +53,36 @@ public class BynderService {
     private final String baseUrl;
     private final UserAccessData userAccessData;
 
-    public BynderService(final String baseUrl, final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException {
+    public BynderService(final String baseUrl, final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
         this.baseUrl = baseUrl;
         this.userAccessData = getUserAccessData(username, password);
     }
 
     public UserAccessData getUserAccessData(final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException,
-    OAuthCommunicationException, ClientProtocolException, IOException {
+    OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
 
         // create a consumer object and configure it with the access token and token secret obtained from the service provider
         OAuthConsumer consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
         consumer.setTokenWithSecret(ACCESS_TOKEN, ACCESS_TOKEN_SECRET);
 
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(CONSUMER_KEY, CONSUMER_SECRET));
+        params.add(new BasicNameValuePair("username", username));
+        params.add(new BasicNameValuePair("password", password));
+
         // create an HTTP request to a protected resource
-        String loginUri = Utils.getLoginURI(baseUrl+LOGIN_PATH, "consumerId", CONSUMER_KEY, "username", username, "password", password);
+        URI loginUri = Utils.createLoginURI(baseUrl, LOGIN_PATH, params);
+
         HttpPost request = new HttpPost(loginUri);
 
         // sign the request
         consumer.sign(request);
 
+        //consumerId shall not be used in the request
+        params.remove(0);
+
         // set the parameters into the request
-        request.setEntity(new UrlEncodedFormEntity(Arrays.asList(new BasicNameValuePair("username", username),
-                new BasicNameValuePair("password", password))));
+        request.setEntity(new UrlEncodedFormEntity(params));
 
         // send the request
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();

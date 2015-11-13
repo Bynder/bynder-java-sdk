@@ -1,16 +1,18 @@
 package com.getbynder.api;
 
-import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.getbynder.api.domain.ImageAsset;
 import com.getbynder.api.domain.UserAccessData;
 
-import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
@@ -27,22 +29,22 @@ public final class Utils {
         //prevent instantiation
     }
 
-    public static String getLoginURI(final String url, final String... params) throws UnsupportedEncodingException {
+    public static URI createLoginURI(final String url, final String path, final List<BasicNameValuePair> params) throws URISyntaxException {
 
-        StringBuilder loginUri = new StringBuilder(url);
-        loginUri.append("?");
+        String scheme = BynderProperties.getInstance().getProperty("URI_SCHEME");
 
-        for (int i=0; i<params.length; i+=2) {
+        int pos = url.indexOf("//") + 2;
+        String host = url.substring(pos);
 
-            if (i > 0) {
-                loginUri.append("&");
-            }
+        URIBuilder builder = new URIBuilder();
 
-            String value = params[i + 1];
-            loginUri.append(OAuth.percentEncode(params[i]).concat("=").concat(OAuth.percentEncode(value)));
+        builder.setScheme(scheme).setHost(host).setPath(path);
+
+        for(BasicNameValuePair pair : params) {
+            builder.setParameter(pair.getName(), pair.getValue());
         }
 
-        return loginUri.toString();
+        return builder.build();
     }
 
     public static String getOAuthHeaderFromUrl(final String url) {

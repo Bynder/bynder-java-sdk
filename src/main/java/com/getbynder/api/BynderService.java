@@ -92,7 +92,7 @@ public class BynderService {
 
         // if request was unsuccessful
         if(response.getStatusLine().getStatusCode() != 200){
-            throw new HttpResponseException(response.getStatusLine().getStatusCode(), "The request was unsuccessful");
+            throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
         }
 
         // if successful, return the response body

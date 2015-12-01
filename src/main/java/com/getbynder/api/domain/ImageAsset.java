@@ -67,6 +67,8 @@ public class ImageAsset implements Serializable {
 
     @Override
     public String toString() {
-        return "ImageAsset [id=" + id + ", title=" + title + ", description=" + description + ", url=" + url + "]";
+        return "ImageAsset [id=" + id + ", title=" + title + ", description=" + description + ", url=" + url
+                + ", thumbnailUrl=" + thumbnailUrl + "]";
     }
+
 }

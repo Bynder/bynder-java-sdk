@@ -45,11 +45,6 @@ public class BynderServiceTest {
         List<Category> categories = bynderService.getCategories();
 
         assertNotNull(categories);
-
-        //to be deleted
-        for(Category category : categories){
-            System.out.println(category.toString());
-        }
     }
 
     @Test
@@ -58,11 +53,6 @@ public class BynderServiceTest {
         List<ImageAsset> bynderAllImageAssets = bynderService.getImageAssets();
 
         assertNotNull(bynderAllImageAssets);
-
-        //to be deleted
-        for(ImageAsset bynderImageAsset : bynderAllImageAssets){
-            System.out.println(bynderImageAsset.toString());
-        }
     }
 
     @Test
@@ -71,11 +61,6 @@ public class BynderServiceTest {
         List<ImageAsset> bynderImageAssets = bynderService.getImageAssets(5, 1);
 
         assertNotNull(bynderImageAssets);
-
-        //to be deleted
-        for(ImageAsset bynderImageAsset : bynderImageAssets){
-            System.out.println(bynderImageAsset.toString());
-        }
     }
 
     @Test

@@ -1,9 +1,11 @@
 package com.getbynder.api;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.apache.http.client.HttpResponseException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,11 +18,25 @@ import com.getbynder.api.domain.ImageAsset;
  */
 public class BynderServiceTest {
 
+    private final String BASE_URL = BynderProperties.getInstance().getProperty("BASE_URL");
+    private final String USERNAME = BynderProperties.getInstance().getProperty("USERNAME");
+    private final String PASSWORD = BynderProperties.getInstance().getProperty("PASSWORD");
+
     private BynderService bynderService;
 
     @Before
     public void setUp() throws Exception {
-        bynderService = new BynderService("https://workflow-api.bynder.info/api/v4/", "barcelona-admin", "barcelona-admin");
+        bynderService = new BynderService(BASE_URL, USERNAME, PASSWORD);
+    }
+
+    @Test
+    public void getUserAccessDataFail() {
+
+        try {
+            bynderService.getUserAccessData("username", "password");
+        } catch (Exception e) {
+            assertTrue(e instanceof HttpResponseException);
+        }
     }
 
     @Test
@@ -69,4 +85,5 @@ public class BynderServiceTest {
 
         assertNotNull(imageAssetCount);
     }
+
 }

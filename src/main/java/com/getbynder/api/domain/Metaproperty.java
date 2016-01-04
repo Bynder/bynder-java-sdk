@@ -3,8 +3,6 @@ package com.getbynder.api.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
 /**
  *
  * @author daniel.sequeira
@@ -32,11 +30,6 @@ public class Metaproperty {
         this.id = id;
         this.name = name;
         this.options = options;
-    }
-
-    public Metaproperty(final JSONObject jsonObject) {
-        this.id = jsonObject.getString("id");
-        this.name = jsonObject.getString("name");
     }
 
     public String getId() {

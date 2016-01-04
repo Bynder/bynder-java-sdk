@@ -1,7 +1,5 @@
 package com.getbynder.api.domain;
 
-import org.json.JSONObject;
-
 /**
  *
  * @author daniel.sequeira
@@ -16,12 +14,6 @@ public class Category {
         this.id = id;
         this.name = name;
         this.description = description;
-    }
-
-    public Category(final JSONObject jsonObject) {
-        this.id = jsonObject.getString("id");
-        this.name = jsonObject.getString("name");
-        this.description = jsonObject.getString("description");
     }
 
     public String getId() {

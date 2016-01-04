@@ -16,16 +16,16 @@ public class MediaAsset implements Serializable {
     private String description;
     private String copyright;
     private Boolean archive;
-    private String publicationDate;
+    private String datePublished;
 
-    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String publicationDate) {
+    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished) {
         super();
         this.id = id;
         this.name = name;
         this.description = description;
         this.copyright = copyright;
         this.archive = archive;
-        this.publicationDate = publicationDate;
+        this.datePublished = datePublished;
     }
 
     public String getId() {
@@ -69,17 +69,17 @@ public class MediaAsset implements Serializable {
     }
 
     public String getPublicationDate() {
-        return publicationDate;
+        return datePublished;
     }
 
-    public void setPublicationDate(final String publicationDate) {
-        this.publicationDate = publicationDate;
+    public void setPublicationDate(final String datePublished) {
+        this.datePublished = datePublished;
     }
 
     @Override
     public String toString() {
         return "MediaAsset [id=" + id + ", name=" + name + ", description=" + description + ", copyright="
-                + copyright + ", archive=" + archive + ", publicationDate=" + publicationDate + "]";
+                + copyright + ", archive=" + archive + ", publicationDate=" + datePublished + "]";
     }
 
 }

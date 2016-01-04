@@ -11,18 +11,16 @@ public class ImageAsset implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
-    private String title;
+    private String name;
     private String description;
-    private String url;
-    private String thumbnailUrl;
+    private Thumbnails thumbnails;
 
-    public ImageAsset(final String id, final String title, final String description, final String url, final String thumbnailUrl) {
+    public ImageAsset(final String id, final String name, final String description, final Thumbnails thumbnails) {
         super();
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.description = description;
-        this.url = url;
-        this.thumbnailUrl = thumbnailUrl;
+        this.thumbnails = thumbnails;
     }
 
     public String getId() {
@@ -33,12 +31,12 @@ public class ImageAsset implements Serializable {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(final String title) {
-        this.title = title;
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -49,26 +47,36 @@ public class ImageAsset implements Serializable {
         this.description = description;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
-    }
-
-    public String getThumbnailUrl() {
-        return thumbnailUrl;
-    }
-
-    public void setThumbnailUrl(final String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
+    public Thumbnails getThumbnails() {
+        return thumbnails;
     }
 
     @Override
     public String toString() {
-        return "ImageAsset [id=" + id + ", title=" + title + ", description=" + description + ", url=" + url
-                + ", thumbnailUrl=" + thumbnailUrl + "]";
+        return "ImageAsset [id=" + id + ", name=" + name + ", description=" + description + ", webimage=" + thumbnails.getWebimage()
+        + ", thumbnail=" + thumbnails.getThul() + "]";
+    }
+
+    public class Thumbnails {
+
+        private String webimage;
+        private String thul;
+
+        public String getWebimage() {
+            return webimage;
+        }
+
+        public void setWebimage(final String webimage) {
+            this.webimage = webimage;
+        }
+
+        public String getThul() {
+            return thul;
+        }
+
+        public void setThul(final String thul) {
+            this.thul = thul;
+        }
     }
 
 }

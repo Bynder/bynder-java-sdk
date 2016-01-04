@@ -1,4 +1,4 @@
-package com.getbynder.api;
+package com.getbynder.api.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -11,16 +11,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import com.getbynder.api.domain.ImageAsset;
-import com.getbynder.api.domain.MediaAsset;
-import com.getbynder.api.domain.Metaproperty;
+import com.getbynder.api.ConfigProperties;
 import com.getbynder.api.domain.UserAccessData;
 
 import oauth.signpost.OAuth;
@@ -35,9 +36,9 @@ import oauth.signpost.exception.OAuthMessageSignerException;
  *
  * @author daniel.sequeira
  */
-public final class Utils {
+public final class ApiUtils {
 
-    private Utils() {
+    private ApiUtils() {
         //prevent instantiation
     }
 
@@ -56,7 +57,7 @@ public final class Utils {
 
         builder.setScheme(url.getProtocol()).setHost(url.getHost()).setPath(url.getPath().concat(relativePath));
 
-        for(BasicNameValuePair pair : params) {
+        for (BasicNameValuePair pair : params) {
             builder.setParameter(pair.getName(), pair.getValue());
         }
 
@@ -79,7 +80,7 @@ public final class Utils {
 
         StringBuilder oauthHeader = new StringBuilder("OAuth ");
 
-        for(BasicNameValuePair nvPair : queryPairs) {
+        for (BasicNameValuePair nvPair : queryPairs) {
             oauthHeader.append(OAuth.toHeaderElement(nvPair.getName(), nvPair.getValue())).append(",");
         }
 
@@ -98,81 +99,6 @@ public final class Utils {
         String inputUrl = consumer.sign(url);
 
         return getOAuthHeaderFromUrl(new URL(inputUrl));
-    }
-
-    public static List<ImageAsset> createImageAssetListFromJSONArray(final JSONArray responseJsonArray) {
-
-        List<ImageAsset> bynderImageAssets = new ArrayList<>();
-
-        String id = "";
-        String title = "";
-        String description = "";
-        String url = "";
-        String thumbnailUrl = "";
-
-        for(int i = 0; i < responseJsonArray.length(); i++) {
-            JSONObject responseJsonObj = responseJsonArray.getJSONObject(i);
-
-            id = responseJsonObj.getString("id");
-            title = responseJsonObj.getString("name");
-            description = responseJsonObj.has("description") ? responseJsonObj.getString("description") : "";
-
-            responseJsonObj = new JSONObject(responseJsonObj.getJSONObject("thumbnails").toString());
-
-            url = responseJsonObj.getString("webimage");
-            thumbnailUrl = responseJsonObj.getString("thul");
-
-            bynderImageAssets.add(new ImageAsset(id, title, description, url, thumbnailUrl));
-        }
-
-        return bynderImageAssets;
-    }
-
-    public static List<MediaAsset> createMediaAssetListFromJSONArray(final JSONArray responseJsonArray) {
-
-        List<MediaAsset> bynderMediaAssets = new ArrayList<>();
-
-        String id = "";
-        String name = "";
-        String description = "";
-        String copyright = "";
-        Boolean archive = Boolean.FALSE;
-        String publicationDate = "";
-
-
-        for(int i = 0; i < responseJsonArray.length(); i++) {
-            JSONObject responseJsonObj = responseJsonArray.getJSONObject(i);
-
-            id = responseJsonObj.getString("id");
-            name = responseJsonObj.getString("name");
-            description = responseJsonObj.has("description") ? responseJsonObj.getString("description") : "";
-            copyright = responseJsonObj.has("copyright") ? responseJsonObj.getString("copyright") : "";
-            archive = Boolean.valueOf(responseJsonObj.get("archive").toString());
-            publicationDate = responseJsonObj.has("datePublished") ? responseJsonObj.getString("datePublished") : "";
-
-            bynderMediaAssets.add(new MediaAsset(id, name, description, copyright, archive, publicationDate));
-        }
-
-        return bynderMediaAssets;
-    }
-
-    public static Metaproperty buildMetaproperty(final JSONObject jsonObject) {
-
-        Metaproperty metaproperty = new Metaproperty();
-
-        metaproperty.setId(jsonObject.getString("id"));
-        metaproperty.setName(jsonObject.getString("name"));
-
-        if(jsonObject.has("options")) {
-            JSONArray jsonArray = jsonObject.getJSONArray("options");
-
-            for(int i = 0; i < jsonArray.length(); i++) {
-                metaproperty.addOption(buildMetaproperty(jsonArray.getJSONObject(i)));
-            }
-        } else {
-            return metaproperty;
-        }
-        return metaproperty;
     }
 
     public static boolean isDateFormatValid(final String date) {
@@ -195,7 +121,12 @@ public final class Utils {
 
         // create a consumer object and configure it with the access token and token secret obtained from the service provider
         OAuthConsumer consumer = new CommonsHttpOAuthConsumer(consumerKey, consumerSecret);
-        consumer.setTokenWithSecret(userAccessData.getTokenKey(), userAccessData.getTokenSecret());
+
+        if (userAccessData != null) {
+            consumer.setTokenWithSecret(userAccessData.getTokenKey(), userAccessData.getTokenSecret());
+        } else {
+            consumer.setTokenWithSecret(ConfigProperties.getInstance().getProperty("ACCESS_TOKEN"), ConfigProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
+        }
 
         // set the parameters into the request
         request.setEntity(new UrlEncodedFormEntity(params));
@@ -206,16 +137,10 @@ public final class Utils {
         return request;
     }
 
-    public static List<Metaproperty> createMetapropertyListFromJSONObject(final JSONObject jsonObject) {
+    public static Response getRequestResponse(final String url, final String oauthHeader) {
 
-        String[] metapropertiesNames = JSONObject.getNames(jsonObject);
+        Client client = ClientBuilder.newClient();
 
-        List<Metaproperty> metaproperties = new ArrayList<>();
-
-        for(int i=0; i < metapropertiesNames.length; i++) {
-            metaproperties.add(Utils.buildMetaproperty(jsonObject.getJSONObject(metapropertiesNames[i])));
-        }
-
-        return metaproperties;
+        return client.target(url).request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", oauthHeader).get();
     }
 }

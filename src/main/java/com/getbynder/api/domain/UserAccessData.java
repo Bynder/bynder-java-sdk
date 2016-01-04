@@ -1,7 +1,5 @@
 package com.getbynder.api.domain;
 
-import org.json.JSONObject;
-
 /**
  *
  * @author daniel.sequeira
@@ -18,13 +16,6 @@ public class UserAccessData {
         this.tokenKey = tokenKey;
         this.tokenSecret = tokenSecret;
         this.hasAccess = hasAccess;
-    }
-
-    public UserAccessData(final JSONObject jsonObject) {
-        this.userId = jsonObject.getString("userId");
-        this.tokenKey = jsonObject.getString("tokenKey");
-        this.tokenSecret = jsonObject.getString("tokenSecret");
-        this.hasAccess = jsonObject.getBoolean("access");
     }
 
     public String getUserId() {

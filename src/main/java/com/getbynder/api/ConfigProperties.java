@@ -8,11 +8,11 @@ import java.util.Properties;
  *
  * @author daniel.sequeira
  */
-public class BynderProperties {
+public class ConfigProperties {
 
     private final Properties configProperties = new Properties();
 
-    private BynderProperties() {
+    private ConfigProperties() {
         InputStream input = this.getClass().getClassLoader().getResourceAsStream("config.properties");
 
         try {
@@ -23,10 +23,10 @@ public class BynderProperties {
     }
 
     private static class SingletonHolder {
-        private static final BynderProperties INSTANCE = new BynderProperties();
+        private static final ConfigProperties INSTANCE = new ConfigProperties();
     }
 
-    public static BynderProperties getInstance() {
+    public static ConfigProperties getInstance() {
         return SingletonHolder.INSTANCE;
     }
 

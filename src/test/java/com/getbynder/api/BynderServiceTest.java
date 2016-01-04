@@ -21,9 +21,9 @@ import com.getbynder.api.domain.Metaproperty;
  */
 public class BynderServiceTest {
 
-    private final String BASE_URL = BynderProperties.getInstance().getProperty("BASE_URL");
-    private final String USERNAME = BynderProperties.getInstance().getProperty("USERNAME");
-    private final String PASSWORD = BynderProperties.getInstance().getProperty("PASSWORD");
+    private final String BASE_URL = ConfigProperties.getInstance().getProperty("BASE_URL");
+    private final String USERNAME = ConfigProperties.getInstance().getProperty("USERNAME");
+    private final String PASSWORD = ConfigProperties.getInstance().getProperty("PASSWORD");
 
     private BynderService bynderService;
 
@@ -165,13 +165,13 @@ public class BynderServiceTest {
 
         int statusCode = 0;
         boolean testDone = false;
-        for(Metaproperty metaproperty : metaproperties) {
-            if(testDone) {
+        for (Metaproperty metaproperty : metaproperties) {
+            if (testDone) {
                 break;
             }
-            if(metaproperty.getOptions().size() != 0) {
-                for(Metaproperty option : metaproperty.getOptions()) {
-                    if(option.getOptions().size() != 0) {
+            if (metaproperty.getOptions().size() != 0) {
+                for (Metaproperty option : metaproperty.getOptions()) {
+                    if (option.getOptions().size() != 0) {
                         statusCode = bynderService.addMetapropertyToAsset(bynderMediaAssets.get(0).getId(), metaproperty.getId(), option.getId(), option.getOptions().get(0).getId());
                         testDone = true;
                         break;
@@ -180,7 +180,7 @@ public class BynderServiceTest {
             }
         }
 
-        if(testDone) {
+        if (testDone) {
             assertEquals(202, statusCode);
         }
     }

@@ -53,6 +53,8 @@ public class BynderService {
     private static final String IMAGE_ASSETS_PATH = ConfigProperties.getInstance().getProperty("IMAGE_ASSETS_PATH");
     private static final String MEDIA_PATH = ConfigProperties.getInstance().getProperty("MEDIA_PATH");
     private static final String METAPROPERTIES_PATH = ConfigProperties.getInstance().getProperty("METAPROPERTIES_PATH");
+    private static final String LIMIT_PARAMETER = ConfigProperties.getInstance().getProperty("LIMIT_PARAMETER");
+    private static final String OFFSET_PARAMETER = ConfigProperties.getInstance().getProperty("OFFSET_PARAMETER");
 
     private final String CONSUMER_KEY = ConfigProperties.getInstance().getProperty("CONSUMER_KEY");
     private final String CONSUMER_SECRET = ConfigProperties.getInstance().getProperty("CONSUMER_SECRET");
@@ -135,9 +137,9 @@ public class BynderService {
 
         StringBuilder stringBuilder = new StringBuilder(baseUrl);
         stringBuilder.append(IMAGE_ASSETS_PATH);
-        stringBuilder.append("&limit=");
+        stringBuilder.append(LIMIT_PARAMETER);
         stringBuilder.append(limit);
-        stringBuilder.append("&page=");
+        stringBuilder.append(OFFSET_PARAMETER);
         stringBuilder.append(offset);
 
         String apiGetImageAssetsUrl = stringBuilder.toString();

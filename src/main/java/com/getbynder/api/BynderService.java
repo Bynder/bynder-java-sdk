@@ -31,6 +31,8 @@ import com.getbynder.api.domain.Metaproperty;
 import com.getbynder.api.domain.UserAccessData;
 import com.getbynder.api.util.ApiUtils;
 import com.getbynder.api.util.BooleanTypeAdapter;
+import com.getbynder.api.util.ConfigProperties;
+import com.getbynder.api.util.SecretProperties;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -56,8 +58,8 @@ public class BynderService {
     private static final String LIMIT_PARAMETER = ConfigProperties.getInstance().getProperty("LIMIT_PARAMETER");
     private static final String OFFSET_PARAMETER = ConfigProperties.getInstance().getProperty("OFFSET_PARAMETER");
 
-    private final String CONSUMER_KEY = ConfigProperties.getInstance().getProperty("CONSUMER_KEY");
-    private final String CONSUMER_SECRET = ConfigProperties.getInstance().getProperty("CONSUMER_SECRET");
+    private final String CONSUMER_KEY = SecretProperties.getInstance().getProperty("CONSUMER_KEY");
+    private final String CONSUMER_SECRET = SecretProperties.getInstance().getProperty("CONSUMER_SECRET");
 
     private final String baseUrl;
     private final UserAccessData userAccessData;

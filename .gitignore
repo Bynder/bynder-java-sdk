@@ -1,3 +1,7 @@
+# Secret stuff
+**/secret.properties
+
+# Compilation files
 .*
 target/
 *.class

@@ -21,7 +21,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.getbynder.api.ConfigProperties;
 import com.getbynder.api.domain.UserAccessData;
 
 import oauth.signpost.OAuth;
@@ -125,7 +124,7 @@ public final class ApiUtils {
         if (userAccessData != null) {
             consumer.setTokenWithSecret(userAccessData.getTokenKey(), userAccessData.getTokenSecret());
         } else {
-            consumer.setTokenWithSecret(ConfigProperties.getInstance().getProperty("ACCESS_TOKEN"), ConfigProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
+            consumer.setTokenWithSecret(SecretProperties.getInstance().getProperty("ACCESS_TOKEN"), SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
         }
 
         // set the parameters into the request

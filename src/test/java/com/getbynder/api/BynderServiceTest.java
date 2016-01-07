@@ -14,6 +14,8 @@ import com.getbynder.api.domain.Category;
 import com.getbynder.api.domain.ImageAsset;
 import com.getbynder.api.domain.MediaAsset;
 import com.getbynder.api.domain.Metaproperty;
+import com.getbynder.api.util.ConfigProperties;
+import com.getbynder.api.util.SecretProperties;
 
 /**
  *
@@ -22,8 +24,8 @@ import com.getbynder.api.domain.Metaproperty;
 public class BynderServiceTest {
 
     private final String BASE_URL = ConfigProperties.getInstance().getProperty("BASE_URL");
-    private final String USERNAME = ConfigProperties.getInstance().getProperty("USERNAME");
-    private final String PASSWORD = ConfigProperties.getInstance().getProperty("PASSWORD");
+    private final String USERNAME = SecretProperties.getInstance().getProperty("USERNAME");
+    private final String PASSWORD = SecretProperties.getInstance().getProperty("PASSWORD");
 
     private BynderService bynderService;
 

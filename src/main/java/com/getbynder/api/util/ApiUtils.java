@@ -37,6 +37,8 @@ import oauth.signpost.exception.OAuthMessageSignerException;
  */
 public final class ApiUtils {
 
+    private final static String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
     private ApiUtils() {
         //prevent instantiation
     }
@@ -73,6 +75,7 @@ public final class ApiUtils {
 
         for (String pair : pairs) {
             int idx = pair.indexOf("=");
+
             //the value needs to be decoded because the method OAuth.toHeaderElement will encode it again
             queryPairs.add(new BasicNameValuePair(pair.substring(0, idx), OAuth.percentDecode(pair.substring(idx + 1))));
         }
@@ -102,7 +105,8 @@ public final class ApiUtils {
 
     public static boolean isDateFormatValid(final String date) {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        //The valid date format is ISO 8601
+        DateFormat dateFormat = new SimpleDateFormat(ISO_8601_DATE_FORMAT);
         dateFormat.setLenient(false);
 
         try {

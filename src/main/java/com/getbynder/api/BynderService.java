@@ -25,13 +25,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.getbynder.api.domain.Category;
-import com.getbynder.api.domain.ImageAsset;
 import com.getbynder.api.domain.MediaAsset;
 import com.getbynder.api.domain.Metaproperty;
 import com.getbynder.api.domain.UserAccessData;
 import com.getbynder.api.util.ApiUtils;
 import com.getbynder.api.util.BooleanTypeAdapter;
 import com.getbynder.api.util.ConfigProperties;
+import com.getbynder.api.util.ErrorMessages;
 import com.getbynder.api.util.SecretProperties;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -57,6 +57,8 @@ public class BynderService {
     private static final String METAPROPERTIES_PATH = ConfigProperties.getInstance().getProperty("METAPROPERTIES_PATH");
     private static final String LIMIT_PARAMETER = ConfigProperties.getInstance().getProperty("LIMIT_PARAMETER");
     private static final String OFFSET_PARAMETER = ConfigProperties.getInstance().getProperty("OFFSET_PARAMETER");
+    private static final String VERSIONS_PARAMETER = ConfigProperties.getInstance().getProperty("VERSIONS_PARAMETER");
+    private static final String METAPROPERTY_ID_PARAMETER = ConfigProperties.getInstance().getProperty("METAPROPERTY_ID_PARAMETER");
 
     private final String CONSUMER_KEY = SecretProperties.getInstance().getProperty("CONSUMER_KEY");
     private final String CONSUMER_SECRET = SecretProperties.getInstance().getProperty("CONSUMER_SECRET");
@@ -88,7 +90,7 @@ public class BynderService {
 
         // if request was unsuccessful
         if (response.getStatusLine().getStatusCode() != 200) {
-            throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
+            throw new HttpResponseException(response.getStatusLine().getStatusCode(), ErrorMessages.LOGIN_REQUEST_FAILED);
         }
 
         // if successful, return the response body
@@ -121,21 +123,22 @@ public class BynderService {
         return categories;
     }
 
-    public List<ImageAsset> getImageAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public List<MediaAsset> getAllImageAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
-        String apiGetImageAssetsUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
+        String apiGetAllImageAssetsUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
+        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllImageAssetsUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
+        Response response = ApiUtils.getRequestResponse(apiGetAllImageAssetsUrl, oauthHeader);
 
-        Type collectionType = new TypeToken<List<ImageAsset>>(){}.getType();
-        List<ImageAsset> imageAssets = new Gson().fromJson(response.readEntity(String.class), collectionType);
+        Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
+        List<MediaAsset> allImageAssets = gson.fromJson(response.readEntity(String.class), collectionType);
 
-        return imageAssets;
+        return allImageAssets;
     }
 
-    public List<ImageAsset> getImageAssets(final int limit, final int offset) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public List<MediaAsset> getImageAssets(final int limit, final int offset) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
         StringBuilder stringBuilder = new StringBuilder(baseUrl);
         stringBuilder.append(IMAGE_ASSETS_PATH);
@@ -150,45 +153,74 @@ public class BynderService {
 
         Response response = ApiUtils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
 
-        Type collectionType = new TypeToken<List<ImageAsset>>(){}.getType();
-        List<ImageAsset> imageAssets = new Gson().fromJson(response.readEntity(String.class), collectionType);
+        Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
+        List<MediaAsset> imageAssets = gson.fromJson(response.readEntity(String.class), collectionType);
 
         return imageAssets;
     }
 
-    public int getImageAssetCount() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public int getImageAssetsTotal() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
-        String apiGetImageAssetCountUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
+        String apiGetImageAssetsTotalUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetCountUrl);
+        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsTotalUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetImageAssetCountUrl, oauthHeader);
+        Response response = ApiUtils.getRequestResponse(apiGetImageAssetsTotalUrl, oauthHeader);
 
-        Type collectionType = new TypeToken<List<ImageAsset>>(){}.getType();
-        List<ImageAsset> imageAssets = new Gson().fromJson(response.readEntity(String.class), collectionType);
+        Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
+        List<MediaAsset> imageAssets = gson.fromJson(response.readEntity(String.class), collectionType);
 
         return imageAssets.size();
     }
 
-    public List<MediaAsset> getMediaAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public List<MediaAsset> getAllMediaAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
-        String apiGetMediaAssetsUrl = baseUrl.concat(MEDIA_PATH);
+        String apiGetAllMediaAssetsUrl = baseUrl.concat(MEDIA_PATH);
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetMediaAssetsUrl);
+        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllMediaAssetsUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetMediaAssetsUrl, oauthHeader);
+        Response response = ApiUtils.getRequestResponse(apiGetAllMediaAssetsUrl, oauthHeader);
 
         Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
         Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
-        List<MediaAsset> mediaAssets = gson.fromJson(response.readEntity(String.class), collectionType);
+        List<MediaAsset> allMediaAssets = gson.fromJson(response.readEntity(String.class), collectionType);
 
-        return mediaAssets;
+        return allMediaAssets;
     }
+
+    public MediaAsset getMediaAssetById(final String id, final Boolean includeVersions) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+
+        int versionsValue = 0;
+        if(includeVersions != null) {
+            versionsValue = includeVersions ? 1 : 0;
+        }
+
+        StringBuilder stringBuilder = new StringBuilder(baseUrl);
+        stringBuilder.append(MEDIA_PATH);
+        stringBuilder.append(id);
+        stringBuilder.append(VERSIONS_PARAMETER);
+        stringBuilder.append(versionsValue);
+
+        String apiGetMediaAssetByIdUrl = stringBuilder.toString();
+
+        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetMediaAssetByIdUrl);
+
+        Response response = ApiUtils.getRequestResponse(apiGetMediaAssetByIdUrl, oauthHeader);
+
+        Type type = new TypeToken<MediaAsset>(){}.getType();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
+        MediaAsset mediaAsset = gson.fromJson(response.readEntity(String.class), type);
+
+        return mediaAsset;
+    }
+
 
     public int setMediaAssetProperties(final MediaAsset mediaAsset) throws URISyntaxException, OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException  {
 
         if (mediaAsset.getId() == null) {
-            throw new IllegalArgumentException("Asset ID shall not be null");
+            throw new IllegalArgumentException(ErrorMessages.NULL_MEDIA_ASSET_ID);
         }
 
         List<BasicNameValuePair> params = new ArrayList<>();
@@ -214,7 +246,7 @@ public class BynderService {
             if (ApiUtils.isDateFormatValid(mediaAsset.getPublicationDate())) {
                 params.add(new BasicNameValuePair("datePublished", mediaAsset.getPublicationDate()));
             } else {
-                throw new IllegalArgumentException(String.format("Invalid format for inserted publication date: %s, should be ISO8601-format [yyyy-MM-dd'T'HH:mm:ss'Z']", mediaAsset.getPublicationDate()));
+                throw new IllegalArgumentException(ErrorMessages.INVALID_PUBLICATION_DATE_FORMAT);
             }
         }
 
@@ -234,7 +266,7 @@ public class BynderService {
         HttpResponse response = httpClient.execute(request);
 
         if (response.getStatusLine().getStatusCode() == 404) {
-            throw new HttpResponseException(response.getStatusLine().getStatusCode(), String.format("Check if Asset ID: %s exists", mediaAsset.getId()));
+            throw new HttpResponseException(response.getStatusLine().getStatusCode(), ErrorMessages.MEDIA_ASSET_ID_NOT_FOUND);
         }
 
         return response.getStatusLine().getStatusCode();
@@ -252,21 +284,21 @@ public class BynderService {
 
         Set<Entry<String,JsonElement>> elements = jsonObject.entrySet();
 
-        List<Metaproperty> metaproperties = new ArrayList<>();
+        List<Metaproperty> allMetaproperties = new ArrayList<>();
 
         for (Entry<String,JsonElement> element: elements) {
             Metaproperty metaproperty = new Gson().fromJson(element.getValue(), Metaproperty.class);
-            metaproperties.add(metaproperty);
+            allMetaproperties.add(metaproperty);
         }
 
-        return metaproperties;
+        return allMetaproperties;
     }
 
     public int addMetapropertyToAsset(final String assetId, final String metapropertyId, final String... optionsIds) throws URISyntaxException, OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException {
 
         List<BasicNameValuePair> params = new ArrayList<>();
 
-        StringBuilder stringBuilder = new StringBuilder("metaproperty.");
+        StringBuilder stringBuilder = new StringBuilder(METAPROPERTY_ID_PARAMETER);
         stringBuilder.append(metapropertyId);
 
         String paramName = stringBuilder.toString();

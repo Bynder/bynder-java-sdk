@@ -1,6 +1,7 @@
 package com.getbynder.api.domain;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  *
@@ -93,9 +94,30 @@ public class MediaAsset implements Serializable {
 
     @Override
     public String toString() {
-        return "MediaAsset [id=" + id + ", name=" + name + ", description=" + description + ", copyright=" + copyright
-                + ", archive=" + archive + ", datePublished=" + datePublished + ", type=" + type + ", thumbnails="
-                + thumbnails + "]";
+
+        StringBuilder result = new StringBuilder("MediaAsset [");
+
+        Field[] fields = this.getClass().getDeclaredFields();
+
+        boolean isFirstField = true;
+        for (Field field : fields) {
+            try {
+                if(!isFirstField) {
+                    result.append(", ");
+                } else {
+                    isFirstField = false;
+                }
+
+                result.append(field.getName());
+                result.append("=");
+                result.append(field.get(this));
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        result.append("]");
+
+        return result.toString();
     }
 
     public class Thumbnails {
@@ -126,6 +148,34 @@ public class MediaAsset implements Serializable {
 
         public void setWebimage(final String webimage) {
             this.webimage = webimage;
+        }
+
+        @Override
+        public String toString() {
+
+            StringBuilder result = new StringBuilder("[");
+
+            Field[] fields = this.getClass().getDeclaredFields();
+
+            boolean isFirstField = true;
+            for (Field field : fields) {
+                try {
+                    if(!isFirstField) {
+                        result.append(", ");
+                    } else {
+                        isFirstField = false;
+                    }
+
+                    result.append(field.getName());
+                    result.append("=");
+                    result.append(field.get(this));
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            result.append("]");
+
+            return result.toString();
         }
     }
 

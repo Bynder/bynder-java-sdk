@@ -4,8 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.http.client.HttpResponseException;
 import org.junit.Assert;
@@ -35,8 +39,11 @@ public class BynderServiceTest {
     private final String INVALID_ID = "Invalid id";
     private final String MEDIA_ASSET_NAME = String.format("Name changed through Java API on %s", new Date().toString());
     private final String MEDIA_ASSET_DESCRIPTION = String.format("Descripton changed through Java API on %s", new Date().toString());
-    private final String INVALID_DATE_FORMAT = "2015-14-12";
-    private final String VALID_DATE_FORMAT = "2015-12-14T10:30:00Z";
+
+    private final String INVALID_DATETIME = DatatypeConverter.printDate(Calendar.getInstance());
+    private final String VALID_DATETIME_UTC = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
+    private final String VALID_DATETIME_GMT = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
+    private final String VALID_DATETIME_WET = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("WET")));
 
     private final String TEST_NOT_PERFORMED = "This test was not performed";
 
@@ -116,7 +123,7 @@ public class BynderServiceTest {
     }
 
     @Test
-    public void getAllMediaAssetbyIdTest() throws Exception {
+    public void getMediaAssetByIdTest() throws Exception {
 
         List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
 
@@ -162,11 +169,12 @@ public class BynderServiceTest {
             assertNotNull(allMediaAssets);
             assertTrue(allMediaAssets.size() > 0);
 
-            MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), MEDIA_ASSET_NAME, null, null, null, INVALID_DATE_FORMAT, null, null);
+            // using datetime value without time
+            MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), MEDIA_ASSET_NAME, null, null, null, INVALID_DATETIME, null, null);
             bynderService.setMediaAssetProperties(mediaAsset);
         } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);
-            assertEquals(ErrorMessages.INVALID_PUBLICATION_DATE_FORMAT, e.getMessage());
+            assertEquals(ErrorMessages.INVALID_PUBLICATION_DATETIME_FORMAT, e.getMessage());
         }
     }
 
@@ -191,7 +199,35 @@ public class BynderServiceTest {
         assertNotNull(allMediaAssets);
         assertTrue(allMediaAssets.size() > 0);
 
-        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), MEDIA_ASSET_NAME, null, null, null, VALID_DATE_FORMAT, null, null);
+        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), MEDIA_ASSET_NAME, null, null, null, VALID_DATETIME_UTC, null, null);
+
+        int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
+
+        assertEquals(202, statusCode);
+    }
+
+    @Test
+    public void setMediaAssetPublicationDateGMTTest() throws Exception {
+
+        List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
+        assertNotNull(allMediaAssets);
+        assertTrue(allMediaAssets.size() > 0);
+
+        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_GMT, null, null);
+
+        int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
+
+        assertEquals(202, statusCode);
+    }
+
+    @Test
+    public void setMediaAssetPublicationDateWETTest() throws Exception {
+
+        List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
+        assertNotNull(allMediaAssets);
+        assertTrue(allMediaAssets.size() > 0);
+
+        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_WET, null, null);
 
         int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
 

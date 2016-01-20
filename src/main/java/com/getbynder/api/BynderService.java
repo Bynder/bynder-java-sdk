@@ -246,7 +246,7 @@ public class BynderService {
             if (ApiUtils.isDateFormatValid(mediaAsset.getPublicationDate())) {
                 params.add(new BasicNameValuePair("datePublished", mediaAsset.getPublicationDate()));
             } else {
-                throw new IllegalArgumentException(ErrorMessages.INVALID_PUBLICATION_DATE_FORMAT);
+                throw new IllegalArgumentException(ErrorMessages.INVALID_PUBLICATION_DATETIME_FORMAT);
             }
         }
 

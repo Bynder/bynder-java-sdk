@@ -5,9 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +12,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -36,8 +34,6 @@ import oauth.signpost.exception.OAuthMessageSignerException;
  * @author daniel.sequeira
  */
 public final class ApiUtils {
-
-    private final static String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     private ApiUtils() {
         //prevent instantiation
@@ -105,13 +101,10 @@ public final class ApiUtils {
 
     public static boolean isDateFormatValid(final String date) {
 
-        //The valid date format is ISO 8601
-        DateFormat dateFormat = new SimpleDateFormat(ISO_8601_DATE_FORMAT);
-        dateFormat.setLenient(false);
-
+        //The valid datetime format is ISO8601
         try {
-            dateFormat.parse(date.trim());
-        } catch (ParseException e) {
+            DatatypeConverter.parseDateTime(date);
+        } catch (IllegalArgumentException e) {
             return false;
         }
 

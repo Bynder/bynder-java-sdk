@@ -2,6 +2,14 @@ package com.getbynder.api.domain;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.http.message.BasicNameValuePair;
+
+import com.getbynder.api.util.ApiUtils;
+import com.getbynder.api.util.ErrorMessages;
 
 /**
  *
@@ -92,6 +100,30 @@ public class MediaAsset implements Serializable {
         return thumbnails;
     }
 
+    public List<BasicNameValuePair> getFieldsNameValuePairs() throws IllegalArgumentException, IllegalAccessException {
+
+        List<BasicNameValuePair> params = new ArrayList<>();
+        Field[] fields = this.getClass().getDeclaredFields();
+
+        for(Field field : fields) {
+
+            if(field.get(this) != null && !Arrays.asList("serialVersionUID", "id", "type", "thumbnails").contains(field.getName())) {
+
+                if(field.getName().equals("datePublished")) {
+                    if (ApiUtils.isDateFormatValid(field.get(this).toString())) {
+                        params.add(new BasicNameValuePair(field.getName(), field.get(this).toString()));
+                    } else {
+                        throw new IllegalArgumentException(ErrorMessages.INVALID_PUBLICATION_DATETIME_FORMAT);
+                    }
+                } else {
+                    params.add(new BasicNameValuePair(field.getName(), field.get(this).toString()));
+                }
+            }
+        }
+
+        return params;
+    }
+
     @Override
     public String toString() {
 
@@ -100,6 +132,7 @@ public class MediaAsset implements Serializable {
         Field[] fields = this.getClass().getDeclaredFields();
 
         boolean isFirstField = true;
+
         for (Field field : fields) {
             try {
                 if(!isFirstField) {
@@ -158,6 +191,7 @@ public class MediaAsset implements Serializable {
             Field[] fields = this.getClass().getDeclaredFields();
 
             boolean isFirstField = true;
+
             for (Field field : fields) {
                 try {
                     if(!isFirstField) {

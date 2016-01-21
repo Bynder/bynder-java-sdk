@@ -36,7 +36,7 @@ public class BynderServiceTest {
 
     private final String MEDIA_TYPE_IMAGE = "image";
 
-    private final String INVALID_ID = "Invalid id";
+    private final String ID_NOT_FOUND = "ID-NOT-FOUND";
     private final String MEDIA_ASSET_NAME = String.format("Name changed through Java API on %s", new Date().toString());
     private final String MEDIA_ASSET_DESCRIPTION = String.format("Descripton changed through Java API on %s", new Date().toString());
 
@@ -123,6 +123,17 @@ public class BynderServiceTest {
     }
 
     @Test
+    public void getMediaAssetByIdFailTest() throws Exception {
+
+        try {
+            bynderService.getMediaAssetById(ID_NOT_FOUND, null);
+        } catch (Exception e) {
+            assertTrue(e instanceof HttpResponseException);
+            assertEquals(ErrorMessages.MEDIA_ASSET_ID_NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @Test
     public void getMediaAssetByIdTest() throws Exception {
 
         List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
@@ -150,10 +161,10 @@ public class BynderServiceTest {
     }
 
     @Test
-    public void setMediaAssetInvalidIdTest() {
+    public void setMediaAssetIdNotFoundTest() {
 
         try {
-            MediaAsset mediaAsset = new MediaAsset(INVALID_ID, null, null, null, null, null, null, null);
+            MediaAsset mediaAsset = new MediaAsset(ID_NOT_FOUND, MEDIA_ASSET_NAME, null, null, null, null, null, null);
             bynderService.setMediaAssetProperties(mediaAsset);
         } catch (Exception e) {
             assertTrue(e instanceof HttpResponseException);
@@ -170,7 +181,7 @@ public class BynderServiceTest {
             assertTrue(allMediaAssets.size() > 0);
 
             // using datetime value without time
-            MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), MEDIA_ASSET_NAME, null, null, null, INVALID_DATETIME, null, null);
+            MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, INVALID_DATETIME, null, null);
             bynderService.setMediaAssetProperties(mediaAsset);
         } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);

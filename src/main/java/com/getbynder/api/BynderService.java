@@ -190,7 +190,7 @@ public class BynderService {
         return allMediaAssets;
     }
 
-    public MediaAsset getMediaAssetById(final String id, final Boolean includeVersions) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public MediaAsset getMediaAssetById(final String id, final Boolean includeVersions) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, HttpResponseException {
 
         int versionsValue = 0;
         if(includeVersions != null) {
@@ -209,6 +209,11 @@ public class BynderService {
 
         Response response = ApiUtils.getRequestResponse(apiGetMediaAssetByIdUrl, oauthHeader);
 
+        // if request was unsuccessful
+        if (response.getStatusInfo().getStatusCode() != 200) {
+            throw new HttpResponseException(response.getStatusInfo().getStatusCode(), ErrorMessages.MEDIA_ASSET_ID_NOT_FOUND);
+        }
+
         Type type = new TypeToken<MediaAsset>(){}.getType();
         Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
         MediaAsset mediaAsset = gson.fromJson(response.readEntity(String.class), type);
@@ -217,38 +222,13 @@ public class BynderService {
     }
 
 
-    public int setMediaAssetProperties(final MediaAsset mediaAsset) throws URISyntaxException, OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException  {
+    public int setMediaAssetProperties(final MediaAsset mediaAsset) throws URISyntaxException, OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, IllegalArgumentException, IllegalAccessException {
 
         if (mediaAsset.getId() == null) {
             throw new IllegalArgumentException(ErrorMessages.NULL_MEDIA_ASSET_ID);
         }
 
-        List<BasicNameValuePair> params = new ArrayList<>();
-
-        //check which parameters to update
-        if (mediaAsset.getName() != null) {
-            params.add(new BasicNameValuePair("name", mediaAsset.getName()));
-        }
-
-        if (mediaAsset.getDescription() != null) {
-            params.add(new BasicNameValuePair("description", mediaAsset.getDescription()));
-        }
-
-        if (mediaAsset.getCopyright() != null) {
-            params.add(new BasicNameValuePair("copyright", mediaAsset.getCopyright()));
-        }
-
-        if (mediaAsset.getArchive() != null) {
-            params.add(new BasicNameValuePair("archive", mediaAsset.getArchive().toString()));
-        }
-
-        if (mediaAsset.getPublicationDate() != null) {
-            if (ApiUtils.isDateFormatValid(mediaAsset.getPublicationDate())) {
-                params.add(new BasicNameValuePair("datePublished", mediaAsset.getPublicationDate()));
-            } else {
-                throw new IllegalArgumentException(ErrorMessages.INVALID_PUBLICATION_DATETIME_FORMAT);
-            }
-        }
+        List<BasicNameValuePair> params = mediaAsset.getFieldsNameValuePairs();
 
         StringBuilder stringBuilder = new StringBuilder(MEDIA_PATH);
         stringBuilder.append(mediaAsset.getId());

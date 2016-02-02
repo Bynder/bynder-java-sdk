@@ -26,9 +26,10 @@ public class MediaAsset implements Serializable {
     private Boolean archive;
     private String datePublished;
     private String type;
+    private List<String> propertyOptions;
     private Thumbnails thumbnails;
 
-    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type, final Thumbnails thumbnails) {
+    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type, final List<String> propertyOptions, final Thumbnails thumbnails) {
         super();
         this.id = id;
         this.name = name;
@@ -37,6 +38,7 @@ public class MediaAsset implements Serializable {
         this.archive = archive;
         this.datePublished = datePublished;
         this.type = type;
+        this.propertyOptions = propertyOptions;
         this.thumbnails = thumbnails;
     }
 
@@ -96,6 +98,14 @@ public class MediaAsset implements Serializable {
         this.type = type;
     }
 
+    public List<String> getPropertyOptions() {
+        return propertyOptions;
+    }
+
+    public void setPropertyOptions(final List<String> propertyOptions) {
+        this.propertyOptions = propertyOptions;
+    }
+
     public Thumbnails getThumbnails() {
         return thumbnails;
     }
@@ -107,7 +117,7 @@ public class MediaAsset implements Serializable {
 
         for(Field field : fields) {
 
-            if(field.get(this) != null && !Arrays.asList("serialVersionUID", "id", "type", "thumbnails").contains(field.getName())) {
+            if(field.get(this) != null && !Arrays.asList("serialVersionUID", "id", "type", "propertyOptions", "thumbnails").contains(field.getName())) {
 
                 if(field.getName().equals("datePublished")) {
                     if (ApiUtils.isDateFormatValid(field.get(this).toString())) {

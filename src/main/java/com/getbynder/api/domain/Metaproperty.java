@@ -11,24 +11,28 @@ public class Metaproperty {
 
     private String id;
     private String name;
+    private String label;
     private List<Metaproperty> options;
 
     public Metaproperty() {
         super();
         this.id = "";
         this.name = "";
+        this.label = "";
         this.options = new ArrayList<>();
     }
 
-    public Metaproperty(final String id, final String name) {
+    public Metaproperty(final String id, final String name, final String label) {
         this.id = id;
         this.name = name;
+        this.label = label;
         this.options = new ArrayList<>();
     }
 
-    public Metaproperty(final String id, final String name, final List<Metaproperty> options) {
+    public Metaproperty(final String id, final String name, final String label, final List<Metaproperty> options) {
         this.id = id;
         this.name = name;
+        this.label = label;
         this.options = options;
     }
 
@@ -48,6 +52,14 @@ public class Metaproperty {
         this.name = name;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(final String label) {
+        this.label = label;
+    }
+
     public List<Metaproperty> getOptions() {
         return options;
     }
@@ -62,6 +74,6 @@ public class Metaproperty {
 
     @Override
     public String toString() {
-        return "Metaproperty [id=" + id + ", name=" + name + "]";
+        return "Metaproperty [id=" + id + ", name=" + name + ", label=" + label + "]";
     }
 }

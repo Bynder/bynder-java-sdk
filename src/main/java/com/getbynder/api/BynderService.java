@@ -59,6 +59,8 @@ public class BynderService {
     private static final String OFFSET_PARAMETER = ConfigProperties.getInstance().getProperty("OFFSET_PARAMETER");
     private static final String VERSIONS_PARAMETER = ConfigProperties.getInstance().getProperty("VERSIONS_PARAMETER");
     private static final String METAPROPERTY_ID_PARAMETER = ConfigProperties.getInstance().getProperty("METAPROPERTY_ID_PARAMETER");
+    private static final String KEYWORD_PARAMETER = ConfigProperties.getInstance().getProperty("KEYWORD_PARAMETER");
+    private static final String METAPROPERTIES_PARAMETER = ConfigProperties.getInstance().getProperty("METAPROPERTIES_PARAMETER");
 
     private final String CONSUMER_KEY = SecretProperties.getInstance().getProperty("CONSUMER_KEY");
     private final String CONSUMER_SECRET = SecretProperties.getInstance().getProperty("CONSUMER_SECRET");
@@ -160,6 +162,50 @@ public class BynderService {
         return imageAssets;
     }
 
+    public List<MediaAsset> getImageAssetsByKeyword(final String keyword) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+
+        StringBuilder stringBuilder = new StringBuilder(baseUrl);
+        stringBuilder.append(IMAGE_ASSETS_PATH);
+        stringBuilder.append(KEYWORD_PARAMETER);
+
+        // only append keyword if it is different then null
+        if(keyword != null) {
+            stringBuilder.append(keyword);
+        }
+
+        String apiGetImageAssetsUrl = stringBuilder.toString();
+
+        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
+
+        Response response = ApiUtils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
+
+        Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
+        List<MediaAsset> imageAssets = gson.fromJson(response.readEntity(String.class), collectionType);
+
+        return imageAssets;
+    }
+
+    public List<MediaAsset> getImageAssetsByMetapropertyId(final String metapropertyId) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+
+        StringBuilder stringBuilder = new StringBuilder(baseUrl);
+        stringBuilder.append(IMAGE_ASSETS_PATH);
+        stringBuilder.append(METAPROPERTIES_PARAMETER);
+        stringBuilder.append(metapropertyId);
+
+        String apiGetImageAssetsUrl = stringBuilder.toString();
+
+        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
+
+        Response response = ApiUtils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
+
+        Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
+        List<MediaAsset> imageAssets = gson.fromJson(response.readEntity(String.class), collectionType);
+
+        return imageAssets;
+    }
+
     public int getImageAssetsTotal() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
         String apiGetImageAssetsTotalUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
@@ -220,7 +266,6 @@ public class BynderService {
 
         return mediaAsset;
     }
-
 
     public int setMediaAssetProperties(final MediaAsset mediaAsset) throws URISyntaxException, OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, IllegalArgumentException, IllegalAccessException {
 

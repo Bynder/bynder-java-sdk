@@ -1,4 +1,4 @@
-package com.getbynder.api.util;
+package com.getbynder.sdk.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -19,7 +19,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.getbynder.api.domain.UserAccessData;
+import com.getbynder.sdk.domain.UserAccessData;
 
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
@@ -33,9 +33,9 @@ import oauth.signpost.exception.OAuthMessageSignerException;
  *
  * @author daniel.sequeira
  */
-public final class ApiUtils {
+public final class Utils {
 
-    private ApiUtils() {
+    private Utils() {
         //prevent instantiation
     }
 

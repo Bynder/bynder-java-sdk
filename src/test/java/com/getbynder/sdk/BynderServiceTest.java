@@ -1,4 +1,4 @@
-package com.getbynder.api;
+package com.getbynder.sdk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -16,13 +16,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.getbynder.api.domain.Category;
-import com.getbynder.api.domain.MediaAsset;
-import com.getbynder.api.domain.Metaproperty;
-import com.getbynder.api.domain.UserAccessData;
-import com.getbynder.api.util.ConfigProperties;
-import com.getbynder.api.util.ErrorMessages;
-import com.getbynder.api.util.SecretProperties;
+import com.getbynder.sdk.domain.Category;
+import com.getbynder.sdk.domain.MediaAsset;
+import com.getbynder.sdk.domain.Metaproperty;
+import com.getbynder.sdk.domain.UserAccessData;
+import com.getbynder.sdk.util.ConfigProperties;
+import com.getbynder.sdk.util.ErrorMessages;
+import com.getbynder.sdk.util.SecretProperties;
 
 /**
  *
@@ -336,18 +336,18 @@ public class BynderServiceTest {
             }
         }
 
+        if (testDone) {
+            assertEquals(202, statusCode);
+        } else {
+            Assert.fail(TEST_NOT_PERFORMED);
+        }
+
         //give it some time for the metaproperty to be added to the asset
         Thread.sleep(6000);
 
         testMediaAsset = bynderService.getMediaAssetById(testMediaAsset.getId(), null);
         assertNotNull(testMediaAsset.getPropertyOptions());
         assertTrue(testMediaAsset.getPropertyOptions().contains(optionId));
-
-        if (testDone) {
-            assertEquals(202, statusCode);
-        } else {
-            Assert.fail(TEST_NOT_PERFORMED);
-        }
     }
 
 }

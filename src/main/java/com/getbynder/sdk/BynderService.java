@@ -1,4 +1,4 @@
-package com.getbynder.api;
+package com.getbynder.sdk;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -24,15 +24,15 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.getbynder.api.domain.Category;
-import com.getbynder.api.domain.MediaAsset;
-import com.getbynder.api.domain.Metaproperty;
-import com.getbynder.api.domain.UserAccessData;
-import com.getbynder.api.util.ApiUtils;
-import com.getbynder.api.util.BooleanTypeAdapter;
-import com.getbynder.api.util.ConfigProperties;
-import com.getbynder.api.util.ErrorMessages;
-import com.getbynder.api.util.SecretProperties;
+import com.getbynder.sdk.domain.Category;
+import com.getbynder.sdk.domain.MediaAsset;
+import com.getbynder.sdk.domain.Metaproperty;
+import com.getbynder.sdk.domain.UserAccessData;
+import com.getbynder.sdk.util.Utils;
+import com.getbynder.sdk.util.BooleanTypeAdapter;
+import com.getbynder.sdk.util.ConfigProperties;
+import com.getbynder.sdk.util.ErrorMessages;
+import com.getbynder.sdk.util.SecretProperties;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -82,9 +82,9 @@ public class BynderService {
         params.add(new BasicNameValuePair("password", password));
 
         // create an HTTP request to a protected resource
-        URI loginUri = ApiUtils.createRequestURI(new URL(baseUrl), LOGIN_PATH, params);
+        URI loginUri = Utils.createRequestURI(new URL(baseUrl), LOGIN_PATH, params);
 
-        HttpPost request = ApiUtils.createPostRequest(CONSUMER_KEY, CONSUMER_SECRET, null, loginUri, params);
+        HttpPost request = Utils.createPostRequest(CONSUMER_KEY, CONSUMER_SECRET, null, loginUri, params);
 
         // send the post request
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -115,9 +115,9 @@ public class BynderService {
 
         String apiGetCategoriesUrl = baseUrl.concat(CATEGORIES_PATH);
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetCategoriesUrl);
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetCategoriesUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetCategoriesUrl, oauthHeader);
+        Response response = Utils.getRequestResponse(apiGetCategoriesUrl, oauthHeader);
 
         Type collectionType = new TypeToken<List<Category>>(){}.getType();
         List<Category> categories = new Gson().fromJson(response.readEntity(String.class), collectionType);
@@ -129,9 +129,9 @@ public class BynderService {
 
         String apiGetAllImageAssetsUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllImageAssetsUrl);
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllImageAssetsUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetAllImageAssetsUrl, oauthHeader);
+        Response response = Utils.getRequestResponse(apiGetAllImageAssetsUrl, oauthHeader);
 
         Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
         Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
@@ -151,9 +151,9 @@ public class BynderService {
 
         String apiGetImageAssetsUrl = stringBuilder.toString();
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
+        Response response = Utils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
 
         Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
         Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
@@ -175,9 +175,9 @@ public class BynderService {
 
         String apiGetImageAssetsUrl = stringBuilder.toString();
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
+        Response response = Utils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
 
         Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
         Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
@@ -195,9 +195,9 @@ public class BynderService {
 
         String apiGetImageAssetsUrl = stringBuilder.toString();
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
+        Response response = Utils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
 
         Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
         Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
@@ -210,9 +210,9 @@ public class BynderService {
 
         String apiGetImageAssetsTotalUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsTotalUrl);
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsTotalUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetImageAssetsTotalUrl, oauthHeader);
+        Response response = Utils.getRequestResponse(apiGetImageAssetsTotalUrl, oauthHeader);
 
         Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
         Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
@@ -225,9 +225,9 @@ public class BynderService {
 
         String apiGetAllMediaAssetsUrl = baseUrl.concat(MEDIA_PATH);
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllMediaAssetsUrl);
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllMediaAssetsUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetAllMediaAssetsUrl, oauthHeader);
+        Response response = Utils.getRequestResponse(apiGetAllMediaAssetsUrl, oauthHeader);
 
         Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
         Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
@@ -251,9 +251,9 @@ public class BynderService {
 
         String apiGetMediaAssetByIdUrl = stringBuilder.toString();
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetMediaAssetByIdUrl);
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetMediaAssetByIdUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetMediaAssetByIdUrl, oauthHeader);
+        Response response = Utils.getRequestResponse(apiGetMediaAssetByIdUrl, oauthHeader);
 
         // if request was unsuccessful
         if (response.getStatusInfo().getStatusCode() != 200) {
@@ -282,9 +282,9 @@ public class BynderService {
         String relativePath = stringBuilder.toString();
 
         // create an HTTP request to a protected resource
-        URI requestUri = ApiUtils.createRequestURI(new URL(baseUrl), relativePath, params);
+        URI requestUri = Utils.createRequestURI(new URL(baseUrl), relativePath, params);
 
-        HttpPost request = ApiUtils.createPostRequest(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, requestUri, params);
+        HttpPost request = Utils.createPostRequest(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, requestUri, params);
 
         // send the post request
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -301,9 +301,9 @@ public class BynderService {
 
         String apiGetAllMetapropertiesUrl = baseUrl.concat(METAPROPERTIES_PATH);
 
-        String oauthHeader = ApiUtils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllMetapropertiesUrl);
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllMetapropertiesUrl);
 
-        Response response = ApiUtils.getRequestResponse(apiGetAllMetapropertiesUrl, oauthHeader);
+        Response response = Utils.getRequestResponse(apiGetAllMetapropertiesUrl, oauthHeader);
 
         JsonObject jsonObject = new JsonParser().parse(response.readEntity(String.class)).getAsJsonObject();
 
@@ -343,9 +343,9 @@ public class BynderService {
         params.add(new BasicNameValuePair(paramName, paramValues));
 
         // create an HTTP request to a protected resource
-        URI requestUri = ApiUtils.createRequestURI(new URL(baseUrl), MEDIA_PATH);
+        URI requestUri = Utils.createRequestURI(new URL(baseUrl), MEDIA_PATH);
 
-        HttpPost request = ApiUtils.createPostRequest(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, requestUri, params);
+        HttpPost request = Utils.createPostRequest(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, requestUri, params);
 
         // send the post request
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();

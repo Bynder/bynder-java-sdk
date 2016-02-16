@@ -1,4 +1,4 @@
-package com.getbynder.api.domain;
+package com.getbynder.sdk.domain;
 
 /**
  *

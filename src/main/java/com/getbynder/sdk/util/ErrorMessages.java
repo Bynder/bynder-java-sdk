@@ -1,4 +1,4 @@
-package com.getbynder.api.util;
+package com.getbynder.sdk.util;
 
 /**
  *

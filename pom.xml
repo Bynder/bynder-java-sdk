@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.getbynder</groupId>
-    <artifactId>bynder-java-api</artifactId>
+    <artifactId>bynder-java-sdk</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>bynder-java-api</name>
-    <description>Bynder Java API</description>
+    <name>bynder-java-sdk</name>
+    <description>Bynder Java SDK</description>
     <url>http://www.getbynder.com/</url>
 
     <properties>

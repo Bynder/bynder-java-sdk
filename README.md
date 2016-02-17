@@ -1,1 +1,1 @@
-# bynder-java-api
+# bynder-java-sdk

@@ -37,8 +37,8 @@ public class BynderServiceTest {
     private final String MEDIA_TYPE_IMAGE = "image";
 
     private final String ID_NOT_FOUND = "ID-NOT-FOUND";
-    private final String MEDIA_ASSET_NAME = String.format("Name changed through Java API on %s", new Date().toString());
-    private final String MEDIA_ASSET_DESCRIPTION = String.format("Descripton changed through Java API on %s", new Date().toString());
+    private final String MEDIA_ASSET_NAME = String.format("Name changed through Java SDK on %s", new Date().toString());
+    private final String MEDIA_ASSET_DESCRIPTION = String.format("Descripton changed through Java SDK on %s", new Date().toString());
 
     private final String MEDIA_ASSET_KEYWORD = "Porto";
     private final String MEDIA_ASSET_KEYWORD_NOT_FOUND = "MEDIA_ASSET_KEYWORD_NOT_FOUND";

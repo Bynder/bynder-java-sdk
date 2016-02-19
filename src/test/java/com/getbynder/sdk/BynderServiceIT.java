@@ -28,7 +28,7 @@ import com.getbynder.sdk.util.SecretProperties;
  *
  * @author daniel.sequeira
  */
-public class BynderServiceTest {
+public class BynderServiceIT {
 
     private final String BASE_URL = ConfigProperties.getInstance().getProperty("BASE_URL");
     private final String USERNAME = SecretProperties.getInstance().getProperty("USERNAME");

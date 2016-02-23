@@ -50,8 +50,8 @@ Access the "config.properties" file
 $ vi bynder-java-sdk/src/main/resources/config.properties
 ```
 
-Change the BASE_URL property to your Bynder API v4 base url (hostname).
-Example: &lt;hostname&gt;/api/v4/
+Change the <b>BASE_URL</b> property to your Bynder API v4 base url (hostname).
+Example: <i>&lt;hostname&gt;/api/v4/</i>
 
 Create a new properties file called "secret.properties" with the following content:
 ```bash
@@ -89,7 +89,7 @@ Results :
 
 Tests run: 20, Failures: 0, Errors: 0, Skipped: 0
 
-[INFO] ------------------------------------------------
+[INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------
+[INFO] ------------------------------------------------------------------------
 ```

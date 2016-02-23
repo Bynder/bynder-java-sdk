@@ -89,7 +89,7 @@ Code example to instantiate the <b>BynderService</b> class:
 ```java
 BynderService bynderService = new BynderService("https://example.getbynder.com/api/v4/", "test", "12345");
 ```
-In the example above the BynderService class is instantiated with the baseUrl "https://example.getbynder.com/api/v4/", username "test" and password "12345".
+In the example above the BynderService class is instantiated with the baseUrl "ht&#8203;tp://example.getbynder.com/api/v4/", username "test" and password "12345".
 
 After instantiating the <b>BynderService</b> class successfuly it is possible to call any of the methods listed in the above section <b>Current Status</b>. Example:
 
@@ -104,6 +104,8 @@ To run the integration tests defined in the class <b>com.getbynder.sdk.BynderSer
 ```bash
 $ mvn verify
 ```
+<b>Note:</b> before running the integration tests will use the login credentials and oauth header parameters defined in the "secret.properties" file.
+
 After running this command, if everything is working fine, you should get the output shown below, telling you all the tests run successfuly:
 ```bash
 -------------------------------------------------------

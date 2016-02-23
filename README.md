@@ -55,11 +55,11 @@ Example: <i>&lt;hostname&gt;/api/v4/</i>
 
 Create a new properties file called "secret.properties" with the following content:
 ```bash
-# dev env login credentials
+# bynder login credentials
 USERNAME=<your username>
 PASSWORD=<your password>
 
-# dev env oauth header parameters
+# bynder access tokens
 CONSUMER_KEY=<your consumer key>
 CONSUMER_SECRET=<your consumer secret>
 ACCESS_TOKEN=<your access token>

@@ -1,4 +1,4 @@
-# bynder-java-sdk
+# Bynder Java SDK
 
 The main goal of this SDK is to speed up the integration of Bynder customers who use JAVA. Making it easier to connect to the Bynder API v4 (http://docs.bynder.apiary.io) and executing Requests on it.
 
@@ -75,7 +75,7 @@ This command tells Maven to build all the modules and to install it in the local
 ## How does it work
 Before executing any Request to the Bynder API, it is necessary to instantiate the class <b>BynderService</b>.
 
-The contructor in the <b>BynderService</b> class takes three String arguments: <b>baseUrl</b>, <b>username</b> and <b>password</b>. Stores the <b>baseUrl</b> in an instance variable and calls the <b>getUserAccessData</b> method that receives the <b>username</b> and <b>password</b> as arguments and logins to the Bynder API to get the tokens that are necessary to make the Requests. Constructor code:
+The constructor in the <b>BynderService</b> class takes three String arguments: <b>baseUrl</b>, <b>username</b> and <b>password</b>. Stores the <b>baseUrl</b> in an instance variable and calls the <b>getUserAccessData</b> method that receives the <b>username</b> and <b>password</b> as arguments and logins to the Bynder API to get the tokens that are necessary to make the Requests. Constructor code:
 
 ```java
 public BynderService(final String baseUrl, final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
@@ -83,7 +83,7 @@ public BynderService(final String baseUrl, final String username, final String p
     this.userAccessData = getUserAccessData(username, password);
 }
 ```
-As shown above the tokens that are retireved by the Bynder API after a successful login are stored in the instance variable <b>userAccessData</b>.
+As shown above the tokens that are retrieved by the Bynder API after a successful login are stored in the instance variable <b>userAccessData</b>.
 
 Code example to instantiate the <b>BynderService</b> class:
 ```java
@@ -91,7 +91,7 @@ BynderService bynderService = new BynderService("https://example.getbynder.com/a
 ```
 In the example above the BynderService class is instantiated with the baseUrl "ht&#8203;tp://example.getbynder.com/api/v4/", username "test" and password "12345".
 
-After instantiating the <b>BynderService</b> class successfuly it is possible to call any of the methods listed in the above section <b>Current Status</b>. Example:
+After instantiating the <b>BynderService</b> class successfully it is possible to call any of the methods listed in the above section <b>Current Status</b>. Example:
 
 ```java
 BynderService bynderService = new BynderService("https://example.getbynder.com/api/v4/", "test", "12345");
@@ -106,7 +106,7 @@ $ mvn verify
 ```
 <b>Note:</b> Before the integration tests are executed, an instance of the <b>BynderService</b> class will be created with the login credentials and oauth header parameters defined in the "secret.properties" file.
 
-After running this command, if everything is working fine, you should get the output shown below, telling you all the tests run successfuly:
+After running this command, if everything is working fine, you should get the output shown below, telling you all the tests ran successfully:
 ```bash
 -------------------------------------------------------
  T E S T S
@@ -118,7 +118,4 @@ Results :
 
 Tests run: 20, Failures: 0, Errors: 0, Skipped: 0
 
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
 ```

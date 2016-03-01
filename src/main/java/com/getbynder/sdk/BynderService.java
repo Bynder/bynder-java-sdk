@@ -28,11 +28,11 @@ import com.getbynder.sdk.domain.Category;
 import com.getbynder.sdk.domain.MediaAsset;
 import com.getbynder.sdk.domain.Metaproperty;
 import com.getbynder.sdk.domain.UserAccessData;
-import com.getbynder.sdk.util.Utils;
 import com.getbynder.sdk.util.BooleanTypeAdapter;
 import com.getbynder.sdk.util.ConfigProperties;
 import com.getbynder.sdk.util.ErrorMessages;
 import com.getbynder.sdk.util.SecretProperties;
+import com.getbynder.sdk.util.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -50,6 +50,8 @@ import oauth.signpost.exception.OAuthMessageSignerException;
  */
 public class BynderService {
 
+    private final String BASE_URL = ConfigProperties.getInstance().getProperty("BASE_URL");
+
     private static final String LOGIN_PATH = ConfigProperties.getInstance().getProperty("LOGIN_PATH");
     private static final String CATEGORIES_PATH = ConfigProperties.getInstance().getProperty("CATEGORIES_PATH");
     private static final String IMAGE_ASSETS_PATH = ConfigProperties.getInstance().getProperty("IMAGE_ASSETS_PATH");
@@ -61,12 +63,23 @@ public class BynderService {
     private static final String METAPROPERTY_ID_PARAMETER = ConfigProperties.getInstance().getProperty("METAPROPERTY_ID_PARAMETER");
     private static final String KEYWORD_PARAMETER = ConfigProperties.getInstance().getProperty("KEYWORD_PARAMETER");
     private static final String METAPROPERTIES_PARAMETER = ConfigProperties.getInstance().getProperty("METAPROPERTIES_PARAMETER");
+    private static final String COUNT_PARAMETER_ENABLED = ConfigProperties.getInstance().getProperty("COUNT_PARAMETER_ENABLED");
 
     private final String CONSUMER_KEY = SecretProperties.getInstance().getProperty("CONSUMER_KEY");
     private final String CONSUMER_SECRET = SecretProperties.getInstance().getProperty("CONSUMER_SECRET");
 
     private final String baseUrl;
     private final UserAccessData userAccessData;
+
+    public BynderService() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
+        this.baseUrl = BASE_URL;
+        this.userAccessData = new UserAccessData(CONSUMER_KEY, SecretProperties.getInstance().getProperty("TOKEN_KEY"), SecretProperties.getInstance().getProperty("TOKEN_SECRET"), true);
+    }
+
+    public BynderService(final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
+        this.baseUrl = BASE_URL;
+        this.userAccessData = getUserAccessData(username, password);
+    }
 
     public BynderService(final String baseUrl, final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
         this.baseUrl = baseUrl;
@@ -127,7 +140,15 @@ public class BynderService {
 
     public List<MediaAsset> getAllImageAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
-        String apiGetAllImageAssetsUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
+        StringBuilder stringBuilder = new StringBuilder(baseUrl);
+        stringBuilder.append(IMAGE_ASSETS_PATH);
+        stringBuilder.append(Utils.STR_AND);
+        stringBuilder.append(LIMIT_PARAMETER);
+
+        int total = getImageAssetsTotal();
+        stringBuilder.append(total);
+
+        String apiGetAllImageAssetsUrl = stringBuilder.toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllImageAssetsUrl);
 
@@ -144,6 +165,7 @@ public class BynderService {
 
         StringBuilder stringBuilder = new StringBuilder(baseUrl);
         stringBuilder.append(IMAGE_ASSETS_PATH);
+        stringBuilder.append(Utils.STR_AND);
         stringBuilder.append(LIMIT_PARAMETER);
         stringBuilder.append(limit);
         stringBuilder.append(OFFSET_PARAMETER);
@@ -164,14 +186,19 @@ public class BynderService {
 
     public List<MediaAsset> getImageAssetsByKeyword(final String keyword) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
+        if(keyword == null || keyword.isEmpty()) {
+            return getAllImageAssets();
+        }
+
         StringBuilder stringBuilder = new StringBuilder(baseUrl);
         stringBuilder.append(IMAGE_ASSETS_PATH);
         stringBuilder.append(KEYWORD_PARAMETER);
+        stringBuilder.append(keyword);
+        stringBuilder.append(Utils.STR_AND);
+        stringBuilder.append(LIMIT_PARAMETER);
 
-        // only append keyword if it is different then null
-        if(keyword != null) {
-            stringBuilder.append(keyword);
-        }
+        int total = getImageAssetsTotal();
+        stringBuilder.append(total);
 
         String apiGetImageAssetsUrl = stringBuilder.toString();
 
@@ -208,22 +235,47 @@ public class BynderService {
 
     public int getImageAssetsTotal() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
-        String apiGetImageAssetsTotalUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
+        StringBuilder stringBuilder = new StringBuilder(baseUrl);
+        stringBuilder.append(IMAGE_ASSETS_PATH);
+        stringBuilder.append(Utils.STR_AND);
+        stringBuilder.append(COUNT_PARAMETER_ENABLED);
+
+        String apiGetImageAssetsTotalUrl = stringBuilder.toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsTotalUrl);
 
         Response response = Utils.getRequestResponse(apiGetImageAssetsTotalUrl, oauthHeader);
 
-        Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
-        List<MediaAsset> imageAssets = gson.fromJson(response.readEntity(String.class), collectionType);
+        return Utils.getTotalCountFromJson(response.readEntity(String.class));
+    }
 
-        return imageAssets.size();
+    public int getMediaAssetsTotal() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+
+        StringBuilder stringBuilder = new StringBuilder(baseUrl);
+        stringBuilder.append(MEDIA_PATH);
+        stringBuilder.append(Utils.STR_QUESTION);
+        stringBuilder.append(COUNT_PARAMETER_ENABLED);
+
+        String apiGetMediaAssetsTotalUrl = stringBuilder.toString();
+
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetMediaAssetsTotalUrl);
+
+        Response response = Utils.getRequestResponse(apiGetMediaAssetsTotalUrl, oauthHeader);
+
+        return Utils.getTotalCountFromJson(response.readEntity(String.class));
     }
 
     public List<MediaAsset> getAllMediaAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
-        String apiGetAllMediaAssetsUrl = baseUrl.concat(MEDIA_PATH);
+        StringBuilder stringBuilder = new StringBuilder(baseUrl);
+        stringBuilder.append(MEDIA_PATH);
+        stringBuilder.append(Utils.STR_QUESTION);
+        stringBuilder.append(LIMIT_PARAMETER);
+
+        int total = getMediaAssetsTotal();
+        stringBuilder.append(total);
+
+        String apiGetAllMediaAssetsUrl = stringBuilder.toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllMediaAssetsUrl);
 
@@ -277,7 +329,7 @@ public class BynderService {
 
         StringBuilder stringBuilder = new StringBuilder(MEDIA_PATH);
         stringBuilder.append(mediaAsset.getId());
-        stringBuilder.append("/");
+        stringBuilder.append(Utils.STR_SLASH);
 
         String relativePath = stringBuilder.toString();
 
@@ -333,7 +385,7 @@ public class BynderService {
         stringBuilder = new StringBuilder();
 
         for (String optionId : optionsIds) {
-            stringBuilder.append(",");
+            stringBuilder.append(Utils.STR_COMMA);
             stringBuilder.append(optionId);
         }
         stringBuilder.deleteCharAt(0);

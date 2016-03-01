@@ -20,6 +20,9 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.getbynder.sdk.domain.UserAccessData;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
@@ -34,6 +37,14 @@ import oauth.signpost.exception.OAuthMessageSignerException;
  * @author daniel.sequeira
  */
 public final class Utils {
+
+    //separators
+    public static final String STR_AND = "&";
+    public static final String STR_COMMA = ",";
+    public static final String STR_EQUALS = "=";
+    public static final String STR_QUESTION = "?";
+    public static final String STR_SLASH = "/";
+    public static final String STR_SPACE = " ";
 
     private Utils() {
         //prevent instantiation
@@ -67,10 +78,10 @@ public final class Utils {
 
         List<BasicNameValuePair> queryPairs = new ArrayList<>();
 
-        String[] pairs = query.split("&");
+        String[] pairs = query.split(STR_AND);
 
         for (String pair : pairs) {
-            int idx = pair.indexOf("=");
+            int idx = pair.indexOf(STR_EQUALS);
 
             //the value needs to be decoded because the method OAuth.toHeaderElement will encode it again
             queryPairs.add(new BasicNameValuePair(pair.substring(0, idx), OAuth.percentDecode(pair.substring(idx + 1))));
@@ -79,7 +90,7 @@ public final class Utils {
         StringBuilder oauthHeader = new StringBuilder("OAuth ");
 
         for (BasicNameValuePair nvPair : queryPairs) {
-            oauthHeader.append(OAuth.toHeaderElement(nvPair.getName(), nvPair.getValue())).append(",");
+            oauthHeader.append(OAuth.toHeaderElement(nvPair.getName(), nvPair.getValue())).append(STR_COMMA);
         }
 
         oauthHeader.deleteCharAt(oauthHeader.length()-1);
@@ -138,5 +149,12 @@ public final class Utils {
         Client client = ClientBuilder.newClient();
 
         return client.target(url).request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", oauthHeader).get();
+    }
+
+    public static int getTotalCountFromJson(final String jsonResponse) {
+        JsonElement jsonElement = new JsonParser().parse(jsonResponse);
+        JsonObject  jsonObject = jsonElement.getAsJsonObject();
+
+        return jsonObject.get("count").getAsJsonObject().get("total").getAsInt();
     }
 }

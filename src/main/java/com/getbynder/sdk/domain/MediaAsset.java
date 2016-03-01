@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.apache.http.message.BasicNameValuePair;
 
-import com.getbynder.sdk.util.Utils;
 import com.getbynder.sdk.util.ErrorMessages;
+import com.getbynder.sdk.util.Utils;
 
 /**
  *
@@ -146,13 +146,14 @@ public class MediaAsset implements Serializable {
         for (Field field : fields) {
             try {
                 if(!isFirstField) {
-                    result.append(", ");
+                    result.append(Utils.STR_COMMA);
+                    result.append(Utils.STR_SPACE);
                 } else {
                     isFirstField = false;
                 }
 
                 result.append(field.getName());
-                result.append("=");
+                result.append(Utils.STR_EQUALS);
                 result.append(field.get(this));
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -205,13 +206,14 @@ public class MediaAsset implements Serializable {
             for (Field field : fields) {
                 try {
                     if(!isFirstField) {
-                        result.append(", ");
+                        result.append(Utils.STR_COMMA);
+                        result.append(Utils.STR_SPACE);
                     } else {
                         isFirstField = false;
                     }
 
                     result.append(field.getName());
-                    result.append("=");
+                    result.append(Utils.STR_EQUALS);
                     result.append(field.get(this));
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     e.printStackTrace();

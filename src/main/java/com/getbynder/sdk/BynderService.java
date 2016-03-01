@@ -68,7 +68,6 @@ public class BynderService {
     private static final String MEDIA_TYPE_IMAGE = ConfigProperties.getInstance().getProperty("MEDIA_TYPE_IMAGE");
     private static final String MEDIA_PATH_ID = ConfigProperties.getInstance().getProperty("MEDIA_PATH_ID");
 
-
     private final String CONSUMER_KEY = SecretProperties.getInstance().getProperty("CONSUMER_KEY");
     private final String CONSUMER_SECRET = SecretProperties.getInstance().getProperty("CONSUMER_SECRET");
 

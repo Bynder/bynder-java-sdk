@@ -42,8 +42,6 @@ public final class Utils {
     public static final String STR_AND = "&";
     public static final String STR_COMMA = ",";
     public static final String STR_EQUALS = "=";
-    public static final String STR_QUESTION = "?";
-    public static final String STR_SLASH = "/";
     public static final String STR_SPACE = " ";
 
     private Utils() {

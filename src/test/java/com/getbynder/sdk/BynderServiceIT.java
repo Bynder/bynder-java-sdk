@@ -20,6 +20,7 @@ import com.getbynder.sdk.domain.Category;
 import com.getbynder.sdk.domain.MediaAsset;
 import com.getbynder.sdk.domain.Metaproperty;
 import com.getbynder.sdk.domain.UserAccessData;
+import com.getbynder.sdk.util.ConfigProperties;
 import com.getbynder.sdk.util.ErrorMessages;
 import com.getbynder.sdk.util.SecretProperties;
 import com.getbynder.sdk.util.Utils;
@@ -33,7 +34,7 @@ public class BynderServiceIT {
     private final String USERNAME = SecretProperties.getInstance().getProperty("USERNAME");
     private final String PASSWORD = SecretProperties.getInstance().getProperty("PASSWORD");
 
-    private final String MEDIA_TYPE_IMAGE = "image";
+    private final String MEDIA_TYPE_IMAGE = ConfigProperties.getInstance().getProperty("MEDIA_TYPE_IMAGE");
 
     private final String ID_NOT_FOUND = "ID-NOT-FOUND";
     private final String MEDIA_ASSET_NAME = String.format("Name changed through Java SDK on %s", new Date().toString());
@@ -145,14 +146,28 @@ public class BynderServiceIT {
 
         List<Metaproperty> allMetaproperties = bynderService.getAllMetaproperties();
         assertNotNull(allMetaproperties);
-        Assume.assumeTrue(allMetaproperties.size() > 0 && allMetaproperties.get(0).getOptions().size() > 0);
-        assertNotNull(allMetaproperties.get(0).getOptions().get(0));
+        Assume.assumeTrue(allMetaproperties.size() > 0);
 
-        List<MediaAsset> imageAssets = bynderService.getImageAssetsByMetapropertyId(allMetaproperties.get(0).getOptions().get(0).getId());
+        boolean metapropertyFound = false;
+        String metapropertyId = null;
+
+        for (Metaproperty metaproperty : allMetaproperties) {
+            if (metapropertyFound) {
+                break;
+            } else if (metaproperty.getOptions().size() > 0) {
+                metapropertyId = metaproperty.getOptions().get(0).getId();
+                metapropertyFound = true;
+                break;
+            }
+        }
+
+        Assume.assumeTrue(metapropertyFound && metapropertyId != null);
+
+        List<MediaAsset> imageAssets = bynderService.getImageAssetsByMetapropertyId(metapropertyId);
 
         assertNotNull(imageAssets);
         Assume.assumeTrue(imageAssets.size() > 0);
-        assertTrue(imageAssets.get(0).getPropertyOptions().contains(allMetaproperties.get(0).getOptions().get(0).getId()));
+        assertTrue(imageAssets.get(0).getPropertyOptions().contains(metapropertyId));
     }
 
     @Test
@@ -343,7 +358,6 @@ public class BynderServiceIT {
         String optionId = null;
 
         for (Metaproperty metaproperty : allMetaproperties) {
-
             if (testDone) {
                 break;
             } else if (metaproperty.getOptions().size() > 0) {

@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
@@ -107,7 +108,7 @@ public class BynderService {
         HttpResponse response = httpClient.execute(request);
 
         // if request was unsuccessful
-        if (response.getStatusLine().getStatusCode() != 200) {
+        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
             throw new HttpResponseException(response.getStatusLine().getStatusCode(), ErrorMessages.LOGIN_REQUEST_FAILED);
         }
 
@@ -293,7 +294,7 @@ public class BynderService {
         Response response = Utils.getRequestResponse(apiGetMediaAssetByIdUrl, oauthHeader);
 
         // if request was unsuccessful
-        if (response.getStatusInfo().getStatusCode() != 200) {
+        if (response.getStatusInfo().getStatusCode() != HttpStatus.SC_OK) {
             throw new HttpResponseException(response.getStatusInfo().getStatusCode(), ErrorMessages.MEDIA_ASSET_ID_NOT_FOUND);
         }
 
@@ -321,7 +322,7 @@ public class BynderService {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpResponse response = httpClient.execute(request);
 
-        if (response.getStatusLine().getStatusCode() == 404) {
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
             throw new HttpResponseException(response.getStatusLine().getStatusCode(), ErrorMessages.MEDIA_ASSET_ID_NOT_FOUND);
         }
 

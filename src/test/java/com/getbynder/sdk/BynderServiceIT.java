@@ -11,6 +11,7 @@ import java.util.TimeZone;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 import org.junit.Assume;
 import org.junit.Before;
@@ -275,7 +276,7 @@ public class BynderServiceIT {
 
         int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
 
-        assertEquals(202, statusCode);
+        assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     @Test
@@ -289,7 +290,7 @@ public class BynderServiceIT {
 
         int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
 
-        assertEquals(202, statusCode);
+        assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     @Test
@@ -303,7 +304,7 @@ public class BynderServiceIT {
 
         int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
 
-        assertEquals(202, statusCode);
+        assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     @Test
@@ -317,7 +318,7 @@ public class BynderServiceIT {
 
         int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
 
-        assertEquals(202, statusCode);
+        assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     @Test
@@ -358,9 +359,7 @@ public class BynderServiceIT {
         String optionId = null;
 
         for (Metaproperty metaproperty : allMetaproperties) {
-            if (testDone) {
-                break;
-            } else if (metaproperty.getOptions().size() > 0) {
+            if (metaproperty.getOptions().size() > 0) {
                 statusCode = bynderService.addMetapropertyToAsset(testMediaAsset.getId(), metaproperty.getId(), metaproperty.getOptions().get(0).getId());
                 optionId = metaproperty.getOptions().get(0).getId();
                 testDone = true;
@@ -368,7 +367,7 @@ public class BynderServiceIT {
             }
         }
 
-        Assume.assumeTrue(testDone && statusCode == 202);
+        Assume.assumeTrue(testDone && statusCode == HttpStatus.SC_ACCEPTED);
 
         //give it some time for the metaproperty to be added to the asset
         Thread.sleep(6000);

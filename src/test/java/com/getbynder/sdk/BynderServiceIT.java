@@ -153,9 +153,7 @@ public class BynderServiceIT {
         String metapropertyId = null;
 
         for (Metaproperty metaproperty : allMetaproperties) {
-            if (metapropertyFound) {
-                break;
-            } else if (metaproperty.getOptions().size() > 0) {
+            if (metaproperty.getOptions().size() > 0) {
                 metapropertyId = metaproperty.getOptions().get(0).getId();
                 metapropertyFound = true;
                 break;

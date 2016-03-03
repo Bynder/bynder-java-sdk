@@ -339,10 +339,9 @@ public class BynderServiceIT {
         MediaAsset testMediaAsset = null;
 
         for(MediaAsset mediaAsset : allImageAssets) {
-            if(testMediaAsset != null) {
-                break;
-            } else if(mediaAsset.getPropertyOptions() == null || mediaAsset.getPropertyOptions().isEmpty()) {
+            if(mediaAsset.getPropertyOptions() == null || mediaAsset.getPropertyOptions().isEmpty()) {
                 testMediaAsset = mediaAsset;
+                break;
             }
         }
 
@@ -353,19 +352,17 @@ public class BynderServiceIT {
         Assume.assumeTrue(allMetaproperties.size() > 0);
 
         int statusCode = 0;
-        boolean testDone = false;
         String optionId = null;
 
         for (Metaproperty metaproperty : allMetaproperties) {
             if (metaproperty.getOptions().size() > 0) {
                 statusCode = bynderService.addMetapropertyToAsset(testMediaAsset.getId(), metaproperty.getId(), metaproperty.getOptions().get(0).getId());
                 optionId = metaproperty.getOptions().get(0).getId();
-                testDone = true;
                 break;
             }
         }
 
-        Assume.assumeTrue(testDone && statusCode == HttpStatus.SC_ACCEPTED);
+        Assume.assumeTrue(optionId != null && statusCode == HttpStatus.SC_ACCEPTED);
 
         //give it some time for the metaproperty to be added to the asset
         Thread.sleep(6000);

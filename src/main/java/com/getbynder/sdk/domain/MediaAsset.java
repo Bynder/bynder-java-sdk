@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.message.BasicNameValuePair;
 
@@ -27,10 +28,10 @@ public class MediaAsset implements Serializable {
     private String datePublished;
     private String type;
     private List<String> propertyOptions;
-    private Thumbnails thumbnails;
+    private Map<String, String> thumbnails;
     private List<MediaItem> mediaItems;
 
-    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type, final List<String> propertyOptions, final Thumbnails thumbnails, final List<MediaItem> mediaItems) {
+    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type, final List<String> propertyOptions, final Map<String, String> thumbnails, final List<MediaItem> mediaItems) {
         super();
         this.id = id;
         this.name = name;
@@ -108,7 +109,7 @@ public class MediaAsset implements Serializable {
         this.propertyOptions = propertyOptions;
     }
 
-    public Thumbnails getThumbnails() {
+    public Map<String, String> getThumbnails() {
         return thumbnails;
     }
 
@@ -170,67 +171,6 @@ public class MediaAsset implements Serializable {
         return result.toString();
     }
 
-    public class Thumbnails {
-
-        private String thul;
-        private String mini;
-        private String webimage;
-
-        public String getMini() {
-            return mini;
-        }
-
-        public void setMini(final String mini) {
-            this.mini = mini;
-        }
-
-        public String getThul() {
-            return thul;
-        }
-
-        public void setThul(final String thul) {
-            this.thul = thul;
-        }
-
-        public String getWebimage() {
-            return webimage;
-        }
-
-        public void setWebimage(final String webimage) {
-            this.webimage = webimage;
-        }
-
-        @Override
-        public String toString() {
-
-            StringBuilder result = new StringBuilder("[");
-
-            Field[] fields = this.getClass().getDeclaredFields();
-
-            boolean isFirstField = true;
-
-            for (Field field : fields) {
-                try {
-                    if(!isFirstField) {
-                        result.append(Utils.STR_COMMA);
-                        result.append(Utils.STR_SPACE);
-                    } else {
-                        isFirstField = false;
-                    }
-
-                    result.append(field.getName());
-                    result.append(Utils.STR_EQUALS);
-                    result.append(field.get(this));
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            result.append("]");
-
-            return result.toString();
-        }
-    }
-
     public class MediaItem {
 
         private String id;
@@ -242,7 +182,7 @@ public class MediaAsset implements Serializable {
         private int size;
         private int version;
         private Boolean active;
-        private Thumbnails thumbnails;
+        private Map<String, String> thumbnails;
 
         public String getId() {
             return id;
@@ -316,7 +256,7 @@ public class MediaAsset implements Serializable {
             this.active = active;
         }
 
-        public Thumbnails getThumbnails() {
+        public Map<String, String> getThumbnails() {
             return thumbnails;
         }
 

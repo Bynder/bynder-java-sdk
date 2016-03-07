@@ -71,7 +71,7 @@ ACCESS_TOKEN_SECRET=<your authentication token secret>
 TOKEN_KEY=<your access token key>
 TOKEN_SECRET=<your access token secret>
 ```
-<b>Important:</b> You just need to fill the <b>USERNAME</b>, <b>PASSWORD</b>, <b>ACCESS_TOKEN</b> and <b>ACCESS_TOKEN_SECRET</b> properties if you need to login to the Bynder API in order get the access tokens. If you already possess the access tokens, just insert them in the <b>TOKEN_KEY</b> and <b>TOKEN_SECRET</b> properties.
+<b>Important:</b> You just need to fill the <b>USERNAME</b>, <b>PASSWORD</b>, <b>ACCESS_TOKEN</b> and <b>ACCESS_TOKEN_SECRET</b> properties if you need to login to the Bynder API in order get the access tokens. If you already possess the access tokens, just insert them in the <b>TOKEN_KEY</b> and <b>TOKEN_SECRET</b> properties. <b>Don't forget to add this file to .gitignore</b>.
 
 Build the project from its root with the following Maven command:
 ```bash

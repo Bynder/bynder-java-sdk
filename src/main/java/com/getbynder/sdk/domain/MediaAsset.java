@@ -5,11 +5,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.message.BasicNameValuePair;
 
-import com.getbynder.sdk.util.Utils;
 import com.getbynder.sdk.util.ErrorMessages;
+import com.getbynder.sdk.util.Utils;
 
 /**
  *
@@ -27,9 +28,10 @@ public class MediaAsset implements Serializable {
     private String datePublished;
     private String type;
     private List<String> propertyOptions;
-    private Thumbnails thumbnails;
+    private Map<String, String> thumbnails;
+    private List<MediaItem> mediaItems;
 
-    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type, final List<String> propertyOptions, final Thumbnails thumbnails) {
+    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type, final List<String> propertyOptions, final Map<String, String> thumbnails, final List<MediaItem> mediaItems) {
         super();
         this.id = id;
         this.name = name;
@@ -40,6 +42,7 @@ public class MediaAsset implements Serializable {
         this.type = type;
         this.propertyOptions = propertyOptions;
         this.thumbnails = thumbnails;
+        this.mediaItems = mediaItems;
     }
 
     public String getId() {
@@ -106,8 +109,12 @@ public class MediaAsset implements Serializable {
         this.propertyOptions = propertyOptions;
     }
 
-    public Thumbnails getThumbnails() {
+    public Map<String, String> getThumbnails() {
         return thumbnails;
+    }
+
+    public List<MediaItem> getMediaItems() {
+        return mediaItems;
     }
 
     public List<BasicNameValuePair> getFieldsNameValuePairs() throws IllegalArgumentException, IllegalAccessException {
@@ -146,13 +153,14 @@ public class MediaAsset implements Serializable {
         for (Field field : fields) {
             try {
                 if(!isFirstField) {
-                    result.append(", ");
+                    result.append(Utils.STR_COMMA);
+                    result.append(Utils.STR_SPACE);
                 } else {
                     isFirstField = false;
                 }
 
                 result.append(field.getName());
-                result.append("=");
+                result.append(Utils.STR_EQUALS);
                 result.append(field.get(this));
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -163,63 +171,100 @@ public class MediaAsset implements Serializable {
         return result.toString();
     }
 
-    public class Thumbnails {
+    public class MediaItem {
 
-        private String thul;
-        private String mini;
-        private String webimage;
+        private String id;
+        private String fileName;
+        private String type;
+        private String dateCreated;
+        private int height;
+        private int width;
+        private int size;
+        private int version;
+        private Boolean active;
+        private Map<String, String> thumbnails;
 
-        public String getMini() {
-            return mini;
+        public String getId() {
+            return id;
         }
 
-        public void setMini(final String mini) {
-            this.mini = mini;
+        public void setId(final String id) {
+            this.id = id;
         }
 
-        public String getThul() {
-            return thul;
+        public String getFileName() {
+            return fileName;
         }
 
-        public void setThul(final String thul) {
-            this.thul = thul;
+        public void setFileName(final String fileName) {
+            this.fileName = fileName;
         }
 
-        public String getWebimage() {
-            return webimage;
+        public String getType() {
+            return type;
         }
 
-        public void setWebimage(final String webimage) {
-            this.webimage = webimage;
+        public void setType(final String type) {
+            this.type = type;
+        }
+
+        public String getDateCreated() {
+            return dateCreated;
+        }
+
+        public void setDateCreated(final String dateCreated) {
+            this.dateCreated = dateCreated;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(final int height) {
+            this.height = height;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(final int width) {
+            this.width = width;
+        }
+
+        public int getSize() {
+            return size;
+        }
+
+        public void setSize(final int size) {
+            this.size = size;
+        }
+
+        public int getVersion() {
+            return version;
+        }
+
+        public void setVersion(final int version) {
+            this.version = version;
+        }
+
+        public Boolean getActive() {
+            return active;
+        }
+
+        public void setActive(final Boolean active) {
+            this.active = active;
+        }
+
+        public Map<String, String> getThumbnails() {
+            return thumbnails;
         }
 
         @Override
         public String toString() {
-
-            StringBuilder result = new StringBuilder("[");
-
-            Field[] fields = this.getClass().getDeclaredFields();
-
-            boolean isFirstField = true;
-
-            for (Field field : fields) {
-                try {
-                    if(!isFirstField) {
-                        result.append(", ");
-                    } else {
-                        isFirstField = false;
-                    }
-
-                    result.append(field.getName());
-                    result.append("=");
-                    result.append(field.get(this));
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            result.append("]");
-
-            return result.toString();
+            return "MediaItem [id=" + id + ", fileName=" + fileName + ", type=" + type + ", dateCreated=" + dateCreated
+                    + ", height=" + height + ", width=" + width + ", size=" + size + ", version=" + version
+                    + ", active=" + active + ", thumbnails=" + thumbnails + "]";
         }
     }
 

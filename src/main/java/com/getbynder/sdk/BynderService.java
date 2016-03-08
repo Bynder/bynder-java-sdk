@@ -14,8 +14,10 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
@@ -28,11 +30,11 @@ import com.getbynder.sdk.domain.Category;
 import com.getbynder.sdk.domain.MediaAsset;
 import com.getbynder.sdk.domain.Metaproperty;
 import com.getbynder.sdk.domain.UserAccessData;
-import com.getbynder.sdk.util.Utils;
 import com.getbynder.sdk.util.BooleanTypeAdapter;
 import com.getbynder.sdk.util.ConfigProperties;
 import com.getbynder.sdk.util.ErrorMessages;
 import com.getbynder.sdk.util.SecretProperties;
+import com.getbynder.sdk.util.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -50,9 +52,10 @@ import oauth.signpost.exception.OAuthMessageSignerException;
  */
 public class BynderService {
 
+    private final String BASE_URL = ConfigProperties.getInstance().getProperty("BASE_URL");
+
     private static final String LOGIN_PATH = ConfigProperties.getInstance().getProperty("LOGIN_PATH");
     private static final String CATEGORIES_PATH = ConfigProperties.getInstance().getProperty("CATEGORIES_PATH");
-    private static final String IMAGE_ASSETS_PATH = ConfigProperties.getInstance().getProperty("IMAGE_ASSETS_PATH");
     private static final String MEDIA_PATH = ConfigProperties.getInstance().getProperty("MEDIA_PATH");
     private static final String METAPROPERTIES_PATH = ConfigProperties.getInstance().getProperty("METAPROPERTIES_PATH");
     private static final String LIMIT_PARAMETER = ConfigProperties.getInstance().getProperty("LIMIT_PARAMETER");
@@ -61,12 +64,26 @@ public class BynderService {
     private static final String METAPROPERTY_ID_PARAMETER = ConfigProperties.getInstance().getProperty("METAPROPERTY_ID_PARAMETER");
     private static final String KEYWORD_PARAMETER = ConfigProperties.getInstance().getProperty("KEYWORD_PARAMETER");
     private static final String METAPROPERTIES_PARAMETER = ConfigProperties.getInstance().getProperty("METAPROPERTIES_PARAMETER");
+    private static final String COUNT_PARAMETER = ConfigProperties.getInstance().getProperty("COUNT_PARAMETER");
+    private static final String MEDIA_TYPE_PARAMETER = ConfigProperties.getInstance().getProperty("MEDIA_TYPE_PARAMETER");
+    private static final String MEDIA_TYPE_IMAGE = ConfigProperties.getInstance().getProperty("MEDIA_TYPE_IMAGE");
+    private static final String MEDIA_PATH_ID = ConfigProperties.getInstance().getProperty("MEDIA_PATH_ID");
 
     private final String CONSUMER_KEY = SecretProperties.getInstance().getProperty("CONSUMER_KEY");
     private final String CONSUMER_SECRET = SecretProperties.getInstance().getProperty("CONSUMER_SECRET");
 
     private final String baseUrl;
     private final UserAccessData userAccessData;
+
+    public BynderService() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
+        this.baseUrl = BASE_URL;
+        this.userAccessData = new UserAccessData(CONSUMER_KEY, SecretProperties.getInstance().getProperty("TOKEN_KEY"), SecretProperties.getInstance().getProperty("TOKEN_SECRET"), true);
+    }
+
+    public BynderService(final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
+        this.baseUrl = BASE_URL;
+        this.userAccessData = getUserAccessData(username, password);
+    }
 
     public BynderService(final String baseUrl, final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
         this.baseUrl = baseUrl;
@@ -91,7 +108,7 @@ public class BynderService {
         HttpResponse response = httpClient.execute(request);
 
         // if request was unsuccessful
-        if (response.getStatusLine().getStatusCode() != 200) {
+        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
             throw new HttpResponseException(response.getStatusLine().getStatusCode(), ErrorMessages.LOGIN_REQUEST_FAILED);
         }
 
@@ -111,9 +128,9 @@ public class BynderService {
         return userAccessData;
     }
 
-    public List<Category> getCategories() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, UnsupportedEncodingException, MalformedURLException {
+    public List<Category> getCategories() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, UnsupportedEncodingException, MalformedURLException, URISyntaxException {
 
-        String apiGetCategoriesUrl = baseUrl.concat(CATEGORIES_PATH);
+        String apiGetCategoriesUrl = Utils.createRequestURI(new URL(baseUrl), CATEGORIES_PATH).toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetCategoriesUrl);
 
@@ -125,9 +142,15 @@ public class BynderService {
         return categories;
     }
 
-    public List<MediaAsset> getAllImageAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public List<MediaAsset> getAllImageAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
 
-        String apiGetAllImageAssetsUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
+        int total = getImageAssetsTotal();
+
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));
+        params.add(new BasicNameValuePair(LIMIT_PARAMETER, Integer.toString(total)));
+
+        String apiGetAllImageAssetsUrl = Utils.createRequestURI(new URL(baseUrl), MEDIA_PATH, params).toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllImageAssetsUrl);
 
@@ -140,16 +163,14 @@ public class BynderService {
         return allImageAssets;
     }
 
-    public List<MediaAsset> getImageAssets(final int limit, final int offset) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public List<MediaAsset> getImageAssets(final int limit, final int offset) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
 
-        StringBuilder stringBuilder = new StringBuilder(baseUrl);
-        stringBuilder.append(IMAGE_ASSETS_PATH);
-        stringBuilder.append(LIMIT_PARAMETER);
-        stringBuilder.append(limit);
-        stringBuilder.append(OFFSET_PARAMETER);
-        stringBuilder.append(offset);
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));
+        params.add(new BasicNameValuePair(LIMIT_PARAMETER, Integer.toString(limit)));
+        params.add(new BasicNameValuePair(OFFSET_PARAMETER, Integer.toString(offset)));
 
-        String apiGetImageAssetsUrl = stringBuilder.toString();
+        String apiGetImageAssetsUrl = Utils.createRequestURI(new URL(baseUrl), MEDIA_PATH, params).toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
 
@@ -162,18 +183,20 @@ public class BynderService {
         return imageAssets;
     }
 
-    public List<MediaAsset> getImageAssetsByKeyword(final String keyword) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public List<MediaAsset> getImageAssetsByKeyword(final String keyword) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
 
-        StringBuilder stringBuilder = new StringBuilder(baseUrl);
-        stringBuilder.append(IMAGE_ASSETS_PATH);
-        stringBuilder.append(KEYWORD_PARAMETER);
-
-        // only append keyword if it is different then null
-        if(keyword != null) {
-            stringBuilder.append(keyword);
+        if(keyword == null || keyword.isEmpty()) {
+            return getAllImageAssets();
         }
 
-        String apiGetImageAssetsUrl = stringBuilder.toString();
+        int total = getImageAssetsTotal();
+
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));
+        params.add(new BasicNameValuePair(KEYWORD_PARAMETER, keyword));
+        params.add(new BasicNameValuePair(LIMIT_PARAMETER, Integer.toString(total)));
+
+        String apiGetImageAssetsUrl = Utils.createRequestURI(new URL(baseUrl), MEDIA_PATH, params).toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
 
@@ -186,14 +209,13 @@ public class BynderService {
         return imageAssets;
     }
 
-    public List<MediaAsset> getImageAssetsByMetapropertyId(final String metapropertyId) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public List<MediaAsset> getImageAssetsByMetapropertyId(final String metapropertyId) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
 
-        StringBuilder stringBuilder = new StringBuilder(baseUrl);
-        stringBuilder.append(IMAGE_ASSETS_PATH);
-        stringBuilder.append(METAPROPERTIES_PARAMETER);
-        stringBuilder.append(metapropertyId);
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));
+        params.add(new BasicNameValuePair(METAPROPERTIES_PARAMETER, metapropertyId));
 
-        String apiGetImageAssetsUrl = stringBuilder.toString();
+        String apiGetImageAssetsUrl = Utils.createRequestURI(new URL(baseUrl), MEDIA_PATH, params).toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
 
@@ -206,24 +228,43 @@ public class BynderService {
         return imageAssets;
     }
 
-    public int getImageAssetsTotal() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public int getImageAssetsTotal() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
 
-        String apiGetImageAssetsTotalUrl = baseUrl.concat(IMAGE_ASSETS_PATH);
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));
+        params.add(new BasicNameValuePair(COUNT_PARAMETER, "1"));
+
+        String apiGetImageAssetsTotalUrl = Utils.createRequestURI(new URL(baseUrl), MEDIA_PATH, params).toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsTotalUrl);
 
         Response response = Utils.getRequestResponse(apiGetImageAssetsTotalUrl, oauthHeader);
 
-        Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
-        List<MediaAsset> imageAssets = gson.fromJson(response.readEntity(String.class), collectionType);
-
-        return imageAssets.size();
+        return Utils.getTotalCountFromJson(response.readEntity(String.class));
     }
 
-    public List<MediaAsset> getAllMediaAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
+    public int getMediaAssetsTotal() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
 
-        String apiGetAllMediaAssetsUrl = baseUrl.concat(MEDIA_PATH);
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(COUNT_PARAMETER, "1"));
+
+        String apiGetMediaAssetsTotalUrl = Utils.createRequestURI(new URL(baseUrl), MEDIA_PATH, params).toString();
+
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetMediaAssetsTotalUrl);
+
+        Response response = Utils.getRequestResponse(apiGetMediaAssetsTotalUrl, oauthHeader);
+
+        return Utils.getTotalCountFromJson(response.readEntity(String.class));
+    }
+
+    public List<MediaAsset> getAllMediaAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
+
+        int total = getMediaAssetsTotal();
+
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(LIMIT_PARAMETER, Integer.toString(total)));
+
+        String apiGetAllMediaAssetsUrl = Utils.createRequestURI(new URL(baseUrl), MEDIA_PATH, params).toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetAllMediaAssetsUrl);
 
@@ -236,27 +277,24 @@ public class BynderService {
         return allMediaAssets;
     }
 
-    public MediaAsset getMediaAssetById(final String id, final Boolean includeVersions) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, HttpResponseException {
+    public MediaAsset getMediaAssetById(final String id, final Boolean includeVersions) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, HttpResponseException, URISyntaxException {
 
         int versionsValue = 0;
         if(includeVersions != null) {
             versionsValue = includeVersions ? 1 : 0;
         }
 
-        StringBuilder stringBuilder = new StringBuilder(baseUrl);
-        stringBuilder.append(MEDIA_PATH);
-        stringBuilder.append(id);
-        stringBuilder.append(VERSIONS_PARAMETER);
-        stringBuilder.append(versionsValue);
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(VERSIONS_PARAMETER, Integer.toString(versionsValue)));
 
-        String apiGetMediaAssetByIdUrl = stringBuilder.toString();
+        String apiGetMediaAssetByIdUrl = Utils.createRequestURI(new URL(baseUrl), String.format(MEDIA_PATH_ID, id), params).toString();
 
         String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetMediaAssetByIdUrl);
 
         Response response = Utils.getRequestResponse(apiGetMediaAssetByIdUrl, oauthHeader);
 
         // if request was unsuccessful
-        if (response.getStatusInfo().getStatusCode() != 200) {
+        if (response.getStatusInfo().getStatusCode() != HttpStatus.SC_OK) {
             throw new HttpResponseException(response.getStatusInfo().getStatusCode(), ErrorMessages.MEDIA_ASSET_ID_NOT_FOUND);
         }
 
@@ -275,14 +313,8 @@ public class BynderService {
 
         List<BasicNameValuePair> params = mediaAsset.getFieldsNameValuePairs();
 
-        StringBuilder stringBuilder = new StringBuilder(MEDIA_PATH);
-        stringBuilder.append(mediaAsset.getId());
-        stringBuilder.append("/");
-
-        String relativePath = stringBuilder.toString();
-
         // create an HTTP request to a protected resource
-        URI requestUri = Utils.createRequestURI(new URL(baseUrl), relativePath, params);
+        URI requestUri = Utils.createRequestURI(new URL(baseUrl), String.format(MEDIA_PATH_ID, mediaAsset.getId()), params);
 
         HttpPost request = Utils.createPostRequest(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, requestUri, params);
 
@@ -290,7 +322,7 @@ public class BynderService {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpResponse response = httpClient.execute(request);
 
-        if (response.getStatusLine().getStatusCode() == 404) {
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
             throw new HttpResponseException(response.getStatusLine().getStatusCode(), ErrorMessages.MEDIA_ASSET_ID_NOT_FOUND);
         }
 
@@ -323,22 +355,11 @@ public class BynderService {
 
         List<BasicNameValuePair> params = new ArrayList<>();
 
-        StringBuilder stringBuilder = new StringBuilder(METAPROPERTY_ID_PARAMETER);
-        stringBuilder.append(metapropertyId);
-
-        String paramName = stringBuilder.toString();
-
         params.add(new BasicNameValuePair("id", assetId));
 
-        stringBuilder = new StringBuilder();
+        String paramName = String.format(METAPROPERTY_ID_PARAMETER, metapropertyId);
 
-        for (String optionId : optionsIds) {
-            stringBuilder.append(",");
-            stringBuilder.append(optionId);
-        }
-        stringBuilder.deleteCharAt(0);
-
-        String paramValues = stringBuilder.toString();
+        String paramValues = StringUtils.join(optionsIds, ',');
 
         params.add(new BasicNameValuePair(paramName, paramValues));
 

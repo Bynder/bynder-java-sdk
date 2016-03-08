@@ -2,6 +2,7 @@ package com.getbynder.sdk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
@@ -11,8 +12,9 @@ import java.util.TimeZone;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
-import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,6 +25,7 @@ import com.getbynder.sdk.domain.UserAccessData;
 import com.getbynder.sdk.util.ConfigProperties;
 import com.getbynder.sdk.util.ErrorMessages;
 import com.getbynder.sdk.util.SecretProperties;
+import com.getbynder.sdk.util.Utils;
 
 /**
  *
@@ -30,17 +33,15 @@ import com.getbynder.sdk.util.SecretProperties;
  */
 public class BynderServiceIT {
 
-    private final String BASE_URL = ConfigProperties.getInstance().getProperty("BASE_URL");
     private final String USERNAME = SecretProperties.getInstance().getProperty("USERNAME");
     private final String PASSWORD = SecretProperties.getInstance().getProperty("PASSWORD");
 
-    private final String MEDIA_TYPE_IMAGE = "image";
+    private final String MEDIA_TYPE_IMAGE = ConfigProperties.getInstance().getProperty("MEDIA_TYPE_IMAGE");
 
     private final String ID_NOT_FOUND = "ID-NOT-FOUND";
     private final String MEDIA_ASSET_NAME = String.format("Name changed through Java SDK on %s", new Date().toString());
     private final String MEDIA_ASSET_DESCRIPTION = String.format("Descripton changed through Java SDK on %s", new Date().toString());
 
-    private final String MEDIA_ASSET_KEYWORD = "Porto";
     private final String MEDIA_ASSET_KEYWORD_NOT_FOUND = "MEDIA_ASSET_KEYWORD_NOT_FOUND";
 
     private final String INVALID_DATETIME = DatatypeConverter.printDate(Calendar.getInstance());
@@ -48,13 +49,11 @@ public class BynderServiceIT {
     private final String VALID_DATETIME_GMT = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
     private final String VALID_DATETIME_WET = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("WET")));
 
-    private final String TEST_NOT_PERFORMED = "This test was not performed";
-
     private BynderService bynderService;
 
     @Before
     public void setUp() throws Exception {
-        bynderService = new BynderService(BASE_URL, USERNAME, PASSWORD);
+        bynderService = new BynderService();
     }
 
     @Test
@@ -71,6 +70,8 @@ public class BynderServiceIT {
     @Test
     public void getUserAccessDataTest() throws Exception {
 
+        Assume.assumeTrue(USERNAME != null && PASSWORD != null && !USERNAME.isEmpty() && !PASSWORD.isEmpty());
+
         UserAccessData userAccessData = bynderService.getUserAccessData(USERNAME, PASSWORD);
 
         assertNotNull(userAccessData);
@@ -84,7 +85,8 @@ public class BynderServiceIT {
         List<Category> categories = bynderService.getCategories();
 
         assertNotNull(categories);
-        assertTrue(categories.size() > 0);
+        Assume.assumeTrue(categories.size() > 0);
+        assertNotNull(categories.get(0).getId());
     }
 
     @Test
@@ -93,7 +95,7 @@ public class BynderServiceIT {
         List<MediaAsset> allImageAssets = bynderService.getAllImageAssets();
 
         assertNotNull(allImageAssets);
-        assertTrue(allImageAssets.size() > 0);
+        Assume.assumeTrue(allImageAssets.size() > 0);
         assertEquals(MEDIA_TYPE_IMAGE, allImageAssets.get(0).getType());
     }
 
@@ -110,14 +112,25 @@ public class BynderServiceIT {
     @Test
     public void getImageAssetsByKeywordTest() throws Exception {
 
-        List<MediaAsset> imageAssets = bynderService.getImageAssetsByKeyword(MEDIA_ASSET_KEYWORD);
+        String keyword = "";
+
+        List<MediaAsset> allImageAssets = bynderService.getAllImageAssets();
+
+        for(MediaAsset mediaAsset : allImageAssets) {
+            if(mediaAsset.getDescription() != null && !mediaAsset.getDescription().isEmpty()) {
+                keyword = mediaAsset.getDescription().split(Utils.STR_SPACE)[0];
+                break;
+            }
+        }
+
+        List<MediaAsset> imageAssets = bynderService.getImageAssetsByKeyword(keyword);
 
         assertNotNull(imageAssets);
         assertTrue(imageAssets.size() > 0);
         assertEquals(MEDIA_TYPE_IMAGE, imageAssets.get(0).getType());
 
         // null/empty keyword
-        List<MediaAsset> allImageAssets = bynderService.getImageAssetsByKeyword(null);
+        allImageAssets = bynderService.getImageAssetsByKeyword(null);
 
         assertNotNull(allImageAssets);
         assertTrue(allImageAssets.size() > imageAssets.size());
@@ -135,23 +148,35 @@ public class BynderServiceIT {
 
         List<Metaproperty> allMetaproperties = bynderService.getAllMetaproperties();
         assertNotNull(allMetaproperties);
-        assertTrue(allMetaproperties.size() > 0);
-        assertNotNull(allMetaproperties.get(0).getOptions().get(0));
+        Assume.assumeTrue(allMetaproperties.size() > 0);
 
-        List<MediaAsset> imageAssets = bynderService.getImageAssetsByMetapropertyId(allMetaproperties.get(0).getOptions().get(0).getId());
+        boolean metapropertyFound = false;
+        String metapropertyId = null;
+
+        for (Metaproperty metaproperty : allMetaproperties) {
+            if (metaproperty.getOptions().size() > 0) {
+                metapropertyId = metaproperty.getOptions().get(0).getId();
+                metapropertyFound = true;
+                break;
+            }
+        }
+
+        Assume.assumeTrue(metapropertyFound && metapropertyId != null);
+
+        List<MediaAsset> imageAssets = bynderService.getImageAssetsByMetapropertyId(metapropertyId);
 
         assertNotNull(imageAssets);
-        assertTrue(imageAssets.size() > 0);
-        assertEquals(MEDIA_TYPE_IMAGE, imageAssets.get(0).getType());
+        Assume.assumeTrue(imageAssets.size() > 0);
+        assertTrue(imageAssets.get(0).getPropertyOptions().contains(metapropertyId));
     }
 
     @Test
     public void getImageAssetTotalTest() throws Exception {
 
-        int imageAssetTotal = bynderService.getImageAssetsTotal();
+        int imageAssetsTotal = bynderService.getImageAssetsTotal();
 
-        assertNotNull(imageAssetTotal);
-        assertTrue(imageAssetTotal > 0);
+        assertNotNull(imageAssetsTotal);
+        assertTrue(imageAssetsTotal == bynderService.getAllImageAssets().size());
     }
 
     @Test
@@ -161,6 +186,15 @@ public class BynderServiceIT {
 
         assertNotNull(allMediaAssets);
         assertTrue(allMediaAssets.size() > 0);
+    }
+
+    @Test
+    public void getMediaAssetTotalTest() throws Exception {
+
+        int mediaAssetTotal = bynderService.getMediaAssetsTotal();
+
+        assertNotNull(mediaAssetTotal);
+        assertTrue(mediaAssetTotal == bynderService.getAllMediaAssets().size());
     }
 
     @Test
@@ -180,20 +214,25 @@ public class BynderServiceIT {
         List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
 
         assertNotNull(allMediaAssets);
-        assertTrue(allMediaAssets.size() > 0);
+        Assume.assumeTrue(allMediaAssets.size() > 0);
 
         MediaAsset mediaAsset = bynderService.getMediaAssetById(allMediaAssets.get(0).getId(), null);
 
         assertNotNull(mediaAsset);
         assertNotNull(mediaAsset.getId());
         assertEquals(allMediaAssets.get(0).getId(), mediaAsset.getId());
+        assertNull(mediaAsset.getMediaItems());
+
+        mediaAsset = bynderService.getMediaAssetById(allMediaAssets.get(0).getId(), true);
+
+        assertNotNull(mediaAsset.getMediaItems());
     }
 
     @Test
     public void setMediaAssetIdNullTest() {
 
         try {
-            MediaAsset mediaAsset = new MediaAsset(null, MEDIA_ASSET_NAME, null, null, null, null, null, null, null);
+            MediaAsset mediaAsset = new MediaAsset(null, MEDIA_ASSET_NAME, null, null, null, null, null, null, null, null);
             bynderService.setMediaAssetProperties(mediaAsset);
         } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);
@@ -205,7 +244,7 @@ public class BynderServiceIT {
     public void setMediaAssetIdNotFoundTest() {
 
         try {
-            MediaAsset mediaAsset = new MediaAsset(ID_NOT_FOUND, MEDIA_ASSET_NAME, null, null, null, null, null, null, null);
+            MediaAsset mediaAsset = new MediaAsset(ID_NOT_FOUND, MEDIA_ASSET_NAME, null, null, null, null, null, null, null, null);
             bynderService.setMediaAssetProperties(mediaAsset);
         } catch (Exception e) {
             assertTrue(e instanceof HttpResponseException);
@@ -222,7 +261,7 @@ public class BynderServiceIT {
             assertTrue(allMediaAssets.size() > 0);
 
             // using datetime value without time
-            MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, INVALID_DATETIME, null, null, null);
+            MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, INVALID_DATETIME, null, null, null, null);
             bynderService.setMediaAssetProperties(mediaAsset);
         } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);
@@ -237,11 +276,11 @@ public class BynderServiceIT {
         assertNotNull(allMediaAssets);
         assertTrue(allMediaAssets.size() > 0);
 
-        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, MEDIA_ASSET_DESCRIPTION, null, null, null, null, null, null);
+        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, MEDIA_ASSET_DESCRIPTION, null, null, null, null, null, null, null);
 
         int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
 
-        assertEquals(202, statusCode);
+        assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     @Test
@@ -251,11 +290,11 @@ public class BynderServiceIT {
         assertNotNull(allMediaAssets);
         assertTrue(allMediaAssets.size() > 0);
 
-        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), MEDIA_ASSET_NAME, null, null, null, VALID_DATETIME_UTC, null, null, null);
+        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), MEDIA_ASSET_NAME, null, null, null, VALID_DATETIME_UTC, null, null, null, null);
 
         int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
 
-        assertEquals(202, statusCode);
+        assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     @Test
@@ -265,11 +304,11 @@ public class BynderServiceIT {
         assertNotNull(allMediaAssets);
         assertTrue(allMediaAssets.size() > 0);
 
-        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_GMT, null, null, null);
+        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_GMT, null, null, null, null);
 
         int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
 
-        assertEquals(202, statusCode);
+        assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     @Test
@@ -279,11 +318,11 @@ public class BynderServiceIT {
         assertNotNull(allMediaAssets);
         assertTrue(allMediaAssets.size() > 0);
 
-        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_WET, null, null, null);
+        MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_WET, null, null, null, null);
 
         int statusCode = bynderService.setMediaAssetProperties(mediaAsset);
 
-        assertEquals(202, statusCode);
+        assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     @Test
@@ -292,7 +331,8 @@ public class BynderServiceIT {
         List<Metaproperty> allMetaproperties = bynderService.getAllMetaproperties();
 
         assertNotNull(allMetaproperties);
-        assertTrue(allMetaproperties.size() > 0);
+        Assume.assumeTrue(allMetaproperties.size() > 0);
+        assertNotNull(allMetaproperties.get(0).getId());
     }
 
     @Test
@@ -300,47 +340,35 @@ public class BynderServiceIT {
 
         List<MediaAsset> allImageAssets = bynderService.getAllImageAssets();
         assertNotNull(allImageAssets);
-        assertTrue(allImageAssets.size() > 0);
+        Assume.assumeTrue(allImageAssets.size() > 0);
 
         MediaAsset testMediaAsset = null;
 
         for(MediaAsset mediaAsset : allImageAssets) {
-            if(testMediaAsset != null) {
-                break;
-            } else if(mediaAsset.getPropertyOptions() == null || mediaAsset.getPropertyOptions().isEmpty()) {
+            if(mediaAsset.getPropertyOptions() == null || mediaAsset.getPropertyOptions().isEmpty()) {
                 testMediaAsset = mediaAsset;
+                break;
             }
         }
 
-        if(testMediaAsset == null) {
-            Assert.fail(TEST_NOT_PERFORMED);
-        }
+        Assume.assumeTrue(testMediaAsset != null);
 
         List<Metaproperty> allMetaproperties = bynderService.getAllMetaproperties();
         assertNotNull(allMetaproperties);
-        assertTrue(allMetaproperties.size() > 0);
+        Assume.assumeTrue(allMetaproperties.size() > 0);
 
         int statusCode = 0;
-        boolean testDone = false;
         String optionId = null;
 
         for (Metaproperty metaproperty : allMetaproperties) {
-
-            if (testDone) {
-                break;
-            } else if (metaproperty.getOptions().size() > 0) {
+            if (metaproperty.getOptions().size() > 0) {
                 statusCode = bynderService.addMetapropertyToAsset(testMediaAsset.getId(), metaproperty.getId(), metaproperty.getOptions().get(0).getId());
                 optionId = metaproperty.getOptions().get(0).getId();
-                testDone = true;
                 break;
             }
         }
 
-        if (testDone) {
-            assertEquals(202, statusCode);
-        } else {
-            Assert.fail(TEST_NOT_PERFORMED);
-        }
+        Assume.assumeTrue(optionId != null && statusCode == HttpStatus.SC_ACCEPTED);
 
         //give it some time for the metaproperty to be added to the asset
         Thread.sleep(6000);
@@ -349,5 +377,4 @@ public class BynderServiceIT {
         assertNotNull(testMediaAsset.getPropertyOptions());
         assertTrue(testMediaAsset.getPropertyOptions().contains(optionId));
     }
-
 }

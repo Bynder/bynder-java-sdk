@@ -122,11 +122,11 @@ public class MediaAsset implements Serializable {
         List<BasicNameValuePair> params = new ArrayList<>();
         Field[] fields = this.getClass().getDeclaredFields();
 
-        for(Field field : fields) {
+        for (Field field : fields) {
 
-            if(field.get(this) != null && !Arrays.asList("serialVersionUID", "id", "type", "propertyOptions", "thumbnails").contains(field.getName())) {
+            if (field.get(this) != null && !Arrays.asList("serialVersionUID", "id", "type", "propertyOptions", "thumbnails").contains(field.getName())) {
 
-                if(field.getName().equals("datePublished")) {
+                if (field.getName().equals("datePublished")) {
                     if (Utils.isDateFormatValid(field.get(this).toString())) {
                         params.add(new BasicNameValuePair(field.getName(), field.get(this).toString()));
                     } else {
@@ -152,7 +152,7 @@ public class MediaAsset implements Serializable {
 
         for (Field field : fields) {
             try {
-                if(!isFirstField) {
+                if (!isFirstField) {
                     result.append(Utils.STR_COMMA);
                     result.append(Utils.STR_SPACE);
                 } else {

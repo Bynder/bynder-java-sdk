@@ -38,14 +38,14 @@ import oauth.signpost.exception.OAuthMessageSignerException;
  */
 public final class Utils {
 
-    //separators
+    // separators
     public static final String STR_AND = "&";
     public static final String STR_COMMA = ",";
     public static final String STR_EQUALS = "=";
     public static final String STR_SPACE = " ";
 
     private Utils() {
-        //prevent instantiation
+        // prevent instantiation
     }
 
     public static URI createRequestURI(final URL url, final String relativePath) throws URISyntaxException {
@@ -81,7 +81,7 @@ public final class Utils {
         for (String pair : pairs) {
             int idx = pair.indexOf(STR_EQUALS);
 
-            //the value needs to be decoded because the method OAuth.toHeaderElement will encode it again
+            // the value needs to be decoded because the method OAuth.toHeaderElement will encode it again
             queryPairs.add(new BasicNameValuePair(pair.substring(0, idx), OAuth.percentDecode(pair.substring(idx + 1))));
         }
 
@@ -110,7 +110,7 @@ public final class Utils {
 
     public static boolean isDateFormatValid(final String date) {
 
-        //The valid datetime format is ISO8601
+        // The valid datetime format is ISO8601
         try {
             DatatypeConverter.parseDateTime(date);
         } catch (IllegalArgumentException e) {

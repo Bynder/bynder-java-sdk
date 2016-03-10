@@ -120,7 +120,7 @@ public class BynderService {
             responseBody = EntityUtils.toString(resEntity);
         }
 
-        //close this stream
+        // close this stream
         httpClient.close();
 
         UserAccessData userAccessData = new Gson().fromJson(responseBody, UserAccessData.class);
@@ -145,6 +145,10 @@ public class BynderService {
     public List<MediaAsset> getAllImageAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
 
         int total = getImageAssetsTotal();
+
+        if (total > 1000) {
+            total = 1000;
+        }
 
         List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));
@@ -185,11 +189,15 @@ public class BynderService {
 
     public List<MediaAsset> getImageAssetsByKeyword(final String keyword) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
 
-        if(keyword == null || keyword.isEmpty()) {
+        if (keyword == null || keyword.isEmpty()) {
             return getAllImageAssets();
         }
 
         int total = getImageAssetsTotal();
+
+        if (total > 1000) {
+            total = 1000;
+        }
 
         List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));
@@ -280,7 +288,7 @@ public class BynderService {
     public MediaAsset getMediaAssetById(final String id, final Boolean includeVersions) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, HttpResponseException, URISyntaxException {
 
         int versionsValue = 0;
-        if(includeVersions != null) {
+        if (includeVersions != null) {
             versionsValue = includeVersions ? 1 : 0;
         }
 

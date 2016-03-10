@@ -103,25 +103,25 @@ public class BynderService {
 
         HttpPost request = Utils.createPostRequest(CONSUMER_KEY, CONSUMER_SECRET, null, loginUri, params);
 
-        // send the post request
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse response = httpClient.execute(request);
-
-        // if request was unsuccessful
-        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new HttpResponseException(response.getStatusLine().getStatusCode(), ErrorMessages.LOGIN_REQUEST_FAILED);
-        }
-
-        // if successful, return the response body
-        HttpEntity resEntity = response.getEntity();
         String responseBody = "";
 
-        if (resEntity != null) {
-            responseBody = EntityUtils.toString(resEntity);
-        }
+        // send the post request
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 
-        // close this stream
-        httpClient.close();
+            HttpResponse response = httpClient.execute(request);
+
+            // if request was unsuccessful
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new HttpResponseException(response.getStatusLine().getStatusCode(), ErrorMessages.LOGIN_REQUEST_FAILED);
+            }
+
+            // if successful, return the response body
+            HttpEntity resEntity = response.getEntity();
+
+            if (resEntity != null) {
+                responseBody = EntityUtils.toString(resEntity);
+            }
+        }
 
         UserAccessData userAccessData = new Gson().fromJson(responseBody, UserAccessData.class);
 
@@ -144,11 +144,7 @@ public class BynderService {
 
     public List<MediaAsset> getAllImageAssets() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException {
 
-        int total = getImageAssetsTotal();
-
-        if (total > 1000) {
-            total = 1000;
-        }
+        int total = Math.min(getImageAssetsTotal(), 1000);
 
         List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));
@@ -193,11 +189,7 @@ public class BynderService {
             return getAllImageAssets();
         }
 
-        int total = getImageAssetsTotal();
-
-        if (total > 1000) {
-            total = 1000;
-        }
+        int total = Math.min(getImageAssetsTotal(), 1000);
 
         List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));

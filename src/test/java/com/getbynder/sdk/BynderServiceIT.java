@@ -14,8 +14,13 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 import org.junit.Assume;
+import org.junit.AssumptionViolatedException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.getbynder.sdk.domain.Category;
 import com.getbynder.sdk.domain.MediaAsset;
@@ -32,14 +37,16 @@ import com.getbynder.sdk.util.Utils;
  */
 public class BynderServiceIT {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BynderServiceIT.class);
+
     private final String USERNAME = SecretProperties.getInstance().getProperty("USERNAME");
     private final String PASSWORD = SecretProperties.getInstance().getProperty("PASSWORD");
 
     private final String MEDIA_TYPE_IMAGE = ConfigProperties.getInstance().getProperty("MEDIA_TYPE_IMAGE");
 
     private final String ID_NOT_FOUND = "ID-NOT-FOUND";
-    private final String MEDIA_ASSET_NAME = String.format("Name changed by Integration Test of Bynder Java SDK");
-    private final String MEDIA_ASSET_DESCRIPTION = String.format("Descripton changed by Integration Test of Bynder Java SDK");
+    private final String MEDIA_ASSET_NAME = "Name changed by Integration Test of Bynder Java SDK";
+    private final String MEDIA_ASSET_DESCRIPTION = "Descripton changed by Integration Test of Bynder Java SDK";
 
     private final String MEDIA_ASSET_KEYWORD_NOT_FOUND = "MEDIA_ASSET_KEYWORD_NOT_FOUND";
 
@@ -49,19 +56,22 @@ public class BynderServiceIT {
     private final String VALID_DATETIME_WET = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("WET")));
 
     // tests skipped assumptions messages
-    private final String TEST_SKIPPED_NO_USERNAME_PASSWORD = "Test skipped: No username or/and password defined";
-    private final String TEST_SKIPPED_NO_CATEGORIES = "Test skipped: No categories created for this environment";
-    private final String TEST_SKIPPED_NO_IMAGE_ASSETS = "Test skipped: No image assets uploaded for this environment";
-    private final String TEST_SKIPPED_NO_MEDIA_ASSETS = "Test skipped: No media assets uploaded for this environment";
-    private final String TEST_SKIPPED_NO_METAPROPERTIES = "Test skipped: No metaproperties created for this environment";
-    private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS = "Test skipped: No metaproperties options found for this environment";
-    private final String TEST_SKIPPED_THOUSAND_IMAGE_ASSETS = "Test skipped: More than 1000 image assets uploaded for this environment";
-    private final String TEST_SKIPPED_THOUSAND_MEDIA_ASSETS = "Test skipped: More than 1000 media assets uploaded for this environment";
-    private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITHOUT_METAPROPERTIES = "Test skipped: No image asset without metaproperties found for this environment";
-    private final String TEST_SKIPPED_NO_ADD_METAPROPERTY_PERMISSION = "Test skipped: No permission to add metaproperty to media asset in this environment";
-    private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION = "Test skipped: No image asset with description found for this environment";
+    private final String TEST_SKIPPED_NO_USERNAME_PASSWORD = "%s skipped: No username or/and password defined";
+    private final String TEST_SKIPPED_NO_CATEGORIES = "%s skipped: No categories created for this environment";
+    private final String TEST_SKIPPED_NO_IMAGE_ASSETS = "%s skipped: No image assets uploaded for this environment";
+    private final String TEST_SKIPPED_NO_MEDIA_ASSETS = "%s skipped: No media assets uploaded for this environment";
+    private final String TEST_SKIPPED_NO_METAPROPERTIES = "%s skipped: No metaproperties created for this environment";
+    private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS = "%s skipped: No metaproperties options found for this environment";
+    private final String TEST_SKIPPED_THOUSAND_IMAGE_ASSETS = "%s skipped: More than 1000 image assets uploaded for this environment";
+    private final String TEST_SKIPPED_THOUSAND_MEDIA_ASSETS = "%s skipped: More than 1000 media assets uploaded for this environment";
+    private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITHOUT_METAPROPERTIES = "%s skipped: No image asset without metaproperties found for this environment";
+    private final String TEST_SKIPPED_NO_ADD_METAPROPERTY_PERMISSION = "%s skipped: No permission to add metaproperty to media asset in this environment";
+    private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION = "%s skipped: No image asset with description found for this environment";
 
     private BynderService bynderService;
+
+    @Rule
+    public TestName testName = new TestName();
 
     @Before
     public void setUp() throws Exception {
@@ -82,7 +92,12 @@ public class BynderServiceIT {
     @Test
     public void getUserAccessDataTest() throws Exception {
 
-        Assume.assumeTrue(TEST_SKIPPED_NO_USERNAME_PASSWORD, USERNAME != null && PASSWORD != null && !USERNAME.isEmpty() && !PASSWORD.isEmpty());
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_USERNAME_PASSWORD, testName.getMethodName()), USERNAME != null && PASSWORD != null && !USERNAME.isEmpty() && !PASSWORD.isEmpty());
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         UserAccessData userAccessData = bynderService.getUserAccessData(USERNAME, PASSWORD);
 
@@ -97,7 +112,14 @@ public class BynderServiceIT {
         List<Category> categories = bynderService.getCategories();
 
         assertNotNull(categories);
-        Assume.assumeTrue(TEST_SKIPPED_NO_CATEGORIES, categories.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_CATEGORIES, testName.getMethodName()), categories.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
         assertNotNull(categories.get(0).getId());
     }
 
@@ -107,7 +129,14 @@ public class BynderServiceIT {
         List<MediaAsset> allImageAssets = bynderService.getAllImageAssets();
 
         assertNotNull(allImageAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_IMAGE_ASSETS, allImageAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS, testName.getMethodName()), allImageAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
         assertEquals(MEDIA_TYPE_IMAGE, allImageAssets.get(0).getType());
     }
 
@@ -117,7 +146,14 @@ public class BynderServiceIT {
         List<MediaAsset> imageAssets = bynderService.getImageAssets(5, 1);
 
         assertNotNull(imageAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_IMAGE_ASSETS, imageAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS, testName.getMethodName()), imageAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
         assertTrue(imageAssets.size() == 5);
         assertEquals(MEDIA_TYPE_IMAGE, imageAssets.get(0).getType());
     }
@@ -125,12 +161,18 @@ public class BynderServiceIT {
     @Test
     public void getImageAssetsByKeywordTest() throws Exception {
 
-        String keyword = "";
-
         List<MediaAsset> allImageAssets = bynderService.getAllImageAssets();
 
         assertNotNull(allImageAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_IMAGE_ASSETS, allImageAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS, testName.getMethodName()), allImageAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
+        String keyword = "";
 
         for (MediaAsset mediaAsset : allImageAssets) {
             if (mediaAsset.getDescription() != null && !mediaAsset.getDescription().isEmpty()) {
@@ -164,7 +206,13 @@ public class BynderServiceIT {
 
         List<Metaproperty> allMetaproperties = bynderService.getAllMetaproperties();
         assertNotNull(allMetaproperties);
-        Assume.assumeTrue(TEST_SKIPPED_NO_METAPROPERTIES, allMetaproperties.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES, testName.getMethodName()), allMetaproperties.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         boolean metapropertyFound = false;
         String metapropertyId = null;
@@ -177,12 +225,24 @@ public class BynderServiceIT {
             }
         }
 
-        Assume.assumeTrue(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, metapropertyFound && metapropertyId != null);
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, testName.getMethodName()), metapropertyFound && metapropertyId != null);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         List<MediaAsset> imageAssets = bynderService.getImageAssetsByMetapropertyId(metapropertyId);
 
         assertNotNull(imageAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_IMAGE_ASSETS, imageAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS, testName.getMethodName()), imageAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
         assertTrue(imageAssets.get(0).getPropertyOptions().contains(metapropertyId));
     }
 
@@ -192,7 +252,14 @@ public class BynderServiceIT {
         int imageAssetsTotal = bynderService.getImageAssetsTotal();
 
         assertNotNull(imageAssetsTotal);
-        Assume.assumeTrue(TEST_SKIPPED_THOUSAND_IMAGE_ASSETS, imageAssetsTotal <= 1000);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_THOUSAND_IMAGE_ASSETS, testName.getMethodName()), imageAssetsTotal <= 1000);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
         assertTrue(imageAssetsTotal == bynderService.getAllImageAssets().size());
     }
 
@@ -202,7 +269,14 @@ public class BynderServiceIT {
         List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
 
         assertNotNull(allMediaAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_MEDIA_ASSETS, allMediaAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_MEDIA_ASSETS, testName.getMethodName()), allMediaAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
         assertNotNull(allMediaAssets.get(0).getId());
     }
 
@@ -212,7 +286,14 @@ public class BynderServiceIT {
         int mediaAssetTotal = bynderService.getMediaAssetsTotal();
 
         assertNotNull(mediaAssetTotal);
-        Assume.assumeTrue(TEST_SKIPPED_THOUSAND_MEDIA_ASSETS, mediaAssetTotal <= 1000);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_THOUSAND_MEDIA_ASSETS, testName.getMethodName()), mediaAssetTotal <= 1000);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
         assertTrue(mediaAssetTotal == bynderService.getAllMediaAssets().size());
     }
 
@@ -233,7 +314,13 @@ public class BynderServiceIT {
         List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
 
         assertNotNull(allMediaAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_MEDIA_ASSETS, allMediaAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_MEDIA_ASSETS, testName.getMethodName()), allMediaAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         MediaAsset mediaAsset = bynderService.getMediaAssetById(allMediaAssets.get(0).getId(), null);
 
@@ -293,7 +380,13 @@ public class BynderServiceIT {
 
         List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
         assertNotNull(allMediaAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_MEDIA_ASSETS, allMediaAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_MEDIA_ASSETS, testName.getMethodName()), allMediaAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         String mediaAssetId = null;
         String originalDescription = null;
@@ -305,7 +398,12 @@ public class BynderServiceIT {
             }
         }
 
-        Assume.assumeTrue(TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION, originalDescription != null);
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION, testName.getMethodName()), originalDescription != null);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         MediaAsset mediaAsset = new MediaAsset(mediaAssetId, null, MEDIA_ASSET_DESCRIPTION, null, null, null, null, null, null, null);
 
@@ -335,7 +433,13 @@ public class BynderServiceIT {
 
         List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
         assertNotNull(allMediaAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_MEDIA_ASSETS, allMediaAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_MEDIA_ASSETS, testName.getMethodName()), allMediaAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         String mediaAssetId = allMediaAssets.get(0).getId();
         String originalName = allMediaAssets.get(0).getName();
@@ -368,7 +472,13 @@ public class BynderServiceIT {
 
         List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
         assertNotNull(allMediaAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_MEDIA_ASSETS, allMediaAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_MEDIA_ASSETS, testName.getMethodName()), allMediaAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_GMT, null, null, null, null);
 
@@ -381,7 +491,13 @@ public class BynderServiceIT {
 
         List<MediaAsset> allMediaAssets = bynderService.getAllMediaAssets();
         assertNotNull(allMediaAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_MEDIA_ASSETS, allMediaAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_MEDIA_ASSETS, testName.getMethodName()), allMediaAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         MediaAsset mediaAsset = new MediaAsset(allMediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_WET, null, null, null, null);
 
@@ -395,7 +511,14 @@ public class BynderServiceIT {
         List<Metaproperty> allMetaproperties = bynderService.getAllMetaproperties();
 
         assertNotNull(allMetaproperties);
-        Assume.assumeTrue(TEST_SKIPPED_NO_METAPROPERTIES, allMetaproperties.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES, testName.getMethodName()), allMetaproperties.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
         assertNotNull(allMetaproperties.get(0).getId());
     }
 
@@ -404,7 +527,13 @@ public class BynderServiceIT {
 
         List<MediaAsset> allImageAssets = bynderService.getAllImageAssets();
         assertNotNull(allImageAssets);
-        Assume.assumeTrue(TEST_SKIPPED_NO_IMAGE_ASSETS, allImageAssets.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS, testName.getMethodName()), allImageAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         MediaAsset testMediaAsset = null;
 
@@ -415,11 +544,22 @@ public class BynderServiceIT {
             }
         }
 
-        Assume.assumeTrue(TEST_SKIPPED_NO_IMAGE_ASSETS_WITHOUT_METAPROPERTIES, testMediaAsset != null);
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS_WITHOUT_METAPROPERTIES, testName.getMethodName()), testMediaAsset != null);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         List<Metaproperty> allMetaproperties = bynderService.getAllMetaproperties();
         assertNotNull(allMetaproperties);
-        Assume.assumeTrue(TEST_SKIPPED_NO_METAPROPERTIES, allMetaproperties.size() > 0);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES, testName.getMethodName()), allMetaproperties.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         int statusCode = 0;
         String optionId = null;
@@ -432,8 +572,13 @@ public class BynderServiceIT {
             }
         }
 
-        Assume.assumeTrue(TEST_SKIPPED_NO_ADD_METAPROPERTY_PERMISSION, statusCode == HttpStatus.SC_ACCEPTED);
-        Assume.assumeTrue(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, optionId != null);
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_ADD_METAPROPERTY_PERMISSION, testName.getMethodName()), statusCode == HttpStatus.SC_ACCEPTED);
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, testName.getMethodName()), optionId != null);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
 
         // give it some time for the metaproperty to be added to the asset
         Thread.sleep(6000);

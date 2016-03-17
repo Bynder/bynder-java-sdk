@@ -55,6 +55,8 @@ public class BynderServiceIT {
     private final String VALID_DATETIME_GMT = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
     private final String VALID_DATETIME_WET = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("WET")));
 
+    private final int TIME_TO_SLEEP = 6000;
+
     // tests skipped assumptions messages
     private final String TEST_SKIPPED_NO_USERNAME_PASSWORD = "%s skipped: No username or/and password defined";
     private final String TEST_SKIPPED_NO_CATEGORIES = "%s skipped: No categories created for this environment";
@@ -411,7 +413,7 @@ public class BynderServiceIT {
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
         // give it some time for the media asset to be updated
-        Thread.sleep(6000);
+        Thread.sleep(TIME_TO_SLEEP);
 
         mediaAsset = bynderService.getMediaAssetById(mediaAssetId, null);
         assertEquals(MEDIA_ASSET_DESCRIPTION, mediaAsset.getDescription());
@@ -422,7 +424,7 @@ public class BynderServiceIT {
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
         // give it some time for the media asset to be updated
-        Thread.sleep(6000);
+        Thread.sleep(TIME_TO_SLEEP);
 
         mediaAsset = bynderService.getMediaAssetById(mediaAssetId, null);
         assertEquals(originalDescription, mediaAsset.getDescription());
@@ -450,7 +452,7 @@ public class BynderServiceIT {
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
         // give it some time for the media asset to be updated
-        Thread.sleep(6000);
+        Thread.sleep(TIME_TO_SLEEP);
 
         mediaAsset = bynderService.getMediaAssetById(mediaAssetId, null);
         assertEquals(MEDIA_ASSET_NAME, mediaAsset.getName());
@@ -461,7 +463,7 @@ public class BynderServiceIT {
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
         // give it some time for the media asset to be updated
-        Thread.sleep(6000);
+        Thread.sleep(TIME_TO_SLEEP);
 
         mediaAsset = bynderService.getMediaAssetById(mediaAssetId, null);
         assertEquals(originalName, mediaAsset.getName());
@@ -581,7 +583,7 @@ public class BynderServiceIT {
         }
 
         // give it some time for the metaproperty to be added to the asset
-        Thread.sleep(6000);
+        Thread.sleep(TIME_TO_SLEEP);
 
         testMediaAsset = bynderService.getMediaAssetById(testMediaAsset.getId(), null);
         assertNotNull(testMediaAsset.getPropertyOptions());

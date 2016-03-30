@@ -177,7 +177,7 @@ public class BynderServiceIT {
         String keyword = "";
 
         for (MediaAsset mediaAsset : allImageAssets) {
-            if (mediaAsset.getDescription() != null && !mediaAsset.getDescription().isEmpty()) {
+            if (mediaAsset.getDescription() != null && !mediaAsset.getDescription().isEmpty() && !mediaAsset.getDescription().contains("\\")) {
                 keyword = mediaAsset.getDescription().split(Utils.STR_SPACE)[0];
                 break;
             }

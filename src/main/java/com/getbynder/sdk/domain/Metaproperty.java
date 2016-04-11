@@ -15,7 +15,6 @@ public class Metaproperty {
     private List<Metaproperty> options;
 
     public Metaproperty() {
-        super();
         this.id = "";
         this.name = "";
         this.label = "";

@@ -31,8 +31,33 @@ public class MediaAsset implements Serializable {
     private Map<String, String> thumbnails;
     private List<MediaItem> mediaItems;
 
-    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type, final List<String> propertyOptions, final Map<String, String> thumbnails, final List<MediaItem> mediaItems) {
+    public MediaAsset() {
         super();
+    }
+
+    public MediaAsset(final String id) {
+        this.id = id;
+    }
+
+    public MediaAsset(final String id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public MediaAsset(final String id, final String name, final String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
+    public MediaAsset(final String id, final String name, final String description, final String datePublished) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.datePublished = datePublished;
+    }
+
+    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type, final List<String> propertyOptions, final Map<String, String> thumbnails, final List<MediaItem> mediaItems) {
         this.id = id;
         this.name = name;
         this.description = description;

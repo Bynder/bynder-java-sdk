@@ -51,7 +51,7 @@ public class BynderServiceIT {
 
     private final String MEDIA_TYPE_IMAGE = ConfigProperties.getInstance().getProperty("MEDIA_TYPE_IMAGE");
 
-    // regex to avoid descriptions with special characters
+    // regex to avoid media assets names and descriptions with special characters
     private final Pattern pattern = Pattern.compile("[a-z0-9 ]", Pattern.CASE_INSENSITIVE);
 
     private final String ID_NOT_FOUND = "ID_NOT_FOUND";

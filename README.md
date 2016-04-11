@@ -1,15 +1,21 @@
 # Bynder Java SDK
 
-The main goal of this SDK is to speed up the integration of Bynder customers who use JAVA. Making it easier to connect to the Bynder API v4 (http://docs.bynder.apiary.io) and executing Requests on it.
+The main goal of this SDK is to speed up the integration of Bynder customers who use JAVA. Making it easier to connect to the Bynder API v4 (http://docs.bynder.apiary.io) and executing requests on it.
 
 ## Current status
 
 At the moment this JAVA SDK provides a default library with the following methods defined in the class <b>com.getbynder.sdk.BynderService</b>:
 
 ```java
-public UserAccessData getUserAccessData(final String username, final String password);
+public UserAccessData login(final String username, final String password);
+
+public Map<String, String> getRequestToken();
+
+public Map<String, String> getAccessToken(final String requestToken, final String requestTokenSecret);
 
 public List<Category> getCategories();
+
+public List<Tag> getTags();
 
 public List<MediaAsset> getAllImageAssets();
 
@@ -21,11 +27,13 @@ public List<MediaAsset> getImageAssetsByMetapropertyId(final String metaproperty
 
 public int getImageAssetsTotal();
 
-public int getAllMediaAssetsTotal();
-
 public List<MediaAsset> getAllMediaAssets();
 
+public List<MediaAsset> getMediaAssets(final int limit, final int offset);
+
 public MediaAsset getMediaAssetById(final String id, final Boolean includeVersions);
+
+public int getAllMediaAssetsTotal();
 
 public int setMediaAssetProperties(final MediaAsset mediaAsset);
 
@@ -61,17 +69,17 @@ Create a new properties file called "secret.properties" with the following struc
 USERNAME=<your username>
 PASSWORD=<your password>
 
-# bynder api authentication tokens
-CONSUMER_KEY=<your consumer key>
-CONSUMER_SECRET=<your consumer secret>
-ACCESS_TOKEN=<your authentication token key>
-ACCESS_TOKEN_SECRET=<your authentication token secret>
+# bynder api request tokens
+REQUEST_TOKEN_KEY=<your request token key>
+REQUEST_TOKEN_SECRET=<your request token secret>
 
 # bynder api access tokens
-TOKEN_KEY=<your access token key>
-TOKEN_SECRET=<your access token secret>
+CONSUMER_KEY=<your consumer key>
+CONSUMER_SECRET=<your consumer secret>
+ACCESS_TOKEN_KEY=<your access token key>
+ACCESS_TOKEN_SECRET=<your access token secret>
 ```
-<b>Important:</b> You just need to fill the <b>USERNAME</b>, <b>PASSWORD</b>, <b>ACCESS_TOKEN</b> and <b>ACCESS_TOKEN_SECRET</b> properties if you need to login to the Bynder API in order get the access tokens. If you already possess the access tokens, just insert them in the <b>TOKEN_KEY</b> and <b>TOKEN_SECRET</b> properties. <b>Don't forget to add this file to .gitignore</b>.
+<b>Important:</b> You just need to fill the <b>USERNAME</b>, <b>PASSWORD</b>, <b>REQUEST_TOKEN_KEY</b> and <b>REQUEST_TOKEN_SECRET</b> properties if you need to login to the Bynder API in order get the access tokens. If you already possess the access tokens, just insert them in the <b>ACCESS_TOKEN_KEY</b> and <b>ACCESS_TOKEN_SECRET</b> properties. <b>Don't forget to add this file to .gitignore</b>.
 
 Build the project from its root with the following Maven command:
 ```bash
@@ -80,28 +88,21 @@ $ mvn clean install -DskipTests
 This command tells Maven to build all the modules and to install it in the local repository, skipping the tests.
 
 ## How does it work
-Before executing any Request to the Bynder API, it is necessary to instantiate the class <b>BynderService</b>.
+Before executing any request to the Bynder API, it is necessary to instantiate the class <b>BynderService</b>.
 
 For this purpose there are three different constructors you can use:
 ```java
-    public BynderService() throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
-        this.baseUrl = BASE_URL;
-        this.userAccessData = new UserAccessData(CONSUMER_KEY, SecretProperties.getInstance().getProperty("TOKEN_KEY"), SecretProperties.getInstance().getProperty("TOKEN_SECRET"), true);
-    }
+    public BynderService();
 
-    public BynderService(final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
-        this.baseUrl = BASE_URL;
-        this.userAccessData = getUserAccessData(username, password);
-    }
+    public BynderService(final String username, final String password);
 
-    public BynderService(final String baseUrl, final String username, final String password) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, ClientProtocolException, IOException, URISyntaxException {
-        this.baseUrl = baseUrl;
-        this.userAccessData = getUserAccessData(username, password);
-    }
+    public BynderService(final String baseUrl, final String username, final String password);
 ```
-The first constructor, the one without arguments, it is supposed to be used when you don't need to login to the Bynder API because you already have the access tokens (like explained previously). Meaning that in this case the properties <b>TOKEN_KEY</b> and <b>TOKEN_SECRET</b> of your "secret.properties" file were already filled in with those same access tokens.
+The first constructor, the one without parameters, it is supposed to be used when you don't need to login to the Bynder API because you already have the access tokens (explained previously). Meaning that in this case the properties <b>ACCESS_TOKEN_KEY</b> and <b>ACCESS_TOKEN_SECRET</b> of your "secret.properties" file were already filled in with those same access tokens.
 
-The third and last constructor takes three String arguments: <b>baseUrl</b>, <b>username</b> and <b>password</b>. Stores the <b>baseUrl</b> in an instance variable and calls the <b>getUserAccessData</b> method that receives the <b>username</b> and <b>password</b> as arguments and logins to the Bynder API to get the access tokens that are necessary to make the Requests.
+The second constructor takes two String parameters: <b>username</b> and <b>password</b>. Gets the <b>BASE_URL</b> property from the "config.properties" file and stores it in an instance variable, calls the <b>getUserAccessData</b> method that receives the <b>username</b> and <b>password</b> as arguments and logins to the Bynder API to get the access tokens that are necessary to make the requests.
+
+The third and last constructor takes three String parameters: <b>baseUrl</b>, <b>username</b> and <b>password</b>. Stores the <b>baseUrl</b> in an instance variable and calls the <b>getUserAccessData</b> method that receives the <b>username</b> and <b>password</b> as arguments and logins to the Bynder API to get the access tokens that are necessary to make the requests.
 
 As shown above the access tokens that are retrieved by the Bynder API after a successful login are stored in the instance variable <b>userAccessData</b>.
 
@@ -126,7 +127,7 @@ $ mvn verify
 ```
 <b>Note:</b> Before the integration tests are executed, an instance of the <b>BynderService</b> class will be created using the access tokens defined in the "secret.properties" file.
 
-After running this command, if everything is working fine, you should get the output shown below, telling you all the tests ran successfully:
+After running this command, if everything is working fine, you should get a similar output as the one shown below, telling you all the tests ran successfully. It can also happen that some tests are skipped and in that case the reason why they were skipped it will be printed in the console.
 ```bash
 -------------------------------------------------------
  T E S T S

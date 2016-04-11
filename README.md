@@ -133,10 +133,10 @@ After running this command, if everything is working fine, you should get a simi
  T E S T S
 -------------------------------------------------------
 Running com.getbynder.sdk.BynderServiceIT
-Tests run: 21, Failures: 0, Errors: 0, Skipped: 0, ... - in com.getbynder.sdk.BynderServiceIT
+Tests run: 20, Failures: 0, Errors: 0, Skipped: 0, ... - in com.getbynder.sdk.BynderServiceIT
 
 Results :
 
-Tests run: 21, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 20, Failures: 0, Errors: 0, Skipped: 0
 
 ```

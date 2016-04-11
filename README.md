@@ -92,11 +92,11 @@ Before executing any request to the Bynder API, it is necessary to instantiate t
 
 For this purpose there are three different constructors you can use:
 ```java
-    public BynderService();
+public BynderService();
 
-    public BynderService(final String username, final String password);
+public BynderService(final String username, final String password);
 
-    public BynderService(final String baseUrl, final String username, final String password);
+public BynderService(final String baseUrl, final String username, final String password);
 ```
 The first constructor, the one without parameters, it is supposed to be used when you don't need to login to the Bynder API because you already have the access tokens (explained previously). Meaning that in this case the properties <b>ACCESS_TOKEN_KEY</b> and <b>ACCESS_TOKEN_SECRET</b> of your "secret.properties" file were already filled in with those same access tokens.
 

@@ -31,9 +31,7 @@ public class MediaAsset implements Serializable {
     private Map<String, String> thumbnails;
     private List<MediaItem> mediaItems;
 
-    public MediaAsset() {
-        super();
-    }
+    public MediaAsset() { }
 
     public MediaAsset(final String id) {
         this.id = id;

@@ -20,10 +20,10 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -174,20 +174,21 @@ public final class Utils {
         // send the post request
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 
-            HttpResponse response = httpClient.execute(request);
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
 
-            // if request was unsuccessful
-            if (Arrays.asList(HttpStatus.SC_INTERNAL_SERVER_ERROR, HttpStatus.SC_NOT_FOUND).contains(response.getStatusLine().getStatusCode())) {
-                throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-            } else if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                throw new HttpResponseException(response.getStatusLine().getStatusCode(), errorMessage);
-            }
+                // if request was unsuccessful
+                if (Arrays.asList(HttpStatus.SC_INTERNAL_SERVER_ERROR, HttpStatus.SC_NOT_FOUND).contains(response.getStatusLine().getStatusCode())) {
+                    throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
+                } else if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                    throw new HttpResponseException(response.getStatusLine().getStatusCode(), errorMessage);
+                }
 
-            // if successful, return the response body
-            HttpEntity resEntity = response.getEntity();
+                // if successful, return the response body
+                HttpEntity resEntity = response.getEntity();
 
-            if (resEntity != null) {
-                responseBody = EntityUtils.toString(resEntity);
+                if (resEntity != null) {
+                    responseBody = EntityUtils.toString(resEntity);
+                }
             }
         }
 

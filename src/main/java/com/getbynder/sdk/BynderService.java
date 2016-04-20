@@ -242,6 +242,35 @@ public class BynderService {
         return imageAssets;
     }
 
+    public List<MediaAsset> getImageAssets(final String keyword, final int limit, final int offset) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException, HttpResponseException {
+
+        if (limit < 1 || offset < 1) {
+            throw new IllegalArgumentException(ErrorMessages.INVALID_LIMIT_AND_OFFSET_PARAMETERS);
+        }
+
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(MEDIA_TYPE_PARAMETER, MEDIA_TYPE_IMAGE));
+
+        if (StringUtils.isNotEmpty(keyword)) {
+            params.add(new BasicNameValuePair(KEYWORD_PARAMETER, keyword));
+        }
+
+        params.add(new BasicNameValuePair(LIMIT_PARAMETER, Integer.toString(limit)));
+        params.add(new BasicNameValuePair(OFFSET_PARAMETER, Integer.toString(offset)));
+
+        String apiGetImageAssetsUrl = Utils.createRequestURI(new URL(baseUrl), MEDIA_PATH, params).toString();
+
+        String oauthHeader = Utils.createOAuthHeader(CONSUMER_KEY, CONSUMER_SECRET, userAccessData, apiGetImageAssetsUrl);
+
+        Response response = Utils.getRequestResponse(apiGetImageAssetsUrl, oauthHeader);
+
+        Type collectionType = new TypeToken<List<MediaAsset>>(){}.getType();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create();
+        List<MediaAsset> imageAssets = gson.fromJson(response.readEntity(String.class), collectionType);
+
+        return imageAssets;
+    }
+
     public List<MediaAsset> getImageAssetsByKeyword(final String keyword) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException, URISyntaxException, HttpResponseException {
 
         if (StringUtils.isEmpty(keyword)) {

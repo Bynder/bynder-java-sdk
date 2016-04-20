@@ -180,12 +180,16 @@ public class BynderServiceIT {
 
         assertTrue(imageAssets.size() == 5);
         assertEquals(MEDIA_TYPE_IMAGE, imageAssets.get(0).getType());
+
+        imageAssets = bynderService.getImageAssets(null, 5, 1);
+        assertNotNull(imageAssets);
+        assertTrue(imageAssets.size() == 5);
     }
 
     @Test
     public void getImageAssetsByKeywordTest() throws Exception {
 
-        List<MediaAsset> imageAssets = bynderService.getImageAssets(50, 1);
+        List<MediaAsset> imageAssets = bynderService.getImageAssets(100, 1);
 
         assertNotNull(imageAssets);
 
@@ -314,7 +318,7 @@ public class BynderServiceIT {
     @Test
     public void getMediaAssetByIdTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(50, 1);
+        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(100, 1);
 
         assertNotNull(mediaAssets);
 
@@ -352,7 +356,7 @@ public class BynderServiceIT {
     public void setMediaAssetInvalidDateTest() throws Exception {
 
         try {
-            List<MediaAsset> mediaAssets = bynderService.getMediaAssets(50, 1);
+            List<MediaAsset> mediaAssets = bynderService.getMediaAssets(100, 1);
             assertNotNull(mediaAssets);
             assertTrue(mediaAssets.size() > 0);
 
@@ -367,7 +371,7 @@ public class BynderServiceIT {
     @Test
     public void setMediaAssetDescriptionTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(50, 1);
+        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(100, 1);
         assertNotNull(mediaAssets);
 
         try {
@@ -421,7 +425,7 @@ public class BynderServiceIT {
     @Test
     public void setMediaAssetNameAndPublicationDateTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(50, 1);
+        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(100, 1);
         assertNotNull(mediaAssets);
 
         try {
@@ -468,7 +472,7 @@ public class BynderServiceIT {
     @Test
     public void setMediaAssetPublicationDateGMTTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(50, 1);
+        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(100, 1);
         assertNotNull(mediaAssets);
 
         try {
@@ -487,7 +491,7 @@ public class BynderServiceIT {
     @Test
     public void setMediaAssetPublicationDateWETTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(50, 1);
+        List<MediaAsset> mediaAssets = bynderService.getMediaAssets(100, 1);
         assertNotNull(mediaAssets);
 
         try {
@@ -523,7 +527,7 @@ public class BynderServiceIT {
     @Test
     public void addMetapropertyToMediaAssetTest() throws Exception {
 
-        List<MediaAsset> imageAssets = bynderService.getImageAssets(50, 1);
+        List<MediaAsset> imageAssets = bynderService.getImageAssets(100, 1);
         assertNotNull(imageAssets);
 
         try {

@@ -21,6 +21,8 @@ public List<MediaAsset> getAllImageAssets();
 
 public List<MediaAsset> getImageAssets(final int limit, final int offset);
 
+public List<MediaAsset> getImageAssets(final String keyword, final int limit, final int offset);
+
 public List<MediaAsset> getImageAssetsByKeyword(final String keyword);
 
 public List<MediaAsset> getImageAssetsByMetapropertyId(final String metapropertyId);

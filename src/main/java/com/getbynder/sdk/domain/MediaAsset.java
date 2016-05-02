@@ -147,7 +147,7 @@ public class MediaAsset implements Serializable {
 
         for (Field field : fields) {
 
-            if (field.get(this) != null && !Arrays.asList("serialVersionUID", "id", "type", "propertyOptions", "thumbnails").contains(field.getName())) {
+            if (field.get(this) != null && !Arrays.asList("serialVersionUID", "id", "type", "propertyOptions", "thumbnails", "mediaItems").contains(field.getName())) {
 
                 if (field.getName().equals("datePublished")) {
                     if (Utils.isDateFormatValid(field.get(this).toString())) {

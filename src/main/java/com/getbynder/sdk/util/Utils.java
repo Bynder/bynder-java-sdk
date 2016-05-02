@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -32,6 +33,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.getbynder.sdk.domain.UserAccessData;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -43,6 +45,12 @@ import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.Retrofit.Builder;
+import retrofit2.converter.gson.GsonConverterFactory;
+import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer;
+import se.akerfeldt.okhttp.signpost.SigningInterceptor;
 
 /**
  *
@@ -250,5 +258,39 @@ public final class Utils {
             return valueIfTrue;
         }
         return valueIfFalse;
+    }
+
+    public static <T> T createApiService(final Class<T> apiClass, final boolean forLogin) {
+
+        String tokenKey;
+        String tokenSecret;
+
+        if (forLogin) {
+            tokenKey = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
+            tokenSecret = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
+        } else {
+            tokenKey = SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY");
+            tokenSecret = SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET");
+        }
+
+        OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(SecretProperties.getInstance().getProperty("CONSUMER_KEY"), SecretProperties.getInstance().getProperty("CONSUMER_SECRET"));
+        consumer.setTokenWithSecret(tokenKey, tokenSecret);
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+        httpClient.interceptors().clear();
+        httpClient.addInterceptor(new SigningInterceptor(consumer));
+
+        // Increase timeout
+        httpClient.readTimeout(30, TimeUnit.SECONDS);
+        httpClient.connectTimeout(30, TimeUnit.SECONDS);
+
+        OkHttpClient client = httpClient.build();
+
+        Builder retrofitBuilder = new Builder().baseUrl(ConfigProperties.getInstance().getProperty("BASE_URL")).addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create()));
+
+        Retrofit retrofitBynderApi = retrofitBuilder.client(client).build();
+
+        return retrofitBynderApi.create(apiClass);
     }
 }

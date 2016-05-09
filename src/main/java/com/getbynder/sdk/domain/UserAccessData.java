@@ -22,31 +22,15 @@ public class UserAccessData {
         return userId;
     }
 
-    public void setUserId(final String userId) {
-        this.userId = userId;
-    }
-
     public String getTokenKey() {
         return tokenKey;
-    }
-
-    public void setTokenKey(final String tokenKey) {
-        this.tokenKey = tokenKey;
     }
 
     public String getTokenSecret() {
         return tokenSecret;
     }
 
-    public void setTokenSecret(final String tokenSecret) {
-        this.tokenSecret = tokenSecret;
-    }
-
     public boolean hasAccess() {
         return hasAccess;
-    }
-
-    public void setAccess(final boolean hasAccess) {
-        this.hasAccess = hasAccess;
     }
 }

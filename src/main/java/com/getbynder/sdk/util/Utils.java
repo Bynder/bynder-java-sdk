@@ -1,42 +1,25 @@
 package com.getbynder.sdk.util;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 import com.getbynder.sdk.domain.UserAccessData;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
@@ -68,28 +51,6 @@ public final class Utils {
         // prevent instantiation
     }
 
-    public static URI createRequestURI(final URL url, final String relativePath) throws URISyntaxException {
-
-        URIBuilder builder = new URIBuilder();
-
-        builder.setScheme(url.getProtocol()).setHost(url.getHost()).setPath(url.getPath().concat(relativePath));
-
-        return builder.build();
-    }
-
-    public static URI createRequestURI(final URL url, final String relativePath, final List<BasicNameValuePair> params) throws URISyntaxException {
-
-        URIBuilder builder = new URIBuilder();
-
-        builder.setScheme(url.getProtocol()).setHost(url.getHost()).setPath(url.getPath().concat(relativePath));
-
-        for (BasicNameValuePair pair : params) {
-            builder.setParameter(pair.getName(), pair.getValue());
-        }
-
-        return builder.build();
-    }
-
     public static String getOAuthHeaderFromUrl(final URL url) {
 
         String query = url.getQuery();
@@ -118,8 +79,8 @@ public final class Utils {
 
     public static String createOAuthHeader(final String consumerKey, final String consumerSecret, final UserAccessData userAccessData, final String url) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
 
-        checkNotNull("CONSUMER_KEY", consumerKey, true);
-        checkNotNull("CONSUMER_SECRET", consumerSecret, true);
+        checkNotNull("CONSUMER_KEY", consumerKey);
+        checkNotNull("CONSUMER_SECRET", consumerSecret);
 
         // create a consumer object and configure it with the access token and token secret obtained from the service provider
         OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
@@ -145,8 +106,8 @@ public final class Utils {
 
     public static HttpPost createPostRequest(final String consumerKey, final String consumerSecret, final UserAccessData userAccessData, final URI requestUri, final List<BasicNameValuePair> params) throws MalformedURLException, URISyntaxException, UnsupportedEncodingException, OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
 
-        checkNotNull("CONSUMER_KEY", consumerKey, true);
-        checkNotNull("CONSUMER_SECRET", consumerSecret, true);
+        checkNotNull("CONSUMER_KEY", consumerKey);
+        checkNotNull("CONSUMER_SECRET", consumerSecret);
 
         HttpPost request = new HttpPost(requestUri);
 
@@ -160,8 +121,8 @@ public final class Utils {
             String requestTokenKey = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
             String requestTokenSecret = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
 
-            checkNotNull("REQUEST_TOKEN_KEY", requestTokenKey, true);
-            checkNotNull("REQUEST_TOKEN_SECRET", requestTokenSecret, true);
+            checkNotNull("REQUEST_TOKEN_KEY", requestTokenKey);
+            checkNotNull("REQUEST_TOKEN_SECRET", requestTokenSecret);
 
             consumer.setTokenWithSecret(requestTokenKey, requestTokenSecret);
         }
@@ -173,56 +134,6 @@ public final class Utils {
         consumer.sign(request);
 
         return request;
-    }
-
-    public static String sendPostRequest(final HttpPost request, final String errorMessage) throws IOException {
-
-        String responseBody = "";
-
-        // send the post request
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-
-                // if request was unsuccessful
-                if (Arrays.asList(HttpStatus.SC_INTERNAL_SERVER_ERROR, HttpStatus.SC_NOT_FOUND).contains(response.getStatusLine().getStatusCode())) {
-                    throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-                } else if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    throw new HttpResponseException(response.getStatusLine().getStatusCode(), errorMessage);
-                }
-
-                // if successful, return the response body
-                HttpEntity resEntity = response.getEntity();
-
-                if (resEntity != null) {
-                    responseBody = EntityUtils.toString(resEntity);
-                }
-            }
-        }
-
-        return responseBody;
-    }
-
-    public static Response getRequestResponse(final String url, final String oauthHeader) throws HttpResponseException {
-
-        Client client = ClientBuilder.newClient();
-
-        Response response = client.target(url).request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", oauthHeader).get();
-
-        // if request was unsuccessful
-        if (response.getStatusInfo().getStatusCode() != HttpStatus.SC_OK) {
-            throw new HttpResponseException(response.getStatusInfo().getStatusCode(), response.getStatusInfo().getReasonPhrase());
-        }
-
-        return response;
-    }
-
-    public static int getTotalCountFromJson(final String jsonResponse) {
-
-        JsonElement jsonElement = new JsonParser().parse(jsonResponse);
-        JsonObject  jsonObject = jsonElement.getAsJsonObject();
-
-        return jsonObject.get("count").getAsJsonObject().get("total").getAsInt();
     }
 
     public static Map<String, String> buildMapFromResponse(final String response) {
@@ -238,9 +149,9 @@ public final class Utils {
         return map;
     }
 
-    public static void checkNotNull(final String name, final Object value, final boolean isPropertyFromFile) {
+    public static void checkNotNull(final String name, final Object value) {
 
-        String errorMessage = conditionalSetter(isPropertyFromFile, ErrorMessages.PROPERTY_NOT_DEFINED, ErrorMessages.NULL_PARAMETER);
+        String errorMessage = "%s shall not be null.";
 
         if (value == null) {
             throw new IllegalArgumentException(String.format(errorMessage, name));
@@ -251,30 +162,20 @@ public final class Utils {
         }
     }
 
-    // same function as a ternary operator
-    public static <T> T conditionalSetter(final boolean condition, final T valueIfTrue, final T valueIfFalse) {
+    public static <T> T createApiService(final Class<T> apiClass, final String baseUrl, final String tokenKey, final String tokenSecret) {
 
-        if (condition) {
-            return valueIfTrue;
+        String consumerKey = SecretProperties.getInstance().getProperty("CONSUMER_KEY");
+        String consumerSecret = SecretProperties.getInstance().getProperty("CONSUMER_SECRET");
+
+        Utils.checkNotNull("CONSUMER_KEY", consumerKey);
+        Utils.checkNotNull("CONSUMER_SECRET", consumerSecret);
+        Utils.checkNotNull("baseUrl", baseUrl);
+
+        OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(consumerKey, consumerSecret);
+
+        if (tokenKey != null && tokenSecret != null) {
+            consumer.setTokenWithSecret(tokenKey, tokenSecret);
         }
-        return valueIfFalse;
-    }
-
-    public static <T> T createApiService(final Class<T> apiClass, final boolean forLogin) {
-
-        String tokenKey;
-        String tokenSecret;
-
-        if (forLogin) {
-            tokenKey = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
-            tokenSecret = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
-        } else {
-            tokenKey = SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY");
-            tokenSecret = SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET");
-        }
-
-        OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(SecretProperties.getInstance().getProperty("CONSUMER_KEY"), SecretProperties.getInstance().getProperty("CONSUMER_SECRET"));
-        consumer.setTokenWithSecret(tokenKey, tokenSecret);
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
@@ -287,7 +188,7 @@ public final class Utils {
 
         OkHttpClient client = httpClient.build();
 
-        Builder retrofitBuilder = new Builder().baseUrl(ConfigProperties.getInstance().getProperty("BASE_URL")).addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create()));
+        Builder retrofitBuilder = new Builder().baseUrl(baseUrl).addConverterFactory(new StringConverterFactory()).addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create()));
 
         Retrofit retrofitBynderApi = retrofitBuilder.client(client).build();
 

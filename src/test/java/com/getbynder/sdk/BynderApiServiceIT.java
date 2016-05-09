@@ -1,6 +1,7 @@
 package com.getbynder.sdk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -188,7 +189,7 @@ public class BynderApiServiceIT {
     @Test
     public void getMediaAssetsTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
+        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, "");
         assertNotNull(mediaAssets);
 
         try {
@@ -211,7 +212,7 @@ public class BynderApiServiceIT {
     @Test
     public void getMediaAssetByIdTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
+        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, "");
         assertNotNull(mediaAssets);
 
         try {
@@ -248,6 +249,14 @@ public class BynderApiServiceIT {
 
         assertTrue(imageAssets.size() == 1);
         assertEquals(MEDIA_TYPE_IMAGE, imageAssets.get(0).getType());
+    }
+
+    @Test
+    public void getImageAssetsPaginationTest() throws Exception {
+
+        List<MediaAsset> imageAssetsPage1 = bynderApiService.getImageAssets(null, 1, 1);
+        List<MediaAsset> imageAssetsPage2 = bynderApiService.getImageAssets(null, 1, 2);
+        assertNotEquals(imageAssetsPage1.get(0).getId(), imageAssetsPage2.get(0).getId());
     }
 
     @Test
@@ -394,7 +403,7 @@ public class BynderApiServiceIT {
     @Test
     public void setMediaAssetInvalidDateTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
+        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, "");
         assertNotNull(mediaAssets);
 
         try {
@@ -410,7 +419,7 @@ public class BynderApiServiceIT {
     @Test
     public void setMediaAssetPublicationDateTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
+        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, "");
         assertNotNull(mediaAssets);
 
         try {

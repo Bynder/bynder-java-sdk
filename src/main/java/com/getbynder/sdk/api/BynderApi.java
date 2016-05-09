@@ -45,13 +45,13 @@ public interface BynderApi {
     Call<Map<String, Metaproperty>> getMetaproperties();
 
     @GET("v4/media/")
-    Call<List<MediaAsset>> getMediaAssets(@Query("type") String type, @Query("keyword") String keyword, @Query("limit") Integer limit, @Query("offset") Integer offset, @Query("propertyOptionId") String propertyOptionId);
+    Call<List<MediaAsset>> getMediaAssets(@Query("type") String type, @Query("keyword") String keyword, @Query("limit") Integer limit, @Query("page") Integer page, @Query("propertyOptionId") String propertyOptionId);
 
     @GET("v4/media/{id}/")
     Call<MediaAsset> getMediaAssetById(@Path("id") String id, @Query("versions") Boolean versions);
 
     @GET("v4/media/?type=image")
-    Call<List<MediaAsset>> getImageAssets(@Query("keyword") String keyword, @Query("limit") Integer limit, @Query("offset") Integer offset);
+    Call<List<MediaAsset>> getImageAssets(@Query("keyword") String keyword, @Query("limit") Integer limit, @Query("page") Integer page);
 
     @GET("v4/media/?type=image")
     Call<List<MediaAsset>> getImageAssetsByMetapropertyId(@Query("propertyOptionId") String propertyOptionId);

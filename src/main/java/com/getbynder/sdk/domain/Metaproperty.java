@@ -35,4 +35,9 @@ public class Metaproperty {
     public List<Metaproperty> getOptions() {
         return options;
     }
+
+    @Override
+    public String toString() {
+        return "Metaproperty [id=" + id + ", name=" + name + ", label=" + label + "]";
+    }
 }

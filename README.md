@@ -25,6 +25,8 @@ public MediaAsset getMediaAssetById(final String id, final Boolean versions);
 
 public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer offset);
 
+public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds);
+
 public List<MediaAsset> getImageAssetsByMetapropertyId(final String propertyOptionId);
 
 public int getImageAssetsTotal();
@@ -127,10 +129,10 @@ After running this command, if everything is working fine, you should get a simi
  T E S T S
 -------------------------------------------------------
 Running com.getbynder.sdk.BynderServiceIT
-Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, ... - in com.getbynder.sdk.BynderServiceIT
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, ... - in com.getbynder.sdk.BynderServiceIT
 
 Results :
 
-Tests run: 17, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
 
 ```

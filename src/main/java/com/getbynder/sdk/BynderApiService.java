@@ -1,6 +1,7 @@
 package com.getbynder.sdk;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,8 +115,8 @@ public class BynderApiService {
         return response.body();
     }
 
-    public List<MediaAsset> getMediaAssets(final String type, final String keyword, final Integer limit, final Integer offset, final String propertyOptionId) throws IOException {
-        Response<List<MediaAsset>> response = bynderApi.getMediaAssets(type, keyword, limit, offset, propertyOptionId).execute();
+    public List<MediaAsset> getMediaAssets(final String type, final String keyword, final Integer limit, final Integer page, final String propertyOptionId) throws IOException {
+        Response<List<MediaAsset>> response = bynderApi.getMediaAssets(type, keyword, limit, page, propertyOptionId).execute();
         return response.body();
     }
 
@@ -127,9 +128,27 @@ public class BynderApiService {
         return response.body();
     }
 
-    public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer offset) throws IOException {
-        Response<List<MediaAsset>> response = bynderApi.getImageAssets(keyword, limit, offset).execute();
+    public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page) throws IOException {
+
+        Response<List<MediaAsset>> response = bynderApi.getImageAssets(keyword, limit, page).execute();
         return response.body();
+    }
+
+    public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds) throws IOException {
+
+        Response<List<MediaAsset>> response = bynderApi.getImageAssets(keyword, limit, page).execute();
+
+        List<MediaAsset> mediaAssets = new ArrayList<>();
+
+        for (MediaAsset mediaAsset : response.body()) {
+            if (mediaAsset.getPropertyOptions() != null) {
+                if (mediaAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
+                    mediaAssets.add(mediaAsset);
+                }
+            }
+        }
+
+        return mediaAssets;
     }
 
     public List<MediaAsset> getImageAssetsByMetapropertyId(final String propertyOptionId) throws IOException {

@@ -136,11 +136,10 @@ public class BynderApiService {
 
     public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds) throws IOException {
 
-        Response<List<MediaAsset>> response = bynderApi.getImageAssets(keyword, limit, page).execute();
-
+        List<MediaAsset> response = getImageAssets(keyword, limit, page);
         List<MediaAsset> mediaAssets = new ArrayList<>();
 
-        for (MediaAsset mediaAsset : response.body()) {
+        for (MediaAsset mediaAsset : response) {
             if (mediaAsset.getPropertyOptions() != null) {
                 if (mediaAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
                     mediaAssets.add(mediaAsset);

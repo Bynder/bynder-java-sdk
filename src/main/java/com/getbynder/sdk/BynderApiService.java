@@ -137,17 +137,21 @@ public class BynderApiService {
     public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds) throws IOException {
 
         List<MediaAsset> response = getImageAssets(keyword, limit, page);
-        List<MediaAsset> mediaAssets = new ArrayList<>();
 
-        for (MediaAsset mediaAsset : response) {
-            if (mediaAsset.getPropertyOptions() != null) {
-                if (mediaAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
-                    mediaAssets.add(mediaAsset);
+        if (propertyOptionIds != null && !propertyOptionIds.isEmpty()) {
+            List<MediaAsset> mediaAssets = new ArrayList<>();
+
+            for (MediaAsset mediaAsset : response) {
+                if (mediaAsset.getPropertyOptions() != null) {
+                    if (mediaAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
+                        mediaAssets.add(mediaAsset);
+                    }
                 }
             }
+            return mediaAssets;
+        } else {
+            return response;
         }
-
-        return mediaAssets;
     }
 
     public List<MediaAsset> getImageAssetsByMetapropertyId(final String propertyOptionId) throws IOException {

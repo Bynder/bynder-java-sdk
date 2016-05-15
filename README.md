@@ -29,6 +29,8 @@ public List<MediaAsset> getImageAssets(final String keyword, final Integer limit
 
 public List<MediaAsset> getImageAssetsByMetapropertyId(final String propertyOptionId);
 
+public int getImageAssetsTotalByMetapropertyIds(final List<String> propertyOptionIds);
+
 public int getImageAssetsTotal();
 
 public int setMediaAssetProperties(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished);
@@ -42,20 +44,18 @@ Components used to install and run the project:
 * Java JDK (version 1.7.0_80)
 * Apache Maven 3.3.3
 
-<b>Important:</b> Don't forget to define the environmental variables for Java and Maven
+<b>Important:</b> Don't forget to define the environmental variables for Java and Maven!
 
 ### Installation steps
 Clone the repository:
 ```bash
 $ git clone git@github.com:Bynder/bynder-java-sdk.git
 ```
-Access the "config.properties" file:
-```bash
-$ vi bynder-java-sdk/src/main/resources/config.properties
-```
 
 Create a new properties file called "secret.properties" like the one shown below. Where your bynder api base url shall have this structure: <i>https://&#91;accountdomain&#93;/api/</i>
 ```bash
+$ vi bynder-java-sdk/src/main/resources/secret.properties
+
 # bynder api base url
 BASE_URL=<your bynder api base url>
 
@@ -73,7 +73,7 @@ CONSUMER_SECRET=<your consumer secret>
 ACCESS_TOKEN_KEY=<your access token key>
 ACCESS_TOKEN_SECRET=<your access token secret>
 ```
-<b>Important:</b> You just need to fill the <b>USERNAME</b>, <b>PASSWORD</b>, <b>REQUEST_TOKEN_KEY</b> and <b>REQUEST_TOKEN_SECRET</b> properties if you need to login to the Bynder API in order get the access tokens. If you already possess the access tokens, just insert them in the <b>ACCESS_TOKEN_KEY</b> and <b>ACCESS_TOKEN_SECRET</b> properties. <b>Don't forget to add this file to your .gitignore</b>.
+<b>Important:</b> You just need to fill the <b>USERNAME</b>, <b>PASSWORD</b>, <b>REQUEST_TOKEN_KEY</b> and <b>REQUEST_TOKEN_SECRET</b> properties if you need to login to the Bynder API in order get the access tokens. If you already possess the access tokens, just insert them in the <b>ACCESS_TOKEN_KEY</b> and <b>ACCESS_TOKEN_SECRET</b> properties. Don't forget to add this file to your <b>.gitignore</b>.
 
 Build the project from its root with the following Maven command:
 ```bash
@@ -102,14 +102,14 @@ As shown above the access tokens that are retrieved by the Bynder API after a su
 
 Code example to instantiate the <b>BynderApiService</b> class using this constructor:
 ```java
-BynderApiService bynderApiService = new BynderApiService("https://example.getbynder.com/api/v4/", "test", "12345");
+BynderApiService bynderApiService = new BynderApiService("https://example.getbynder.com/api/", "test", "12345");
 ```
-In the example above the <b>BynderApiService</b> class is instantiated with the <b>baseUrl</b> "ht&#8203;tp://example.getbynder.com/api/v4/", <b>username</b> "test" and <b>password</b> "12345".
+In the example above the <b>BynderApiService</b> class is instantiated with the <b>baseUrl</b> "ht&#8203;tp://example.getbynder.com/api/", <b>username</b> "test" and <b>password</b> "12345".
 
 After instantiating the <b>BynderApiService</b> class successfully it is possible to call any of the methods listed in the section <b>Current Status</b>. Example:
 
 ```java
-BynderApiService bynderApiService = new BynderApiService("https://example.getbynder.com/api/v4/", "test", "12345");
+BynderApiService bynderApiService = new BynderApiService("https://example.getbynder.com/api/", "test", "12345");
 
 Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
 ```
@@ -129,10 +129,10 @@ After running this command, if everything is working fine, you should get a simi
  T E S T S
 -------------------------------------------------------
 Running com.getbynder.sdk.BynderServiceIT
-Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, ... - in com.getbynder.sdk.BynderServiceIT
+Tests run: 20, Failures: 0, Errors: 0, Skipped: 0, ... - in com.getbynder.sdk.BynderServiceIT
 
 Results :
 
-Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 20, Failures: 0, Errors: 0, Skipped: 0
 
 ```

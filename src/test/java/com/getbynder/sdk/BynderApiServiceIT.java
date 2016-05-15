@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,7 +54,6 @@ public class BynderApiServiceIT {
     public final String MEDIA_TYPE_IMAGE = "image";
     private final String MEDIA_ASSET_KEYWORD_NOT_FOUND = "MEDIA_ASSET_KEYWORD_NOT_FOUND";
     private final String ID_NOT_FOUND = "ID_NOT_FOUND";
-    private final String MEDIA_ASSET_NAME = "Name changed by Integration Test of Bynder Java SDK";
     private final String MEDIA_ASSET_DESCRIPTION = "Description changed by Integration Test of Bynder Java SDK";
 
     private final String INVALID_DATETIME = new Date().toString();
@@ -74,6 +74,7 @@ public class BynderApiServiceIT {
     private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION = "%s skipped: No image asset with description found for this environment";
     private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITHOUT_METAPROPERTIES = "%s skipped: No image asset without metaproperties found for this environment";
     private final String TEST_SKIPPED_NO_ADD_METAPROPERTY_PERMISSION = "%s skipped: No permission to add metaproperty to media asset in this environment";
+    private final String TEST_SKIPPED_NO_KEYWORD_DEFINED = "%s skipped: No keyword defined";
 
     // regex to avoid media assets names and descriptions with special characters
     private final Pattern pattern = Pattern.compile("[a-z0-9 ]", Pattern.CASE_INSENSITIVE);
@@ -136,7 +137,7 @@ public class BynderApiServiceIT {
     }
 
     @Test
-    public void getAllMetaproperties() throws Exception {
+    public void getMetapropertiesTest() throws Exception {
 
         Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
         assertNotNull(metaproperties);
@@ -189,11 +190,11 @@ public class BynderApiServiceIT {
     @Test
     public void getMediaAssetsTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, "");
+        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
         assertNotNull(mediaAssets);
 
         try {
-            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS, testName.getMethodName()), mediaAssets.size() > 0);
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_MEDIA_ASSETS, testName.getMethodName()), mediaAssets.size() > 0);
         } catch (AssumptionViolatedException e) {
             LOG.warn(e.getMessage());
             throw e;
@@ -212,7 +213,7 @@ public class BynderApiServiceIT {
     @Test
     public void getMediaAssetByIdTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, "");
+        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
         assertNotNull(mediaAssets);
 
         try {
@@ -255,7 +256,17 @@ public class BynderApiServiceIT {
     public void getImageAssetsPaginationTest() throws Exception {
 
         List<MediaAsset> imageAssetsPage1 = bynderApiService.getImageAssets(null, 1, 1);
+        assertNotNull(imageAssetsPage1);
         List<MediaAsset> imageAssetsPage2 = bynderApiService.getImageAssets(null, 1, 2);
+        assertNotNull(imageAssetsPage2);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS, testName.getMethodName()), imageAssetsPage1.size() > 0 && imageAssetsPage2.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
         assertNotEquals(imageAssetsPage1.get(0).getId(), imageAssetsPage2.get(0).getId());
     }
 
@@ -273,24 +284,65 @@ public class BynderApiServiceIT {
         }
 
         String metapropertyId = null;
-        boolean metapropertyFound = false;
 
         for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
             if (entry.getValue().getOptions().size() > 0) {
                 metapropertyId = entry.getValue().getOptions().get(0).getId();
-                metapropertyFound = true;
                 break;
             }
         }
 
         try {
-            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, testName.getMethodName()), metapropertyFound && metapropertyId != null);
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, testName.getMethodName()), metapropertyId != null);
         } catch (AssumptionViolatedException e) {
             LOG.warn(e.getMessage());
             throw e;
         }
 
         List<MediaAsset> imageAssets = bynderApiService.getImageAssetsByMetapropertyId(metapropertyId);
+        assertNotNull(imageAssets);
+        assertTrue(imageAssets.size() > 0);
+
+        assertTrue(imageAssets.get(0).getPropertyOptions().contains(metapropertyId));
+    }
+
+    @Test
+    public void getImageAssetsTotalByMetapropertyIds() throws IOException {
+
+        Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
+        assertNotNull(metaproperties);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES, testName.getMethodName()), metaproperties.entrySet().size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
+        String metapropertyId = null;
+
+        for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
+            if (entry.getValue().getOptions().size() > 0) {
+                metapropertyId = entry.getValue().getOptions().get(0).getId();
+                break;
+            }
+        }
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, testName.getMethodName()), metapropertyId != null);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
+        int total = bynderApiService.getImageAssetsTotalByMetapropertyIds(Arrays.asList(metapropertyId));
+        assertTrue(total > 0);
+    }
+
+    @Test
+    public void getImageAssetsTotalTest() throws Exception {
+
+        List<MediaAsset> imageAssets = bynderApiService.getImageAssets(null, 1, 1);
         assertNotNull(imageAssets);
 
         try {
@@ -299,12 +351,6 @@ public class BynderApiServiceIT {
             LOG.warn(e.getMessage());
             throw e;
         }
-
-        assertTrue(imageAssets.get(0).getPropertyOptions().contains(metapropertyId));
-    }
-
-    @Test
-    public void getImageAssetsTotalTest() throws Exception {
 
         int imageAssetsTotal = bynderApiService.getImageAssetsTotal();
         assertTrue(imageAssetsTotal > 0);
@@ -323,13 +369,20 @@ public class BynderApiServiceIT {
             throw e;
         }
 
-        String keyword = "";
+        String keyword = null;
 
         for (MediaAsset mediaAsset : imageAssets) {
             if (StringUtils.isNotEmpty(mediaAsset.getName()) && pattern.matcher(mediaAsset.getName()).find()) {
                 keyword = mediaAsset.getName().split(Utils.STR_SPACE)[0];
                 break;
             }
+        }
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_KEYWORD_DEFINED, testName.getMethodName()), keyword != null);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
         }
 
         List<MediaAsset> imageAssetsByKeyword = bynderApiService.getImageAssets(keyword, null, null);
@@ -346,7 +399,7 @@ public class BynderApiServiceIT {
     @Test
     public void setMediaAssetIdNotFoundTest() throws Exception {
 
-        int statusCode = bynderApiService.setMediaAssetProperties(ID_NOT_FOUND, MEDIA_ASSET_NAME, null, null, null, null);
+        int statusCode = bynderApiService.setMediaAssetProperties(ID_NOT_FOUND, null, null, null, null, null);
         assertEquals(HttpStatus.SC_NOT_FOUND, statusCode);
     }
 
@@ -375,7 +428,7 @@ public class BynderApiServiceIT {
         }
 
         try {
-            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION, testName.getMethodName()), imageAssetDescription != null);
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION, testName.getMethodName()), imageAssetId != null && imageAssetDescription != null);
         } catch (AssumptionViolatedException e) {
             LOG.warn(e.getMessage());
             throw e;
@@ -403,7 +456,7 @@ public class BynderApiServiceIT {
     @Test
     public void setMediaAssetInvalidDateTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, "");
+        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
         assertNotNull(mediaAssets);
 
         try {
@@ -419,7 +472,7 @@ public class BynderApiServiceIT {
     @Test
     public void setMediaAssetPublicationDateTest() throws Exception {
 
-        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, "");
+        List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
         assertNotNull(mediaAssets);
 
         try {
@@ -429,13 +482,15 @@ public class BynderApiServiceIT {
             throw e;
         }
 
-        int statusCode = bynderApiService.setMediaAssetProperties(mediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_UTC);
+        String mediaAssetid = mediaAssets.get(0).getId();
+
+        int statusCode = bynderApiService.setMediaAssetProperties(mediaAssetid, null, null, null, null, VALID_DATETIME_UTC);
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
-        statusCode = bynderApiService.setMediaAssetProperties(mediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_WET);
+        statusCode = bynderApiService.setMediaAssetProperties(mediaAssetid, null, null, null, null, VALID_DATETIME_WET);
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
-        statusCode = bynderApiService.setMediaAssetProperties(mediaAssets.get(0).getId(), null, null, null, null, VALID_DATETIME_GMT);
+        statusCode = bynderApiService.setMediaAssetProperties(mediaAssetid, null, null, null, null, VALID_DATETIME_GMT);
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
     }
 

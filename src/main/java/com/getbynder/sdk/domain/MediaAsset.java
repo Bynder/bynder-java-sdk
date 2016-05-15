@@ -77,4 +77,10 @@ public class MediaAsset implements Serializable {
     public List<MediaItem> getMediaItems() {
         return mediaItems;
     }
+
+    @Override
+    public String toString() {
+        return "MediaAsset [id=" + id + ", name=" + name + ", description=" + description + ", copyright=" + copyright + ", archive=" + archive + ", datePublished=" + datePublished + ", type=" + type + ", propertyOptions=" + propertyOptions
+                + ", thumbnails=" + thumbnails + ", mediaItems=" + mediaItems + "]";
+    }
 }

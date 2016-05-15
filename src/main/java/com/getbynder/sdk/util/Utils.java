@@ -178,7 +178,6 @@ public final class Utils {
         }
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
         httpClient.interceptors().clear();
         httpClient.addInterceptor(new SigningInterceptor(consumer));
 
@@ -187,9 +186,7 @@ public final class Utils {
         httpClient.connectTimeout(30, TimeUnit.SECONDS);
 
         OkHttpClient client = httpClient.build();
-
         Builder retrofitBuilder = new Builder().baseUrl(baseUrl).addConverterFactory(new StringConverterFactory()).addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create()));
-
         Retrofit retrofitBynderApi = retrofitBuilder.client(client).build();
 
         return retrofitBynderApi.create(apiClass);

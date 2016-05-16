@@ -302,12 +302,11 @@ public class BynderApiServiceIT {
         List<MediaAsset> imageAssets = bynderApiService.getImageAssetsByMetapropertyId(metapropertyId);
         assertNotNull(imageAssets);
         assertTrue(imageAssets.size() > 0);
-
         assertTrue(imageAssets.get(0).getPropertyOptions().contains(metapropertyId));
     }
 
     @Test
-    public void getImageAssetsTotalByMetapropertyIds() throws IOException {
+    public void getImageAssetsTotalByMetapropertyIdsTest() throws IOException {
 
         Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
         assertNotNull(metaproperties);

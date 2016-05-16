@@ -41,22 +41,20 @@ public class BynderApiService {
     private BynderApi bynderApi;
 
     public BynderApiService() {
+
+        Utils.checkNotNull("ACCESS_TOKEN_KEY", SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY"));
+        Utils.checkNotNull("ACCESS_TOKEN_SECRET", SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
+
         bynderApi = Utils.createApiService(BynderApi.class, BASE_URL, SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY"), SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
     }
 
     public BynderApiService(final String username, final String password) throws IOException {
-
-        Utils.checkNotNull("username", username);
-        Utils.checkNotNull("password", password);
 
         UserAccessData userAccessData = login(username, password);
         bynderApi = Utils.createApiService(BynderApi.class, BASE_URL, userAccessData.getTokenKey(), userAccessData.getTokenSecret());
     }
 
     public BynderApiService(final String baseUrl, final String username, final String password) throws IOException {
-
-        Utils.checkNotNull("username", username);
-        Utils.checkNotNull("password", password);
 
         UserAccessData userAccessData = login(username, password);
         bynderApi = Utils.createApiService(BynderApi.class, baseUrl, userAccessData.getTokenKey(), userAccessData.getTokenSecret());
@@ -66,6 +64,8 @@ public class BynderApiService {
 
         Utils.checkNotNull("username", username);
         Utils.checkNotNull("password", password);
+        Utils.checkNotNull("REQUEST_TOKEN_KEY", REQUEST_TOKEN_KEY);
+        Utils.checkNotNull("REQUEST_TOKEN_SECRET", REQUEST_TOKEN_SECRET);
 
         bynderApi = Utils.createApiService(BynderApi.class, BASE_URL, REQUEST_TOKEN_KEY, REQUEST_TOKEN_SECRET);
         Response<UserAccessData> response = bynderApi.login(username, password).execute();
@@ -142,34 +142,45 @@ public class BynderApiService {
         return response.body();
     }
 
+    // get the N-th set of limit-results of images assets that contain all the metaproperties ids inside the propertyOptionIds list
     public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds) throws IOException {
 
+        // if propertyOptions is null or empty call getImageAssets
         if (propertyOptionIds == null || propertyOptionIds.size() == 0) {
             return getImageAssets(keyword, limit, page);
         }
 
-        List<MediaAsset> allImageAssets = new ArrayList<>();
+        List<MediaAsset> imageAssets = new ArrayList<>();
         List<MediaAsset> imageAssetsOffset = new ArrayList<>();
 
+        // number of the first N image assets that shall be ignored
         int ignoreCount = limit * (page - 1);
         int offset = 1;
 
-        while (offset == 1 || (allImageAssets.size() < limit && imageAssetsOffset.size() != 0)) {
+        // the condition 'offset == 1' is included in the while loop just for its first iteration
+        // if imageAssets already has the same number of elements as the asked limit and the imageAssetsOffset retrieved is empty, stop the while
+        while (offset == 1 || (imageAssets.size() < limit && imageAssetsOffset.size() != 0)) {
 
-            imageAssetsOffset = getImageAssets(keyword, limit, offset);
+            imageAssetsOffset = getImageAssets(keyword, DEFAULT_LIMIT, offset);
 
             for (MediaAsset imageAsset : imageAssetsOffset) {
-                if (imageAsset.getPropertyOptions().containsAll(propertyOptionIds) && allImageAssets.size() < limit) {
-                    ignoreCount--;
-                    if (ignoreCount < 0) {
-                        allImageAssets.add(imageAsset);
+                // if imageAssets already has the same number of elements as the asked limit, break the for loop
+                if (imageAssets.size() < limit) {
+                    if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
+                        // decrement ignoreCount and if it is already less than zero add the imageAsset to the list
+                        ignoreCount--;
+                        if (ignoreCount < 0) {
+                            imageAssets.add(imageAsset);
+                        }
                     }
+                } else {
+                    break;
                 }
             }
             offset++;
         }
 
-        return allImageAssets;
+        return imageAssets;
     }
 
     public List<MediaAsset> getImageAssetsByMetapropertyId(final String propertyOptionId) throws IOException {
@@ -184,16 +195,17 @@ public class BynderApiService {
 
         Utils.checkNotNull("propertyOptionIds", propertyOptionIds);
 
+        int total = 0;
         List<MediaAsset> imageAssetsOffset = new ArrayList<>();
         int offset = 1;
-        int total = 0;
 
+        // the condition 'offset == 1' is included in the while loop just for its first iteration
         while (offset == 1 || imageAssetsOffset.size() == DEFAULT_LIMIT) {
 
             imageAssetsOffset = getImageAssets(null, DEFAULT_LIMIT, offset);
 
             for (MediaAsset imageAsset : imageAssetsOffset) {
-                if (imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
+                if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
                     total++;
                 }
             }

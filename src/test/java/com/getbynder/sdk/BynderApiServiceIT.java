@@ -51,7 +51,7 @@ public class BynderApiServiceIT {
     private final String REQUEST_TOKEN_KEY = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
     private final String REQUEST_TOKEN_SECRET = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
 
-    public final String MEDIA_TYPE_IMAGE = "image";
+    private final String MEDIA_TYPE_IMAGE = "image";
     private final String MEDIA_ASSET_KEYWORD_NOT_FOUND = "MEDIA_ASSET_KEYWORD_NOT_FOUND";
     private final String ID_NOT_FOUND = "ID_NOT_FOUND";
     private final String MEDIA_ASSET_DESCRIPTION = "Description changed by Integration Test of Bynder Java SDK";

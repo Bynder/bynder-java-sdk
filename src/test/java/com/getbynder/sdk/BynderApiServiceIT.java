@@ -110,6 +110,7 @@ public class BynderApiServiceIT {
     public void loginTest() throws Exception {
 
         try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_REQUEST_TOKENS, testName.getMethodName()), !StringUtils.isEmpty(REQUEST_TOKEN_KEY) && !StringUtils.isEmpty(REQUEST_TOKEN_SECRET));
             Assume.assumeTrue(String.format(TEST_SKIPPED_NO_USERNAME_PASSWORD, testName.getMethodName()), !StringUtils.isEmpty(USERNAME) && !StringUtils.isEmpty(PASSWORD));
         } catch (AssumptionViolatedException e) {
             LOG.warn(e.getMessage());

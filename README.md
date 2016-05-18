@@ -114,7 +114,7 @@ BynderApiService bynderApiService = new BynderApiService("https://example.getbyn
 Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
 ```
 
-## Running the tests
+## Running the integration tests
 To run the integration tests defined in the class <b>com.getbynder.sdk.BynderApiServiceIT</b> against the Bynder API, you should execute the following Maven command in the project's root:
 ```bash
 $ mvn verify

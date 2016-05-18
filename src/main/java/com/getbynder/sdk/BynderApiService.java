@@ -166,7 +166,7 @@ public class BynderApiService {
             for (MediaAsset imageAsset : imageAssetsOffset) {
                 // if imageAssets already has the same number of elements as the asked limit, break the for loop
                 if (imageAssets.size() < limit) {
-                    if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
+                    if (imageAsset.getPropertyOptions() != null && propertyOptionIds.containsAll(imageAsset.getPropertyOptions())) {
                         // decrement ignoreCount and if it is already less than zero add the imageAsset to the list
                         ignoreCount--;
                         if (ignoreCount < 0) {
@@ -205,7 +205,7 @@ public class BynderApiService {
             imageAssetsOffset = getImageAssets(null, DEFAULT_LIMIT, offset);
 
             for (MediaAsset imageAsset : imageAssetsOffset) {
-                if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
+                if (imageAsset.getPropertyOptions() != null && propertyOptionIds.containsAll(imageAsset.getPropertyOptions())) {
                     total++;
                 }
             }

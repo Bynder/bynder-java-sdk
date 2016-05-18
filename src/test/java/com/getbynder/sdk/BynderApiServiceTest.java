@@ -21,29 +21,30 @@ import com.getbynder.sdk.domain.MediaAsset;
  */
 public class BynderApiServiceTest {
 
-    private final String MEDIA_TYPE_IMAGE = "image";
+    private final String ID = "ID";
+    private final String NAME = "NAME";
     private final List<String> PROPERTY_OPTION_IDS = Arrays.asList("POID");
+
+    private final String MEDIA_TYPE_IMAGE = "image";
 
     private BynderApiService mockedBynderApiService;
 
     @Before
     public void setUp() throws Exception {
+
         mockedBynderApiService = mock(BynderApiService.class);
 
         List<MediaAsset> imageAssets = new ArrayList<>();
+        MediaAsset imageAsset = null;
 
-        MediaAsset imageAsset = new MediaAsset("ID1", "NAME1", null, null, null, null, MEDIA_TYPE_IMAGE, PROPERTY_OPTION_IDS, null, null);
-        imageAssets.add(imageAsset);
-        imageAsset = new MediaAsset("ID2", "NAME2", null, null, null, null, MEDIA_TYPE_IMAGE, PROPERTY_OPTION_IDS, null, null);
-        imageAssets.add(imageAsset);
-        imageAsset = new MediaAsset("ID3", "NAME3", null, null, null, null, MEDIA_TYPE_IMAGE, null, null, null);
-        imageAssets.add(imageAsset);
-        imageAsset = new MediaAsset("ID4", "NAME4", null, null, null, null, MEDIA_TYPE_IMAGE, PROPERTY_OPTION_IDS, null, null);
-        imageAssets.add(imageAsset);
-        imageAsset = new MediaAsset("ID5", "NAME5", null, null, null, null, MEDIA_TYPE_IMAGE, PROPERTY_OPTION_IDS, null, null);
-        imageAssets.add(imageAsset);
-        imageAsset = new MediaAsset("ID6", "NAME6", null, null, null, null, MEDIA_TYPE_IMAGE, null, null, null);
-        imageAssets.add(imageAsset);
+        for (int i=1; i<7; i++) {
+            if (i % 3 == 0) {
+                imageAsset = new MediaAsset(ID+Integer.toString(i), NAME+Integer.toString(i), null, null, null, null, MEDIA_TYPE_IMAGE, null, null, null);
+            } else {
+                imageAsset = new MediaAsset(ID+Integer.toString(i), NAME+Integer.toString(i), null, null, null, null, MEDIA_TYPE_IMAGE, PROPERTY_OPTION_IDS, null, null);
+            }
+            imageAssets.add(imageAsset);
+        }
 
         when(mockedBynderApiService.getImageAssets(Mockito.anyString(),Mockito.eq(50), Mockito.eq(1))).thenReturn(imageAssets);
         when(mockedBynderApiService.getImageAssets(Mockito.anyString(), Mockito.eq(50), Mockito.eq(2))).thenReturn(new ArrayList<MediaAsset>());
@@ -81,11 +82,27 @@ public class BynderApiServiceTest {
         imageAssets = mockedBynderApiService.getImageAssets(null, 6, 1, PROPERTY_OPTION_IDS);
         assertNotNull(imageAssets);
         assertEquals(4, imageAssets.size());
+
+        imageAssets = mockedBynderApiService.getImageAssets(null, 50, 1, null);
+        assertNotNull(imageAssets);
+        assertEquals(6, imageAssets.size());
+
+        imageAssets = mockedBynderApiService.getImageAssets(null, 50, 1, new ArrayList<String>());
+        assertNotNull(imageAssets);
+        assertEquals(6, imageAssets.size());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getImageAssetsTotalByMetapropertyIdsFailTest() throws Exception {
+        mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(null);
     }
 
     @Test
     public void getImageAssetsTotalByMetapropertyIdsTest() throws Exception {
-        int total = mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(PROPERTY_OPTION_IDS);
+        int total = mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(new ArrayList<String>());
+        assertEquals(0, total);
+
+        total = mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(PROPERTY_OPTION_IDS);
         assertEquals(4, total);
     }
 }

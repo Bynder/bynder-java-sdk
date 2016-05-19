@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpResponseException;
 
 import com.getbynder.sdk.api.BynderApi;
 import com.getbynder.sdk.domain.Category;
@@ -32,9 +30,9 @@ public class BynderApiService {
     private final String REQUEST_TOKEN_KEY = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
     private final String REQUEST_TOKEN_SECRET = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
 
-    public final String LOGIN_REQUEST_FAILED = "Could not login to the API. The request was unsuccessful.";
-    public final String REQUEST_TOKEN_FAILED = "Could not obtain request token. The request was unsuccessful.";
-    public final String ACCESS_TOKEN_FAILED = "Could not obtain access token. The request was unsuccessful.";
+    public final String LOGIN_REQUEST_FAILED = "Could not login to the API. Reason: %s %s";
+    public final String REQUEST_TOKEN_FAILED = "Could not obtain request token. Reason: %s %s";
+    public final String ACCESS_TOKEN_FAILED = "Could not obtain access token. Reason: %s %s";
 
     private final int DEFAULT_LIMIT = 50;
 
@@ -70,9 +68,7 @@ public class BynderApiService {
         bynderApi = Utils.createApiService(BynderApi.class, BASE_URL, REQUEST_TOKEN_KEY, REQUEST_TOKEN_SECRET);
         Response<UserAccessData> response = bynderApi.login(username, password).execute();
 
-        if(response.code() != HttpStatus.SC_OK) {
-            throw new HttpResponseException(response.code(), LOGIN_REQUEST_FAILED);
-        }
+        Utils.validateResponse(response, LOGIN_REQUEST_FAILED);
 
         return response.body();
     }
@@ -82,9 +78,7 @@ public class BynderApiService {
         BynderApi bynderApiForRequestToken = Utils.createApiService(BynderApi.class, BASE_URL, null, null);
         Response<String> response = bynderApiForRequestToken.getRequestToken().execute();
 
-        if(response.code() != HttpStatus.SC_OK) {
-            throw new HttpResponseException(response.code(), REQUEST_TOKEN_FAILED);
-        }
+        Utils.validateResponse(response, REQUEST_TOKEN_FAILED);
 
         return Utils.buildMapFromResponse(response.body());
     }
@@ -97,9 +91,7 @@ public class BynderApiService {
         BynderApi bynderApiForAccessToken = Utils.createApiService(BynderApi.class, BASE_URL, requestTokenKey, requestTokenSecret);
         Response<String> response = bynderApiForAccessToken.getRequestToken().execute();
 
-        if(response.code() != HttpStatus.SC_OK) {
-            throw new HttpResponseException(response.code(), ACCESS_TOKEN_FAILED);
-        }
+        Utils.validateResponse(response, ACCESS_TOKEN_FAILED);
 
         return Utils.buildMapFromResponse(response.body());
     }

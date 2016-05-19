@@ -61,7 +61,7 @@ public class BynderApiServiceIT {
     private final String VALID_DATETIME_GMT = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
     private final String VALID_DATETIME_WET = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("WET")));
 
-    private final int TIME_TO_SLEEP = 6000;
+    private final int TIME_TO_SLEEP = 5000;
 
     private final String TEST_SKIPPED_NO_REQUEST_TOKENS = "%s skipped: No request token key or/and request token secret defined";
     private final String TEST_SKIPPED_NO_USERNAME_PASSWORD = "%s skipped: No username or/and password defined";
@@ -534,11 +534,13 @@ public class BynderApiServiceIT {
         }
 
         int statusCode = 0;
+        String metapropertyId = null;
         String optionId = null;
 
         for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
             if (entry.getValue().getOptions().size() > 0) {
                 statusCode = bynderApiService.addMetapropertyToAsset(testImageAsset.getId(), entry.getValue().getId(), entry.getValue().getOptions().get(0).getId());
+                metapropertyId = entry.getValue().getId();
                 optionId = entry.getValue().getOptions().get(0).getId();
                 break;
             }
@@ -558,5 +560,14 @@ public class BynderApiServiceIT {
         testImageAsset = bynderApiService.getMediaAssetById(testImageAsset.getId(), null);
         assertNotNull(testImageAsset.getPropertyOptions());
         assertTrue(testImageAsset.getPropertyOptions().contains(optionId));
+
+        // remove the metaproperty from the asset
+        bynderApiService.addMetapropertyToAsset(testImageAsset.getId(), metapropertyId, "");
+
+        // give it some time for the metaproperty to be removed from the asset
+        Thread.sleep(TIME_TO_SLEEP);
+
+        testImageAsset = bynderApiService.getMediaAssetById(testImageAsset.getId(), null);
+        assertNull(testImageAsset.getPropertyOptions());
     }
 }

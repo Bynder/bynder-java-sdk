@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
@@ -29,6 +31,7 @@ import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import okhttp3.OkHttpClient;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -190,5 +193,11 @@ public final class Utils {
         Retrofit retrofitBynderApi = retrofitBuilder.client(client).build();
 
         return retrofitBynderApi.create(apiClass);
+    }
+
+    public static <T> void validateResponse(final Response<T> response, final String errorMessage) throws HttpResponseException {
+        if(response.code() != HttpStatus.SC_OK) {
+            throw new HttpResponseException(response.code(), String.format(errorMessage, Integer.toString(response.code()), response.message()));
+        }
     }
 }

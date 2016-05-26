@@ -1,5 +1,7 @@
 package com.getbynder.sdk.domain;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  *
  * @author daniel.sequeira
@@ -9,13 +11,14 @@ public class UserAccessData {
     private String userId;
     private String tokenKey;
     private String tokenSecret;
-    private boolean access;
+    @SerializedName(value = "access")
+    private boolean hasAccess;
 
-    public UserAccessData(final String userId, final String tokenKey, final String tokenSecret, final boolean access) {
+    public UserAccessData(final String userId, final String tokenKey, final String tokenSecret, final boolean hasAccess) {
         this.userId = userId;
         this.tokenKey = tokenKey;
         this.tokenSecret = tokenSecret;
-        this.access = access;
+        this.hasAccess = hasAccess;
     }
 
     public String getUserId() {
@@ -31,6 +34,6 @@ public class UserAccessData {
     }
 
     public boolean hasAccess() {
-        return access;
+        return hasAccess;
     }
 }

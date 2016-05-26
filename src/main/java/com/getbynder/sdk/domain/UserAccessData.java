@@ -9,13 +9,13 @@ public class UserAccessData {
     private String userId;
     private String tokenKey;
     private String tokenSecret;
-    private boolean hasAccess;
+    private boolean access;
 
-    public UserAccessData(final String userId, final String tokenKey, final String tokenSecret, final boolean hasAccess) {
+    public UserAccessData(final String userId, final String tokenKey, final String tokenSecret, final boolean access) {
         this.userId = userId;
         this.tokenKey = tokenKey;
         this.tokenSecret = tokenSecret;
-        this.hasAccess = hasAccess;
+        this.access = access;
     }
 
     public String getUserId() {
@@ -31,6 +31,6 @@ public class UserAccessData {
     }
 
     public boolean hasAccess() {
-        return hasAccess;
+        return access;
     }
 }

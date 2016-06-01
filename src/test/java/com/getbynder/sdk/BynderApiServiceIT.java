@@ -70,6 +70,7 @@ public class BynderApiServiceIT {
     private final String TEST_SKIPPED_NO_CATEGORIES = "%s skipped: No categories created for this environment";
     private final String TEST_SKIPPED_NO_TAGS = "%s skipped: No tags created for this environment";
     private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS = "%s skipped: No metaproperties options found for this environment";
+    private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS_WITH_MEDIA = "%s skipped: No metaproperties options with media found for this environment";
     private final String TEST_SKIPPED_NO_MEDIA_ASSETS = "%s skipped: No media assets uploaded for this environment";
     private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION = "%s skipped: No image asset with description found for this environment";
     private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITHOUT_METAPROPERTIES = "%s skipped: No image asset without metaproperties found for this environment";
@@ -320,23 +321,29 @@ public class BynderApiServiceIT {
         }
 
         String metapropertyId = null;
+        int mediaCount = 0;
 
         for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
             if (entry.getValue().getOptions().size() > 0) {
-                metapropertyId = entry.getValue().getOptions().get(0).getId();
-                break;
+                for (Metaproperty option : entry.getValue().getOptions()) {
+                    if (option.getMediaCount() > 0) {
+                        metapropertyId = option.getId();
+                        mediaCount = option.getMediaCount();
+                        break;
+                    }
+                }
             }
         }
 
         try {
-            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, testName.getMethodName()), metapropertyId != null);
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS_WITH_MEDIA, testName.getMethodName()), metapropertyId != null);
         } catch (AssumptionViolatedException e) {
             LOG.warn(e.getMessage());
             throw e;
         }
 
         int total = bynderApiService.getImageAssetsTotalByMetapropertyIds(Arrays.asList(metapropertyId));
-        assertTrue(total > 0);
+        assertEquals(mediaCount, total);
     }
 
     @Test

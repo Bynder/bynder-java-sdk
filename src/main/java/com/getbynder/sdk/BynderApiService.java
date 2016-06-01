@@ -2,9 +2,11 @@ package com.getbynder.sdk;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -30,9 +32,9 @@ public class BynderApiService {
     private final String REQUEST_TOKEN_KEY = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
     private final String REQUEST_TOKEN_SECRET = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
 
-    public final String LOGIN_REQUEST_FAILED = "Could not login to the API. Reason: %s %s";
-    public final String REQUEST_TOKEN_FAILED = "Could not obtain request token. Reason: %s %s";
-    public final String ACCESS_TOKEN_FAILED = "Could not obtain access token. Reason: %s %s";
+    private final String LOGIN_REQUEST_FAILED = "Could not login to the API. Reason: %s %s";
+    private final String REQUEST_TOKEN_FAILED = "Could not obtain request token. Reason: %s %s";
+    private final String ACCESS_TOKEN_FAILED = "Could not obtain access token. Reason: %s %s";
 
     private final int DEFAULT_LIMIT = 50;
 
@@ -65,8 +67,8 @@ public class BynderApiService {
         Utils.checkNotNull("REQUEST_TOKEN_KEY", REQUEST_TOKEN_KEY);
         Utils.checkNotNull("REQUEST_TOKEN_SECRET", REQUEST_TOKEN_SECRET);
 
-        bynderApi = Utils.createApiService(BynderApi.class, BASE_URL, REQUEST_TOKEN_KEY, REQUEST_TOKEN_SECRET);
-        Response<UserAccessData> response = bynderApi.login(username, password).execute();
+        BynderApi bynderApiForLogin = Utils.createApiService(BynderApi.class, BASE_URL, REQUEST_TOKEN_KEY, REQUEST_TOKEN_SECRET);
+        Response<UserAccessData> response = bynderApiForLogin.login(username, password).execute();
 
         Utils.validateResponse(response, LOGIN_REQUEST_FAILED);
 
@@ -111,7 +113,25 @@ public class BynderApiService {
     public Map<String, Metaproperty> getMetaproperties() throws IOException {
 
         Response<Map<String, Metaproperty>> response = bynderApi.getMetaproperties().execute();
-        return response.body();
+
+        Map<String, Metaproperty> metaproperties = response.body();
+        for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
+            if (entry.getValue().getOptions().size() > 0) {
+                updateOptionsMediaCount(entry.getValue().getOptions());
+            }
+        }
+
+        return metaproperties;
+    }
+
+    private void updateOptionsMediaCount(final List<Metaproperty> options) throws IOException {
+
+        for (Metaproperty option : options) {
+            option.setMediaCount(getImageAssetsTotalByMetapropertyIds(Arrays.asList(option.getId())));
+            if (option.getOptions() != null && option.getOptions().size() > 0) {
+                updateOptionsMediaCount(option.getOptions());
+            }
+        }
     }
 
     public List<MediaAsset> getMediaAssets(final String type, final String keyword, final Integer limit, final Integer page, final String propertyOptionId) throws IOException {
@@ -158,7 +178,7 @@ public class BynderApiService {
             for (MediaAsset imageAsset : imageAssetsOffset) {
                 // if imageAssets already has the same number of elements as the asked limit, break the for loop
                 if (imageAssets.size() < limit) {
-                    if (imageAsset.getPropertyOptions() != null && propertyOptionIds.containsAll(imageAsset.getPropertyOptions())) {
+                    if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
                         // decrement ignoreCount and if it is already less than zero add the imageAsset to the list
                         ignoreCount--;
                         if (ignoreCount < 0) {
@@ -197,7 +217,7 @@ public class BynderApiService {
             imageAssetsOffset = getImageAssets(null, DEFAULT_LIMIT, offset);
 
             for (MediaAsset imageAsset : imageAssetsOffset) {
-                if (imageAsset.getPropertyOptions() != null && propertyOptionIds.containsAll(imageAsset.getPropertyOptions())) {
+                if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
                     total++;
                 }
             }

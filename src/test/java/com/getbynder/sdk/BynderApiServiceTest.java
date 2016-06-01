@@ -26,6 +26,7 @@ public class BynderApiServiceTest {
     private final List<String> PROPERTY_OPTION_IDS = Arrays.asList("POID");
 
     private final String MEDIA_TYPE_IMAGE = "image";
+    private final String METAPROPERTY_ID = "METAPROPERTY_ID";
 
     private BynderApiService mockedBynderApiService;
 
@@ -99,7 +100,7 @@ public class BynderApiServiceTest {
 
     @Test
     public void getImageAssetsTotalByMetapropertyIdsTest() throws Exception {
-        int total = mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(new ArrayList<String>());
+        int total = mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(Arrays.asList(METAPROPERTY_ID));
         assertEquals(0, total);
 
         total = mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(PROPERTY_OPTION_IDS);

@@ -1,3 +1,9 @@
+# Secret stuff
+**/secret.properties
+
+# Compilation files
+.*
+target/
 *.class
 
 # Mobile Tools for Java (J2ME)

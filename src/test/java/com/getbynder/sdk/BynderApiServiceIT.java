@@ -342,7 +342,7 @@ public class BynderApiServiceIT {
             throw e;
         }
 
-        int total = bynderApiService.getImageAssetsTotalByMetapropertyIds(Arrays.asList(metapropertyId));
+        int total = bynderApiService.getImageAssetsTotal(null, Arrays.asList(metapropertyId));
         assertEquals(mediaCount, total);
     }
 

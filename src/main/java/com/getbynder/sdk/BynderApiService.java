@@ -127,7 +127,7 @@ public class BynderApiService {
     private void updateOptionsMediaCount(final List<Metaproperty> options) throws IOException {
 
         for (Metaproperty option : options) {
-            option.setMediaCount(getImageAssetsTotalByMetapropertyIds(Arrays.asList(option.getId())));
+            option.setMediaCount(getImageAssetsTotal(null, Arrays.asList(option.getId())));
             if (option.getOptions() != null && option.getOptions().size() > 0) {
                 updateOptionsMediaCount(option.getOptions());
             }
@@ -203,7 +203,14 @@ public class BynderApiService {
         return response.body();
     }
 
-    public int getImageAssetsTotalByMetapropertyIds(final List<String> propertyOptionIds) throws IOException {
+    public int getImageAssetsTotal() throws IOException {
+
+        Response<MediaCount> response = bynderApi.getImageAssetsCount().execute();
+        MediaCount mediaCount = response.body();
+        return mediaCount.getCount().getTotal();
+    }
+
+    public int getImageAssetsTotal(final String keyword, final List<String> propertyOptionIds) throws IOException {
 
         Utils.checkNotNull("propertyOptionIds", propertyOptionIds);
 
@@ -214,7 +221,7 @@ public class BynderApiService {
         // the condition 'offset == 1' is included in the while loop just for its first iteration
         while (offset == 1 || imageAssetsOffset.size() == DEFAULT_LIMIT) {
 
-            imageAssetsOffset = getImageAssets(null, DEFAULT_LIMIT, offset);
+            imageAssetsOffset = getImageAssets(keyword, DEFAULT_LIMIT, offset);
 
             for (MediaAsset imageAsset : imageAssetsOffset) {
                 if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
@@ -225,13 +232,6 @@ public class BynderApiService {
         }
 
         return total;
-    }
-
-    public int getImageAssetsTotal() throws IOException {
-
-        Response<MediaCount> response = bynderApi.getImageAssetsCount().execute();
-        MediaCount mediaCount = response.body();
-        return mediaCount.getCount().getTotal();
     }
 
     public int setMediaAssetProperties(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished) throws IOException {

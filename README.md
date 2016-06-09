@@ -29,9 +29,9 @@ public List<MediaAsset> getImageAssets(final String keyword, final Integer limit
 
 public List<MediaAsset> getImageAssetsByMetapropertyId(final String propertyOptionId);
 
-public int getImageAssetsTotalByMetapropertyIds(final List<String> propertyOptionIds);
-
 public int getImageAssetsTotal();
+
+public int getImageAssetsTotal(final String keyword, final List<String> propertyOptionIds);
 
 public int setMediaAssetProperties(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished);
 

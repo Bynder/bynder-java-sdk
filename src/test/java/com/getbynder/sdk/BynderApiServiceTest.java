@@ -50,7 +50,7 @@ public class BynderApiServiceTest {
         when(mockedBynderApiService.getImageAssets(Mockito.anyString(),Mockito.eq(50), Mockito.eq(1))).thenReturn(imageAssets);
         when(mockedBynderApiService.getImageAssets(Mockito.anyString(), Mockito.eq(50), Mockito.eq(2))).thenReturn(new ArrayList<MediaAsset>());
         when(mockedBynderApiService.getImageAssets(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyListOf(String.class))).thenCallRealMethod();
-        when(mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(Mockito.anyListOf(String.class))).thenCallRealMethod();
+        when(mockedBynderApiService.getImageAssetsTotal(Mockito.anyString(), Mockito.anyListOf(String.class))).thenCallRealMethod();
     }
 
     @Test
@@ -95,15 +95,15 @@ public class BynderApiServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void getImageAssetsTotalByMetapropertyIdsFailTest() throws Exception {
-        mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(null);
+        mockedBynderApiService.getImageAssetsTotal(null, null);
     }
 
     @Test
     public void getImageAssetsTotalByMetapropertyIdsTest() throws Exception {
-        int total = mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(Arrays.asList(METAPROPERTY_ID));
+        int total = mockedBynderApiService.getImageAssetsTotal(null, Arrays.asList(METAPROPERTY_ID));
         assertEquals(0, total);
 
-        total = mockedBynderApiService.getImageAssetsTotalByMetapropertyIds(PROPERTY_OPTION_IDS);
+        total = mockedBynderApiService.getImageAssetsTotal(null, PROPERTY_OPTION_IDS);
         assertEquals(4, total);
     }
 }

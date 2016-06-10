@@ -93,11 +93,6 @@ public class BynderApiServiceTest {
         assertEquals(6, imageAssets.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getImageAssetsTotalByMetapropertyIdsFailTest() throws Exception {
-        mockedBynderApiService.getImageAssetsTotal(null, null);
-    }
-
     @Test
     public void getImageAssetsTotalByMetapropertyIdsTest() throws Exception {
         int total = mockedBynderApiService.getImageAssetsTotal(null, Arrays.asList(METAPROPERTY_ID));

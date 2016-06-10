@@ -212,8 +212,6 @@ public class BynderApiService {
 
     public int getImageAssetsTotal(final String keyword, final List<String> propertyOptionIds) throws IOException {
 
-        Utils.checkNotNull("propertyOptionIds", propertyOptionIds);
-
         int total = 0;
         List<MediaAsset> imageAssetsOffset = new ArrayList<>();
         int offset = 1;
@@ -223,10 +221,14 @@ public class BynderApiService {
 
             imageAssetsOffset = getImageAssets(keyword, DEFAULT_LIMIT, offset);
 
-            for (MediaAsset imageAsset : imageAssetsOffset) {
-                if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
-                    total++;
+            if (propertyOptionIds != null) {
+                for (MediaAsset imageAsset : imageAssetsOffset) {
+                    if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
+                        total++;
+                    }
                 }
+            } else {
+                total += imageAssetsOffset.size();
             }
             offset++;
         }

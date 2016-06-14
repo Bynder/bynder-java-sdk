@@ -51,31 +51,31 @@ public class BynderApiServiceIT {
     private final String REQUEST_TOKEN_KEY = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
     private final String REQUEST_TOKEN_SECRET = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
 
-    private final String MEDIA_TYPE_IMAGE = "image";
-    private final String MEDIA_ASSET_KEYWORD_NOT_FOUND = "MEDIA_ASSET_KEYWORD_NOT_FOUND";
     private final String ID_NOT_FOUND = "ID_NOT_FOUND";
     private final String MEDIA_ASSET_DESCRIPTION = "Description changed by Integration Test of Bynder Java SDK";
+    private final String MEDIA_ASSET_KEYWORD_NOT_FOUND = "MEDIA_ASSET_KEYWORD_NOT_FOUND";
+    private final String MEDIA_TYPE_IMAGE = "image";
 
     private final String INVALID_DATETIME = new Date().toString();
-    private final String VALID_DATETIME_UTC = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
     private final String VALID_DATETIME_GMT = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
+    private final String VALID_DATETIME_UTC = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
     private final String VALID_DATETIME_WET = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("WET")));
 
     private final int TIME_TO_SLEEP = 5000;
 
-    private final String TEST_SKIPPED_NO_REQUEST_TOKENS = "%s skipped: No request token key or/and request token secret defined";
-    private final String TEST_SKIPPED_NO_USERNAME_PASSWORD = "%s skipped: No username or/and password defined";
-    private final String TEST_SKIPPED_NO_IMAGE_ASSETS = "%s skipped: No image assets uploaded for this environment";
-    private final String TEST_SKIPPED_NO_METAPROPERTIES = "%s skipped: No metaproperties created for this environment";
+    private final String TEST_SKIPPED_NO_ADD_METAPROPERTY_PERMISSION = "%s skipped: No permission to add metaproperty to media asset in this environment";
     private final String TEST_SKIPPED_NO_CATEGORIES = "%s skipped: No categories created for this environment";
-    private final String TEST_SKIPPED_NO_TAGS = "%s skipped: No tags created for this environment";
-    private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS = "%s skipped: No metaproperties options found for this environment";
-    private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS_WITH_MEDIA = "%s skipped: No metaproperties options with media found for this environment";
-    private final String TEST_SKIPPED_NO_MEDIA_ASSETS = "%s skipped: No media assets uploaded for this environment";
+    private final String TEST_SKIPPED_NO_IMAGE_ASSETS = "%s skipped: No image assets uploaded for this environment";
     private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION = "%s skipped: No image asset with description found for this environment";
     private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITHOUT_METAPROPERTIES = "%s skipped: No image asset without metaproperties found for this environment";
-    private final String TEST_SKIPPED_NO_ADD_METAPROPERTY_PERMISSION = "%s skipped: No permission to add metaproperty to media asset in this environment";
     private final String TEST_SKIPPED_NO_KEYWORD_DEFINED = "%s skipped: No keyword defined";
+    private final String TEST_SKIPPED_NO_MEDIA_ASSETS = "%s skipped: No media assets uploaded for this environment";
+    private final String TEST_SKIPPED_NO_METAPROPERTIES = "%s skipped: No metaproperties created for this environment";
+    private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS = "%s skipped: No metaproperties options found for this environment";
+    private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS_WITH_MEDIA = "%s skipped: No metaproperties options with media found for this environment";
+    private final String TEST_SKIPPED_NO_REQUEST_TOKENS = "%s skipped: No request token key or/and request token secret defined";
+    private final String TEST_SKIPPED_NO_TAGS = "%s skipped: No tags created for this environment";
+    private final String TEST_SKIPPED_NO_USERNAME_PASSWORD = "%s skipped: No username or/and password defined";
 
     // regex to avoid media assets names and descriptions with special characters
     private final Pattern pattern = Pattern.compile("[a-z0-9 ]", Pattern.CASE_INSENSITIVE);
@@ -92,7 +92,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void loginFailTest() throws Exception {
-
         try {
             Assume.assumeTrue(String.format(TEST_SKIPPED_NO_REQUEST_TOKENS, testName.getMethodName()), !StringUtils.isEmpty(REQUEST_TOKEN_KEY) && !StringUtils.isEmpty(REQUEST_TOKEN_SECRET));
         } catch (AssumptionViolatedException e) {
@@ -109,7 +108,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void loginTest() throws Exception {
-
         try {
             Assume.assumeTrue(String.format(TEST_SKIPPED_NO_REQUEST_TOKENS, testName.getMethodName()), !StringUtils.isEmpty(REQUEST_TOKEN_KEY) && !StringUtils.isEmpty(REQUEST_TOKEN_SECRET));
             Assume.assumeTrue(String.format(TEST_SKIPPED_NO_USERNAME_PASSWORD, testName.getMethodName()), !StringUtils.isEmpty(USERNAME) && !StringUtils.isEmpty(PASSWORD));
@@ -126,7 +124,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getRequestTokenTest() throws Exception {
-
         try {
             Map<String, String> requestToken = bynderApiService.getRequestToken();
             assertNotNull(requestToken);
@@ -140,7 +137,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getMetapropertiesTest() throws Exception {
-
         Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
         assertNotNull(metaproperties);
 
@@ -159,7 +155,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getCategoriesTest() throws Exception {
-
         List<Category> categories = bynderApiService.getCategories();
         assertNotNull(categories);
 
@@ -175,7 +170,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getTagsTest() throws Exception {
-
         List<Tag> tags = bynderApiService.getTags();
         assertNotNull(tags);
 
@@ -191,7 +185,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getMediaAssetsTest() throws Exception {
-
         List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
         assertNotNull(mediaAssets);
 
@@ -207,14 +200,12 @@ public class BynderApiServiceIT {
 
     @Test
     public void getMediaAssetByIdFailTest() throws Exception {
-
         MediaAsset mediaAsset = bynderApiService.getMediaAssetById(ID_NOT_FOUND, null);
         assertNull(mediaAsset);
     }
 
     @Test
     public void getMediaAssetByIdTest() throws Exception {
-
         List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
         assertNotNull(mediaAssets);
 
@@ -239,7 +230,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getImageAssetsTest() throws Exception {
-
         List<MediaAsset> imageAssets = bynderApiService.getImageAssets(null, 1, 1);
         assertNotNull(imageAssets);
 
@@ -256,7 +246,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getImageAssetsPaginationTest() throws Exception {
-
         List<MediaAsset> imageAssetsPage1 = bynderApiService.getImageAssets(null, 1, 1);
         assertNotNull(imageAssetsPage1);
         List<MediaAsset> imageAssetsPage2 = bynderApiService.getImageAssets(null, 1, 2);
@@ -274,7 +263,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getImageAssetsByMetapropertyIdTest() throws Exception {
-
         Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
         assertNotNull(metaproperties);
 
@@ -309,7 +297,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getImageAssetsTotalByMetapropertyIdsTest() throws IOException {
-
         Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
         assertNotNull(metaproperties);
 
@@ -348,7 +335,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getImageAssetsTotalTest() throws Exception {
-
         List<MediaAsset> imageAssets = bynderApiService.getImageAssets(null, 1, 1);
         assertNotNull(imageAssets);
 
@@ -365,7 +351,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void getImageAssetsByKeywordTest() throws Exception {
-
         List<MediaAsset> imageAssets = bynderApiService.getImageAssets(null, 50, 1);
         assertNotNull(imageAssets);
 
@@ -405,14 +390,12 @@ public class BynderApiServiceIT {
 
     @Test
     public void setMediaAssetIdNotFoundTest() throws Exception {
-
         int statusCode = bynderApiService.setMediaAssetProperties(ID_NOT_FOUND, null, null, null, null, null);
         assertEquals(HttpStatus.SC_NOT_FOUND, statusCode);
     }
 
     @Test
     public void setImageAssetDescriptionTest() throws Exception {
-
         List<MediaAsset> imageAssets = bynderApiService.getImageAssets(null, 100, 1);
         assertNotNull(imageAssets);
 
@@ -462,7 +445,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void setMediaAssetInvalidDateTest() throws Exception {
-
         List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
         assertNotNull(mediaAssets);
 
@@ -478,7 +460,6 @@ public class BynderApiServiceIT {
     }
     @Test
     public void setMediaAssetPublicationDateTest() throws Exception {
-
         List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);
         assertNotNull(mediaAssets);
 
@@ -503,7 +484,6 @@ public class BynderApiServiceIT {
 
     @Test
     public void addMetapropertyToMediaAssetTest() throws Exception {
-
         List<MediaAsset> imageAssets = bynderApiService.getImageAssets(null, 100, 1);
         assertNotNull(imageAssets);
 

@@ -12,7 +12,9 @@ public class StringConverterFactory extends Converter.Factory {
 
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(final Type type, final Annotation[] annotations, final Retrofit retrofit) {
-        if (String.class.equals(type)) {
+        if (!String.class.equals(type)) {
+            return null;
+        } else {
             return new Converter<ResponseBody, String>() {
                 @Override
                 public String convert(final ResponseBody value) throws IOException {
@@ -20,6 +22,5 @@ public class StringConverterFactory extends Converter.Factory {
                 }
             };
         }
-        return null;
     }
 }

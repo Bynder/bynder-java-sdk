@@ -32,16 +32,15 @@ public class BynderApiService {
     private final String REQUEST_TOKEN_KEY = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
     private final String REQUEST_TOKEN_SECRET = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
 
+    private final String ACCESS_TOKEN_FAILED = "Could not obtain access token. Reason: %s %s";
     private final String LOGIN_REQUEST_FAILED = "Could not login to the API. Reason: %s %s";
     private final String REQUEST_TOKEN_FAILED = "Could not obtain request token. Reason: %s %s";
-    private final String ACCESS_TOKEN_FAILED = "Could not obtain access token. Reason: %s %s";
 
     private final int DEFAULT_LIMIT = 50;
 
     private BynderApi bynderApi;
 
     public BynderApiService() {
-
         Utils.checkNotNull("ACCESS_TOKEN_KEY", SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY"));
         Utils.checkNotNull("ACCESS_TOKEN_SECRET", SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
 
@@ -49,19 +48,16 @@ public class BynderApiService {
     }
 
     public BynderApiService(final String username, final String password) throws IOException {
-
         UserAccessData userAccessData = login(username, password);
         bynderApi = Utils.createApiService(BynderApi.class, BASE_URL, userAccessData.getTokenKey(), userAccessData.getTokenSecret());
     }
 
     public BynderApiService(final String baseUrl, final String username, final String password) throws IOException {
-
         UserAccessData userAccessData = login(username, password);
         bynderApi = Utils.createApiService(BynderApi.class, baseUrl, userAccessData.getTokenKey(), userAccessData.getTokenSecret());
     }
 
     public UserAccessData login(final String username, final String password) throws IOException {
-
         Utils.checkNotNull("username", username);
         Utils.checkNotNull("password", password);
         Utils.checkNotNull("REQUEST_TOKEN_KEY", REQUEST_TOKEN_KEY);
@@ -76,7 +72,6 @@ public class BynderApiService {
     }
 
     public Map<String, String> getRequestToken() throws IOException {
-
         BynderApi bynderApiForRequestToken = Utils.createApiService(BynderApi.class, BASE_URL, null, null);
         Response<String> response = bynderApiForRequestToken.getRequestToken().execute();
 
@@ -86,7 +81,6 @@ public class BynderApiService {
     }
 
     public Map<String, String> getAccessToken(final String requestTokenKey, final String requestTokenSecret) throws IOException {
-
         Utils.checkNotNull("requestTokenKey", requestTokenKey);
         Utils.checkNotNull("requestTokenSecret", requestTokenSecret);
 
@@ -99,19 +93,16 @@ public class BynderApiService {
     }
 
     public List<Category> getCategories() throws IOException {
-
         Response<List<Category>> response = bynderApi.getCategories().execute();
         return response.body();
     }
 
     public List<Tag> getTags() throws IOException {
-
         Response<List<Tag>> response = bynderApi.getTags().execute();
         return response.body();
     }
 
     public Map<String, Metaproperty> getMetaproperties() throws IOException {
-
         Response<Map<String, Metaproperty>> response = bynderApi.getMetaproperties().execute();
 
         Map<String, Metaproperty> metaproperties = response.body();
@@ -125,7 +116,6 @@ public class BynderApiService {
     }
 
     private void updateOptionsMediaCount(final List<Metaproperty> options) throws IOException {
-
         for (Metaproperty option : options) {
             option.setMediaCount(getImageAssetsTotal(null, Arrays.asList(option.getId())));
             if (option.getOptions() != null && option.getOptions().size() > 0) {
@@ -135,13 +125,11 @@ public class BynderApiService {
     }
 
     public List<MediaAsset> getMediaAssets(final String type, final String keyword, final Integer limit, final Integer page, final String propertyOptionId) throws IOException {
-
         Response<List<MediaAsset>> response = bynderApi.getMediaAssets(type, keyword, limit, page, propertyOptionId).execute();
         return response.body();
     }
 
     public MediaAsset getMediaAssetById(final String id, final Boolean versions) throws IOException {
-
         Utils.checkNotNull("id", id);
 
         Response<MediaAsset> response = bynderApi.getMediaAssetById(id, versions).execute();
@@ -149,14 +137,12 @@ public class BynderApiService {
     }
 
     public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page) throws IOException {
-
         Response<List<MediaAsset>> response = bynderApi.getImageAssets(keyword, limit, page, null).execute();
         return response.body();
     }
 
     // get the N-th set of limit-results of images assets that contain all the metaproperties ids inside the propertyOptionIds list
     public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds) throws IOException {
-
         // if propertyOptions is null or empty call getImageAssets
         if (propertyOptionIds == null || propertyOptionIds.size() == 0) {
             return getImageAssets(keyword, limit, page);
@@ -177,16 +163,16 @@ public class BynderApiService {
 
             for (MediaAsset imageAsset : imageAssetsOffset) {
                 // if imageAssets already has the same number of elements as the asked limit, break the for loop
-                if (imageAssets.size() < limit) {
-                    if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
-                        // decrement ignoreCount and if it is already less than zero add the imageAsset to the list
-                        ignoreCount--;
-                        if (ignoreCount < 0) {
-                            imageAssets.add(imageAsset);
-                        }
-                    }
-                } else {
+                if (imageAssets.size() >= limit) {
                     break;
+                }
+
+                if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
+                    // decrement ignoreCount and if it is already less than zero add the imageAsset to the list
+                    ignoreCount--;
+                    if (ignoreCount < 0) {
+                        imageAssets.add(imageAsset);
+                    }
                 }
             }
             offset++;
@@ -196,7 +182,6 @@ public class BynderApiService {
     }
 
     public List<MediaAsset> getImageAssetsByMetapropertyId(final String propertyOptionId) throws IOException {
-
         Utils.checkNotNull("propertyOptionId", propertyOptionId);
 
         Response<List<MediaAsset>> response = bynderApi.getImageAssetsByMetapropertyId(propertyOptionId).execute();
@@ -204,14 +189,12 @@ public class BynderApiService {
     }
 
     public int getImageAssetsTotal() throws IOException {
-
         Response<MediaCount> response = bynderApi.getImageAssetsCount().execute();
         MediaCount mediaCount = response.body();
         return mediaCount.getCount().getTotal();
     }
 
     public int getImageAssetsTotal(final String keyword, final List<String> propertyOptionIds) throws IOException {
-
         int total = 0;
         List<MediaAsset> imageAssetsOffset = new ArrayList<>();
         int offset = 1;
@@ -237,7 +220,6 @@ public class BynderApiService {
     }
 
     public int setMediaAssetProperties(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished) throws IOException {
-
         Utils.checkNotNull("id", id);
 
         Response<Void> response = bynderApi.setMediaAssetProperties(id, name, description, copyright, archive, datePublished).execute();

@@ -44,6 +44,8 @@ import se.akerfeldt.okhttp.signpost.SigningInterceptor;
  */
 public final class Utils {
 
+    public static final String errorMessage = "%s shall not be null.";
+
     // separators
     public static final String STR_AND = "&";
     public static final String STR_COMMA = ",";
@@ -55,7 +57,6 @@ public final class Utils {
     }
 
     public static String getOAuthHeaderFromUrl(final URL url) {
-
         String query = url.getQuery();
 
         List<BasicNameValuePair> queryPairs = new ArrayList<>();
@@ -81,7 +82,6 @@ public final class Utils {
     }
 
     public static String createOAuthHeader(final String consumerKey, final String consumerSecret, final UserAccessData userAccessData, final String url) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException, MalformedURLException {
-
         checkNotNull("CONSUMER_KEY", consumerKey);
         checkNotNull("CONSUMER_SECRET", consumerSecret);
 
@@ -96,7 +96,6 @@ public final class Utils {
     }
 
     public static boolean isDateFormatValid(final String date) {
-
         // The valid datetime format is ISO8601
         try {
             DatatypeConverter.parseDateTime(date);
@@ -108,7 +107,6 @@ public final class Utils {
     }
 
     public static HttpPost createPostRequest(final String consumerKey, final String consumerSecret, final UserAccessData userAccessData, final URI requestUri, final List<BasicNameValuePair> params) throws MalformedURLException, URISyntaxException, UnsupportedEncodingException, OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
-
         checkNotNull("CONSUMER_KEY", consumerKey);
         checkNotNull("CONSUMER_SECRET", consumerSecret);
 
@@ -140,7 +138,6 @@ public final class Utils {
     }
 
     public static Map<String, String> buildMapFromResponse(final String response) {
-
         Map<String, String> map = new HashMap<>();
         String[] keyValuePairs = response.split(STR_AND);
 
@@ -153,9 +150,6 @@ public final class Utils {
     }
 
     public static void checkNotNull(final String name, final Object value) {
-
-        String errorMessage = "%s shall not be null.";
-
         if (value == null) {
             throw new IllegalArgumentException(String.format(errorMessage, name));
         } else if (value.getClass().equals(String.class)) {
@@ -166,7 +160,6 @@ public final class Utils {
     }
 
     public static <T> T createApiService(final Class<T> apiClass, final String baseUrl, final String tokenKey, final String tokenSecret) {
-
         String consumerKey = SecretProperties.getInstance().getProperty("CONSUMER_KEY");
         String consumerSecret = SecretProperties.getInstance().getProperty("CONSUMER_SECRET");
 

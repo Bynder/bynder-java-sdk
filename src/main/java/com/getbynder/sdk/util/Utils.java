@@ -44,7 +44,7 @@ import se.akerfeldt.okhttp.signpost.SigningInterceptor;
  */
 public final class Utils {
 
-    public static final String errorMessage = "%s shall not be null.";
+    private static final String errorMessage = "%s shall not be null.";
 
     // separators
     public static final String STR_AND = "&";

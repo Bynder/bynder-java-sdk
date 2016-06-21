@@ -67,6 +67,7 @@ public class BynderApiServiceIT {
     private final String TEST_SKIPPED_NO_CATEGORIES = "%s skipped: No categories created for this environment";
     private final String TEST_SKIPPED_NO_IMAGE_ASSETS = "%s skipped: No image assets uploaded for this environment";
     private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_DESCRIPTION = "%s skipped: No image asset with description found for this environment";
+    private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_METAPROPERTIES = "%s skipped: No image asset with metaproperties found for this environment";
     private final String TEST_SKIPPED_NO_IMAGE_ASSETS_WITHOUT_METAPROPERTIES = "%s skipped: No image asset without metaproperties found for this environment";
     private final String TEST_SKIPPED_NO_KEYWORD_DEFINED = "%s skipped: No keyword defined";
     private final String TEST_SKIPPED_NO_MEDIA_ASSETS = "%s skipped: No media assets uploaded for this environment";
@@ -263,11 +264,11 @@ public class BynderApiServiceIT {
 
     @Test
     public void getImageAssetsByMetapropertyIdTest() throws Exception {
-        Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
-        assertNotNull(metaproperties);
+        List<MediaAsset> imageAssets = bynderApiService.getImageAssets(null, 100, 1);
+        assertNotNull(imageAssets);
 
         try {
-            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES, testName.getMethodName()), metaproperties.entrySet().size() > 0);
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS, testName.getMethodName()), imageAssets.size() > 0);
         } catch (AssumptionViolatedException e) {
             LOG.warn(e.getMessage());
             throw e;
@@ -275,21 +276,21 @@ public class BynderApiServiceIT {
 
         String metapropertyId = null;
 
-        for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
-            if (entry.getValue().getOptions().size() > 0) {
-                metapropertyId = entry.getValue().getOptions().get(0).getId();
+        for (MediaAsset imageAsset : imageAssets) {
+            if (imageAsset.getPropertyOptions() != null && !imageAsset.getPropertyOptions().isEmpty()) {
+                metapropertyId = imageAsset.getPropertyOptions().get(0);
                 break;
             }
         }
 
         try {
-            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, testName.getMethodName()), metapropertyId != null);
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS_WITH_METAPROPERTIES, testName.getMethodName()), metapropertyId != null);
         } catch (AssumptionViolatedException e) {
             LOG.warn(e.getMessage());
             throw e;
         }
 
-        List<MediaAsset> imageAssets = bynderApiService.getImageAssetsByMetapropertyId(metapropertyId);
+        imageAssets = bynderApiService.getImageAssetsByMetapropertyId(metapropertyId);
         assertNotNull(imageAssets);
         assertTrue(imageAssets.size() > 0);
         assertTrue(imageAssets.get(0).getPropertyOptions().contains(metapropertyId));

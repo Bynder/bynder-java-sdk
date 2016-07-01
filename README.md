@@ -52,7 +52,49 @@ Clone the repository:
 $ git clone git@github.com:Bynder/bynder-java-sdk.git
 ```
 
-Create a new properties file called "secret.properties" like the one shown below. Where your bynder api base url shall have this structure: <i>https://&#91;accountdomain&#93;/api/</i>
+Build the project from its root with the following Maven command:
+```bash
+$ mvn clean install
+```
+
+This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.
+
+## How does it work
+Before executing any request to the Bynder API, it is necessary to instantiate the class <b>BynderApiService</b>.
+
+The following example shows how to use the <b>BynderApiServiceBuilder</b> to construct a <b>BynderApiService</b> instance:
+```java
+BynderApiService bynderApiService = new BynderApiServiceBuilder()
+    .setBaseUrl("https://example.getbynder.com/api/")
+    .setConsumerKey("your consumer key")
+    .setConsumerSecret("your consumer secret")
+    .setAccessTokenKey("your access token key")
+    .setAccessTokenSecret("your access token secret")
+    .create();
+```
+
+It is also possible to construct a <b>BynderApiService</b> instance with login, in case you don't have access token for your environment:
+```java
+BynderApiService bynderApiService = new BynderApiServiceBuilder()
+    .setBaseUrl("https://example.getbynder.com/api/")
+    .setConsumerKey("your consumer key")
+    .setConsumerSecret("your consumer secret")
+    .setRequestTokenKey("your request token key")
+    .setRequestTokenSecret("your request token secret")
+    .createWithLogin("your username", "your password");
+```
+
+<b>Important:</b> The order of invocation of the setter methods does not matter, but they are all mandatory.
+
+After instantiating the <b>BynderApiService</b> class successfully it is possible to call any of the methods listed in the section <b>Current Status</b>. Example:
+
+```java
+Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
+```
+
+## Running the integration tests
+
+In order to be able to run the integration tests against the Bynder API you need to create a new properties file called "secret.properties" like the one shown below. Where your Bynder API base url shall have this structure: <i>https://&#91;accountdomain&#93;/api/</i>
 ```bash
 $ vi bynder-java-sdk/src/main/resources/secret.properties
 
@@ -73,53 +115,13 @@ CONSUMER_SECRET=<your consumer secret>
 ACCESS_TOKEN_KEY=<your access token key>
 ACCESS_TOKEN_SECRET=<your access token secret>
 ```
-<b>Important:</b> You just need to fill the <b>USERNAME</b>, <b>PASSWORD</b>, <b>REQUEST_TOKEN_KEY</b> and <b>REQUEST_TOKEN_SECRET</b> properties if you need to login to the Bynder API in order get the access tokens. If you already possess the access tokens, just insert them in the <b>ACCESS_TOKEN_KEY</b> and <b>ACCESS_TOKEN_SECRET</b> properties. Don't forget to add this file to your <b>.gitignore</b>.
+<b>Important:</b> Don't forget to add this file to your .gitignore.
 
-Build the project from its root with the following Maven command:
-```bash
-$ mvn clean install -DskipTests
-```
-This command tells Maven to build all the modules and to install it in the local repository, skipping the tests.
-
-## How does it work
-Before executing any request to the Bynder API, it is necessary to instantiate the class <b>BynderApiService</b>.
-
-For this purpose there are three different constructors you can use:
-```java
-public BynderApiService();
-
-public BynderApiService(final String username, final String password);
-
-public BynderApiService(final String baseUrl, final String username, final String password);
-```
-The first constructor, the one without parameters, it is supposed to be used when you don't need to login to the Bynder API because you already have the access tokens (explained previously). Meaning that in this case the properties <b>ACCESS_TOKEN_KEY</b> and <b>ACCESS_TOKEN_SECRET</b> of your "secret.properties" file were already filled in with those same access tokens.
-
-The second constructor takes two String parameters: <b>username</b> and <b>password</b>. Gets the <b>BASE_URL</b> property from the "secret.properties" file, calls the <b>login</b> method that receives the <b>username</b> and <b>password</b> as arguments and logins to the Bynder API to get the access tokens that are necessary to make the requests.
-
-The third and last constructor takes three String parameters: <b>baseUrl</b>, <b>username</b> and <b>password</b>. Uses the <b>baseUrl</b> received as parameter instead of getting it from the "secret.properties" file and calls the <b>login</b> method that receives the <b>username</b> and <b>password</b> as arguments and logins to the Bynder API to get the access tokens that are necessary to make the requests.
-
-As shown above the access tokens that are retrieved by the Bynder API after a successful login are stored in the instance variable <b>userAccessData</b>.
-
-Code example to instantiate the <b>BynderApiService</b> class using this constructor:
-```java
-BynderApiService bynderApiService = new BynderApiService("https://example.getbynder.com/api/", "test", "12345");
-```
-In the example above the <b>BynderApiService</b> class is instantiated with the <b>baseUrl</b> "ht&#8203;tp://example.getbynder.com/api/", <b>username</b> "test" and <b>password</b> "12345".
-
-After instantiating the <b>BynderApiService</b> class successfully it is possible to call any of the methods listed in the section <b>Current Status</b>. Example:
-
-```java
-BynderApiService bynderApiService = new BynderApiService("https://example.getbynder.com/api/", "test", "12345");
-
-Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
-```
-
-## Running the integration tests
-To run the integration tests defined in the class <b>com.getbynder.sdk.BynderApiServiceIT</b> against the Bynder API, you should execute the following Maven command in the project's root:
+To run the integration tests you can execute the following Maven command in the project's root:
 ```bash
 $ mvn verify
 ```
-<b>Note:</b> Before the integration tests are executed, an instance of the <b>BynderApiService</b> class will be created using the access tokens defined in the "secret.properties" file.
+<b>Note:</b> Before the integration tests are executed, an instance of the <b>BynderApiService</b> class will be created using the base url, credentials and tokens defined in the "secret.properties" file.
 
 After running this command, if everything is working fine, you should get a similar output as the one shown below, telling you all the tests ran successfully.
 
@@ -128,11 +130,13 @@ After running this command, if everything is working fine, you should get a simi
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
-Running com.getbynder.sdk.BynderServiceIT
-Tests run: 20, Failures: 0, Errors: 0, Skipped: 0, ... - in com.getbynder.sdk.BynderServiceIT
+Running com.getbynder.sdk.BynderApiServiceBuilderIT
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.589 sec - in com.getbynder.sdk.BynderApiServiceBuilderIT
+Running com.getbynder.sdk.BynderApiServiceIT
+Tests run: 20, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 36.498 sec - in com.getbynder.sdk.BynderApiServiceIT
 
 Results :
 
-Tests run: 20, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 23, Failures: 0, Errors: 0, Skipped: 0
 
 ```

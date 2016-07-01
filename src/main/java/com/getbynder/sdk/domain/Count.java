@@ -16,7 +16,8 @@ public class Count {
     private Map<String, String> orientation;
     private Integer total;
 
-    public Count(final Map<String, String> brandId, final Map<String, String> subBrandId, final Map<String, String> categoryId, final Map<String, String> tags, final Map<String, String> type, final Map<String, String> orientation, final Integer total) {
+    public Count(final Map<String, String> brandId, final Map<String, String> subBrandId, final Map<String, String> categoryId, final Map<String, String> tags, final Map<String, String> type,
+            final Map<String, String> orientation, final Integer total) {
         this.brandId = brandId;
         this.subBrandId = subBrandId;
         this.categoryId = categoryId;

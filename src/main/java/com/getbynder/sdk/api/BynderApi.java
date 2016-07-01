@@ -45,7 +45,8 @@ public interface BynderApi {
     Call<Map<String, Metaproperty>> getMetaproperties();
 
     @GET("v4/media/")
-    Call<List<MediaAsset>> getMediaAssets(@Query("type") String type, @Query("keyword") String keyword, @Query("limit") Integer limit, @Query("page") Integer page, @Query("propertyOptionId") String propertyOptionId);
+    Call<List<MediaAsset>> getMediaAssets(@Query("type") String type, @Query("keyword") String keyword, @Query("limit") Integer limit, @Query("page") Integer page,
+            @Query("propertyOptionId") String propertyOptionId);
 
     @GET("v4/media/{id}/")
     Call<MediaAsset> getMediaAssetById(@Path("id") String id, @Query("versions") Boolean versions);
@@ -61,7 +62,8 @@ public interface BynderApi {
 
     @FormUrlEncoded
     @POST("v4/media/{id}/")
-    Call<Void> setMediaAssetProperties(@Path("id") String id, @Field("name") String name, @Field("description") String description, @Field("copyright") String copyright, @Field("archive") Boolean archive, @Field("datePublished") String datePublished);
+    Call<Void> setMediaAssetProperties(@Path("id") String id, @Field("name") String name, @Field("description") String description, @Field("copyright") String copyright,
+            @Field("archive") Boolean archive, @Field("datePublished") String datePublished);
 
     @FormUrlEncoded
     @POST("v4/media/")

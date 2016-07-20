@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.getbynder.sdk.domain.Category;
+import com.getbynder.sdk.domain.Count;
 import com.getbynder.sdk.domain.MediaAsset;
 import com.getbynder.sdk.domain.Metaproperty;
 import com.getbynder.sdk.domain.Tag;
@@ -351,6 +352,12 @@ public class BynderApiServiceIT {
     }
 
     @Test
+    public void getImageAssetsCount() throws Exception {
+        Count count = bynderApiService.getImageAssetsCount();
+        assertNotNull(count);
+    }
+
+    @Test
     public void getImageAssetsByKeywordTest() throws Exception {
         List<MediaAsset> imageAssets = bynderApiService.getImageAssets(null, 50, 1);
         assertNotNull(imageAssets);
@@ -459,6 +466,7 @@ public class BynderApiServiceIT {
         int statusCode = bynderApiService.setMediaAssetProperties(mediaAssets.get(0).getId(), null, null, null, null, INVALID_DATETIME);
         assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode);
     }
+
     @Test
     public void setMediaAssetPublicationDateTest() throws Exception {
         List<MediaAsset> mediaAssets = bynderApiService.getMediaAssets(null, null, 1, 1, null);

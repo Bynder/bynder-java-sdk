@@ -1,5 +1,6 @@
 package com.getbynder.sdk.domain;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,16 +16,7 @@ public class Count {
     private Map<String, String> type;
     private Map<String, String> orientation;
     private Integer total;
-
-    public Count(final Map<String, String> brandId, final Map<String, String> subBrandId, final Map<String, String> categoryId, final Map<String, String> tags, final Map<String, String> type, final Map<String, String> orientation, final Integer total) {
-        this.brandId = brandId;
-        this.subBrandId = subBrandId;
-        this.categoryId = categoryId;
-        this.tags = tags;
-        this.type = type;
-        this.orientation = orientation;
-        this.total = total;
-    }
+    private Map<String, Map<String, Integer>> metaproperties = new HashMap<String, Map<String, Integer>>();
 
     public Map<String, String> getBrandId() {
         return brandId;
@@ -52,5 +44,13 @@ public class Count {
 
     public Integer getTotal() {
         return total;
+    }
+
+    public Map<String, Map<String, Integer>> getMetaproperties() {
+        return metaproperties;
+    }
+
+    public void addMetaproperty(final String name, final Map<String, Integer> options) {
+        metaproperties.put(name, options);
     }
 }

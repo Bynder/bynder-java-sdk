@@ -2,7 +2,6 @@ package com.getbynder.sdk;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.getbynder.sdk.api.BynderApi;
 import com.getbynder.sdk.domain.Category;
+import com.getbynder.sdk.domain.Count;
 import com.getbynder.sdk.domain.MediaAsset;
 import com.getbynder.sdk.domain.MediaCount;
 import com.getbynder.sdk.domain.Metaproperty;
@@ -44,7 +44,8 @@ public class BynderApiService {
         Utils.checkNotNull("ACCESS_TOKEN_KEY", SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY"));
         Utils.checkNotNull("ACCESS_TOKEN_SECRET", SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
 
-        bynderApi = Utils.createApiService(BynderApi.class, BASE_URL, SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY"), SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
+        bynderApi =
+                Utils.createApiService(BynderApi.class, BASE_URL, SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY"), SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
     }
 
     public BynderApiService(final String username, final String password) throws IOException {
@@ -102,24 +103,53 @@ public class BynderApiService {
         return response.body();
     }
 
+    // public Map<String, Metaproperty> getMetaproperties() throws IOException {
+    // Response<Map<String, Metaproperty>> response = bynderApi.getMetaproperties().execute();
+    //
+    // Map<String, Metaproperty> metaproperties = response.body();
+    // for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
+    // if (entry.getValue().getOptions().size() > 0) {
+    // updateOptionsMediaCount(entry.getValue().getOptions());
+    // }
+    // }
+    //
+    // return metaproperties;
+    // }
+    //
+    // private void updateOptionsMediaCount(final List<Metaproperty> options) throws IOException {
+    // for (Metaproperty option : options) {
+    // option.setMediaCount(getImageAssetsTotal(null, Arrays.asList(option.getId())));
+    // if (option.getOptions() != null && option.getOptions().size() > 0) {
+    // updateOptionsMediaCount(option.getOptions());
+    // }
+    // }
+    // }
+
     public Map<String, Metaproperty> getMetaproperties() throws IOException {
         Response<Map<String, Metaproperty>> response = bynderApi.getMetaproperties().execute();
-
         Map<String, Metaproperty> metaproperties = response.body();
+
+        Count count = getImageAssetsCount();
+        Map<String, Map<String, Integer>> mediaCounts = count.getMetaproperties();
+
         for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
             if (entry.getValue().getOptions().size() > 0) {
-                updateOptionsMediaCount(entry.getValue().getOptions());
+                if (mediaCounts.get(entry.getKey()) != null) {
+                    updateOptionsMediaCount(mediaCounts.get(entry.getKey()), entry.getValue().getOptions());
+                }
             }
         }
 
         return metaproperties;
     }
 
-    private void updateOptionsMediaCount(final List<Metaproperty> options) throws IOException {
+    private void updateOptionsMediaCount(final Map<String, Integer> metapropertyMediaCount, final List<Metaproperty> options) throws IOException {
         for (Metaproperty option : options) {
-            option.setMediaCount(getImageAssetsTotal(null, Arrays.asList(option.getId())));
-            if (option.getOptions() != null && option.getOptions().size() > 0) {
-                updateOptionsMediaCount(option.getOptions());
+            if (metapropertyMediaCount.get(option.getName()) != null) {
+                option.setMediaCount(metapropertyMediaCount.get(option.getName()));
+                if (option.getOptions() != null && option.getOptions().size() > 0) {
+                    updateOptionsMediaCount(metapropertyMediaCount, option.getOptions());
+                }
             }
         }
     }
@@ -141,7 +171,8 @@ public class BynderApiService {
         return response.body();
     }
 
-    // get the N-th set of limit-results of images assets that contain all the metaproperties ids inside the propertyOptionIds list
+    // get the N-th set of limit-results of images assets that contain all the metaproperties ids
+    // inside the propertyOptionIds list
     public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds) throws IOException {
         // if propertyOptions is null or empty call getImageAssets
         if (propertyOptionIds == null || propertyOptionIds.size() == 0) {
@@ -156,19 +187,22 @@ public class BynderApiService {
         int offset = 1;
 
         // the condition 'offset == 1' is included in the while loop just for its first iteration
-        // if imageAssets already has the same number of elements as the asked limit and the imageAssetsOffset retrieved is empty, stop the while
+        // if imageAssets already has the same number of elements as the asked limit and the
+        // imageAssetsOffset retrieved is empty, stop the while
         while (offset == 1 || (imageAssets.size() < limit && imageAssetsOffset.size() != 0)) {
 
             imageAssetsOffset = getImageAssets(keyword, DEFAULT_LIMIT, offset);
 
             for (MediaAsset imageAsset : imageAssetsOffset) {
-                // if imageAssets already has the same number of elements as the asked limit, break the for loop
+                // if imageAssets already has the same number of elements as the asked limit, break
+                // the for loop
                 if (imageAssets.size() >= limit) {
                     break;
                 }
 
                 if (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
-                    // decrement ignoreCount and if it is already less than zero add the imageAsset to the list
+                    // decrement ignoreCount and if it is already less than zero add the imageAsset
+                    // to the list
                     ignoreCount--;
                     if (ignoreCount < 0) {
                         imageAssets.add(imageAsset);
@@ -217,6 +251,11 @@ public class BynderApiService {
         }
 
         return total;
+    }
+
+    public Count getImageAssetsCount() throws IOException {
+        Response<MediaCount> response = bynderApi.getImageAssetsCount().execute();
+        return response.body().getCount();
     }
 
     public int setMediaAssetProperties(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished) throws IOException {

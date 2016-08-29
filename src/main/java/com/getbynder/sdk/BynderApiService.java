@@ -103,28 +103,6 @@ public class BynderApiService {
         return response.body();
     }
 
-    // public Map<String, Metaproperty> getMetaproperties() throws IOException {
-    // Response<Map<String, Metaproperty>> response = bynderApi.getMetaproperties().execute();
-    //
-    // Map<String, Metaproperty> metaproperties = response.body();
-    // for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
-    // if (entry.getValue().getOptions().size() > 0) {
-    // updateOptionsMediaCount(entry.getValue().getOptions());
-    // }
-    // }
-    //
-    // return metaproperties;
-    // }
-    //
-    // private void updateOptionsMediaCount(final List<Metaproperty> options) throws IOException {
-    // for (Metaproperty option : options) {
-    // option.setMediaCount(getImageAssetsTotal(null, Arrays.asList(option.getId())));
-    // if (option.getOptions() != null && option.getOptions().size() > 0) {
-    // updateOptionsMediaCount(option.getOptions());
-    // }
-    // }
-    // }
-
     public Map<String, Metaproperty> getMetaproperties() throws IOException {
         Response<Map<String, Metaproperty>> response = bynderApi.getMetaproperties().execute();
         Map<String, Metaproperty> metaproperties = response.body();

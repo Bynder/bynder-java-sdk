@@ -2,7 +2,6 @@ package com.getbynder.sdk;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.getbynder.sdk.api.BynderApi;
 import com.getbynder.sdk.domain.Category;
+import com.getbynder.sdk.domain.Count;
 import com.getbynder.sdk.domain.MediaAsset;
 import com.getbynder.sdk.domain.MediaCount;
 import com.getbynder.sdk.domain.Metaproperty;
@@ -104,22 +104,29 @@ public class BynderApiService {
 
     public Map<String, Metaproperty> getMetaproperties() throws IOException {
         Response<Map<String, Metaproperty>> response = bynderApi.getMetaproperties().execute();
-
         Map<String, Metaproperty> metaproperties = response.body();
+
+        Count count = getImageAssetsCount();
+        Map<String, Map<String, Integer>> mediaCounts = count.getMetaproperties();
+
         for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
             if (entry.getValue().getOptions().size() > 0) {
-                updateOptionsMediaCount(entry.getValue().getOptions());
+                if (mediaCounts.get(entry.getKey()) != null) {
+                    updateOptionsMediaCount(mediaCounts.get(entry.getKey()), entry.getValue().getOptions());
+                }
             }
         }
 
         return metaproperties;
     }
 
-    private void updateOptionsMediaCount(final List<Metaproperty> options) throws IOException {
+    private void updateOptionsMediaCount(final Map<String, Integer> metapropertyMediaCount, final List<Metaproperty> options) throws IOException {
         for (Metaproperty option : options) {
-            option.setMediaCount(getImageAssetsTotal(null, Arrays.asList(option.getId())));
-            if (option.getOptions() != null && option.getOptions().size() > 0) {
-                updateOptionsMediaCount(option.getOptions());
+            if (metapropertyMediaCount.get(option.getName()) != null) {
+                option.setMediaCount(metapropertyMediaCount.get(option.getName()));
+                if (option.getOptions() != null && option.getOptions().size() > 0) {
+                    updateOptionsMediaCount(metapropertyMediaCount, option.getOptions());
+                }
             }
         }
     }
@@ -221,6 +228,11 @@ public class BynderApiService {
         }
 
         return total;
+    }
+
+    public Count getImageAssetsCount() throws IOException {
+        Response<MediaCount> response = bynderApi.getImageAssetsCount().execute();
+        return response.body().getCount();
     }
 
     public int setMediaAssetProperties(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished) throws IOException {

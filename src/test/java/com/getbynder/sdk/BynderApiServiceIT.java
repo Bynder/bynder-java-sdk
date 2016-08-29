@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.getbynder.sdk.domain.Category;
+import com.getbynder.sdk.domain.Count;
 import com.getbynder.sdk.domain.MediaAsset;
 import com.getbynder.sdk.domain.Metaproperty;
 import com.getbynder.sdk.domain.Tag;
@@ -367,6 +368,12 @@ public class BynderApiServiceIT {
 
         int imageAssetsTotal = bynderApiService.getImageAssetsTotal();
         assertTrue(imageAssetsTotal > 0);
+    }
+
+    @Test
+    public void getImageAssetsCount() throws Exception {
+        Count count = bynderApiService.getImageAssetsCount();
+        assertNotNull(count);
     }
 
     @Test

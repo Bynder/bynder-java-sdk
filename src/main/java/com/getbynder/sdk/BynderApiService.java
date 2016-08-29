@@ -17,6 +17,7 @@ import com.getbynder.sdk.domain.MediaCount;
 import com.getbynder.sdk.domain.Metaproperty;
 import com.getbynder.sdk.domain.Tag;
 import com.getbynder.sdk.domain.UserAccessData;
+import com.getbynder.sdk.util.Constants;
 import com.getbynder.sdk.util.Utils;
 
 import retrofit2.Response;
@@ -38,6 +39,14 @@ public class BynderApiService {
     private final int DEFAULT_LIMIT = 50;
 
     private final BynderApi bynderApi;
+
+    public BynderApiService() {
+        this.baseUrl = Constants.BASE_URL;
+        this.consumerKey = Constants.CONSUMER_KEY;
+        this.consumerSecret = Constants.CONSUMER_SECRET;
+
+        bynderApi = Utils.createApiService(BynderApi.class, Constants.BASE_URL, Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET, Constants.ACCESS_TOKEN_KEY, Constants.ACCESS_TOKEN_SECRET);
+    }
 
     public BynderApiService(final String baseUrl, final String consumerKey, final String consumerSecret, final String accessTokenKey, final String accessTokenSecret) {
         this.baseUrl = baseUrl;

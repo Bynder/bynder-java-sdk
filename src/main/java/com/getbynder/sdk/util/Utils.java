@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 
 import com.getbynder.sdk.domain.Count;
@@ -84,7 +83,7 @@ public final class Utils {
     }
 
     public static <T> void validateResponse(final Response<T> response, final String errorMessage) throws HttpResponseException {
-        if (response.code() != HttpStatus.SC_OK) {
+        if (!response.isSuccessful()) {
             throw new HttpResponseException(response.code(), String.format(errorMessage, Integer.toString(response.code()), response.message()));
         }
     }

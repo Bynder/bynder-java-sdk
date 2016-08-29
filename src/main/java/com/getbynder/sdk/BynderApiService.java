@@ -17,7 +17,6 @@ import com.getbynder.sdk.domain.MediaCount;
 import com.getbynder.sdk.domain.Metaproperty;
 import com.getbynder.sdk.domain.Tag;
 import com.getbynder.sdk.domain.UserAccessData;
-import com.getbynder.sdk.util.SecretProperties;
 import com.getbynder.sdk.util.Utils;
 
 import retrofit2.Response;
@@ -28,9 +27,9 @@ import retrofit2.Response;
  */
 public class BynderApiService {
 
-    private final String BASE_URL = SecretProperties.getInstance().getProperty("BASE_URL");
-    private final String REQUEST_TOKEN_KEY = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
-    private final String REQUEST_TOKEN_SECRET = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
+    private final String baseUrl;
+    private final String consumerKey;
+    private final String consumerSecret;
 
     private final String ACCESS_TOKEN_FAILED = "Could not obtain access token. Reason: %s %s";
     private final String LOGIN_REQUEST_FAILED = "Could not login to the API. Reason: %s %s";
@@ -38,33 +37,28 @@ public class BynderApiService {
 
     private final int DEFAULT_LIMIT = 50;
 
-    private BynderApi bynderApi;
+    private final BynderApi bynderApi;
 
-    public BynderApiService() {
-        Utils.checkNotNull("ACCESS_TOKEN_KEY", SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY"));
-        Utils.checkNotNull("ACCESS_TOKEN_SECRET", SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
+    public BynderApiService(final String baseUrl, final String consumerKey, final String consumerSecret, final String accessTokenKey, final String accessTokenSecret) {
+        this.baseUrl = baseUrl;
+        this.consumerKey = consumerKey;
+        this.consumerSecret = consumerSecret;
 
-        bynderApi =
-                Utils.createApiService(BynderApi.class, BASE_URL, SecretProperties.getInstance().getProperty("ACCESS_TOKEN_KEY"), SecretProperties.getInstance().getProperty("ACCESS_TOKEN_SECRET"));
+        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, consumerKey, consumerSecret, accessTokenKey, accessTokenSecret);
     }
 
-    public BynderApiService(final String username, final String password) throws IOException {
-        UserAccessData userAccessData = login(username, password);
-        bynderApi = Utils.createApiService(BynderApi.class, BASE_URL, userAccessData.getTokenKey(), userAccessData.getTokenSecret());
+    public BynderApiService(final String baseUrl, final String consumerKey, final String consumerSecret, final String requestTokenKey, final String requestTokenSecret, final String username,
+            final String password) throws IOException {
+        this.baseUrl = baseUrl;
+        this.consumerKey = consumerKey;
+        this.consumerSecret = consumerSecret;
+
+        UserAccessData userAccessData = login(requestTokenKey, requestTokenSecret, username, password);
+        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, consumerKey, consumerSecret, userAccessData.getTokenKey(), userAccessData.getTokenSecret());
     }
 
-    public BynderApiService(final String baseUrl, final String username, final String password) throws IOException {
-        UserAccessData userAccessData = login(username, password);
-        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, userAccessData.getTokenKey(), userAccessData.getTokenSecret());
-    }
-
-    public UserAccessData login(final String username, final String password) throws IOException {
-        Utils.checkNotNull("username", username);
-        Utils.checkNotNull("password", password);
-        Utils.checkNotNull("REQUEST_TOKEN_KEY", REQUEST_TOKEN_KEY);
-        Utils.checkNotNull("REQUEST_TOKEN_SECRET", REQUEST_TOKEN_SECRET);
-
-        BynderApi bynderApiForLogin = Utils.createApiService(BynderApi.class, BASE_URL, REQUEST_TOKEN_KEY, REQUEST_TOKEN_SECRET);
+    public UserAccessData login(final String requestTokenKey, final String requestTokenSecret, final String username, final String password) throws IOException {
+        BynderApi bynderApiForLogin = Utils.createApiService(BynderApi.class, baseUrl, consumerKey, consumerSecret, requestTokenKey, requestTokenSecret);
         Response<UserAccessData> response = bynderApiForLogin.login(username, password).execute();
 
         Utils.validateResponse(response, LOGIN_REQUEST_FAILED);
@@ -73,19 +67,24 @@ public class BynderApiService {
     }
 
     public Map<String, String> getRequestToken() throws IOException {
-        BynderApi bynderApiForRequestToken = Utils.createApiService(BynderApi.class, BASE_URL, null, null);
+        BynderApi bynderApiForRequestToken = Utils.createApiService(BynderApi.class, baseUrl, consumerKey, consumerSecret, null, null);
         Response<String> response = bynderApiForRequestToken.getRequestToken().execute();
 
         Utils.validateResponse(response, REQUEST_TOKEN_FAILED);
 
-        return Utils.buildMapFromResponse(response.body());
+        Map<String, String> requestToken = Utils.buildMapFromResponse(response.body());
+
+        StringBuilder stringBuilder = new StringBuilder(baseUrl).append("v4/oauth/authorise/?oauth_token=").append(requestToken.get("oauth_token"));
+        requestToken.put("loginpage_url", stringBuilder.toString());
+
+        return requestToken;
     }
 
     public Map<String, String> getAccessToken(final String requestTokenKey, final String requestTokenSecret) throws IOException {
         Utils.checkNotNull("requestTokenKey", requestTokenKey);
         Utils.checkNotNull("requestTokenSecret", requestTokenSecret);
 
-        BynderApi bynderApiForAccessToken = Utils.createApiService(BynderApi.class, BASE_URL, requestTokenKey, requestTokenSecret);
+        BynderApi bynderApiForAccessToken = Utils.createApiService(BynderApi.class, baseUrl, consumerKey, consumerSecret, requestTokenKey, requestTokenSecret);
         Response<String> response = bynderApiForAccessToken.getRequestToken().execute();
 
         Utils.validateResponse(response, ACCESS_TOKEN_FAILED);
@@ -244,7 +243,6 @@ public class BynderApiService {
     }
 
     public int addMetapropertyToAsset(final String assetId, final String metapropertyId, final String... optionsIds) throws IOException {
-
         Utils.checkNotNull("assetId", assetId);
         Utils.checkNotNull("metapropertyId", metapropertyId);
 

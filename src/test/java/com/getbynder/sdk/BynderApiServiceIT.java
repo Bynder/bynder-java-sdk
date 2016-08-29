@@ -21,6 +21,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.AssumptionViolatedException;
 import org.junit.Before;
@@ -36,7 +37,7 @@ import com.getbynder.sdk.domain.MediaAsset;
 import com.getbynder.sdk.domain.Metaproperty;
 import com.getbynder.sdk.domain.Tag;
 import com.getbynder.sdk.domain.UserAccessData;
-import com.getbynder.sdk.util.SecretProperties;
+import com.getbynder.sdk.util.Constants;
 import com.getbynder.sdk.util.Utils;
 
 /**
@@ -47,15 +48,9 @@ public class BynderApiServiceIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(BynderApiServiceIT.class);
 
-    private final String USERNAME = SecretProperties.getInstance().getProperty("USERNAME");
-    private final String PASSWORD = SecretProperties.getInstance().getProperty("PASSWORD");
-    private final String REQUEST_TOKEN_KEY = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_KEY");
-    private final String REQUEST_TOKEN_SECRET = SecretProperties.getInstance().getProperty("REQUEST_TOKEN_SECRET");
-
     private final String ID_NOT_FOUND = "ID_NOT_FOUND";
     private final String MEDIA_ASSET_DESCRIPTION = "Description changed by Integration Test of Bynder Java SDK";
     private final String MEDIA_ASSET_KEYWORD_NOT_FOUND = "MEDIA_ASSET_KEYWORD_NOT_FOUND";
-    private final String MEDIA_TYPE_IMAGE = "image";
 
     private final String INVALID_DATETIME = new Date().toString();
     private final String VALID_DATETIME_GMT = DatatypeConverter.printDateTime(Calendar.getInstance(TimeZone.getTimeZone("GMT")));
@@ -75,9 +70,7 @@ public class BynderApiServiceIT {
     private final String TEST_SKIPPED_NO_METAPROPERTIES = "%s skipped: No metaproperties created for this environment";
     private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS = "%s skipped: No metaproperties options found for this environment";
     private final String TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS_WITH_MEDIA = "%s skipped: No metaproperties options with media found for this environment";
-    private final String TEST_SKIPPED_NO_REQUEST_TOKENS = "%s skipped: No request token key or/and request token secret defined";
     private final String TEST_SKIPPED_NO_TAGS = "%s skipped: No tags created for this environment";
-    private final String TEST_SKIPPED_NO_USERNAME_PASSWORD = "%s skipped: No username or/and password defined";
 
     // regex to avoid media assets names and descriptions with special characters
     private final Pattern pattern = Pattern.compile("[a-z0-9 ]", Pattern.CASE_INSENSITIVE);
@@ -89,39 +82,65 @@ public class BynderApiServiceIT {
 
     @Before
     public void setUp() throws Exception {
-        bynderApiService = new BynderApiService();
+        try {
+            Assume.assumeTrue(String.format(Constants.TEST_SKIPPED_NO_ACCESS_TOKENS, testName.getMethodName()),
+                    !StringUtils.isEmpty(Constants.ACCESS_TOKEN_KEY) && !StringUtils.isEmpty(Constants.ACCESS_TOKEN_SECRET));
+            Assume.assumeTrue(String.format(Constants.TEST_SKIPPED_NO_BASE_URL, testName.getMethodName()), !StringUtils.isEmpty(Constants.BASE_URL));
+            Assume.assumeTrue(String.format(Constants.TEST_SKIPPED_NO_CONSUMER_TOKENS, testName.getMethodName()),
+                    !StringUtils.isEmpty(Constants.CONSUMER_KEY) && !StringUtils.isEmpty(Constants.CONSUMER_SECRET));
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
+        bynderApiService = new BynderApiServiceBuilder().setBaseUrl(Constants.BASE_URL).setConsumerKey(Constants.CONSUMER_KEY).setConsumerSecret(Constants.CONSUMER_SECRET)
+                .setAccessTokenKey(Constants.ACCESS_TOKEN_KEY).setAccessTokenSecret(Constants.ACCESS_TOKEN_SECRET).create();
     }
 
     @Test
     public void loginFailTest() throws Exception {
         try {
-            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_REQUEST_TOKENS, testName.getMethodName()), !StringUtils.isEmpty(REQUEST_TOKEN_KEY) && !StringUtils.isEmpty(REQUEST_TOKEN_SECRET));
+            Assume.assumeTrue(String.format(Constants.TEST_SKIPPED_NO_REQUEST_TOKENS, testName.getMethodName()),
+                    !StringUtils.isEmpty(Constants.REQUEST_TOKEN_KEY) && !StringUtils.isEmpty(Constants.REQUEST_TOKEN_SECRET));
         } catch (AssumptionViolatedException e) {
             LOG.warn(e.getMessage());
             throw e;
         }
 
+        boolean exceptionThrown = false;
+
         try {
-            bynderApiService.login("INVALID_USERNAME", "INVALID_PASSWORD");
+            bynderApiService.login(Constants.REQUEST_TOKEN_KEY, Constants.REQUEST_TOKEN_SECRET, "INVALID_USERNAME", "INVALID_PASSWORD");
         } catch (HttpResponseException e) {
             assertTrue(e.getStatusCode() == HttpStatus.SC_FORBIDDEN);
+            exceptionThrown = true;
+        } finally {
+            if (!exceptionThrown) {
+                Assert.fail(String.format(Constants.TEST_FAILED_EXCEPTION_NOT_THROWN, testName.getMethodName()));
+            }
         }
     }
 
     @Test
-    public void loginTest() throws Exception {
+    public void loginSuccessTest() throws Exception {
         try {
-            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_REQUEST_TOKENS, testName.getMethodName()), !StringUtils.isEmpty(REQUEST_TOKEN_KEY) && !StringUtils.isEmpty(REQUEST_TOKEN_SECRET));
-            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_USERNAME_PASSWORD, testName.getMethodName()), !StringUtils.isEmpty(USERNAME) && !StringUtils.isEmpty(PASSWORD));
+            Assume.assumeTrue(String.format(Constants.TEST_SKIPPED_NO_REQUEST_TOKENS, testName.getMethodName()),
+                    !StringUtils.isEmpty(Constants.REQUEST_TOKEN_KEY) && !StringUtils.isEmpty(Constants.REQUEST_TOKEN_SECRET));
+            Assume.assumeTrue(String.format(Constants.TEST_SKIPPED_NO_USERNAME_PASSWORD, testName.getMethodName()),
+                    !StringUtils.isEmpty(Constants.USERNAME) && !StringUtils.isEmpty(Constants.PASSWORD));
         } catch (AssumptionViolatedException e) {
             LOG.warn(e.getMessage());
             throw e;
         }
 
-        UserAccessData userAccessData = bynderApiService.login(USERNAME, PASSWORD);
+        UserAccessData userAccessData = bynderApiService.login(Constants.REQUEST_TOKEN_KEY, Constants.REQUEST_TOKEN_SECRET, Constants.USERNAME, Constants.PASSWORD);
         assertNotNull(userAccessData);
         assertNotNull(userAccessData.getTokenKey());
         assertNotNull(userAccessData.getTokenSecret());
+
+        bynderApiService = new BynderApiServiceBuilder().setBaseUrl(Constants.BASE_URL).setConsumerKey(Constants.CONSUMER_KEY).setConsumerSecret(Constants.CONSUMER_SECRET)
+                .setRequestTokenKey(Constants.REQUEST_TOKEN_KEY).setRequestTokenSecret(Constants.REQUEST_TOKEN_SECRET).createWithLogin(Constants.USERNAME, Constants.PASSWORD);
+        assertNotNull(bynderApiService);
     }
 
     @Test
@@ -130,8 +149,8 @@ public class BynderApiServiceIT {
             Map<String, String> requestToken = bynderApiService.getRequestToken();
             assertNotNull(requestToken);
             assertNotNull(requestToken.keySet());
-            assertEquals(2, requestToken.keySet().size());
-            assertTrue(requestToken.keySet().containsAll(Arrays.asList("oauth_token", "oauth_token_secret")));
+            assertEquals(3, requestToken.keySet().size());
+            assertTrue(requestToken.keySet().containsAll(Arrays.asList("oauth_token", "oauth_token_secret", "loginpage_url")));
         } catch (HttpResponseException e) {
             assertTrue(e.getStatusCode() == HttpStatus.SC_UNAUTHORIZED);
         }
@@ -243,7 +262,7 @@ public class BynderApiServiceIT {
         }
 
         assertTrue(imageAssets.size() == 1);
-        assertEquals(MEDIA_TYPE_IMAGE, imageAssets.get(0).getType());
+        assertEquals(Constants.MEDIA_TYPE_IMAGE, imageAssets.get(0).getType());
     }
 
     @Test
@@ -388,7 +407,7 @@ public class BynderApiServiceIT {
         List<MediaAsset> imageAssetsByKeyword = bynderApiService.getImageAssets(keyword, null, null);
         assertNotNull(imageAssetsByKeyword);
         assertTrue(imageAssetsByKeyword.size() > 0);
-        assertEquals(MEDIA_TYPE_IMAGE, imageAssetsByKeyword.get(0).getType());
+        assertEquals(Constants.MEDIA_TYPE_IMAGE, imageAssetsByKeyword.get(0).getType());
 
         // keyword not found
         List<MediaAsset> emptyList = bynderApiService.getImageAssets(MEDIA_ASSET_KEYWORD_NOT_FOUND, null, null);

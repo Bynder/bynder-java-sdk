@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.getbynder.sdk.domain.MediaAsset;
+import com.getbynder.sdk.util.Constants;
 
 /**
  *
@@ -21,33 +22,27 @@ import com.getbynder.sdk.domain.MediaAsset;
  */
 public class BynderApiServiceTest {
 
-    private final String ID = "ID";
-    private final String NAME = "NAME";
     private final List<String> PROPERTY_OPTION_IDS = Arrays.asList("POID");
-
-    private final String MEDIA_TYPE_IMAGE = "image";
-    private final String METAPROPERTY_ID = "METAPROPERTY_ID";
 
     private BynderApiService mockedBynderApiService;
 
     @Before
     public void setUp() throws Exception {
-
         mockedBynderApiService = mock(BynderApiService.class);
 
         List<MediaAsset> imageAssets = new ArrayList<>();
         MediaAsset imageAsset = null;
 
-        for (int i=1; i<7; i++) {
+        for (int i = 1; i < 7; i++) {
             if (i % 3 == 0) {
-                imageAsset = new MediaAsset(ID+Integer.toString(i), NAME+Integer.toString(i), null, null, null, null, MEDIA_TYPE_IMAGE, null, null, null);
+                imageAsset = new MediaAsset(Integer.toString(i), Integer.toString(i), null, null, null, null, Constants.MEDIA_TYPE_IMAGE, null, null, null);
             } else {
-                imageAsset = new MediaAsset(ID+Integer.toString(i), NAME+Integer.toString(i), null, null, null, null, MEDIA_TYPE_IMAGE, PROPERTY_OPTION_IDS, null, null);
+                imageAsset = new MediaAsset(Integer.toString(i), Integer.toString(i), null, null, null, null, Constants.MEDIA_TYPE_IMAGE, PROPERTY_OPTION_IDS, null, null);
             }
             imageAssets.add(imageAsset);
         }
 
-        when(mockedBynderApiService.getImageAssets(Mockito.anyString(),Mockito.eq(50), Mockito.eq(1))).thenReturn(imageAssets);
+        when(mockedBynderApiService.getImageAssets(Mockito.anyString(), Mockito.eq(50), Mockito.eq(1))).thenReturn(imageAssets);
         when(mockedBynderApiService.getImageAssets(Mockito.anyString(), Mockito.eq(50), Mockito.eq(2))).thenReturn(new ArrayList<MediaAsset>());
         when(mockedBynderApiService.getImageAssets(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyListOf(String.class))).thenCallRealMethod();
         when(mockedBynderApiService.getImageAssetsTotal(Mockito.anyString(), Mockito.anyListOf(String.class))).thenCallRealMethod();
@@ -55,7 +50,6 @@ public class BynderApiServiceTest {
 
     @Test
     public void getImageAssetsTest() throws Exception {
-
         List<MediaAsset> imageAssets = mockedBynderApiService.getImageAssets(null, 3, 1, PROPERTY_OPTION_IDS);
         assertNotNull(imageAssets);
         assertEquals(3, imageAssets.size());
@@ -95,7 +89,7 @@ public class BynderApiServiceTest {
 
     @Test
     public void getImageAssetsTotalByMetapropertyIdsTest() throws Exception {
-        int total = mockedBynderApiService.getImageAssetsTotal(null, Arrays.asList(METAPROPERTY_ID));
+        int total = mockedBynderApiService.getImageAssetsTotal(null, Arrays.asList("ID"));
         assertEquals(0, total);
 
         total = mockedBynderApiService.getImageAssetsTotal(null, PROPERTY_OPTION_IDS);

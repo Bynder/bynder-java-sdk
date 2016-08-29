@@ -23,9 +23,11 @@ public class MediaAsset implements Serializable {
     private Map<String, String> thumbnails;
     private List<MediaItem> mediaItems;
 
-    public MediaAsset() { }
+    public MediaAsset() {
+    }
 
-    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type, final List<String> propertyOptions, final Map<String, String> thumbnails, final List<MediaItem> mediaItems) {
+    public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type,
+            final List<String> propertyOptions, final Map<String, String> thumbnails, final List<MediaItem> mediaItems) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -80,7 +82,7 @@ public class MediaAsset implements Serializable {
 
     @Override
     public String toString() {
-        return "MediaAsset [id=" + id + ", name=" + name + ", description=" + description + ", copyright=" + copyright + ", archive=" + archive + ", datePublished=" + datePublished + ", type=" + type + ", propertyOptions=" + propertyOptions
-                + ", thumbnails=" + thumbnails + ", mediaItems=" + mediaItems + "]";
+        return "MediaAsset [id=" + id + ", name=" + name + ", description=" + description + ", copyright=" + copyright + ", archive=" + archive + ", datePublished=" + datePublished + ", type=" + type
+                + ", propertyOptions=" + propertyOptions + ", thumbnails=" + thumbnails + ", mediaItems=" + mediaItems + "]";
     }
 }

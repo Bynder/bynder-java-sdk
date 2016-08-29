@@ -19,7 +19,8 @@ public class MediaItem {
     private Boolean active;
     private Map<String, String> thumbnails;
 
-    public MediaItem(final String id, final String fileName, final String type, final String dateCreated, final int height, final int width, final int size, final int version, final Boolean active, final Map<String, String> thumbnails) {
+    public MediaItem(final String id, final String fileName, final String type, final String dateCreated, final int height, final int width, final int size, final int version, final Boolean active,
+            final Map<String, String> thumbnails) {
         super();
         this.id = id;
         this.fileName = fileName;
@@ -75,8 +76,7 @@ public class MediaItem {
 
     @Override
     public String toString() {
-        return "MediaItem [id=" + id + ", fileName=" + fileName + ", type=" + type + ", dateCreated=" + dateCreated
-                + ", height=" + height + ", width=" + width + ", size=" + size + ", version=" + version
-                + ", active=" + active + ", thumbnails=" + thumbnails + "]";
+        return "MediaItem [id=" + id + ", fileName=" + fileName + ", type=" + type + ", dateCreated=" + dateCreated + ", height=" + height + ", width=" + width + ", size=" + size + ", version="
+                + version + ", active=" + active + ", thumbnails=" + thumbnails + "]";
     }
 }

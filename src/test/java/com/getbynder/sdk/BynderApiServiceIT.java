@@ -1,6 +1,7 @@
 package com.getbynder.sdk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -404,11 +405,15 @@ public class BynderApiServiceIT {
         Map<String, Integer> metapropertiesMediaCount = new HashMap<>();
         String optionId = null;
 
-        for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
-            if (entry.getValue().getOptions().size() > 0) {
-                metapropertiesMediaCount = bynderApiService.getImageAssetsMetapropertyCount(null, Arrays.asList(entry.getValue().getOptions().get(0).getId()));
-                optionId = entry.getValue().getOptions().get(0).getId();
-                break;
+        mainLoop: for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
+            if (entry.getValue().isFilterable() == true && entry.getValue().getOptions().size() > 0) {
+                for (Metaproperty metapropertyOption : entry.getValue().getOptions()) {
+                    if (metapropertyOption.getMediaCount() > 0) {
+                        metapropertiesMediaCount = bynderApiService.getImageAssetsMetapropertyCount(null, Arrays.asList(metapropertyOption.getId()));
+                        optionId = metapropertyOption.getId();
+                        break mainLoop;
+                    }
+                }
             }
         }
 
@@ -420,6 +425,7 @@ public class BynderApiServiceIT {
         }
 
         assertNotNull(metapropertiesMediaCount);
+        assertFalse(metapropertiesMediaCount.isEmpty());
         assertTrue(metapropertiesMediaCount.get(optionId) > 0);
     }
 

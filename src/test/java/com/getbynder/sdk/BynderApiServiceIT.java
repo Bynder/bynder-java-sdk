@@ -345,14 +345,12 @@ public class BynderApiServiceIT {
         String metapropertyId = null;
         int mediaCount = 0;
 
-        for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
-            if (entry.getValue().getOptions().size() > 0) {
-                for (Metaproperty option : entry.getValue().getOptions()) {
-                    if (option.getMediaCount() > 0) {
-                        metapropertyId = option.getId();
-                        mediaCount = option.getMediaCount();
-                        break;
-                    }
+        mainLoop: for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
+            for (Metaproperty option : entry.getValue().getOptions()) {
+                if (option.getMediaCount() > 0) {
+                    metapropertyId = option.getId();
+                    mediaCount = option.getMediaCount();
+                    break mainLoop;
                 }
             }
         }
@@ -406,7 +404,7 @@ public class BynderApiServiceIT {
         String optionId = null;
 
         mainLoop: for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
-            if (entry.getValue().isFilterable() == true && entry.getValue().getOptions().size() > 0) {
+            if (entry.getValue().isFilterable() == true) {
                 for (Metaproperty metapropertyOption : entry.getValue().getOptions()) {
                     if (metapropertyOption.getMediaCount() > 0) {
                         metapropertiesMediaCount = bynderApiService.getImageAssetsMetapropertyCount(null, Arrays.asList(metapropertyOption.getId()));

@@ -44,45 +44,45 @@ public class BynderApiServiceTest {
 
         when(mockedBynderApiService.getImageAssets(Mockito.anyString(), Mockito.eq(50), Mockito.eq(1))).thenReturn(imageAssets);
         when(mockedBynderApiService.getImageAssets(Mockito.anyString(), Mockito.eq(50), Mockito.eq(2))).thenReturn(new ArrayList<MediaAsset>());
-        when(mockedBynderApiService.getImageAssets(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyListOf(String.class))).thenCallRealMethod();
+        when(mockedBynderApiService.getImageAssetsForLazyLoading(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyListOf(String.class))).thenCallRealMethod();
         when(mockedBynderApiService.getImageAssetsTotal(Mockito.anyString(), Mockito.anyListOf(String.class))).thenCallRealMethod();
     }
 
     @Test
-    public void getImageAssetsTest() throws Exception {
-        List<MediaAsset> imageAssets = mockedBynderApiService.getImageAssets(null, 3, 1, PROPERTY_OPTION_IDS);
+    public void getImageAssetsForLazyLoadingTest() throws Exception {
+        List<MediaAsset> imageAssets = mockedBynderApiService.getImageAssetsForLazyLoading(null, 3, 1, PROPERTY_OPTION_IDS);
         assertNotNull(imageAssets);
         assertEquals(3, imageAssets.size());
 
-        imageAssets = mockedBynderApiService.getImageAssets(null, 3, 2, PROPERTY_OPTION_IDS);
+        imageAssets = mockedBynderApiService.getImageAssetsForLazyLoading(null, 3, 2, PROPERTY_OPTION_IDS);
         assertNotNull(imageAssets);
         assertEquals(1, imageAssets.size());
 
-        imageAssets = mockedBynderApiService.getImageAssets(null, 2, 1, PROPERTY_OPTION_IDS);
+        imageAssets = mockedBynderApiService.getImageAssetsForLazyLoading(null, 2, 1, PROPERTY_OPTION_IDS);
         assertNotNull(imageAssets);
         assertEquals(2, imageAssets.size());
 
-        imageAssets = mockedBynderApiService.getImageAssets(null, 2, 2, PROPERTY_OPTION_IDS);
+        imageAssets = mockedBynderApiService.getImageAssetsForLazyLoading(null, 2, 2, PROPERTY_OPTION_IDS);
         assertNotNull(imageAssets);
         assertEquals(2, imageAssets.size());
 
-        imageAssets = mockedBynderApiService.getImageAssets(null, 2, 3, PROPERTY_OPTION_IDS);
+        imageAssets = mockedBynderApiService.getImageAssetsForLazyLoading(null, 2, 3, PROPERTY_OPTION_IDS);
         assertNotNull(imageAssets);
         assertEquals(0, imageAssets.size());
 
-        imageAssets = mockedBynderApiService.getImageAssets(null, 4, 1, PROPERTY_OPTION_IDS);
+        imageAssets = mockedBynderApiService.getImageAssetsForLazyLoading(null, 4, 1, PROPERTY_OPTION_IDS);
         assertNotNull(imageAssets);
         assertEquals(4, imageAssets.size());
 
-        imageAssets = mockedBynderApiService.getImageAssets(null, 6, 1, PROPERTY_OPTION_IDS);
+        imageAssets = mockedBynderApiService.getImageAssetsForLazyLoading(null, 6, 1, PROPERTY_OPTION_IDS);
         assertNotNull(imageAssets);
         assertEquals(4, imageAssets.size());
 
-        imageAssets = mockedBynderApiService.getImageAssets(null, 50, 1, null);
+        imageAssets = mockedBynderApiService.getImageAssetsForLazyLoading(null, 50, 1, null);
         assertNotNull(imageAssets);
         assertEquals(6, imageAssets.size());
 
-        imageAssets = mockedBynderApiService.getImageAssets(null, 50, 1, new ArrayList<String>());
+        imageAssets = mockedBynderApiService.getImageAssetsForLazyLoading(null, 50, 1, new ArrayList<String>());
         assertNotNull(imageAssets);
         assertEquals(6, imageAssets.size());
     }

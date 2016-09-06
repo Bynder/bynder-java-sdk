@@ -159,7 +159,7 @@ public class BynderApiService {
 
     // get the N-th set of limit-results of images assets that contain all the metaproperties ids
     // inside the propertyOptionIds list
-    public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds) throws IOException {
+    public List<MediaAsset> getImageAssetsForLazyLoading(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds) throws IOException {
         // if propertyOptions is null or empty call getImageAssets
         if (propertyOptionIds == null || propertyOptionIds.size() == 0) {
             return getImageAssets(keyword, limit, page);
@@ -201,6 +201,11 @@ public class BynderApiService {
         return imageAssets;
     }
 
+    public MediaCount getImageAssetsWithCount(final String keyword, final Integer limit, final Integer page) throws IOException {
+        Response<MediaCount> response = bynderApi.getImageAssetsWithCount(keyword, limit, page, null).execute();
+        return response.body();
+    }
+
     public List<MediaAsset> getImageAssetsByMetapropertyId(final String propertyOptionId) throws IOException {
         Utils.checkNotNull("propertyOptionId", propertyOptionId);
 
@@ -237,6 +242,35 @@ public class BynderApiService {
         }
 
         return total;
+    }
+
+    public Map<String, Integer> getImageAssetsMetapropertyCount(final String keyword, final List<String> propertyOptionIds) throws IOException {
+        List<MediaAsset> imageAssetsOffset = new ArrayList<>();
+        Map<String, Integer> metapropertiesMediaCount = new HashMap<>();
+        int offset = 1;
+
+        // the condition 'offset == 1' is included in the while loop just for its first iteration
+        while (offset == 1 || imageAssetsOffset.size() == DEFAULT_LIMIT) {
+
+            imageAssetsOffset = getImageAssets(keyword, DEFAULT_LIMIT, offset);
+
+            for (MediaAsset imageAsset : imageAssetsOffset) {
+                if ((propertyOptionIds == null) || (imageAsset.getPropertyOptions() != null && imageAsset.getPropertyOptions().containsAll(propertyOptionIds))) {
+                    for (String propertyOptionId : imageAsset.getPropertyOptions()) {
+                        if (metapropertiesMediaCount.containsKey(propertyOptionId)) {
+                            int mediaCount = metapropertiesMediaCount.get(propertyOptionId);
+                            mediaCount++;
+                            metapropertiesMediaCount.put(propertyOptionId, mediaCount);
+                        } else {
+                            metapropertiesMediaCount.put(propertyOptionId, 1);
+                        }
+                    }
+                }
+            }
+            offset++;
+        }
+
+        return metapropertiesMediaCount;
     }
 
     public Count getImageAssetsCount() throws IOException {

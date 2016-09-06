@@ -54,6 +54,9 @@ public interface BynderApi {
     @GET("v4/media/?type=image")
     Call<List<MediaAsset>> getImageAssets(@Query("keyword") String keyword, @Query("limit") Integer limit, @Query("page") Integer page, @Query("propertyOptionId") String propertyOptionId);
 
+    @GET("v4/media/?type=image&count=1")
+    Call<MediaCount> getImageAssetsWithCount(@Query("keyword") String keyword, @Query("limit") Integer limit, @Query("page") Integer page, @Query("propertyOptionId") String propertyOptionId);
+
     @GET("v4/media/?type=image")
     Call<List<MediaAsset>> getImageAssetsByMetapropertyId(@Query("propertyOptionId") String propertyOptionId);
 

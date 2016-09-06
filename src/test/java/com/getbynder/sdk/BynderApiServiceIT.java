@@ -1,6 +1,7 @@
 package com.getbynder.sdk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.getbynder.sdk.domain.Category;
 import com.getbynder.sdk.domain.Count;
 import com.getbynder.sdk.domain.MediaAsset;
+import com.getbynder.sdk.domain.MediaCount;
 import com.getbynder.sdk.domain.Metaproperty;
 import com.getbynder.sdk.domain.Tag;
 import com.getbynder.sdk.domain.UserAccessData;
@@ -170,6 +173,9 @@ public class BynderApiServiceIT {
 
         for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
             assertNotNull(entry.getValue().getId());
+            assertNotNull(entry.getValue().getName());
+            assertTrue(entry.getValue().getZindex() > 0);
+            assertNotNull(entry.getValue().isFilterable());
             break;
         }
     }
@@ -266,6 +272,14 @@ public class BynderApiServiceIT {
     }
 
     @Test
+    public void getImageAssetsWithCountTest() throws Exception {
+        MediaCount mediaCount = bynderApiService.getImageAssetsWithCount(null, 1, 1);
+        assertNotNull(mediaCount);
+        assertNotNull(mediaCount.getCount());
+        assertNotNull(mediaCount.getMedia());
+    }
+
+    @Test
     public void getImageAssetsPaginationTest() throws Exception {
         List<MediaAsset> imageAssetsPage1 = bynderApiService.getImageAssets(null, 1, 1);
         assertNotNull(imageAssetsPage1);
@@ -331,14 +345,12 @@ public class BynderApiServiceIT {
         String metapropertyId = null;
         int mediaCount = 0;
 
-        for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
-            if (entry.getValue().getOptions().size() > 0) {
-                for (Metaproperty option : entry.getValue().getOptions()) {
-                    if (option.getMediaCount() > 0) {
-                        metapropertyId = option.getId();
-                        mediaCount = option.getMediaCount();
-                        break;
-                    }
+        mainLoop: for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
+            for (Metaproperty option : entry.getValue().getOptions()) {
+                if (option.getMediaCount() > 0) {
+                    metapropertyId = option.getId();
+                    mediaCount = option.getMediaCount();
+                    break mainLoop;
                 }
             }
         }
@@ -371,9 +383,48 @@ public class BynderApiServiceIT {
     }
 
     @Test
-    public void getImageAssetsCount() throws Exception {
+    public void getImageAssetsCountTest() throws Exception {
         Count count = bynderApiService.getImageAssetsCount();
         assertNotNull(count);
+    }
+
+    @Test
+    public void getImageAssetsMetapropertyCountTest() throws Exception {
+        Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
+        assertNotNull(metaproperties);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES, testName.getMethodName()), metaproperties.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
+        Map<String, Integer> metapropertiesMediaCount = new HashMap<>();
+        String optionId = null;
+
+        mainLoop: for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
+            if (entry.getValue().isFilterable() == true) {
+                for (Metaproperty metapropertyOption : entry.getValue().getOptions()) {
+                    if (metapropertyOption.getMediaCount() > 0) {
+                        metapropertiesMediaCount = bynderApiService.getImageAssetsMetapropertyCount(null, Arrays.asList(metapropertyOption.getId()));
+                        optionId = metapropertyOption.getId();
+                        break mainLoop;
+                    }
+                }
+            }
+        }
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES_OPTIONS, testName.getMethodName()), optionId != null);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
+        assertNotNull(metapropertiesMediaCount);
+        assertFalse(metapropertiesMediaCount.isEmpty());
+        assertTrue(metapropertiesMediaCount.get(optionId) > 0);
     }
 
     @Test

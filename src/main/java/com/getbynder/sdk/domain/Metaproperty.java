@@ -14,13 +14,17 @@ public class Metaproperty {
     private String label;
     private List<Metaproperty> options = new ArrayList<>();
     private int mediaCount;
+    private Boolean isFilterable;
+    private int zindex;
 
-    public Metaproperty(final String id, final String name, final String label, final List<Metaproperty> options, final int mediaCount) {
+    public Metaproperty(final String id, final String name, final String label, final List<Metaproperty> options, final int mediaCount, final Boolean isFilterable, final int zindex) {
         this.id = id;
         this.name = name;
         this.label = label;
         this.options = options;
         this.mediaCount = mediaCount;
+        this.isFilterable = isFilterable;
+        this.zindex = zindex;
     }
 
     public String getId() {
@@ -47,8 +51,16 @@ public class Metaproperty {
         this.mediaCount = mediaCount;
     }
 
+    public Boolean isFilterable() {
+        return isFilterable;
+    }
+
+    public int getZindex() {
+        return zindex;
+    }
+
     @Override
     public String toString() {
-        return "Metaproperty [id=" + id + ", name=" + name + ", label=" + label + ", mediaCount=" + mediaCount + "]";
+        return "Metaproperty [id=" + id + ", name=" + name + ", label=" + label + ", mediaCount=" + mediaCount + ", isFilterable=" + isFilterable + ", zindex=" + zindex + "]";
     }
 }

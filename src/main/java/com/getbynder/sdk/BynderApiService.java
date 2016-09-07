@@ -120,8 +120,10 @@ public class BynderApiService {
 
         for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
             if (entry.getValue().getOptions().size() > 0) {
-                if (mediaCounts.get(entry.getKey()) != null) {
+                if (mediaCounts.get(entry.getKey()) != null && !mediaCounts.get(entry.getKey()).isEmpty()) {
                     updateOptionsMediaCount(mediaCounts.get(entry.getKey()), entry.getValue().getOptions());
+                } else {
+                    entry.getValue().setIsEmpty(true);
                 }
             }
         }

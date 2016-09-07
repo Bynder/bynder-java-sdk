@@ -16,8 +16,10 @@ public class Metaproperty {
     private int mediaCount;
     private Boolean isFilterable;
     private int zindex;
+    private boolean isEmpty = false;
 
-    public Metaproperty(final String id, final String name, final String label, final List<Metaproperty> options, final int mediaCount, final Boolean isFilterable, final int zindex) {
+    public Metaproperty(final String id, final String name, final String label, final List<Metaproperty> options, final int mediaCount, final Boolean isFilterable, final int zindex,
+            final Boolean isEmpty) {
         this.id = id;
         this.name = name;
         this.label = label;
@@ -25,6 +27,7 @@ public class Metaproperty {
         this.mediaCount = mediaCount;
         this.isFilterable = isFilterable;
         this.zindex = zindex;
+        this.isEmpty = isEmpty;
     }
 
     public String getId() {
@@ -59,8 +62,16 @@ public class Metaproperty {
         return zindex;
     }
 
+    public Boolean isEmpty() {
+        return isEmpty;
+    }
+
+    public void setIsEmpty(final boolean isEmpty) {
+        this.isEmpty = isEmpty;
+    }
+
     @Override
     public String toString() {
-        return "Metaproperty [id=" + id + ", name=" + name + ", label=" + label + ", mediaCount=" + mediaCount + ", isFilterable=" + isFilterable + ", zindex=" + zindex + "]";
+        return "Metaproperty [id=" + id + ", name=" + name + ", label=" + label + ", mediaCount=" + mediaCount + ", isFilterable=" + isFilterable + ", zindex=" + zindex + ", isEmpty=" + isEmpty + "]";
     }
 }

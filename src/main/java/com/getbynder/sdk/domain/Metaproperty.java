@@ -62,7 +62,7 @@ public class Metaproperty {
         return zindex;
     }
 
-    public Boolean isEmpty() {
+    public boolean isEmpty() {
         return isEmpty;
     }
 

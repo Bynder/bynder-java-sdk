@@ -1,6 +1,7 @@
 package com.getbynder.sdk.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +20,11 @@ public class MediaAsset implements Serializable {
     private Boolean archive;
     private String datePublished;
     private String type;
-    private List<String> propertyOptions;
+    private List<String> propertyOptions = new ArrayList<>();
     private Map<String, String> thumbnails;
     private List<MediaItem> mediaItems;
 
-    public MediaAsset() {
-    }
+    public MediaAsset() {}
 
     public MediaAsset(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished, final String type,
             final List<String> propertyOptions, final Map<String, String> thumbnails, final List<MediaItem> mediaItems) {

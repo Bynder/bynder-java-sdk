@@ -634,6 +634,6 @@ public class BynderApiServiceIT {
         Thread.sleep(TIME_TO_SLEEP);
 
         testImageAsset = bynderApiService.getMediaAssetById(testImageAsset.getId(), null);
-        assertNull(testImageAsset.getPropertyOptions());
+        assertTrue(testImageAsset.getPropertyOptions().isEmpty());
     }
 }

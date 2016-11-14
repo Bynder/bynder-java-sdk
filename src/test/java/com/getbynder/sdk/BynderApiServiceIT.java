@@ -372,7 +372,7 @@ public class BynderApiServiceIT {
     }
 
     @Test
-    public void getImageAssetsTotalByMetapropertyIdsTest() throws IOException {
+    public void getMediaAssetsTotalByMetapropertyIdsTest() throws IOException {
         Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
         assertNotNull(metaproperties);
 
@@ -403,7 +403,7 @@ public class BynderApiServiceIT {
             throw e;
         }
 
-        int total = bynderApiService.getImageAssetsTotal(null, Arrays.asList(metapropertyId));
+        int total = bynderApiService.getMediaAssetsTotal(null, Arrays.asList(metapropertyId));
         assertEquals(mediaCount, total);
     }
 

@@ -221,6 +221,31 @@ public class BynderApiService {
         return total;
     }
 
+    public int getMediaAssetsTotal(final String keyword, final List<String> propertyOptionIds) throws IOException {
+        int total = 0;
+        List<MediaAsset> mediaAssetsOffset = new ArrayList<>();
+        int offset = 1;
+
+        // the condition 'offset == 1' is included in the while loop just for its first iteration
+        while (offset == 1 || mediaAssetsOffset.size() == DEFAULT_LIMIT) {
+
+            mediaAssetsOffset = getMediaAssets(null, keyword, DEFAULT_LIMIT, offset, null);
+
+            if (propertyOptionIds != null) {
+                for (MediaAsset mediaAsset : mediaAssetsOffset) {
+                    if (mediaAsset.getPropertyOptions() != null && mediaAsset.getPropertyOptions().containsAll(propertyOptionIds)) {
+                        total++;
+                    }
+                }
+            } else {
+                total += mediaAssetsOffset.size();
+            }
+            offset++;
+        }
+
+        return total;
+    }
+
     public Map<String, Integer> getImageAssetsMetapropertyCount(final String keyword, final List<String> propertyOptionIds) throws IOException {
         List<MediaAsset> imageAssetsOffset = new ArrayList<>();
         Map<String, Integer> metapropertiesMediaCount = new HashMap<>();

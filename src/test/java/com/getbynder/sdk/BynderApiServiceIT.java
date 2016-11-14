@@ -181,6 +181,47 @@ public class BynderApiServiceIT {
     }
 
     @Test
+    public void getMetapropertiesWithMediaCountTest() throws Exception {
+        List<MediaAsset> imageAssets = bynderApiService.getImageAssets(null, 100, 1);
+        assertNotNull(imageAssets);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_IMAGE_ASSETS, testName.getMethodName()), imageAssets.size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
+        String metapropertyOptionId = null;
+
+        for (MediaAsset imageAsset : imageAssets) {
+            if (!imageAsset.getPropertyOptions().isEmpty()) {
+                metapropertyOptionId = imageAsset.getPropertyOptions().get(0);
+                break;
+            }
+        }
+
+        Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
+        assertNotNull(metaproperties);
+
+        try {
+            Assume.assumeTrue(String.format(TEST_SKIPPED_NO_METAPROPERTIES, testName.getMethodName()), metaproperties.entrySet().size() > 0);
+        } catch (AssumptionViolatedException e) {
+            LOG.warn(e.getMessage());
+            throw e;
+        }
+
+        for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
+            for (Metaproperty option : entry.getValue().getOptions()) {
+                if (option.getId().equals(metapropertyOptionId)) {
+                    assertTrue(option.getMediaCount() > 0);
+                    break;
+                }
+            }
+        }
+    }
+
+    @Test
     public void getCategoriesTest() throws Exception {
         List<Category> categories = bynderApiService.getCategories();
         assertNotNull(categories);

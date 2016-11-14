@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -115,31 +114,7 @@ public class BynderApiService {
         Response<Map<String, Metaproperty>> response = bynderApi.getMetaproperties().execute();
         Map<String, Metaproperty> metaproperties = response.body();
 
-        Count count = getImageAssetsCount();
-        Map<String, Map<String, Integer>> mediaCounts = count.getMetaproperties();
-
-        for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
-            if (entry.getValue().getOptions().size() > 0) {
-                if (mediaCounts.get(entry.getKey()) != null && !mediaCounts.get(entry.getKey()).isEmpty()) {
-                    updateOptionsMediaCount(mediaCounts.get(entry.getKey()), entry.getValue().getOptions());
-                } else {
-                    entry.getValue().setIsEmpty(true);
-                }
-            }
-        }
-
         return metaproperties;
-    }
-
-    private void updateOptionsMediaCount(final Map<String, Integer> metapropertyMediaCount, final List<Metaproperty> options) throws IOException {
-        for (Metaproperty option : options) {
-            if (metapropertyMediaCount.get(option.getName()) != null) {
-                option.setMediaCount(metapropertyMediaCount.get(option.getName()));
-                if (option.getOptions() != null && option.getOptions().size() > 0) {
-                    updateOptionsMediaCount(metapropertyMediaCount, option.getOptions());
-                }
-            }
-        }
     }
 
     public List<MediaAsset> getMediaAssets(final String type, final String keyword, final Integer limit, final Integer page, final String propertyOptionId) throws IOException {

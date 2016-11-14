@@ -41,7 +41,7 @@ public interface BynderApi {
     @GET("v4/tags/")
     Call<List<Tag>> getTags();
 
-    @GET("v4/metaproperties/")
+    @GET("v4/metaproperties/?count=1")
     Call<Map<String, Metaproperty>> getMetaproperties();
 
     @GET("v4/media/")

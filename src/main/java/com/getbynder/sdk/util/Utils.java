@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.HttpResponseException;
 
-import com.getbynder.sdk.domain.Count;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
@@ -75,8 +74,8 @@ public final class Utils {
         httpClient.connectTimeout(30, TimeUnit.SECONDS);
 
         OkHttpClient client = httpClient.build();
-        Builder retrofitBuilder = new Builder().baseUrl(baseUrl).addConverterFactory(new StringConverterFactory()).addConverterFactory(
-                GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).registerTypeAdapter(Count.class, new CountTypeAdapter()).create()));
+        Builder retrofitBuilder = new Builder().baseUrl(baseUrl).addConverterFactory(new StringConverterFactory())
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create()));
         Retrofit retrofitBynderApi = retrofitBuilder.client(client).build();
 
         return retrofitBynderApi.create(apiClass);

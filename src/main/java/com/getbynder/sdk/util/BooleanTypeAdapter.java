@@ -8,14 +8,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
 /**
-*
-* @author daniel.sequeira
-*/
+ *
+ * @author daniel.sequeira
+ */
 public class BooleanTypeAdapter implements JsonDeserializer<Boolean> {
 
     @Override
     public Boolean deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
-
         int code = json.getAsInt();
 
         if (code == 0) {

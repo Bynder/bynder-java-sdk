@@ -20,24 +20,12 @@ public class Tag {
         return id;
     }
 
-    public void setId(final String id) {
-        this.id = id;
-    }
-
     public String getTag() {
         return tag;
     }
 
-    public void setTag(final String tag) {
-        this.tag = tag;
-    }
-
     public int getMediaCount() {
         return mediaCount;
-    }
-
-    public void setMediaCount(final int mediaCount) {
-        this.mediaCount = mediaCount;
     }
 
     @Override

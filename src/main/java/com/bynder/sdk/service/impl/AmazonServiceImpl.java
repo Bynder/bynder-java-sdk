@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Bynder. All rights reserved.
+ * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -11,26 +11,26 @@ import java.util.LinkedHashMap;
 import com.bynder.sdk.api.AmazonApi;
 import com.bynder.sdk.model.UploadRequest;
 import com.bynder.sdk.service.AmazonService;
-import com.bynder.sdk.service.BynderServiceCall;
-import com.bynder.sdk.util.Utils;
 
+import io.reactivex.Observable;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 public class AmazonServiceImpl implements AmazonService {
 
     private final AmazonApi amazonApi;
 
     public AmazonServiceImpl(final String awsBucket) {
-        Retrofit retrofit = new Builder().baseUrl(awsBucket).build();
+        Retrofit retrofit = new Builder().addCallAdapterFactory(RxJava2CallAdapterFactory.create()).baseUrl(awsBucket).build();
         amazonApi = retrofit.create(AmazonApi.class);
     }
 
     @Override
-    public BynderServiceCall<Void> uploadPartToAmazon(final String filename, final UploadRequest uploadRequest, final int chunkNumber, final byte[] fileContent, final int numberOfChunks) {
+    public Observable<Response<Void>> uploadPartToAmazon(final String filename, final UploadRequest uploadRequest, final int chunkNumber, final byte[] fileContent, final int numberOfChunks) {
         String finalKey = String.format("%s/p%s", uploadRequest.getMultipartParams().getKey(), chunkNumber);
 
         LinkedHashMap<String, RequestBody> params = new LinkedHashMap<>();
@@ -51,7 +51,6 @@ public class AmazonServiceImpl implements AmazonService {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), fileContent);
         params.put("file", requestFile);
 
-        Call<Void> call = amazonApi.uploadPartToAmazon(params);
-        return Utils.createServiceCall(call);
+        return amazonApi.uploadPartToAmazon(params);
     }
 }

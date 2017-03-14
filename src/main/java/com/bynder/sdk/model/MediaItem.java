@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Bynder. All rights reserved.
+ * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -23,21 +23,6 @@ public class MediaItem {
     private int version;
     private Boolean active;
     private Map<String, String> thumbnails;
-
-    public MediaItem(final String id, final String name, final String type, final String dateCreated, final int height, final int width, final long size, final int version, final Boolean active,
-            final Map<String, String> thumbnails) {
-        super();
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.dateCreated = dateCreated;
-        this.height = height;
-        this.width = width;
-        this.size = size;
-        this.version = version;
-        this.active = active;
-        this.thumbnails = thumbnails;
-    }
 
     public String getId() {
         return id;

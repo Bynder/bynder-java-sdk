@@ -1,5 +1,5 @@
 # Secret stuff
-**/secret.properties
+**/app.properties
 
 # Compilation files
 .*

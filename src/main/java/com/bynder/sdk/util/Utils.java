@@ -1,33 +1,24 @@
 /**
- * Copyright (c) Bynder. All rights reserved.
+ * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
 package com.bynder.sdk.util;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpResponseException;
 
-import com.bynder.sdk.model.Count;
-import com.bynder.sdk.service.BynderServiceCall;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Observable.OnSubscribe;
-import rx.Subscriber;
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer;
 import se.akerfeldt.okhttp.signpost.SigningInterceptor;
 
@@ -40,7 +31,6 @@ public final class Utils {
     public static final String STR_AND = "&";
     public static final String STR_COMMA = ",";
     public static final String STR_EQUALS = "=";
-    public static final String STR_SPACE = " ";
 
     private Utils() {
         // prevent instantiation
@@ -94,53 +84,9 @@ public final class Utils {
         OkHttpOAuthConsumer consumer = createHttpOAuthConsumer(consumerKey, consumerSecret, tokenKey, tokenSecret);
         OkHttpClient client = createHttpClient(consumer);
 
-        Retrofit retrofit =
-                new Builder().baseUrl(baseUrl).addConverterFactory(new StringConverterFactory())
-                        .addConverterFactory(GsonConverterFactory
-                                .create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).registerTypeAdapter(Count.class, new CountTypeAdapter()).create()))
-                        .client(client).build();
+        Retrofit retrofit = new Builder().baseUrl(baseUrl).addConverterFactory(new StringConverterFactory()).addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create())).client(client).build();
 
         return retrofit.create(apiInterface);
-    }
-
-    public static <T> void validateResponse(final Response<T> response, final String errorMessage) throws HttpResponseException {
-        if (!response.isSuccessful()) {
-            throw new HttpResponseException(response.code(), String.format(errorMessage, Integer.toString(response.code()), response.message()));
-        }
-    }
-
-    public static <T> BynderServiceCall<T> createServiceCall(final Call<T> call) {
-        return new BynderServiceCall<T>() {
-            @Override
-            public T execute() throws RuntimeException {
-                try {
-                    Response<T> response = call.execute();
-                    return response.body();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            public Observable<T> executeAsync() {
-                return Observable.create(new OnSubscribe<T>() {
-                    @Override
-                    public void call(final Subscriber<? super T> subscriber) {
-                        call.enqueue(new Callback<T>() {
-                            @Override
-                            public void onResponse(final Call<T> call, final Response<T> response) {
-                                subscriber.onNext(response.body());
-                                subscriber.onCompleted();
-                            }
-
-                            @Override
-                            public void onFailure(final Call<T> call, final Throwable t) {
-                                subscriber.onError(t);
-                            }
-                        });
-                    }
-                });
-            }
-        };
     }
 }

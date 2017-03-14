@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Bynder. All rights reserved.
+ * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -38,33 +38,6 @@ public class Media implements Serializable {
     private List<String> propertyOptions = new ArrayList<>();
     private Map<String, String> thumbnails;
     private List<MediaItem> mediaItems;
-
-    public Media() {}
-
-    public Media(final String id, final String name, final String description, final String copyright, final Boolean archive, final String dateCreated, final String dateModified,
-            final String datePublished, final String type, final String brandId, final int height, final int width, final String orientation, final long fileSize, final List<String> tags,
-            final List<String> extensions, final List<String> videoPreviewURLs, final List<String> propertyOptions, final Map<String, String> thumbnails, final List<MediaItem> mediaItems) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.copyright = copyright;
-        this.archive = archive;
-        this.dateCreated = dateCreated;
-        this.dateModified = dateModified;
-        this.datePublished = datePublished;
-        this.type = type;
-        this.brandId = brandId;
-        this.height = height;
-        this.width = width;
-        this.orientation = orientation;
-        this.fileSize = fileSize;
-        this.tags = tags;
-        this.extensions = extensions;
-        this.videoPreviewURLs = videoPreviewURLs;
-        this.propertyOptions = propertyOptions;
-        this.thumbnails = thumbnails;
-        this.mediaItems = mediaItems;
-    }
 
     public String getId() {
         return id;

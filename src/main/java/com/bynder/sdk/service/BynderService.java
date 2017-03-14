@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Bynder. All rights reserved.
+ * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -10,13 +10,15 @@ import com.bynder.sdk.model.User;
 
 public interface BynderService {
 
-    BynderServiceCall<User> login(String username, String password);
+    User login(String username, String password);
 
-    BynderServiceCall<String> getRequestToken();
+    void getRequestToken();
 
-    BynderServiceCall<String> getAccessToken(final String requestToken, final String requestTokenSecret);
+    void getAccessToken();
 
-    String getAuthoriseUrl(final String requestToken, final String callbackUrl);
+    String getAuthoriseUrl(final String callbackUrl);
+
+    void logout();
 
     AssetBankManager getAssetBankManager();
 }

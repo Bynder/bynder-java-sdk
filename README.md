@@ -1,47 +1,49 @@
 # Bynder Java SDK
 
-The main goal of this SDK is to speed up the integration of Bynder customers who use JAVA. Making it easier to connect to the Bynder API (http://docs.bynder.apiary.io) and executing requests on it.
+The main goal of this SDK is to speed up the integration of Bynder customers who use JAVA. Making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/, http://docs.bynderapiv5.apiary.io/) and executing requests on it.
 
 ## Current status
 
-At the moment this JAVA SDK provides a default library with the following methods defined in the class <b>com.getbynder.sdk.BynderApiService</b>:
+At the moment this SDK provides a default library with the following methods:
 
+#### Login
 ```java
-public UserAccessData login(final String username, final String password);
+User login(String username, String password);
 
-public Map<String, String> getRequestToken();
+void getRequestToken();
 
-public Map<String, String> getAccessToken(final String requestTokenKey, final String requestTokenSecret);
+void getAccessToken();
 
-public List<Category> getCategories();
+String getAuthoriseUrl(final String callbackUrl);
 
-public List<Tag> getTags();
+void logout();
+```
 
-public Map<String, Metaproperty> getMetaproperties();
+#### Asset Bank Manager
+```java
+Observable<Response<List<Brand>>> getBrands();
 
-public List<MediaAsset> getMediaAssets(final String type, final String keyword, final Integer limit, final Integer offset, final String propertyOptionId);
+Observable<Response<List<Tag>>> getTags();
 
-public MediaAsset getMediaAssetById(final String id, final Boolean versions);
+Observable<Response<Map<String, Metaproperty>>> getMetaproperties(MetapropertyQuery metapropertyQuery);
 
-public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer offset);
+Observable<Response<List<Media>>> getMediaList(MediaQuery mediaQuery);
 
-public List<MediaAsset> getImageAssets(final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionIds);
+Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery);
 
-public List<MediaAsset> getImageAssetsByMetapropertyId(final String propertyOptionId);
+Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDownloadQuery);
 
-public int getImageAssetsTotal();
+Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery);
 
-public int getImageAssetsTotal(final String keyword, final List<String> propertyOptionIds);
+Observable<Response<Void>> addMetapropertyToMedia(AddMetapropertyToMediaQuery addMetapropertyToMediaQuery);
 
-public int setMediaAssetProperties(final String id, final String name, final String description, final String copyright, final Boolean archive, final String datePublished);
-
-public int addMetapropertyToAsset(final String assetId, final String metapropertyId, final String... optionsIds);
+void uploadFile(UploadQuery uploadQuery) throws BynderUploadException, IOException, InterruptedException, RuntimeException;
 ```
 
 ## Installation
 
 Components used to install and run the project:
-* Java JDK (version 1.7.0_80)
+* Java JDK (version 1.8.0_60)
 * Apache Maven 3.3.3
 
 <b>Important:</b> Don't forget to define the environmental variables for Java and Maven!
@@ -60,56 +62,39 @@ $ mvn clean install
 This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.
 
 ## How does it work
-Before executing any request to the Bynder API, it is necessary to instantiate the class <b>BynderApiService</b>.
+Before executing any request to the Bynder API, it is necessary to instantiate the class <b>BynderService</b>.
 
-The following example shows how to use the <b>BynderApiServiceBuilder</b> to construct a <b>BynderApiService</b> instance:
+The following example shows how to use the <b>BynderServiceImpl.create</b> static method to create an instance of <b>BynderService</b> using the <b>Settings</b> object as parameter:
 ```java
-BynderApiService bynderApiService = new BynderApiServiceBuilder()
-    .setBaseUrl("https://example.getbynder.com/api/")
-    .setConsumerKey("your consumer key")
-    .setConsumerSecret("your consumer secret")
-    .setAccessTokenKey("your access token key")
-    .setAccessTokenSecret("your access token secret")
-    .create();
+BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.getbynder.com/api/",
+                                                                    "your consumer key",
+                                                                    "your consumer secret",
+                                                                    "your access token key",
+                                                                    "your access token secret"));
 ```
 
-It is also possible to construct a <b>BynderApiService</b> instance with login, in case you don't have access token for your environment:
+After instantiating the <b>BynderService</b> class successfully it is possible to call any of the methods listed in the section <b>Current Status</b>. Example:
+
+#### Reactive way to get the Observable
 ```java
-BynderApiService bynderApiService = new BynderApiServiceBuilder()
-    .setBaseUrl("https://example.getbynder.com/api/")
-    .setConsumerKey("your consumer key")
-    .setConsumerSecret("your consumer secret")
-    .setRequestTokenKey("your request token key")
-    .setRequestTokenSecret("your request token secret")
-    .createWithLogin("your username", "your password");
+Observable<Response<List<Tag>>> observable = bynderService.getTags();
 ```
 
-<b>Important:</b> The order of invocation of the setter methods does not matter, but they are all mandatory.
-
-After instantiating the <b>BynderApiService</b> class successfully it is possible to call any of the methods listed in the section <b>Current Status</b>. Example:
-
+#### Synchronous way to wait for the Observable to complete and emit the single item
 ```java
-Map<String, Metaproperty> metaproperties = bynderApiService.getMetaproperties();
+Response<List<Tag>> response = bynderService.getTags().blockingSingle();
 ```
 
 ## Running the integration tests
 
-In order to be able to run the integration tests against the Bynder API you need to create a new properties file called "secret.properties" like the one shown below. Where your Bynder API base url shall have this structure: <i>https://&#91;accountdomain&#93;/api/</i>
+In order to be able to run the integration tests against the Bynder API you need to create a new properties file called "app.properties" like the one shown below. Where your Bynder API base url shall have this structure: <i>https://&#91;accountdomain&#93;/api/</i>
 ```bash
-$ vi bynder-java-sdk/src/main/resources/secret.properties
+$ vi bynder-java-sdk/src/main/resources/app.properties
 
 # bynder api base url
 BASE_URL=<your bynder api base url>
 
-# bynder api login credentials
-USERNAME=<your username>
-PASSWORD=<your password>
-
-# bynder api request tokens
-REQUEST_TOKEN_KEY=<your request token key>
-REQUEST_TOKEN_SECRET=<your request token secret>
-
-# bynder api access tokens
+# bynder api tokens
 CONSUMER_KEY=<your consumer key>
 CONSUMER_SECRET=<your consumer secret>
 ACCESS_TOKEN_KEY=<your access token key>
@@ -121,7 +106,7 @@ To run the integration tests you can execute the following Maven command in the 
 ```bash
 $ mvn verify
 ```
-<b>Note:</b> Before the integration tests are executed, an instance of the <b>BynderApiService</b> class will be created using the base url, credentials and tokens defined in the "secret.properties" file.
+<b>Note:</b> Before the integration tests are executed, an instance of the <b>BynderService</b> class will be created using the base url, credentials and tokens defined in the "app.properties" file.
 
 After running this command, if everything is working fine, you should get a similar output as the one shown below, telling you all the tests ran successfully.
 
@@ -130,13 +115,13 @@ After running this command, if everything is working fine, you should get a simi
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
-Running com.getbynder.sdk.BynderApiServiceBuilderIT
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.589 sec - in com.getbynder.sdk.BynderApiServiceBuilderIT
-Running com.getbynder.sdk.BynderApiServiceIT
-Tests run: 20, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 36.498 sec - in com.getbynder.sdk.BynderApiServiceIT
+Running com.bynder.sdk.service.AssetBankManagerIT
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 52.866 sec - in com.bynder.sdk.service.AssetBankManagerIT
+Running com.bynder.sdk.service.BynderServiceIT
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.377 sec - in com.bynder.sdk.service.BynderServiceIT
 
 Results :
 
-Tests run: 23, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
 
 ```

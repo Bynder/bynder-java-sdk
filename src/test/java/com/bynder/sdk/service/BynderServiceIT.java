@@ -24,6 +24,9 @@ import com.bynder.sdk.service.impl.BynderServiceImpl;
 import com.bynder.sdk.util.AppProperties;
 import com.bynder.sdk.util.Utils;
 
+/**
+ * Class to test {@link BynderService} implementation against the API.
+ */
 public class BynderServiceIT {
 
     private final String BASE_URL = "BASE_URL";
@@ -36,12 +39,19 @@ public class BynderServiceIT {
     @Rule
     public TestName testName = new TestName();
 
+    /**
+     * Before each test an instance of {@link BynderService} is created using the settings defined
+     * in the src/main/resources/app.properties file.
+     */
     @Before
     public void setUp() throws Exception {
         bynderService = BynderServiceImpl.create(new Settings(AppProperties.getInstance().getProperty(BASE_URL), AppProperties.getInstance().getProperty("CONSUMER_KEY"),
                 AppProperties.getInstance().getProperty("CONSUMER_SECRET"), null, null));
     }
 
+    /**
+     * Tests that the request token pair is returned and the authorize URL is build correctly.
+     */
     @Test
     public void getRequestTokenAndAuthoriseUrlTest() throws URISyntaxException {
         bynderService.getRequestToken();

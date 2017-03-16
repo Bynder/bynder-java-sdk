@@ -26,7 +26,8 @@ public class AppProperties {
     private final Properties appProperties = new Properties();
 
     /**
-     * Initializes a new instance of the class by loading the content in the app.properties file.
+     * Initializes a new instance of the class by loading the content in the
+     * src/main/resources/app.properties file.
      */
     private AppProperties() {
         InputStream input = this.getClass().getClassLoader().getResourceAsStream("app.properties");
@@ -51,7 +52,8 @@ public class AppProperties {
     }
 
     /**
-     * Gets a {@link Settings} instance using the properties define in the app.properties file.
+     * Gets a {@link Settings} instance using the properties define in the
+     * src/main/resources/app.properties file.
      *
      * @return {@link Settings} instance.
      */

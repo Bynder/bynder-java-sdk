@@ -15,11 +15,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+/**
+ * Tests the {@link Utils} class methods
+ */
 public class UtilsTest {
 
     @Rule
     public TestName testName = new TestName();
 
+    /**
+     * Tests that response is correctly converted to a Map.
+     */
     @Test
     public void buildMapFromResponseTest() {
         String keyA = "keyA";

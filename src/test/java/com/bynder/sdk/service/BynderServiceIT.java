@@ -50,7 +50,9 @@ public class BynderServiceIT {
     }
 
     /**
-     * Tests that the request token pair is returned and the authorize URL is build correctly.
+     * Tests that when {@link BynderService#getRequestToken()} is called the request token pair is
+     * returned and the authorize URL is build correctly by
+     * {@link BynderService#getAuthoriseUrl(String)}.
      */
     @Test
     public void getRequestTokenAndAuthoriseUrlTest() throws URISyntaxException {

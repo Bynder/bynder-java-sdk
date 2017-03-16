@@ -34,42 +34,74 @@ import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
 import retrofit2.Response;
 
+/**
+ * Implementation of {@link AssetBankManager}.
+ */
 public class AssetBankManagerImpl implements AssetBankManager {
 
+    /**
+     * Instance of {@link BynderApi} which handles the HTTP communication.
+     */
     private final BynderApi bynderApi;
+    /**
+     * Instance to upload file to Bynder.
+     */
     private final FileUploader fileUploader;
 
+    /**
+     * Initializes a new instance of the class.
+     *
+     * @param bynderApi Instance to handle the HTTP communication.
+     */
     public AssetBankManagerImpl(final BynderApi bynderApi) {
         this.bynderApi = bynderApi;
         this.fileUploader = FileUploader.create(bynderApi);
     }
 
+    /**
+     * Check {@link AssetBankManager} for more information.
+     */
     @Override
     public Observable<Response<List<Brand>>> getBrands() {
         return bynderApi.getBrands();
     }
 
+    /**
+     * Check {@link AssetBankManager} for more information.
+     */
     @Override
     public Observable<Response<List<Tag>>> getTags() {
         return bynderApi.getTags();
     }
 
+    /**
+     * Check {@link AssetBankManager} for more information.
+     */
     @Override
     public Observable<Response<Map<String, Metaproperty>>> getMetaproperties(final MetapropertyQuery metapropertyQuery) {
         return bynderApi.getMetaproperties(metapropertyQuery.getCount());
     }
 
+    /**
+     * Check {@link AssetBankManager} for more information.
+     */
     @Override
     public Observable<Response<List<Media>>> getMediaList(final MediaQuery mediaQuery) {
         return bynderApi.getMediaList(mediaQuery.getType() == null ? null : mediaQuery.getType().toString(), mediaQuery.getKeyword(), mediaQuery.getLimit(), mediaQuery.getPage(),
-                StringUtils.join(mediaQuery.getPropertyOptionId(), Utils.STR_COMMA), mediaQuery.getCount());
+                StringUtils.join(mediaQuery.getPropertyOptionId(), Utils.STR_COMMA));
     }
 
+    /**
+     * Check {@link AssetBankManager} for more information.
+     */
     @Override
     public Observable<Response<Media>> getMediaInfo(final MediaInfoQuery mediaInfoQuery) {
         return bynderApi.getMediaInfo(mediaInfoQuery.getMediaId(), mediaInfoQuery.getVersions());
     }
 
+    /**
+     * Check {@link AssetBankManager} for more information.
+     */
     @Override
     public Observable<Response<DownloadUrl>> getMediaDownloadUrl(final MediaDownloadQuery mediaDownloadQuery) {
         if (mediaDownloadQuery.getMediaItemId() == null) {
@@ -79,12 +111,18 @@ public class AssetBankManagerImpl implements AssetBankManager {
         }
     }
 
+    /**
+     * Check {@link AssetBankManager} for more information.
+     */
     @Override
     public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) {
         return bynderApi.setMediaProperties(mediaPropertiesQuery.getMediaId(), mediaPropertiesQuery.getName(), mediaPropertiesQuery.getDescription(), mediaPropertiesQuery.getCopyright(),
                 mediaPropertiesQuery.getArchive(), mediaPropertiesQuery.getDatePublished());
     }
 
+    /**
+     * Check {@link AssetBankManager} for more information.
+     */
     @Override
     public Observable<Response<Void>> addMetapropertyToMedia(final AddMetapropertyToMediaQuery addMetapropertyToMediaQuery) {
         Map<String, String> metapropertyOptions = new HashMap<>();
@@ -93,6 +131,9 @@ public class AssetBankManagerImpl implements AssetBankManager {
         return bynderApi.addMetapropertyToMedia(addMetapropertyToMediaQuery.getMediaId(), metapropertyOptions);
     }
 
+    /**
+     * Check {@link AssetBankManager} for more information.
+     */
     @Override
     public void uploadFile(final UploadQuery uploadQuery) throws BynderUploadException, IOException, InterruptedException, RuntimeException {
         fileUploader.uploadFile(uploadQuery);

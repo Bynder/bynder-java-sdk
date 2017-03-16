@@ -6,19 +6,57 @@
  */
 package com.bynder.sdk.service;
 
+import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
 
+/**
+ * Interface to login to Bynder and to get instance of {@link AssetBankManager}.
+ */
 public interface BynderService {
 
+    /**
+     * Login using API. To be able to use this method we need to provide an request token key/secret
+     * with login permissions in {@link Settings}.
+     *
+     * @param username Username/email.
+     * @param password Password.
+     *
+     * @return {@link User} information.
+     */
     User login(String username, String password);
 
+    /**
+     * Gets temporary request token pair used to build the authorise URL and login through the
+     * browser.
+     */
     void getRequestToken();
 
-    void getAccessToken();
-
+    /**
+     * Gets the URL needed to open the browser so the user can login and authorize the temporary
+     * request token pair.
+     *
+     * @param callbackUrl
+     * @return
+     */
     String getAuthoriseUrl(final String callbackUrl);
 
+    /**
+     * Gets temporary access token pair once the user has already accessed the authorise URL and
+     * logged in through the browser.
+     */
+    void getAccessToken();
+
+    /**
+     * Logout resets your credentials. If the access token key/secret provided in the
+     * {@link Settings} have full permission, even after this call, calls to any API endpoint will
+     * still work.
+     */
     void logout();
 
+    /**
+     * Gets an instance of the asset bank manager to perform Bynder Asset Bank operations.
+     *
+     * @return
+     */
     AssetBankManager getAssetBankManager();
 }

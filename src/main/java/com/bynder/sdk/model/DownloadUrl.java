@@ -8,10 +8,18 @@ package com.bynder.sdk.model;
 
 import java.net.URI;
 
+import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Model returned by {@link BynderApi#getMediaDownloadUrl(String)} and
+ * {@link BynderApi#getMediaDownloadUrl(String, String)}.
+ */
 public class DownloadUrl {
 
+    /**
+     * URL of the media asset.
+     */
     @SerializedName(value = "s3_file")
     private URI s3File;
 

@@ -6,12 +6,24 @@
  */
 package com.bynder.sdk.model;
 
+import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Model to represent the S3 file information returned in the response of
+ * {@link BynderApi#getUploadInformation(String)}. This model is only and should be only used when
+ * uploading a file.
+ */
 public class S3File {
 
+    /**
+     * Upload id.
+     */
     @SerializedName("uploadid")
     private String uploadId;
+    /**
+     * Target id.
+     */
     @SerializedName("targetid")
     private String targetId;
 

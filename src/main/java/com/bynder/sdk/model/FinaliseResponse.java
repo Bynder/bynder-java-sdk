@@ -6,8 +6,16 @@
  */
 package com.bynder.sdk.model;
 
+import com.bynder.sdk.api.BynderApi;
+
+/**
+ * Model returned by {@link BynderApi#finaliseUploaded(String, String, String, int)}.
+ */
 public class FinaliseResponse {
 
+    /**
+     * Import id for the upload. Needed to poll and save media.
+     */
     private String importId;
 
     public String getImportId() {

@@ -6,12 +6,32 @@
  */
 package com.bynder.sdk.model;
 
+import com.bynder.sdk.service.BynderService;
+
+/**
+ * Settings needed to configure {@link BynderService}.
+ */
 public class Settings {
 
+    /**
+     * Bynder domain URL where we want to point the API calls.
+     */
     private String baseUrl;
+    /**
+     * Oauth consumer key.
+     */
     private String consumerKey;
+    /**
+     * Oauth consumer secret.
+     */
     private String consumerSecret;
+    /**
+     * Oauth token key.
+     */
     private String token;
+    /**
+     * Oauth token secret.
+     */
     private String tokenSecret;
 
     public Settings(final String baseUrl, final String consumerKey, final String consumerSecret, final String token, final String tokenSecret) {

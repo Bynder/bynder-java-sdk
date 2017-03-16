@@ -6,13 +6,29 @@
  */
 package com.bynder.sdk.model;
 
+import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Model returned when success login through API {@link BynderApi#login(String, String)}.
+ */
 public class User {
 
+    /**
+     * Id of the user logged in.
+     */
     private String userId;
+    /**
+     * Token key returned by API.
+     */
     private String tokenKey;
+    /**
+     * Token secret returned by API.
+     */
     private String tokenSecret;
+    /**
+     * True if access was given to the username/password pair.
+     */
     @SerializedName(value = "access")
     private Boolean hasAccess;
 

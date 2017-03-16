@@ -6,9 +6,19 @@
  */
 package com.bynder.sdk.query;
 
+/**
+ * Query to get media information including its media items.
+ */
 public class MediaInfoQuery {
 
+    /**
+     * Id of the media from which we want to retrieve information.
+     */
     private String mediaId;
+    /**
+     * This property has to be set to 1 (TRUE) for the API response to include the media items of
+     * the media asset.
+     */
     private Boolean versions;
 
     public MediaInfoQuery(final String mediaId, final Boolean versions) {

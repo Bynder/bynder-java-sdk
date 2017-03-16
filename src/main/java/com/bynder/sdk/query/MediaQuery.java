@@ -10,22 +10,40 @@ import java.util.List;
 
 import com.bynder.sdk.model.MediaType;
 
+/**
+ * Query to filter media results.
+ */
 public class MediaQuery {
 
+    /**
+     * The type of the media asset. Possible values: image, document, audio, video.
+     */
     private MediaType type;
+    /**
+     * Keyword that the media asset has to have to appear in the results. Search filenames, tags,
+     * extensions, collection names, guidelines, brandstore, campaigns in workflow, enriched PDFs,
+     * word documents.
+     */
     private String keyword;
+    /**
+     * Limit of results per request. Maximum: 1000. Default: 50.
+     */
     private Integer limit;
+    /**
+     * Page to be retrieved.
+     */
     private Integer page;
+    /**
+     * Metaproperty option ids that the media asset has to have.
+     */
     private List<String> propertyOptionId;
-    private Boolean count;
 
-    public MediaQuery(final MediaType type, final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionId, final Boolean count) {
+    public MediaQuery(final MediaType type, final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionId) {
         this.type = type;
         this.keyword = keyword;
         this.limit = limit;
         this.page = page;
         this.propertyOptionId = propertyOptionId;
-        this.count = count;
     }
 
     public MediaType getType() {
@@ -46,9 +64,5 @@ public class MediaQuery {
 
     public List<String> getPropertyOptionId() {
         return propertyOptionId;
-    }
-
-    public Boolean getCount() {
-        return count;
     }
 }

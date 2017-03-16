@@ -8,24 +8,55 @@ package com.bynder.sdk.model;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Parameters needed to upload a part to Amazon. This model is only and should be only used when
+ * uploading a file.
+ */
 public class MultipartParameters {
 
+    /**
+     * Amz credentials.
+     */
     @SerializedName("x-amz-credential")
     private String awsAccessKeyId;
+    /**
+     * Policy.
+     */
     @SerializedName("Policy")
     private String policy;
+    /**
+     * Success status.
+     */
     @SerializedName("success_action_status")
     private String successActionStatus;
+    /**
+     * Key.
+     */
     @SerializedName("key")
     private String key;
+    /**
+     * Amz signature.
+     */
     @SerializedName("X-Amz-Signature")
     private String signature;
+    /**
+     * Content type.
+     */
     @SerializedName("Content-Type")
     private String contentType;
+    /**
+     * Acl.
+     */
     @SerializedName("acl")
     private String acl;
+    /**
+     * Amz algorithm.
+     */
     @SerializedName("x-amz-algorithm")
     private String algorithm;
+    /**
+     * Amz date.
+     */
     @SerializedName("x-amz-date")
     private String date;
 

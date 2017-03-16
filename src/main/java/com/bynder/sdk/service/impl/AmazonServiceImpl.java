@@ -20,15 +20,29 @@ import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+/**
+ * Implementation of {@link AmazonService}.
+ */
 public class AmazonServiceImpl implements AmazonService {
 
+    /**
+     * Instance of {@link AmazonApi} which handles the HTTP communication.
+     */
     private final AmazonApi amazonApi;
 
+    /**
+     * Initializes a new instance of the class.
+     *
+     * @param awsBucket AWS bucket with the URL to upload the part to.
+     */
     public AmazonServiceImpl(final String awsBucket) {
         Retrofit retrofit = new Builder().addCallAdapterFactory(RxJava2CallAdapterFactory.create()).baseUrl(awsBucket).build();
         amazonApi = retrofit.create(AmazonApi.class);
     }
 
+    /**
+     * Check {@link AmazonService} for more information.
+     */
     @Override
     public Observable<Response<Void>> uploadPartToAmazon(final String filename, final UploadRequest uploadRequest, final int chunkNumber, final byte[] fileContent, final int numberOfChunks) {
         String finalKey = String.format("%s/p%s", uploadRequest.getMultipartParams().getKey(), chunkNumber);

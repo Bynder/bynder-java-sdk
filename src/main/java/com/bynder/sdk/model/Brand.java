@@ -6,11 +6,28 @@
  */
 package com.bynder.sdk.model;
 
+import com.bynder.sdk.api.BynderApi;
+
+/**
+ * Brand model returned by {@link BynderApi#getBrands()}.
+ */
 public class Brand {
 
+    /**
+     * Brand id.
+     */
     private String id;
+    /**
+     * Brand name.
+     */
     private String name;
+    /**
+     * Brand description.
+     */
     private String description;
+    /**
+     * URL for the image/logo.
+     */
     private String image;
 
     public String getId() {

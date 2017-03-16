@@ -6,13 +6,34 @@
  */
 package com.bynder.sdk.query;
 
+/**
+ * Query to specify the media properties to be updated.
+ */
 public class MediaPropertiesQuery {
 
+    /**
+     * Id of the media for which we want to update its properties.
+     */
     private String mediaId;
+    /**
+     * Name new value.
+     */
     private String name;
+    /**
+     * Description new value.
+     */
     private String description;
+    /**
+     * Copyright new value.
+     */
     private String copyright;
+    /**
+     * Archive new status.
+     */
     private Boolean archive;
+    /**
+     * Publication date new value.
+     */
     private String datePublished;
 
     public MediaPropertiesQuery(final String mediaId, final String name, final String description, final String copyright, final Boolean archive, final String datePublished) {

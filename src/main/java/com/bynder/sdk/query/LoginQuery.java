@@ -6,9 +6,18 @@
  */
 package com.bynder.sdk.query;
 
+/**
+ * Query used internally to login.
+ */
 public class LoginQuery {
 
+    /**
+     * Username.
+     */
     private String username;
+    /**
+     * Password.
+     */
     private String password;
 
     public LoginQuery(final String username, final String password) {

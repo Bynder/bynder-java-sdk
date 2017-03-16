@@ -9,13 +9,36 @@ package com.bynder.sdk.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bynder.sdk.api.BynderApi;
+
+/**
+ * Metaproperty model returned by {@link BynderApi#getMetaproperties(Boolean)}.
+ */
 public class Metaproperty {
 
+    /**
+     * Id of the metaproperty.
+     */
     private String id;
+    /**
+     * Name of the metaproperty.
+     */
     private String name;
+    /**
+     * Label of the metaproperty.
+     */
     private String label;
+    /**
+     * Child metaproperty options.
+     */
     private List<MetapropertyOption> options = new ArrayList<>();
+    /**
+     * True if metaproperty option has filterable turned on.
+     */
     private Boolean isFilterable;
+    /**
+     * Order in which the metaproperty should appear.
+     */
     private int zindex;
 
     public String getId() {

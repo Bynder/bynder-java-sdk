@@ -6,37 +6,101 @@
  */
 package com.bynder.sdk.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
 
-public class Media implements Serializable {
+/**
+ * Media model returned by {@link BynderApi#getMediaList(String, String, Integer, Integer, String)}
+ * and {@link BynderApi#getMediaInfo(String, Boolean)}.
+ */
+public class Media {
 
-    private static final long serialVersionUID = 1L;
-
+    /**
+     * Media id.
+     */
     private String id;
+    /**
+     * Media name.
+     */
     private String name;
+    /**
+     * Media description.
+     */
     private String description;
+    /**
+     * Copyright of the media.
+     */
     private String copyright;
+    /**
+     * Media archive status.
+     */
     private Boolean archive;
+    /**
+     * Date created.
+     */
     private String dateCreated;
+    /**
+     * Date modified.
+     */
     private String dateModified;
+    /**
+     * Publication date.
+     */
     private String datePublished;
+    /**
+     * Media type. Possible values are: image, document, audio and video.
+     */
     private String type;
+    /**
+     * Id of the brand the media belongs to.
+     */
     private String brandId;
+    /**
+     * Height of the original media file.
+     */
     private int height;
+    /**
+     * Width of the original media file.
+     */
     private int width;
+    /**
+     * Orientation of the original media file.
+     */
     private String orientation;
+    /**
+     * File size of the original media file in bytes.
+     */
     private long fileSize;
+    /**
+     * Tags of the media.
+     */
     private List<String> tags;
+    /**
+     * Extension of the media file.
+     */
     @SerializedName(value = "extension")
     private List<String> extensions;
+    /**
+     * Video preview URLs.
+     */
     private List<String> videoPreviewURLs;
+    /**
+     * Property options assigned to the media.
+     */
     private List<String> propertyOptions = new ArrayList<>();
+    /**
+     * Generated thumbnails for the media.
+     */
     private Map<String, String> thumbnails;
+    /**
+     * Media items for the media. Including derivatives, additional and original. To get this
+     * information we have to call {@link BynderApi#getMediaInfo(String, Boolean)} with the media id
+     * and versions equal to true.
+     */
     private List<MediaItem> mediaItems;
 
     public String getId() {

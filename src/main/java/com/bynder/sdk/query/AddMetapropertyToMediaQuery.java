@@ -6,10 +6,22 @@
  */
 package com.bynder.sdk.query;
 
+/**
+ * Query to specify the metaproperty options to be added to a media asset.
+ */
 public class AddMetapropertyToMediaQuery {
 
+    /**
+     * Id of the media for which we want to add metaproperty options.
+     */
     private String mediaId;
+    /**
+     * Id of the metaproperty to which the metaproperty options belong to.
+     */
     private String metapropertyId;
+    /**
+     * Metaproperty options ids.
+     */
     private String[] optionsIds;
 
     public AddMetapropertyToMediaQuery(final String mediaId, final String metapropertyId, final String[] optionsIds) {

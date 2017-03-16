@@ -6,9 +6,18 @@
  */
 package com.bynder.sdk.query;
 
+/**
+ * Query to specify the media from which we want the download URL.
+ */
 public class MediaDownloadQuery {
 
+    /**
+     * Media id.
+     */
     private String mediaId;
+    /**
+     * Media item id. If null the URL returned will be the URL of the original media.
+     */
     private String mediaItemId;
 
     public MediaDownloadQuery(final String mediaId, final String mediaItemId) {

@@ -8,9 +8,21 @@ package com.bynder.sdk.model;
 
 import java.util.HashSet;
 
+import com.bynder.sdk.api.BynderApi;
+
+/**
+ * Model returned by {@link BynderApi#pollStatus(String)}. This model is only and should be only
+ * used when uploading a file.
+ */
 public class PollStatus {
 
+    /**
+     * Returns the items for which the conversion failed.
+     */
     private HashSet<String> itemsFailed;
+    /**
+     * Returns the items for which the conversion succeeded.
+     */
     private HashSet<String> itemsDone;
 
     public HashSet<String> getItemsFailed() {

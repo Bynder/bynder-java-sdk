@@ -6,14 +6,29 @@
  */
 package com.bynder.sdk.model;
 
+import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Model to represent the authorization information to start an upload returned by
+ * {@link BynderApi#getUploadInformation(String)}. This model is only and should be only used when
+ * uploading a file.
+ */
 public class UploadRequest {
 
+    /**
+     * S3 file name.
+     */
     @SerializedName("s3_filename")
     private String s3Filename;
+    /**
+     * S3 file information.
+     */
     @SerializedName("s3file")
     private S3File s3File;
+    /**
+     * Amazon parameters information {@link MultipartParameters}.
+     */
     @SerializedName("multipart_params")
     private MultipartParameters multipartParams;
 

@@ -6,6 +6,9 @@
  */
 package com.bynder.sdk.model;
 
+/**
+ * Enum to represent type of media.
+ */
 public enum MediaType {
     DOCUMENT("document"), IMAGE("image"), VIDEO("video"), AUDIO("audio");
 

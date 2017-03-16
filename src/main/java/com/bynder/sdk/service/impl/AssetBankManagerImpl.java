@@ -40,18 +40,18 @@ import retrofit2.Response;
 public class AssetBankManagerImpl implements AssetBankManager {
 
     /**
-     * Instance of {@link BynderApi} which handles the HTTP communication.
+     * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
      */
     private final BynderApi bynderApi;
     /**
-     * Instance to upload file to Bynder.
+     * Instance to upload files to Bynder.
      */
     private final FileUploader fileUploader;
 
     /**
      * Initializes a new instance of the class.
      *
-     * @param bynderApi Instance to handle the HTTP communication.
+     * @param bynderApi Instance to handle the HTTP communication with the Bynder API.
      */
     public AssetBankManagerImpl(final BynderApi bynderApi) {
         this.bynderApi = bynderApi;

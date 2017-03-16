@@ -14,7 +14,7 @@ import com.bynder.sdk.api.BynderApi;
 public class FinaliseResponse {
 
     /**
-     * Import id for the upload. Needed to poll and save media.
+     * Import id of the upload. Needed to poll and save media.
      */
     private String importId;
 

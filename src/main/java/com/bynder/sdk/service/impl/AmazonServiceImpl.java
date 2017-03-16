@@ -26,7 +26,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 public class AmazonServiceImpl implements AmazonService {
 
     /**
-     * Instance of {@link AmazonApi} which handles the HTTP communication.
+     * Instance of {@link AmazonApi} which handles the HTTP communication with the Amazon API.
      */
     private final AmazonApi amazonApi;
 

@@ -36,7 +36,7 @@ public class BynderServiceImpl implements BynderService {
      */
     private Credentials credentials;
     /**
-     * Instance of {@link BynderApi} which handles the HTTP communication.
+     * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
      */
     private BynderApi bynderApi;
     /**

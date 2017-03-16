@@ -15,8 +15,16 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Class responsible for converting a String response from the API. This class is used when the
+ * {@link Retrofit} object is instantiated.
+ */
 public class StringConverterFactory extends Converter.Factory {
 
+    /**
+     * Check {@link Converter.Factory#responseBodyConverter(Type, Annotation[], Retrofit)} for more
+     * information.
+     */
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(final Type type, final Annotation[] annotations, final Retrofit retrofit) {
         if (!String.class.equals(type)) {

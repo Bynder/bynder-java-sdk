@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
@@ -22,19 +20,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer;
 import se.akerfeldt.okhttp.signpost.SigningInterceptor;
 
+/**
+ * Final class that provides methods to help handling API requests and responses.
+ */
 public final class Utils {
-
-    // check not null error message
-    private static final String errorMessage = "%s shall not be null.";
 
     // separators
     public static final String STR_AND = "&";
     public static final String STR_COMMA = ",";
     public static final String STR_EQUALS = "=";
 
-    private Utils() {
-        // prevent instantiation
-    }
+    /**
+     * Prevents the instantiation of the class.
+     */
+    private Utils() {}
 
     public static Map<String, String> buildMapFromResponse(final String response) {
         Map<String, String> map = new HashMap<>();
@@ -48,16 +47,16 @@ public final class Utils {
         return map;
     }
 
-    public static void checkNotNull(final String name, final Object value) {
-        if (value == null) {
-            throw new IllegalArgumentException(String.format(errorMessage, name));
-        } else if (value.getClass().equals(String.class)) {
-            if (StringUtils.isEmpty((String) value)) {
-                throw new IllegalArgumentException(String.format(errorMessage, name));
-            }
-        }
-    }
-
+    /**
+     * Creates an instance of {@link OkHttpOAuthConsumer}.
+     *
+     * @param consumerKey Consumer key.
+     * @param consumerSecret Consumer secret.
+     * @param tokenKey Token key.
+     * @param tokenSecret Token secret.
+     *
+     * @return {@link OkHttpOAuthConsumer} instance to create the HTTP client.
+     */
     private static OkHttpOAuthConsumer createHttpOAuthConsumer(final String consumerKey, final String consumerSecret, final String tokenKey, final String tokenSecret) {
         OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(consumerKey, consumerSecret);
 
@@ -68,6 +67,13 @@ public final class Utils {
         return consumer;
     }
 
+    /**
+     * Creates an instance of {@link OkHttpClient}.
+     *
+     * @param consumer {@link OkHttpOAuthConsumer} instance.
+     *
+     * @return {@link OkHttpClient} instance used for API requests.
+     */
     private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.interceptors().clear();
@@ -80,6 +86,18 @@ public final class Utils {
         return httpClient.build();
     }
 
+    /**
+     * Creates an implementation of the API endpoints defined by the service interface.
+     *
+     * @param apiInterface API interface class.
+     * @param baseUrl Domain URL where we want to point the API calls.
+     * @param consumerKey Consumer key.
+     * @param consumerSecret Consumer secret.
+     * @param tokenKey Token key.
+     * @param tokenSecret Token secret.
+     *
+     * @return Instance of the API interface class implementation.
+     */
     public static <T> T createApiService(final Class<T> apiInterface, final String baseUrl, final String consumerKey, final String consumerSecret, final String tokenKey, final String tokenSecret) {
         OkHttpOAuthConsumer consumer = createHttpOAuthConsumer(consumerKey, consumerSecret, tokenKey, tokenSecret);
         OkHttpClient client = createHttpClient(consumer);

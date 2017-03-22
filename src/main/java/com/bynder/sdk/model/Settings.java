@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.model;
 
+import java.net.URL;
+
 import com.bynder.sdk.service.BynderService;
 
 /**
@@ -16,7 +18,7 @@ public class Settings {
     /**
      * Bynder domain URL where we want to point the API calls.
      */
-    private String baseUrl;
+    private URL baseUrl;
     /**
      * Oauth consumer key.
      */
@@ -34,7 +36,7 @@ public class Settings {
      */
     private String tokenSecret;
 
-    public Settings(final String baseUrl, final String consumerKey, final String consumerSecret, final String token, final String tokenSecret) {
+    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token, final String tokenSecret) {
         this.baseUrl = baseUrl;
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
@@ -42,7 +44,7 @@ public class Settings {
         this.tokenSecret = tokenSecret;
     }
 
-    public String getBaseUrl() {
+    public URL getBaseUrl() {
         return baseUrl;
     }
 

@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.FinaliseResponse;
@@ -32,6 +34,8 @@ import retrofit2.Response;
  */
 public class FileUploader {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FileUploader.class);
+
     /**
      * Max chunk size
      */
@@ -41,7 +45,7 @@ public class FileUploader {
      */
     private static final int MAX_POLLING_ITERATIONS = 60;
     /**
-     * Iddle time between polling iterations.
+     * Idle time between polling iterations.
      */
     private static final int POLLING_IDDLE_TIME = 2000;
 
@@ -52,32 +56,15 @@ public class FileUploader {
     /**
      * Amazon service used to upload parts.
      */
-    private final AmazonService amazonService;
-    /**
-     * AWS bucket URL to upload chunks.
-     */
-    private String awsBucket;
+    private AmazonService amazonService;
 
     /**
      * Creates a new instance of the class.
      *
      * @param bynderApi Instance to handle the HTTP communication with the Bynder API.
      */
-    private FileUploader(final BynderApi bynderApi) {
+    public FileUploader(final BynderApi bynderApi) {
         this.bynderApi = bynderApi;
-        this.awsBucket = getClosestS3Endpoint().blockingSingle().body();
-        this.amazonService = new AmazonServiceImpl(awsBucket);
-    }
-
-    /**
-     * Creates a new instance of {@link FileUploader}.
-     *
-     * @param bynderApi Instance to handle the HTTP communication with the Bynder API.
-     *
-     * @return {@link FileUploader} instance.
-     */
-    public static FileUploader create(final BynderApi bynderApi) {
-        return new FileUploader(bynderApi);
     }
 
     /**
@@ -90,22 +77,14 @@ public class FileUploader {
      * @throws InterruptedException
      * @throws RuntimeException
      */
-    public void uploadFile(final UploadQuery uploadQuery) throws BynderUploadException, IOException, InterruptedException, RuntimeException {
+    public void uploadFile(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
+        initializeAmazonService();
         UploadRequest uploadRequest = getUploadInformation(uploadQuery.getFilepath()).blockingSingle().body();
 
-        int chunkNumber = 0;
         File file = new File(uploadQuery.getFilepath());
-        byte[] buffer = new byte[MAX_CHUNK_SIZE];
-        long numberOfChunks = (file.length() + MAX_CHUNK_SIZE - 1) / MAX_CHUNK_SIZE;
-        FileInputStream fileInputStream = new FileInputStream(file);
+        int chunks = uploadPart(file, uploadRequest);
 
-        while (fileInputStream.read(buffer, 0, buffer.length) > 0) {
-            ++chunkNumber;
-            uploadPart(file.getName(), buffer, chunkNumber, uploadRequest, (int) numberOfChunks);
-        }
-        fileInputStream.close();
-
-        FinaliseResponse finaliseResponse = finaliseUploaded(uploadRequest, chunkNumber).blockingSingle().body();
+        FinaliseResponse finaliseResponse = finaliseUploaded(uploadRequest, chunks).blockingSingle().body();
         String importId = finaliseResponse.getImportId();
 
         if (hasFinishedSuccessfully(importId)) {
@@ -117,6 +96,14 @@ public class FileUploader {
         } else {
             throw new BynderUploadException("Converter did not finished. Upload not completed");
         }
+    }
+
+    /**
+     * Gets the closest Amazon S3 upload endpoint and initializes {@link AmazonService}.
+     */
+    private void initializeAmazonService() {
+        String awsBucket = getClosestS3Endpoint().blockingSingle().body();
+        this.amazonService = new AmazonServiceImpl(awsBucket);
     }
 
     /**
@@ -171,17 +158,27 @@ public class FileUploader {
     }
 
     /**
-     * Uploads a part to Amazon and registers the part in Bynder.
+     * Uploads the parts to Amazon and registers them in Bynder.
      *
-     * @param filename Name of the file to be uploaded.
-     * @param buffer Content of the file to be uploaded.
-     * @param chunkNumber Number of the chunk to be uploaded.
-     * @param uploadRequest Upload request information.
-     * @param numberOfChunks Total number of chunks.
+     * @param filepath Path of the file to be uploaded.
+     * @param uploadRequest Upload authorization information.
      */
-    private void uploadPart(final String filename, final byte[] buffer, final int chunkNumber, final UploadRequest uploadRequest, final int numberOfChunks) {
-        amazonService.uploadPartToAmazon(filename, uploadRequest, chunkNumber, buffer, numberOfChunks).blockingSingle();
-        registerChunk(uploadRequest, chunkNumber).blockingSingle();
+    private int uploadPart(final File file, final UploadRequest uploadRequest) {
+        int chunkNumber = 0;
+        byte[] buffer = new byte[MAX_CHUNK_SIZE];
+        int numberOfChunks = (Math.toIntExact(file.length()) + MAX_CHUNK_SIZE - 1) / MAX_CHUNK_SIZE;
+
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            while (fileInputStream.read(buffer, 0, buffer.length) > 0) {
+                ++chunkNumber;
+                amazonService.uploadPartToAmazon(file.getName(), uploadRequest, chunkNumber, buffer, numberOfChunks).blockingSingle();
+                registerChunk(uploadRequest, chunkNumber).blockingSingle();
+            }
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
+        }
+
+        return chunkNumber;
     }
 
     /**

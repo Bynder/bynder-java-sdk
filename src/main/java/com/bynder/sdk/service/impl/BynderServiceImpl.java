@@ -66,7 +66,7 @@ public class BynderServiceImpl implements BynderService {
      */
     public static BynderService create(final Settings settings) {
         Credentials credentials = new Credentials(settings.getConsumerKey(), settings.getConsumerSecret(), settings.getToken(), settings.getTokenSecret());
-        return new BynderServiceImpl(settings.getBaseUrl(), credentials);
+        return new BynderServiceImpl(settings.getBaseUrl().toString(), credentials);
     }
 
     /**

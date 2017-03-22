@@ -9,6 +9,7 @@ package com.bynder.sdk.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.security.InvalidParameterException;
 import java.util.Map;
 
 import org.junit.Rule;
@@ -40,5 +41,20 @@ public class UtilsTest {
         assertNotNull(responseMap);
         assertEquals(valueA, responseMap.get(keyA));
         assertEquals(valueB, responseMap.get(keyB));
+    }
+
+    /**
+     * Tests that if response has invalid format an exception is thrown.
+     */
+    @Test(expected = InvalidParameterException.class)
+    public void buildMapFromResponseFailTest() {
+        String keyA = "keyA";
+        String keyB = "keyB";
+        String valueA = "valueA";
+
+        StringBuilder stringBuilder = new StringBuilder(keyA).append(Utils.STR_EQUALS).append(valueA).append(Utils.STR_AND).append(keyB).append(Utils.STR_EQUALS);
+        String response = stringBuilder.toString();
+
+        Utils.buildMapFromResponse(response);
     }
 }

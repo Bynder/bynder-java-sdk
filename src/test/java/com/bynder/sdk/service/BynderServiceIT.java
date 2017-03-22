@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
 
 import org.junit.Before;
@@ -35,6 +36,7 @@ public class BynderServiceIT {
     private final String CALLBACK_URL = "http://localhost:8080/";
 
     private BynderService bynderService;
+    private final AppProperties appProperties = new AppProperties();
 
     @Rule
     public TestName testName = new TestName();
@@ -45,8 +47,8 @@ public class BynderServiceIT {
      */
     @Before
     public void setUp() throws Exception {
-        bynderService = BynderServiceImpl.create(new Settings(AppProperties.getInstance().getProperty(BASE_URL), AppProperties.getInstance().getProperty("CONSUMER_KEY"),
-                AppProperties.getInstance().getProperty("CONSUMER_SECRET"), null, null));
+        bynderService = BynderServiceImpl
+                .create(new Settings(new URL(appProperties.getProperty(BASE_URL)), appProperties.getProperty("CONSUMER_KEY"), appProperties.getProperty("CONSUMER_SECRET"), null, null));
     }
 
     /**
@@ -61,7 +63,7 @@ public class BynderServiceIT {
         String authoriseUrl = bynderService.getAuthoriseUrl(null);
         assertNotNull(authoriseUrl);
         assertTrue(authoriseUrl.length() > 0);
-        assertTrue(authoriseUrl.contains(AppProperties.getInstance().getProperty(BASE_URL)));
+        assertTrue(authoriseUrl.contains(appProperties.getProperty(BASE_URL)));
 
         String query = new URI(authoriseUrl).getQuery();
         assertNotNull(query);
@@ -73,7 +75,7 @@ public class BynderServiceIT {
         authoriseUrl = bynderService.getAuthoriseUrl(CALLBACK_URL);
         assertNotNull(authoriseUrl);
         assertTrue(authoriseUrl.length() > 0);
-        assertTrue(authoriseUrl.contains(AppProperties.getInstance().getProperty(BASE_URL)));
+        assertTrue(authoriseUrl.contains(appProperties.getProperty(BASE_URL)));
 
         query = new URI(authoriseUrl).getQuery();
         assertNotNull(query);

@@ -8,6 +8,8 @@ package com.bynder.sdk.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -19,7 +21,7 @@ import com.bynder.sdk.service.BynderService;
 /**
  * Application properties to instantiate {@link BynderService} and run the integration tests.
  */
-public class AppProperties {
+public final class AppProperties {
 
     private static final Logger LOG = LoggerFactory.getLogger(AppProperties.class);
 
@@ -29,7 +31,7 @@ public class AppProperties {
      * Initializes a new instance of the class by loading the content in the
      * src/main/resources/app.properties file.
      */
-    private AppProperties() {
+    public AppProperties() {
         InputStream input = this.getClass().getClassLoader().getResourceAsStream("app.properties");
 
         try {
@@ -37,14 +39,6 @@ public class AppProperties {
         } catch (IOException e) {
             LOG.error(e.getMessage());
         }
-    }
-
-    private static class SingletonHolder {
-        private static final AppProperties INSTANCE = new AppProperties();
-    }
-
-    public static AppProperties getInstance() {
-        return SingletonHolder.INSTANCE;
     }
 
     public String getProperty(final String key) {
@@ -56,9 +50,9 @@ public class AppProperties {
      * src/main/resources/app.properties file.
      *
      * @return {@link Settings} instance.
+     * @throws MalformedURLException
      */
-    public static Settings getSettings() {
-        return new Settings(getInstance().getProperty("BASE_URL"), getInstance().getProperty("CONSUMER_KEY"), getInstance().getProperty("CONSUMER_SECRET"),
-                getInstance().getProperty("ACCESS_TOKEN_KEY"), getInstance().getProperty("ACCESS_TOKEN_SECRET"));
+    public Settings getSettings() throws MalformedURLException {
+        return new Settings(new URL(getProperty("BASE_URL")), getProperty("CONSUMER_KEY"), getProperty("CONSUMER_SECRET"), getProperty("ACCESS_TOKEN_KEY"), getProperty("ACCESS_TOKEN_SECRET"));
     }
 }

@@ -73,6 +73,7 @@ public class AssetBankManagerIT {
     private final Pattern pattern = Pattern.compile("[a-z0-9 ]", Pattern.CASE_INSENSITIVE);
 
     private AssetBankManager assetBankManager;
+    private final AppProperties appProperties = new AppProperties();
 
     @Rule
     public TestName testName = new TestName();
@@ -83,7 +84,7 @@ public class AssetBankManagerIT {
      */
     @Before
     public void setUp() throws Exception {
-        assetBankManager = BynderServiceImpl.create(AppProperties.getSettings()).getAssetBankManager();
+        assetBankManager = BynderServiceImpl.create(appProperties.getSettings()).getAssetBankManager();
     }
 
     /**

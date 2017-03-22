@@ -6,6 +6,7 @@
  */
 package com.bynder.sdk.util;
 
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +42,11 @@ public final class Utils {
 
         for (String pair : keyValuePairs) {
             String[] keyValue = pair.split(STR_EQUALS);
-            map.put(keyValue[0], keyValue[1]);
+            if (keyValue.length == 2) {
+                map.put(keyValue[0], keyValue[1]);
+            } else {
+                throw new InvalidParameterException();
+            }
         }
 
         return map;
@@ -99,11 +104,17 @@ public final class Utils {
      * @return Instance of the API interface class implementation.
      */
     public static <T> T createApiService(final Class<T> apiInterface, final String baseUrl, final String consumerKey, final String consumerSecret, final String tokenKey, final String tokenSecret) {
-        OkHttpOAuthConsumer consumer = createHttpOAuthConsumer(consumerKey, consumerSecret, tokenKey, tokenSecret);
-        OkHttpClient client = createHttpClient(consumer);
+        OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(consumerKey, consumerSecret, tokenKey, tokenSecret);
+        OkHttpClient httpClient = createHttpClient(oauthConsumer);
 
-        Retrofit retrofit = new Builder().baseUrl(baseUrl).addConverterFactory(new StringConverterFactory()).addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create())).client(client).build();
+        Builder builder = new Builder();
+        builder.baseUrl(baseUrl);
+        builder.addConverterFactory(new StringConverterFactory());
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());
+        builder.addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create()));
+        builder.client(httpClient);
+
+        Retrofit retrofit = builder.build();
 
         return retrofit.create(apiInterface);
     }

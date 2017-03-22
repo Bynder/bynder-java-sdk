@@ -55,7 +55,7 @@ public class AssetBankManagerImpl implements AssetBankManager {
      */
     public AssetBankManagerImpl(final BynderApi bynderApi) {
         this.bynderApi = bynderApi;
-        this.fileUploader = FileUploader.create(bynderApi);
+        this.fileUploader = new FileUploader(bynderApi);
     }
 
     /**

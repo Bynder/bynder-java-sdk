@@ -58,7 +58,9 @@ public class BynderServiceIT {
      */
     @Test
     public void getRequestTokenAndAuthoriseUrlTest() throws URISyntaxException {
-        bynderService.getRequestToken();
+        Map<String, String> requestToken = bynderService.getRequestToken();
+        assertNotNull(requestToken);
+        assertEquals(2, requestToken.size());
 
         String authoriseUrl = bynderService.getAuthoriseUrl(null);
         assertNotNull(authoriseUrl);
@@ -69,7 +71,7 @@ public class BynderServiceIT {
         assertNotNull(query);
 
         Map<String, String> params = Utils.buildMapFromResponse(query);
-        assertTrue(params.keySet().size() == 1);
+        assertEquals(1, params.size());
         assertNotNull(params.get(OAUTH_TOKEN));
 
         authoriseUrl = bynderService.getAuthoriseUrl(CALLBACK_URL);
@@ -81,7 +83,7 @@ public class BynderServiceIT {
         assertNotNull(query);
 
         params = Utils.buildMapFromResponse(query);
-        assertTrue(params.keySet().size() == 2);
+        assertEquals(2, params.size());
         assertNotNull(params.get(OAUTH_TOKEN));
         assertNotNull(params.get(CALLBACK));
         assertEquals(CALLBACK_URL, params.get(CALLBACK));

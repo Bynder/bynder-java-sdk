@@ -10,9 +10,9 @@ At the moment this SDK provides a default library with the following methods:
 ```java
 User login(String username, String password);
 
-void getRequestToken();
+Map<String, String> getRequestToken();
 
-void getAccessToken();
+Map<String, String> getAccessToken();
 
 String getAuthoriseUrl(final String callbackUrl);
 
@@ -37,7 +37,7 @@ Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaProperti
 
 Observable<Response<Void>> addMetapropertyToMedia(AddMetapropertyToMediaQuery addMetapropertyToMediaQuery);
 
-void uploadFile(UploadQuery uploadQuery) throws BynderUploadException, IOException, InterruptedException, RuntimeException;
+Response<Void> uploadFile(UploadQuery uploadQuery) throws BynderUploadException, InterruptedException;
 ```
 
 ## Installation
@@ -83,45 +83,4 @@ Observable<Response<List<Tag>>> observable = bynderService.getTags();
 #### Synchronous way to wait for the Observable to complete and emit the single item
 ```java
 Response<List<Tag>> response = bynderService.getTags().blockingSingle();
-```
-
-## Running the integration tests
-
-In order to be able to run the integration tests against the Bynder API you need to create a new properties file called "app.properties" like the one shown below. Where your Bynder API base url shall have this structure: *https://&#91;accountdomain&#93;/api/*
-```bash
-$ vi bynder-java-sdk/src/main/resources/app.properties
-
-# bynder api base url
-BASE_URL=<your bynder api base url>
-
-# bynder api tokens
-CONSUMER_KEY=<your consumer key>
-CONSUMER_SECRET=<your consumer secret>
-ACCESS_TOKEN_KEY=<your access token key>
-ACCESS_TOKEN_SECRET=<your access token secret>
-```
-**Important:** Don't forget to add this file to your .gitignore.
-
-To run the integration tests you can execute the following Maven command in the project's root:
-```bash
-$ mvn verify
-```
-**Note:** Before the integration tests are executed, an instance of the **BynderService** class will be created using the base url, credentials and tokens defined in the "app.properties" file.
-
-After running this command, if everything is working fine, you should get a similar output as the one shown below, telling you all the tests ran successfully.
-
-**Important:** It can also happen that some tests are skipped and in that case the reason why they were skipped it will be printed in the console.
-```bash
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running com.bynder.sdk.service.AssetBankManagerIT
-Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 52.866 sec - in com.bynder.sdk.service.AssetBankManagerIT
-Running com.bynder.sdk.service.BynderServiceIT
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.377 sec - in com.bynder.sdk.service.BynderServiceIT
-
-Results :
-
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
-
 ```

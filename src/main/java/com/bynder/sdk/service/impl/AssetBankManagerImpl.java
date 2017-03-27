@@ -6,7 +6,6 @@
  */
 package com.bynder.sdk.service.impl;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,7 +134,7 @@ public class AssetBankManagerImpl implements AssetBankManager {
      * Check {@link AssetBankManager} for more information.
      */
     @Override
-    public void uploadFile(final UploadQuery uploadQuery) throws BynderUploadException, IOException, InterruptedException, RuntimeException {
-        fileUploader.uploadFile(uploadQuery);
+    public Response<Void> uploadFile(final UploadQuery uploadQuery) throws BynderUploadException, InterruptedException {
+        return fileUploader.uploadFile(uploadQuery);
     }
 }

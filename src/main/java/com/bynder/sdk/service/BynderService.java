@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.service;
 
+import java.util.Map;
+
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
 
@@ -28,23 +30,28 @@ public interface BynderService {
     /**
      * Gets temporary request token pair used to build the authorise URL and login through the
      * browser.
+     *
+     * @return Map containing the request token key/secret pair.
      */
-    void getRequestToken();
+    Map<String, String> getRequestToken();
 
     /**
      * Gets the URL needed to open the browser so the user can login and authorize the temporary
      * request token pair.
      *
-     * @param callbackUrl
-     * @return
+     * @param callbackUrl Callback URL to be redirected to when login is successful.
+     *
+     * @return String with the authorise URL we need to open the browser with in order to login.
      */
     String getAuthoriseUrl(final String callbackUrl);
 
     /**
      * Gets temporary access token pair once the user has already accessed the authorise URL and
      * logged in through the browser.
+     *
+     * @return Map containing the access token key/secret pair.
      */
-    void getAccessToken();
+    Map<String, String> getAccessToken();
 
     /**
      * Logout resets your credentials. If the access token key/secret provided in the
@@ -56,7 +63,7 @@ public interface BynderService {
     /**
      * Gets an instance of the asset bank manager to perform Bynder Asset Bank operations.
      *
-     * @return
+     * @return Instance of {@link AssetBankManager}.
      */
     AssetBankManager getAssetBankManager();
 }

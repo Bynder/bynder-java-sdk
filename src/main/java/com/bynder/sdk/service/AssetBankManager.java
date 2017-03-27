@@ -6,7 +6,6 @@
  */
 package com.bynder.sdk.service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -111,9 +110,7 @@ public interface AssetBankManager {
      * @param uploadQuery Information needed to upload the file.
      *
      * @throws BynderUploadException Thrown when upload does not finish within the expected time.
-     * @throws IOException
      * @throws InterruptedException
-     * @throws RuntimeException
      */
-    void uploadFile(UploadQuery uploadQuery) throws BynderUploadException, IOException, InterruptedException, RuntimeException;
+    Response<Void> uploadFile(UploadQuery uploadQuery) throws BynderUploadException, InterruptedException;
 }

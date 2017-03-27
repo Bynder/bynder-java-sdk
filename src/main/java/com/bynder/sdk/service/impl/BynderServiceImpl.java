@@ -81,9 +81,9 @@ public class BynderServiceImpl implements BynderService {
      * Check {@link BynderService} for more information.
      */
     @Override
-    public void getRequestToken() {
+    public Map<String, String> getRequestToken() {
         Response<String> response = bynderApi.getRequestToken().blockingSingle();
-        updateTokensFromResponse(response.body());
+        return updateTokensFromResponse(response.body());
     }
 
     /**
@@ -104,9 +104,9 @@ public class BynderServiceImpl implements BynderService {
      * Check {@link BynderService} for more information.
      */
     @Override
-    public void getAccessToken() {
+    public Map<String, String> getAccessToken() {
         Response<String> response = bynderApi.getAccessToken().blockingSingle();
-        updateTokensFromResponse(response.body());
+        return updateTokensFromResponse(response.body());
     }
 
     /**
@@ -134,10 +134,11 @@ public class BynderServiceImpl implements BynderService {
      *
      * @param response Response string.
      */
-    private void updateTokensFromResponse(final String response) {
+    private Map<String, String> updateTokensFromResponse(final String response) {
         Map<String, String> oauthTokens = Utils.buildMapFromResponse(response);
         credentials.set(oauthTokens.get("oauth_token"), oauthTokens.get("oauth_token_secret"));
         bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials.getConsumerKey(), credentials.getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
+        return oauthTokens;
     }
 
     /**

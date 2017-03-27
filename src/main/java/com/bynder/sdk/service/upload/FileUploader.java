@@ -77,7 +77,7 @@ public class FileUploader {
      * @throws InterruptedException
      * @throws RuntimeException
      */
-    public void uploadFile(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
+    public Response<Void> uploadFile(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
         initializeAmazonService();
         UploadRequest uploadRequest = getUploadInformation(uploadQuery.getFilepath()).blockingSingle().body();
 
@@ -87,15 +87,18 @@ public class FileUploader {
         FinaliseResponse finaliseResponse = finaliseUploaded(uploadRequest, chunks).blockingSingle().body();
         String importId = finaliseResponse.getImportId();
 
+        Response<Void> response = null;
         if (hasFinishedSuccessfully(importId)) {
             if (uploadQuery.getMediaId() == null) {
-                saveMedia(importId, uploadQuery.getBrandId(), file.getName()).blockingSingle();
+                response = saveMedia(importId, uploadQuery.getBrandId(), file.getName()).blockingSingle();
             } else {
-                saveMediaVersion(uploadQuery.getMediaId(), importId);
+                saveMediaVersion(uploadQuery.getMediaId(), importId).blockingSingle();
             }
         } else {
             throw new BynderUploadException("Converter did not finished. Upload not completed");
         }
+
+        return response;
     }
 
     /**

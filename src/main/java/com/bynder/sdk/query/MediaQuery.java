@@ -18,24 +18,29 @@ public class MediaQuery {
     /**
      * The type of the media asset. Possible values: image, document, audio, video.
      */
+    @ApiField
     private MediaType type;
     /**
      * Keyword that the media asset has to have to appear in the results. Search filenames, tags,
      * extensions, collection names, guidelines, brandstore, campaigns in workflow, enriched PDFs,
      * word documents.
      */
+    @ApiField
     private String keyword;
     /**
      * Limit of results per request. Maximum: 1000. Default: 50.
      */
+    @ApiField
     private Integer limit;
     /**
      * Page to be retrieved.
      */
+    @ApiField
     private Integer page;
     /**
      * Metaproperty option ids that the media asset has to have.
      */
+    @ApiField
     private List<String> propertyOptionId;
 
     public MediaQuery(final MediaType type, final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionId) {

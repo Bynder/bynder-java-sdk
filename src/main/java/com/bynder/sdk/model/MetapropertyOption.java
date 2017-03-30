@@ -70,10 +70,4 @@ public class MetapropertyOption {
     public int getZindex() {
         return zindex;
     }
-
-    @Override
-    public String toString() {
-        return "MetapropertyOption [id=" + id + ", name=" + name + ", label=" + label + ", options=" + options + ", mediaCount=" + mediaCount + ", isSelectable=" + isSelectable + ", zindex=" + zindex
-                + "]";
-    }
 }

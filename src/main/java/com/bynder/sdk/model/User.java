@@ -47,9 +47,4 @@ public class User {
     public Boolean hasAccess() {
         return hasAccess;
     }
-
-    @Override
-    public String toString() {
-        return "User [userId=" + userId + ", tokenKey=" + tokenKey + ", tokenSecret=" + tokenSecret + ", hasAccess=" + hasAccess + "]";
-    }
 }

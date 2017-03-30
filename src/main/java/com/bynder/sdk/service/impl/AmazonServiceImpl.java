@@ -48,21 +48,23 @@ public class AmazonServiceImpl implements AmazonService {
         String finalKey = String.format("%s/p%s", uploadRequest.getMultipartParams().getKey(), chunkNumber);
 
         LinkedHashMap<String, RequestBody> params = new LinkedHashMap<>();
-        params.put("x-amz-credential", RequestBody.create(MediaType.parse("multipart/form-data"), uploadRequest.getMultipartParams().getAwsAccessKeyId()));
-        params.put("key", RequestBody.create(MediaType.parse("multipart/form-data"), finalKey));
-        params.put("Policy", RequestBody.create(MediaType.parse("multipart/form-data"), uploadRequest.getMultipartParams().getPolicy()));
-        params.put("X-Amz-Signature", RequestBody.create(MediaType.parse("multipart/form-data"), uploadRequest.getMultipartParams().getSignature()));
-        params.put("acl", RequestBody.create(MediaType.parse("multipart/form-data"), uploadRequest.getMultipartParams().getAcl()));
-        params.put("x-amz-algorithm", RequestBody.create(MediaType.parse("multipart/form-data"), uploadRequest.getMultipartParams().getAlgorithm()));
-        params.put("x-amz-date", RequestBody.create(MediaType.parse("multipart/form-data"), uploadRequest.getMultipartParams().getDate()));
-        params.put("success_action_status", RequestBody.create(MediaType.parse("multipart/form-data"), uploadRequest.getMultipartParams().getSuccessActionStatus()));
-        params.put("Content-Type", RequestBody.create(MediaType.parse("multipart/form-data"), uploadRequest.getMultipartParams().getContentType()));
-        params.put("name", RequestBody.create(MediaType.parse("multipart/form-data"), filename));
-        params.put("chunk", RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(chunkNumber)));
-        params.put("chunks", RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(numberOfChunks)));
-        params.put("Filename", RequestBody.create(MediaType.parse("multipart/form-data"), finalKey));
+        MediaType contentType = MediaType.parse("multipart/form-data");
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), fileContent);
+        params.put("x-amz-credential", RequestBody.create(contentType, uploadRequest.getMultipartParams().getAwsAccessKeyId()));
+        params.put("key", RequestBody.create(contentType, finalKey));
+        params.put("Policy", RequestBody.create(contentType, uploadRequest.getMultipartParams().getPolicy()));
+        params.put("X-Amz-Signature", RequestBody.create(contentType, uploadRequest.getMultipartParams().getSignature()));
+        params.put("acl", RequestBody.create(contentType, uploadRequest.getMultipartParams().getAcl()));
+        params.put("x-amz-algorithm", RequestBody.create(contentType, uploadRequest.getMultipartParams().getAlgorithm()));
+        params.put("x-amz-date", RequestBody.create(contentType, uploadRequest.getMultipartParams().getDate()));
+        params.put("success_action_status", RequestBody.create(contentType, uploadRequest.getMultipartParams().getSuccessActionStatus()));
+        params.put("Content-Type", RequestBody.create(contentType, uploadRequest.getMultipartParams().getContentType()));
+        params.put("name", RequestBody.create(contentType, filename));
+        params.put("chunk", RequestBody.create(contentType, String.valueOf(chunkNumber)));
+        params.put("chunks", RequestBody.create(contentType, String.valueOf(numberOfChunks)));
+        params.put("Filename", RequestBody.create(contentType, finalKey));
+
+        RequestBody requestFile = RequestBody.create(contentType, fileContent);
         params.put("file", requestFile);
 
         return amazonApi.uploadPartToAmazon(params);

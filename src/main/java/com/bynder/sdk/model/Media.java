@@ -182,12 +182,4 @@ public class Media {
     public List<MediaItem> getMediaItems() {
         return mediaItems;
     }
-
-    @Override
-    public String toString() {
-        return "Media [id=" + id + ", name=" + name + ", description=" + description + ", copyright=" + copyright + ", archive=" + archive + ", dateCreated=" + dateCreated + ", dateModified="
-                + dateModified + ", datePublished=" + datePublished + ", type=" + type + ", brandId=" + brandId + ", height=" + height + ", width=" + width + ", orientation=" + orientation
-                + ", fileSize=" + fileSize + ", tags=" + tags + ", extensions=" + extensions + ", videoPreviewURLs=" + videoPreviewURLs + ", propertyOptions=" + propertyOptions + ", thumbnails="
-                + thumbnails + ", mediaItems=" + mediaItems + "]";
-    }
 }

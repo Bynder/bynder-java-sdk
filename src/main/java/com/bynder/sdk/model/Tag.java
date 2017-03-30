@@ -37,9 +37,4 @@ public class Tag {
     public int getMediaCount() {
         return mediaCount;
     }
-
-    @Override
-    public String toString() {
-        return "Tag [id=" + id + ", tag=" + tag + ", mediaCount=" + mediaCount + "]";
-    }
 }

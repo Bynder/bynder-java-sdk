@@ -14,10 +14,12 @@ public class LoginQuery {
     /**
      * Username.
      */
+    @ApiField
     private String username;
     /**
      * Password.
      */
+    @ApiField
     private String password;
 
     public LoginQuery(final String username, final String password) {

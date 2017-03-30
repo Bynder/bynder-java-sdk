@@ -97,10 +97,4 @@ public class MediaItem {
     public Map<String, String> getThumbnails() {
         return thumbnails;
     }
-
-    @Override
-    public String toString() {
-        return "MediaItem [id=" + id + ", name=" + name + ", type=" + type + ", dateCreated=" + dateCreated + ", height=" + height + ", width=" + width + ", size=" + size + ", version=" + version
-                + ", active=" + active + ", thumbnails=" + thumbnails + "]";
-    }
 }

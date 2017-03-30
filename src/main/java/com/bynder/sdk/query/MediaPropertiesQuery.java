@@ -18,22 +18,27 @@ public class MediaPropertiesQuery {
     /**
      * Name new value.
      */
+    @ApiField
     private String name;
     /**
      * Description new value.
      */
+    @ApiField
     private String description;
     /**
      * Copyright new value.
      */
+    @ApiField
     private String copyright;
     /**
      * Archive new status.
      */
+    @ApiField
     private Boolean archive;
     /**
      * Publication date new value.
      */
+    @ApiField
     private String datePublished;
 
     public MediaPropertiesQuery(final String mediaId, final String name, final String description, final String copyright, final Boolean archive, final String datePublished) {

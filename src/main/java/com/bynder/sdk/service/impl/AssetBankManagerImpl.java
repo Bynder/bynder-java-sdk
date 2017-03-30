@@ -78,7 +78,8 @@ public class AssetBankManagerImpl implements AssetBankManager {
      */
     @Override
     public Observable<Response<Map<String, Metaproperty>>> getMetaproperties(final MetapropertyQuery metapropertyQuery) {
-        return bynderApi.getMetaproperties(metapropertyQuery.getCount());
+        Map<String, String> params = Utils.getApiParameters(metapropertyQuery);
+        return bynderApi.getMetaproperties(params);
     }
 
     /**
@@ -86,8 +87,8 @@ public class AssetBankManagerImpl implements AssetBankManager {
      */
     @Override
     public Observable<Response<List<Media>>> getMediaList(final MediaQuery mediaQuery) {
-        return bynderApi.getMediaList(mediaQuery.getType() == null ? null : mediaQuery.getType().toString(), mediaQuery.getKeyword(), mediaQuery.getLimit(), mediaQuery.getPage(),
-                StringUtils.join(mediaQuery.getPropertyOptionId(), Utils.STR_COMMA));
+        Map<String, String> params = Utils.getApiParameters(mediaQuery);
+        return bynderApi.getMediaList(params);
     }
 
     /**
@@ -95,7 +96,8 @@ public class AssetBankManagerImpl implements AssetBankManager {
      */
     @Override
     public Observable<Response<Media>> getMediaInfo(final MediaInfoQuery mediaInfoQuery) {
-        return bynderApi.getMediaInfo(mediaInfoQuery.getMediaId(), mediaInfoQuery.getVersions());
+        Map<String, String> params = Utils.getApiParameters(mediaInfoQuery);
+        return bynderApi.getMediaInfo(mediaInfoQuery.getMediaId(), params);
     }
 
     /**
@@ -115,8 +117,8 @@ public class AssetBankManagerImpl implements AssetBankManager {
      */
     @Override
     public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) {
-        return bynderApi.setMediaProperties(mediaPropertiesQuery.getMediaId(), mediaPropertiesQuery.getName(), mediaPropertiesQuery.getDescription(), mediaPropertiesQuery.getCopyright(),
-                mediaPropertiesQuery.getArchive(), mediaPropertiesQuery.getDatePublished());
+        Map<String, String> params = Utils.getApiParameters(mediaPropertiesQuery);
+        return bynderApi.setMediaProperties(mediaPropertiesQuery.getMediaId(), params);
     }
 
     /**
@@ -124,10 +126,11 @@ public class AssetBankManagerImpl implements AssetBankManager {
      */
     @Override
     public Observable<Response<Void>> addMetapropertyToMedia(final AddMetapropertyToMediaQuery addMetapropertyToMediaQuery) {
-        Map<String, String> metapropertyOptions = new HashMap<>();
-        metapropertyOptions.put(String.format("metaproperty.%s", addMetapropertyToMediaQuery.getMetapropertyId()), StringUtils.join(addMetapropertyToMediaQuery.getOptionsIds(), Utils.STR_COMMA));
+        Map<String, String> params = new HashMap<>();
+        params.put("id", addMetapropertyToMediaQuery.getMediaId());
+        params.put(String.format("metaproperty.%s", addMetapropertyToMediaQuery.getMetapropertyId()), StringUtils.join(addMetapropertyToMediaQuery.getOptionsIds(), Utils.STR_COMMA));
 
-        return bynderApi.addMetapropertyToMedia(addMetapropertyToMediaQuery.getMediaId(), metapropertyOptions);
+        return bynderApi.addMetapropertyToMedia(params);
     }
 
     /**

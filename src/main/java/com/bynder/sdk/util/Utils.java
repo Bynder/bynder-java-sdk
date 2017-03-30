@@ -6,11 +6,17 @@
  */
 package com.bynder.sdk.util;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.bynder.sdk.query.ApiField;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
@@ -25,6 +31,8 @@ import se.akerfeldt.okhttp.signpost.SigningInterceptor;
  * Final class that provides methods to help handling API requests and responses.
  */
 public final class Utils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 
     // separators
     public static final String STR_AND = "&";
@@ -117,5 +125,33 @@ public final class Utils {
         Retrofit retrofit = builder.build();
 
         return retrofit.create(apiInterface);
+    }
+
+    /**
+     * Given a query object it gets its parameters. The parameters are basically the fields of the
+     * query object that have {@link ApiField} annotation.
+     *
+     * @param query Query object.
+     *
+     * @return Map with name/value pairs to send to the API.
+     */
+    public static Map<String, String> getApiParameters(final Object query) {
+        Map<String, String> params = new HashMap<>();
+        Field[] fields = query.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                Annotation[] annotations = field.getDeclaredAnnotations();
+                if (field.get(query) != null && annotations.length > 0 && annotations[0] instanceof ApiField) {
+                    params.put(field.getName(), field.get(query).toString());
+                }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                LOG.error(e.getMessage());
+            }
+            field.setAccessible(false);
+        }
+
+        return params;
     }
 }

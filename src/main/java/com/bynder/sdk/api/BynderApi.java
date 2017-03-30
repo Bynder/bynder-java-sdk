@@ -14,7 +14,6 @@ import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.FinaliseResponse;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
-import com.bynder.sdk.model.MetapropertyOption;
 import com.bynder.sdk.model.PollStatus;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.UploadRequest;
@@ -29,6 +28,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 /**
  * Interface of the Bynder API to handle the HTTP communication.
@@ -36,16 +36,15 @@ import retrofit2.http.Query;
 public interface BynderApi {
 
     /**
-     * Logs in to Bynder with a username/password pair.
+     * Logs in to Bynder with a username and password pair.
      *
-     * @param username Username/email
-     * @param password Password
+     * @param params {@link FieldMap} with parameters.
      *
      * @return {@link Observable} with the {@link User} information.
      */
     @FormUrlEncoded
     @POST("v4/users/login/")
-    Observable<Response<User>> login(@Field("username") String username, @Field("password") String password);
+    Observable<Response<User>> login(@FieldMap Map<String, String> params);
 
     /**
      * Gets temporary request token pair.
@@ -83,40 +82,33 @@ public interface BynderApi {
     /**
      * Gets map of the metaproperties. The key of the map returned is the name of the metaproperty.
      *
-     * @param count Indicates whether or not the response should calculate and include the
-     *        mediaCount for {@link MetapropertyOption}.
+     * @param params {@link QueryMap} with parameters.
      *
-     * @return {@link Observable} with map of metaproperties.
+     * @return {@link Observable} with Map of metaproperties.
      */
     @GET("v4/metaproperties/")
-    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(@Query("count") Boolean count);
+    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(@QueryMap Map<String, String> params);
 
     /**
      * Gets a list of media assets filtered by parameters.
      *
-     * @param type Filter on media type. Possible values: image, document, audio, video.
-     * @param keyword Filter by keyword. Search filenames, tags, extensions, collection names,
-     *        guidelines, brandstore, campaigns in workflow, enriched PDFs, word documents.
-     * @param limit Maximum number of results. Default: 50, maximum: 1000.
-     * @param page Offset page for results: return the N-th set of limit-results.
-     * @param propertyOptionId Filter on metaproperty-options ids (comma separated).
+     * @param params {@link QueryMap} with parameters.
      *
      * @return {@link Observable} with list of {@link Media}.
      */
     @GET("v4/media/")
-    Observable<Response<List<Media>>> getMediaList(@Query("type") String type, @Query("keyword") String keyword, @Query("limit") Integer limit, @Query("page") Integer page,
-            @Query("propertyOptionId") String propertyOptionId);
+    Observable<Response<List<Media>>> getMediaList(@QueryMap Map<String, String> params);
 
     /**
      * Gets all the media information for a specific media id.
      *
      * @param id Media id from which we want to retrieve information.
-     * @param versions Indicates whether or not the response should include media items.
+     * @param params {@link QueryMap} with parameters.
      *
      * @return {@link Observable} with {@link Media} information.
      */
     @GET("v4/media/{id}/")
-    Observable<Response<Media>> getMediaInfo(@Path("id") String id, @Query("versions") Boolean versions);
+    Observable<Response<Media>> getMediaInfo(@Path("id") String id, @QueryMap Map<String, String> params);
 
     /**
      * Gets the download file URL for a specific media.
@@ -143,31 +135,24 @@ public interface BynderApi {
      * Updates the media metadata/properties for a specific media id.
      *
      * @param id Media id of which we want to update.
-     * @param name Media name new value.
-     * @param description Media description new value.
-     * @param copyright Media copyright new value.
-     * @param archive Media archive new status.
-     * @param datePublished Media publication date new value.
+     * @param params {@link FieldMap} with parameters.
      *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
     @POST("v4/media/{id}/")
-    Observable<Response<Void>> setMediaProperties(@Path("id") String id, @Field("name") String name, @Field("description") String description, @Field("copyright") String copyright,
-            @Field("archive") Boolean archive, @Field("datePublished") String datePublished);
+    Observable<Response<Void>> setMediaProperties(@Path("id") String id, @FieldMap Map<String, String> params);
 
     /**
      * Adds metaproperty options to a media with a specific media id.
      *
-     * @param mediaId Media id of which we want to add a metaproperty options to.
-     * @param metapropertyOptions Map with metaproperty options to be added to the media. The key of
-     *        the map is the name of the metaproperty to which the metaproperty options belong to.
+     * @param params {@link FieldMap} with parameters.
      *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
     @POST("v4/media/")
-    Observable<Response<Void>> addMetapropertyToMedia(@Field("id") String mediaId, @FieldMap Map<String, String> metapropertyOptions);
+    Observable<Response<Void>> addMetapropertyToMedia(@FieldMap Map<String, String> params);
 
     /**
      * Initializes a file upload with Bynder and returns authorization information to allow

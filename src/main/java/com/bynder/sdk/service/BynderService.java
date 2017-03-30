@@ -6,10 +6,10 @@
  */
 package com.bynder.sdk.service;
 
-import java.util.Map;
-
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
+
+import io.reactivex.Observable;
 
 /**
  * Interface to login to Bynder and to get instance of {@link AssetBankManager}.
@@ -23,17 +23,17 @@ public interface BynderService {
      * @param username Username/email.
      * @param password Password.
      *
-     * @return {@link User} information.
+     * @return Observable with {@link User} information.
      */
-    User login(String username, String password);
+    Observable<User> login(String username, String password);
 
     /**
      * Gets temporary request token pair used to build the authorise URL and login through the
      * browser.
      *
-     * @return Map containing the request token key/secret pair.
+     * @return Observable with the request token.
      */
-    Map<String, String> getRequestToken();
+    Observable<String> getRequestToken();
 
     /**
      * Gets the URL needed to open the browser so the user can login and authorize the temporary
@@ -49,9 +49,9 @@ public interface BynderService {
      * Gets temporary access token pair once the user has already accessed the authorise URL and
      * logged in through the browser.
      *
-     * @return Map containing the access token key/secret pair.
+     * @return Observable with the access token.
      */
-    Map<String, String> getAccessToken();
+    Observable<String> getAccessToken();
 
     /**
      * Logout resets your credentials. If the access token key/secret provided in the

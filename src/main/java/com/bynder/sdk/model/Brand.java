@@ -45,9 +45,4 @@ public class Brand {
     public String getImage() {
         return image;
     }
-
-    @Override
-    public String toString() {
-        return "Brand [id=" + id + ", name=" + name + ", description=" + description + ", image=" + image + "]";
-    }
 }

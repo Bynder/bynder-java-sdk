@@ -19,6 +19,7 @@ public class MediaInfoQuery {
      * This property has to be set to 1 (TRUE) for the API response to include the media items of
      * the media asset.
      */
+    @ApiField
     private Boolean versions;
 
     public MediaInfoQuery(final String mediaId, final Boolean versions) {

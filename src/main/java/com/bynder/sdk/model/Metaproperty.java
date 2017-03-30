@@ -64,9 +64,4 @@ public class Metaproperty {
     public int getZindex() {
         return zindex;
     }
-
-    @Override
-    public String toString() {
-        return "Metaproperty [id=" + id + ", name=" + name + ", label=" + label + ", options=" + options + ", isFilterable=" + isFilterable + ", zindex=" + zindex + "]";
-    }
 }

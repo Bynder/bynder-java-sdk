@@ -206,7 +206,7 @@ public interface BynderApi {
     Observable<Response<FinaliseResponse>> finaliseUploaded(@Path("id") String id, @Field("targetid") String targetId, @Field("s3_filename") String s3Filename, @Field("chunks") int chunks);
 
     /**
-     * Polls processing status of finalized files.
+     * Gets poll processing status of finalized files.
      *
      * @param items Comma separated import ids of a finalized file, as returned by the
      *        {@link #finaliseUploaded(String, String, String, int)}.
@@ -214,7 +214,7 @@ public interface BynderApi {
      * @return {@link Observable} with {@link PollStatus} information.
      */
     @GET("v4/upload/poll/")
-    Observable<Response<PollStatus>> pollStatus(@Query("items") String items);
+    Observable<Response<PollStatus>> getPollStatus(@Query("items") String items);
 
     /**
      * Saves a new media asset in Bynder.

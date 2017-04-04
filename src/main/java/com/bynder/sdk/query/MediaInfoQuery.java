@@ -22,9 +22,8 @@ public class MediaInfoQuery {
     @ApiField
     private Boolean versions;
 
-    public MediaInfoQuery(final String mediaId, final Boolean versions) {
+    public MediaInfoQuery(final String mediaId) {
         this.mediaId = mediaId;
-        this.versions = versions;
     }
 
     public String getMediaId() {
@@ -33,5 +32,10 @@ public class MediaInfoQuery {
 
     public Boolean getVersions() {
         return versions;
+    }
+
+    public MediaInfoQuery setVersions(final Boolean versions) {
+        this.versions = versions;
+        return this;
     }
 }

@@ -43,31 +43,48 @@ public class MediaQuery {
     @ApiField
     private List<String> propertyOptionId;
 
-    public MediaQuery(final MediaType type, final String keyword, final Integer limit, final Integer page, final List<String> propertyOptionId) {
-        this.type = type;
-        this.keyword = keyword;
-        this.limit = limit;
-        this.page = page;
-        this.propertyOptionId = propertyOptionId;
-    }
-
     public MediaType getType() {
         return type;
+    }
+
+    public MediaQuery setType(final MediaType type) {
+        this.type = type;
+        return this;
     }
 
     public String getKeyword() {
         return keyword;
     }
 
+    public MediaQuery setKeyword(final String keyword) {
+        this.keyword = keyword;
+        return this;
+    }
+
     public Integer getLimit() {
         return limit;
+    }
+
+    public MediaQuery setLimit(final Integer limit) {
+        this.limit = limit;
+        return this;
     }
 
     public Integer getPage() {
         return page;
     }
 
+    public MediaQuery setPage(final Integer page) {
+        this.page = page;
+        return this;
+    }
+
     public List<String> getPropertyOptionId() {
         return propertyOptionId;
+    }
+
+    public MediaQuery setPropertyOptionId(final List<String> propertyOptionId) {
+        this.propertyOptionId = propertyOptionId;
+        return this;
     }
 }

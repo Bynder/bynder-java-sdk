@@ -113,4 +113,6 @@ public interface AssetBankManager {
      * @throws InterruptedException
      */
     Response<Void> uploadFile(UploadQuery uploadQuery) throws BynderUploadException, InterruptedException;
+
+    Observable<Void> uploadFileAsync(UploadQuery uploadQuery) throws BynderUploadException, InterruptedException;
 }

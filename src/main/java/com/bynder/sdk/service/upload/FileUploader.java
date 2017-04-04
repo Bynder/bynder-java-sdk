@@ -27,6 +27,9 @@ import com.bynder.sdk.service.impl.AmazonServiceImpl;
 import com.bynder.sdk.util.Utils;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.functions.Consumer;
 import retrofit2.Response;
 
 /**
@@ -101,6 +104,67 @@ public class FileUploader {
         return response;
     }
 
+    public Observable<Void> uploadFileAsync(final UploadQuery uploadQuery) {
+        return Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Void> e) throws Exception {
+                getClosestS3Endpoint().doOnNext(awsBucketResponse -> {
+                    amazonService = new AmazonServiceImpl(awsBucketResponse.body());
+                    getUploadInformation(uploadQuery.getFilepath()).doOnNext(uploadInformationResponse -> {
+                        File file = new File(uploadQuery.getFilepath());
+                        processChunk(new UploadProcessData(uploadQuery.getMediaId(), uploadQuery.getBrandId(), file, new byte[MAX_CHUNK_SIZE], MAX_CHUNK_SIZE, uploadInformationResponse.body()))
+                                .subscribe();
+                    }).subscribe();
+                }).subscribe();
+            }
+        });
+    }
+
+    private Observable<Void> processChunk(final UploadProcessData uploadProcessData) {
+        return Observable.create(new ObservableOnSubscribe<Void>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Void> observableEmitter) throws Exception {
+                Observable<Response<Void>> uploadToAmazon = amazonService.uploadPartToAmazon(uploadProcessData.getFile().getName(), uploadProcessData.getUploadRequest(),
+                        uploadProcessData.getChunkNumber(), uploadProcessData.getBuffer(), uploadProcessData.getNumberOfChunks());
+                uploadToAmazon.doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(final Throwable throwable) throws Exception {
+                        observableEmitter.onError(throwable);
+                    }
+                }).doOnNext(new Consumer<Response<Void>>() {
+                    @Override
+                    public void accept(final Response<Void> response) throws Exception {
+                        Observable<Response<Void>> registerChunk = registerChunk(uploadProcessData.getUploadRequest(), uploadProcessData.getChunkNumber());
+                        registerChunk.doOnError(new Consumer<Throwable>() {
+                            @Override
+                            public void accept(final Throwable throwable) throws Exception {
+                                observableEmitter.onError(throwable);
+                            }
+                        }).doOnNext(new Consumer<Response<Void>>() {
+                            @Override
+                            public void accept(final Response<Void> response) throws Exception {
+
+                                FinaliseResponse finaliseResponse = finaliseUploaded(uploadProcessData.getUploadRequest(), uploadProcessData.getNumberOfChunks()).blockingSingle().body();
+                                String importId = finaliseResponse.getImportId();
+
+                                if (hasFinishedSuccessfully(importId)) {
+                                    if (uploadProcessData.getMediaId() == null) {
+                                        saveMedia(importId, uploadProcessData.getBrandId(), uploadProcessData.getFile().getName()).blockingSingle();
+                                    } else {
+                                        saveMediaVersion(uploadProcessData.getMediaId(), importId).blockingSingle();
+                                    }
+                                } else {
+                                    throw new BynderUploadException("Converter did not finished. Upload not completed");
+                                }
+                                observableEmitter.onComplete();
+                            }
+                        }).subscribe();
+                    }
+                }).subscribe();
+            }
+        });
+    }
+
     /**
      * Gets the closest Amazon S3 upload endpoint and initializes {@link AmazonService}.
      */
@@ -140,10 +204,10 @@ public class FileUploader {
     }
 
     /**
-     * Check {@link BynderApi#pollStatus(String)} for more information.
+     * Check {@link BynderApi#getPollStatus(String)} for more information.
      */
-    private Observable<Response<PollStatus>> pollStatus(final List<String> items) {
-        return bynderApi.pollStatus(StringUtils.join(items, Utils.STR_COMMA));
+    private Observable<Response<PollStatus>> getPollStatus(final List<String> items) {
+        return bynderApi.getPollStatus(StringUtils.join(items, Utils.STR_COMMA));
     }
 
     /**
@@ -195,7 +259,7 @@ public class FileUploader {
      */
     private boolean hasFinishedSuccessfully(final String importId) throws InterruptedException {
         for (int i = MAX_POLLING_ITERATIONS; i > 0; --i) {
-            PollStatus pollStatus = pollStatus(Arrays.asList(importId)).blockingSingle().body();
+            PollStatus pollStatus = getPollStatus(Arrays.asList(importId)).blockingSingle().body();
 
             if (pollStatus != null) {
                 if (pollStatus.getItemsDone().contains(importId)) {

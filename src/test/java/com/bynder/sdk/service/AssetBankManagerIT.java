@@ -41,9 +41,12 @@ import com.bynder.sdk.query.MediaInfoQuery;
 import com.bynder.sdk.query.MediaPropertiesQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
+import com.bynder.sdk.query.UploadQuery;
+import com.bynder.sdk.service.exception.BynderUploadException;
 import com.bynder.sdk.service.impl.BynderServiceImpl;
 import com.bynder.sdk.util.AppProperties;
 
+import io.reactivex.Observable;
 import retrofit2.Response;
 
 /**
@@ -181,7 +184,7 @@ public class AssetBankManagerIT {
      */
     @Test
     public void getMetapropertiesWithCountTest() {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery(null, null, 100, 1, null)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(100).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -240,7 +243,7 @@ public class AssetBankManagerIT {
      */
     @Test
     public void getMediaListTest() {
-        Response<List<Media>> response = assetBankManager.getMediaList(new MediaQuery(null, null, 1, 1, null)).blockingSingle();
+        Response<List<Media>> response = assetBankManager.getMediaList(new MediaQuery().setLimit(1).setPage(1)).blockingSingle();
         assertNotNull(response);
         assertEquals(HttpStatus.SC_OK, response.code());
 
@@ -265,7 +268,7 @@ public class AssetBankManagerIT {
      */
     @Test
     public void getMediaInfoTest() {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery(null, null, 1, 1, null)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(1).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -284,7 +287,7 @@ public class AssetBankManagerIT {
 
         String mediaId = mediaList.get(0).getId();
 
-        Response<Media> mediaInfoResponse = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId, Boolean.FALSE)).blockingSingle();
+        Response<Media> mediaInfoResponse = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId).setVersions(Boolean.FALSE)).blockingSingle();
         assertNotNull(mediaInfoResponse);
         assertEquals(HttpStatus.SC_OK, mediaInfoResponse.code());
 
@@ -296,7 +299,7 @@ public class AssetBankManagerIT {
         assertNull(media.getMediaItems());
 
         // get media info with media items versions
-        mediaInfoResponse = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId, Boolean.TRUE)).blockingSingle();
+        mediaInfoResponse = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId).setVersions(Boolean.TRUE)).blockingSingle();
         assertNotNull(mediaInfoResponse);
         assertEquals(HttpStatus.SC_OK, mediaInfoResponse.code());
         assertNotNull(mediaInfoResponse.body().getMediaItems());
@@ -309,7 +312,7 @@ public class AssetBankManagerIT {
      */
     @Test
     public void getMediaDownloadUrlTest() {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery(MediaType.IMAGE, null, 1, 1, null)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(1).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -337,7 +340,7 @@ public class AssetBankManagerIT {
      */
     @Test
     public void setMediaDescriptionTest() throws InterruptedException {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery(null, null, 100, 1, null)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(100).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -365,7 +368,7 @@ public class AssetBankManagerIT {
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
         for (int i = MAX_TEST_ITERATIONS; i > 0; --i) {
-            Media media = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId, null)).blockingSingle().body();
+            Media media = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId)).blockingSingle().body();
             if (MEDIA_ASSET_DESCRIPTION.equals(media.getDescription())) {
                 break;
             }
@@ -391,7 +394,7 @@ public class AssetBankManagerIT {
      */
     @Test
     public void setMediaArchiveStatusTest() throws InterruptedException {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery(null, null, 1, 1, null)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(1).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -413,7 +416,7 @@ public class AssetBankManagerIT {
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
         for (int i = MAX_TEST_ITERATIONS; i > 0; --i) {
-            Media media = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId, null)).blockingSingle().body();
+            Media media = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId)).blockingSingle().body();
             if (media.getArchive() == archiveNewValue) {
                 break;
             }
@@ -438,7 +441,7 @@ public class AssetBankManagerIT {
      */
     @Test
     public void addMetapropertyToMediaTest() throws InterruptedException {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery(null, null, 100, 1, null)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(100).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -503,7 +506,7 @@ public class AssetBankManagerIT {
         }
 
         for (int i = MAX_TEST_ITERATIONS; i > 0; --i) {
-            media = assetBankManager.getMediaInfo(new MediaInfoQuery(media.getId(), null)).blockingSingle().body();
+            media = assetBankManager.getMediaInfo(new MediaInfoQuery(media.getId())).blockingSingle().body();
             if (media.getPropertyOptions().contains(metapropertyOptionId)) {
                 break;
             }
@@ -521,5 +524,16 @@ public class AssetBankManagerIT {
 
         statusCode = assetBankManager.addMetapropertyToMedia(new AddMetapropertyToMediaQuery(media.getId(), metapropertyId, StringUtils.EMPTY.split(StringUtils.EMPTY))).blockingSingle().code();
         assertEquals(String.format("Metaproperty options of Media [%s] took too long to be updated and it couldn't be reverted", media.getId()), HttpStatus.SC_ACCEPTED, statusCode);
+    }
+
+    // TO BE DELETED
+    @Test
+    public void uploadTest() throws BynderUploadException, InterruptedException {
+        List<Brand> brands = assetBankManager.getBrands().blockingSingle().body();
+        Observable<Void> observable = assetBankManager.uploadFileAsync(new UploadQuery("/Users/daniel/Documents/Bynder/Media/photo306197607786588286.jpg", brands.get(0).getId(), null));
+
+        observable.doOnComplete(() -> LOG.info("SUCCESS")).doOnError(throwable -> Assert.fail(throwable.getMessage())).subscribe();
+
+        Thread.sleep(40000);
     }
 }

@@ -530,9 +530,12 @@ public class AssetBankManagerIT {
     @Test
     public void uploadTest() throws BynderUploadException, InterruptedException {
         List<Brand> brands = assetBankManager.getBrands().blockingSingle().body();
-        Observable<Void> observable = assetBankManager.uploadFileAsync(new UploadQuery("/Users/daniel/Documents/Bynder/Media/photo306197607786588286.jpg", brands.get(0).getId(), null));
+        Observable<Integer> observable = assetBankManager.uploadFile(new UploadQuery("/Users/adiegobarrerarodriguez/Downloads/687474703a2f2f692e696d6775722e636f6d2f4149696d5138432e6a7067.jpeg", brands.get(0).getId(), null));
 
-        observable.doOnComplete(() -> LOG.info("SUCCESS")).doOnError(throwable -> Assert.fail(throwable.getMessage())).subscribe();
+        observable
+                .doOnComplete(() -> LOG.info("SUCCESS"))
+                .doOnError(throwable -> Assert.fail(throwable.getMessage()))
+                .subscribe();
 
         Thread.sleep(40000);
     }

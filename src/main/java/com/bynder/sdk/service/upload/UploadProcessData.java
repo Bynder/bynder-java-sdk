@@ -17,12 +17,12 @@ public class UploadProcessData {
     private int chunkNumber = 0;
     private UploadRequest uploadRequest;
     private File file;
-    private String mediaId;
-    private String brandId;
+//    private String mediaId;
+//    private String brandId;
 
-    public UploadProcessData(final String mediaId, final String brandId, final File file, final byte[] buffer, final int maxChunkSize, final UploadRequest uploadRequest) {
-        this.mediaId = mediaId;
-        this.brandId = brandId;
+    public UploadProcessData(/*final String mediaId, final String brandId, */final File file, final byte[] buffer, final int maxChunkSize, final UploadRequest uploadRequest) {
+//        this.mediaId = mediaId;
+//        this.brandId = brandId;
         this.file = file;
         this.buffer = buffer;
         this.uploadRequest = uploadRequest;
@@ -30,20 +30,20 @@ public class UploadProcessData {
     }
 
     public void incrementChunk() {
-        numberOfChunks++;
+        chunkNumber++;
     }
 
     public boolean isCompleted() {
         return chunkNumber == numberOfChunks;
     }
 
-    public String getMediaId() {
-        return mediaId;
-    }
-
-    public String getBrandId() {
-        return brandId;
-    }
+//    public String getMediaId() {
+//        return mediaId;
+//    }
+//
+//    public String getBrandId() {
+//        return brandId;
+//    }
 
     public File getFile() {
         return file;

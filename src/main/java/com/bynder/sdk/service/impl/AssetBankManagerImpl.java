@@ -137,12 +137,7 @@ public class AssetBankManagerImpl implements AssetBankManager {
      * Check {@link AssetBankManager} for more information.
      */
     @Override
-    public Response<Void> uploadFile(final UploadQuery uploadQuery) throws BynderUploadException, InterruptedException {
+    public Observable<Integer> uploadFile(final UploadQuery uploadQuery) throws BynderUploadException, InterruptedException {
         return fileUploader.uploadFile(uploadQuery);
-    }
-
-    @Override
-    public Observable<Void> uploadFileAsync(final UploadQuery uploadQuery) throws BynderUploadException, InterruptedException {
-        return fileUploader.uploadFileAsync(uploadQuery);
     }
 }

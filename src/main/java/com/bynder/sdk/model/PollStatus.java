@@ -11,7 +11,7 @@ import java.util.HashSet;
 import com.bynder.sdk.api.BynderApi;
 
 /**
- * Model returned by {@link BynderApi#pollStatus(String)}. This model is only and should be only
+ * Model returned by {@link BynderApi#getPollStatus(String)} (String)}. This model is only and should be only
  * used when uploading a file.
  */
 public class PollStatus {

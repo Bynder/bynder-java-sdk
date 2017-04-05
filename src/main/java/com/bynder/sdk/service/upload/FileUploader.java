@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
- *
+ * <p>
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
 package com.bynder.sdk.service.upload;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -27,9 +27,6 @@ import com.bynder.sdk.service.impl.AmazonServiceImpl;
 import com.bynder.sdk.util.Utils;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.functions.Consumer;
 import retrofit2.Response;
 
 /**
@@ -74,103 +71,61 @@ public class FileUploader {
      * Uploads a file with the information specified in the query parameter.
      *
      * @param uploadQuery Upload query information to upload a file.
-     *
      * @throws BynderUploadException Thrown when upload does not finish within the expected time.
      * @throws IOException
      * @throws InterruptedException
      * @throws RuntimeException
      */
-    public Response<Void> uploadFile(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
-        initializeAmazonService();
-        UploadRequest uploadRequest = getUploadInformation(uploadQuery.getFilepath()).blockingSingle().body();
+    public Observable<Integer> uploadFile(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
+        return Observable.create(observableEmitter -> {
+            Observable<Response<String>> s3Obs = initializeAmazonService();
+            s3Obs
+                    .doOnError(throwable -> observableEmitter.onError(throwable))
+                    .doOnNext(stringResponse -> {
+                        this.amazonService = new AmazonServiceImpl(stringResponse.body());
 
-        File file = new File(uploadQuery.getFilepath());
-        int chunks = uploadPart(file, uploadRequest);
-
-        FinaliseResponse finaliseResponse = finaliseUploaded(uploadRequest, chunks).blockingSingle().body();
-        String importId = finaliseResponse.getImportId();
-
-        Response<Void> response = null;
-        if (hasFinishedSuccessfully(importId)) {
-            if (uploadQuery.getMediaId() == null) {
-                response = saveMedia(importId, uploadQuery.getBrandId(), file.getName()).blockingSingle();
-            } else {
-                saveMediaVersion(uploadQuery.getMediaId(), importId).blockingSingle();
-            }
-        } else {
-            throw new BynderUploadException("Converter did not finished. Upload not completed");
-        }
-
-        return response;
-    }
-
-    public Observable<Void> uploadFileAsync(final UploadQuery uploadQuery) {
-        return Observable.create(new ObservableOnSubscribe<Void>() {
-            @Override
-            public void subscribe(final ObservableEmitter<Void> e) throws Exception {
-                getClosestS3Endpoint().doOnNext(awsBucketResponse -> {
-                    amazonService = new AmazonServiceImpl(awsBucketResponse.body());
-                    getUploadInformation(uploadQuery.getFilepath()).doOnNext(uploadInformationResponse -> {
+                        UploadRequest uploadRequest = getUploadInformation(uploadQuery.getFilepath()).blockingSingle().body();
                         File file = new File(uploadQuery.getFilepath());
-                        processChunk(new UploadProcessData(uploadQuery.getMediaId(), uploadQuery.getBrandId(), file, new byte[MAX_CHUNK_SIZE], MAX_CHUNK_SIZE, uploadInformationResponse.body()))
+                        if (!file.exists())
+                        {
+                            observableEmitter.onError(new FileNotFoundException(file.getName() + " not found"));
+                            observableEmitter.onComplete();
+                            return;
+                        }
+
+                        Observable<Integer> chunksObs = uploadParts(file, uploadRequest);
+                        chunksObs
+                                .doOnError(throwable -> LOG.error(throwable.getMessage()))
+                                .doOnNext(chunks -> {
+                                    Observable<Response<FinaliseResponse>> finaliseResponse = finaliseUploaded(uploadRequest, chunks);
+                                    finaliseResponse
+                                            .doOnNext(finaliseResponseResponse -> {
+                                                String importId = finaliseResponseResponse.body().getImportId();
+                                                Response<Void> response = null;
+                                                if (hasFinishedSuccessfully(importId)) {
+                                                    if (uploadQuery.getMediaId() == null) {
+                                                        response = saveMedia(importId, uploadQuery.getBrandId(), file.getName()).blockingSingle();
+                                                    } else {
+                                                        saveMediaVersion(uploadQuery.getMediaId(), importId).blockingSingle();
+                                                    }
+                                                } else {
+                                                    //throw new BynderUploadException("Converter did not finished. Upload not completed");
+                                                    observableEmitter.onError(new BynderUploadException("Converter did not finished. Upload not completed"));
+                                                }
+                                            })
+                                            .subscribe();
+                                })
                                 .subscribe();
-                    }).subscribe();
-                }).subscribe();
-            }
-        });
-    }
-
-    private Observable<Void> processChunk(final UploadProcessData uploadProcessData) {
-        return Observable.create(new ObservableOnSubscribe<Void>() {
-            @Override
-            public void subscribe(final ObservableEmitter<Void> observableEmitter) throws Exception {
-                Observable<Response<Void>> uploadToAmazon = amazonService.uploadPartToAmazon(uploadProcessData.getFile().getName(), uploadProcessData.getUploadRequest(),
-                        uploadProcessData.getChunkNumber(), uploadProcessData.getBuffer(), uploadProcessData.getNumberOfChunks());
-                uploadToAmazon.doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(final Throwable throwable) throws Exception {
-                        observableEmitter.onError(throwable);
-                    }
-                }).doOnNext(new Consumer<Response<Void>>() {
-                    @Override
-                    public void accept(final Response<Void> response) throws Exception {
-                        Observable<Response<Void>> registerChunk = registerChunk(uploadProcessData.getUploadRequest(), uploadProcessData.getChunkNumber());
-                        registerChunk.doOnError(new Consumer<Throwable>() {
-                            @Override
-                            public void accept(final Throwable throwable) throws Exception {
-                                observableEmitter.onError(throwable);
-                            }
-                        }).doOnNext(new Consumer<Response<Void>>() {
-                            @Override
-                            public void accept(final Response<Void> response) throws Exception {
-
-                                FinaliseResponse finaliseResponse = finaliseUploaded(uploadProcessData.getUploadRequest(), uploadProcessData.getNumberOfChunks()).blockingSingle().body();
-                                String importId = finaliseResponse.getImportId();
-
-                                if (hasFinishedSuccessfully(importId)) {
-                                    if (uploadProcessData.getMediaId() == null) {
-                                        saveMedia(importId, uploadProcessData.getBrandId(), uploadProcessData.getFile().getName()).blockingSingle();
-                                    } else {
-                                        saveMediaVersion(uploadProcessData.getMediaId(), importId).blockingSingle();
-                                    }
-                                } else {
-                                    throw new BynderUploadException("Converter did not finished. Upload not completed");
-                                }
-                                observableEmitter.onComplete();
-                            }
-                        }).subscribe();
-                    }
-                }).subscribe();
-            }
+                    })
+                    .subscribe();
         });
     }
 
     /**
      * Gets the closest Amazon S3 upload endpoint and initializes {@link AmazonService}.
      */
-    private void initializeAmazonService() {
-        String awsBucket = getClosestS3Endpoint().blockingSingle().body();
-        this.amazonService = new AmazonServiceImpl(awsBucket);
+    private Observable<Response<String>> initializeAmazonService() {
+        return getClosestS3Endpoint();
     }
 
     /**
@@ -204,9 +159,9 @@ public class FileUploader {
     }
 
     /**
-     * Check {@link BynderApi#getPollStatus(String)} for more information.
+     * Check {@link BynderApi#getPollStatus(String)} (String)} for more information.
      */
-    private Observable<Response<PollStatus>> getPollStatus(final List<String> items) {
+    private Observable<Response<PollStatus>> pollStatus(final List<String> items) {
         return bynderApi.getPollStatus(StringUtils.join(items, Utils.STR_COMMA));
     }
 
@@ -227,39 +182,64 @@ public class FileUploader {
     /**
      * Uploads the parts to Amazon and registers them in Bynder.
      *
-     * @param filepath Path of the file to be uploaded.
+     * @param file          Path of the file to be uploaded.
      * @param uploadRequest Upload authorization information.
      */
-    private int uploadPart(final File file, final UploadRequest uploadRequest) {
+    private Observable<Integer> uploadParts(final File file, final UploadRequest uploadRequest) {
         int chunkNumber = 0;
         byte[] buffer = new byte[MAX_CHUNK_SIZE];
         int numberOfChunks = (Math.toIntExact(file.length()) + MAX_CHUNK_SIZE - 1) / MAX_CHUNK_SIZE;
 
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            while (fileInputStream.read(buffer, 0, buffer.length) > 0) {
-                ++chunkNumber;
-                amazonService.uploadPartToAmazon(file.getName(), uploadRequest, chunkNumber, buffer, numberOfChunks).blockingSingle();
-                registerChunk(uploadRequest, chunkNumber).blockingSingle();
-            }
-        } catch (IOException e) {
-            LOG.error(e.getMessage());
-        }
+        UploadProcessData data = new UploadProcessData(file, buffer, MAX_CHUNK_SIZE, uploadRequest);
+        return Observable
+                .create(observableEmitter -> {
+                    data.incrementChunk();
+                    processChunk(data)
+                            .repeatUntil(() -> {
+                                if (data.isCompleted()) {
+                                    observableEmitter.onNext(data.getNumberOfChunks());
+                                    observableEmitter.onComplete();
+                                }
+                                else
+                                {
+                                    data.incrementChunk();
+                                }
+                                return data.isCompleted();
+                            })
+                            .doOnError(throwable -> observableEmitter.onError(throwable))
+                            .subscribe();
+                });
+    }
 
-        return chunkNumber;
+    private Observable<Boolean> processChunk(UploadProcessData data) {
+        return Observable.create(observableEmitter -> {
+            Observable<Response<Void>> uploadToAmazon = amazonService.uploadPartToAmazon(data.getFile().getName(), data.getUploadRequest(), data.getChunkNumber(), data.getBuffer(), data.getNumberOfChunks());
+            uploadToAmazon
+                    .doOnError(throwable -> observableEmitter.onError(throwable))
+                    .doOnNext(voidResponse -> {
+                        Observable<Response<Void>> chunkObs = registerChunk(data.getUploadRequest(), data.getChunkNumber());
+                        chunkObs
+                                .doOnNext(voidResponse1 -> {
+                                    observableEmitter.onNext(true);
+                                    observableEmitter.onComplete();
+                                })
+                                .doOnError(throwable -> observableEmitter.onError(throwable))
+                                .subscribe();
+                    })
+                    .subscribe();
+        });
     }
 
     /**
      * Method to check if file has finished converting within expected timeout.
      *
      * @param importId Import id of the upload.
-     *
      * @return True if file has finished converting successfully. False otherwise.
-     *
      * @throws InterruptedException
      */
     private boolean hasFinishedSuccessfully(final String importId) throws InterruptedException {
         for (int i = MAX_POLLING_ITERATIONS; i > 0; --i) {
-            PollStatus pollStatus = getPollStatus(Arrays.asList(importId)).blockingSingle().body();
+            PollStatus pollStatus = pollStatus(Arrays.asList(importId)).blockingSingle().body();
 
             if (pollStatus != null) {
                 if (pollStatus.getItemsDone().contains(importId)) {

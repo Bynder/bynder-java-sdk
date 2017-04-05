@@ -112,5 +112,5 @@ public interface AssetBankManager {
      * @throws BynderUploadException Thrown when upload does not finish within the expected time.
      * @throws InterruptedException
      */
-    Observable<Integer> uploadFile(UploadQuery uploadQuery) throws BynderUploadException, InterruptedException;
+    Observable<Boolean> uploadFile(UploadQuery uploadQuery) throws BynderUploadException, InterruptedException;
 }

@@ -76,7 +76,7 @@ public class FileUploader {
      * @throws InterruptedException
      * @throws RuntimeException
      */
-    public Observable<Integer> uploadFile(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
+    public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
         return Observable.create(observableEmitter -> {
             Observable<Response<String>> s3Obs = initializeAmazonService();
             s3Obs
@@ -86,8 +86,7 @@ public class FileUploader {
 
                         UploadRequest uploadRequest = getUploadInformation(uploadQuery.getFilepath()).blockingSingle().body();
                         File file = new File(uploadQuery.getFilepath());
-                        if (!file.exists())
-                        {
+                        if (!file.exists()) {
                             observableEmitter.onError(new FileNotFoundException(file.getName() + " not found"));
                             observableEmitter.onComplete();
                             return;
@@ -99,19 +98,34 @@ public class FileUploader {
                                 .doOnNext(chunks -> {
                                     Observable<Response<FinaliseResponse>> finaliseResponse = finaliseUploaded(uploadRequest, chunks);
                                     finaliseResponse
+                                            .doOnError(throwable -> observableEmitter.onError(throwable))
                                             .doOnNext(finaliseResponseResponse -> {
                                                 String importId = finaliseResponseResponse.body().getImportId();
-                                                Response<Void> response = null;
-                                                if (hasFinishedSuccessfully(importId)) {
-                                                    if (uploadQuery.getMediaId() == null) {
-                                                        response = saveMedia(importId, uploadQuery.getBrandId(), file.getName()).blockingSingle();
-                                                    } else {
-                                                        saveMediaVersion(uploadQuery.getMediaId(), importId).blockingSingle();
-                                                    }
-                                                } else {
-                                                    //throw new BynderUploadException("Converter did not finished. Upload not completed");
-                                                    observableEmitter.onError(new BynderUploadException("Converter did not finished. Upload not completed"));
-                                                }
+                                                //Response<Void> response = null;
+                                                hasFinishedSuccessfully(importId)
+                                                        .doOnError(throwable -> observableEmitter.onError(throwable))
+                                                        .doOnNext(hasFinishedSuccessfully -> {
+                                                            if (hasFinishedSuccessfully) {
+                                                                Observable<Response<Void>> saveMediaObs;
+                                                                if (uploadQuery.getMediaId() == null) {
+                                                                    /*response = */
+                                                                    saveMediaObs = saveMedia(importId, uploadQuery.getBrandId(), file.getName());
+                                                                } else {
+                                                                    saveMediaObs = saveMediaVersion(uploadQuery.getMediaId(), importId);
+                                                                }
+                                                                saveMediaObs
+                                                                        .doOnError(throwable -> observableEmitter.onError(throwable))
+                                                                        .doOnNext(voidResponse -> observableEmitter.onNext(true))
+                                                                        .doOnComplete(() ->  observableEmitter.onComplete())
+                                                                        .subscribe();
+                                                            } else {
+                                                                //throw new BynderUploadException("Converter did not finished. Upload not completed");
+                                                                observableEmitter.onError(new BynderUploadException("Converter did not finished. Upload not completed"));
+                                                                observableEmitter.onComplete();
+                                                            }
+                                                        })
+                                                        .subscribe();
+
                                             })
                                             .subscribe();
                                 })
@@ -199,9 +213,7 @@ public class FileUploader {
                                 if (data.isCompleted()) {
                                     observableEmitter.onNext(data.getNumberOfChunks());
                                     observableEmitter.onComplete();
-                                }
-                                else
-                                {
+                                } else {
                                     data.incrementChunk();
                                 }
                                 return data.isCompleted();
@@ -237,20 +249,26 @@ public class FileUploader {
      * @return True if file has finished converting successfully. False otherwise.
      * @throws InterruptedException
      */
-    private boolean hasFinishedSuccessfully(final String importId) throws InterruptedException {
-        for (int i = MAX_POLLING_ITERATIONS; i > 0; --i) {
-            PollStatus pollStatus = pollStatus(Arrays.asList(importId)).blockingSingle().body();
-
-            if (pollStatus != null) {
-                if (pollStatus.getItemsDone().contains(importId)) {
-                    return true;
-                }
-                if (pollStatus.getItemsFailed().contains(importId)) {
-                    return false;
-                }
+    private Observable<Boolean> hasFinishedSuccessfully(final String importId) throws InterruptedException {
+        return Observable.create(observableEmitter -> {
+            for (int i = MAX_POLLING_ITERATIONS; i > 0; --i) {
+                pollStatus(Arrays.asList(importId))
+                        .doOnError(throwable -> observableEmitter.onError(throwable))
+                        .doOnNext(pollStatusResponse -> {
+                            PollStatus pollStatus = pollStatusResponse.body();
+                            if (pollStatus != null) {
+                                if (pollStatus.getItemsDone().contains(importId)) {
+                                    observableEmitter.onNext(true);
+                                }
+                                if (pollStatus.getItemsFailed().contains(importId)) {
+                                    observableEmitter.onNext(true);
+                                }
+                            }
+                            Thread.sleep(POLLING_IDDLE_TIME);
+                        });
             }
-            Thread.sleep(POLLING_IDDLE_TIME);
-        }
-        return false;
+            observableEmitter.onNext(false);
+            observableEmitter.onComplete();
+        });
     }
 }

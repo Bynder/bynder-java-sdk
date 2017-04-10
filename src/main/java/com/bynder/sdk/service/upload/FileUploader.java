@@ -116,7 +116,7 @@ public class FileUploader {
                                                                 saveMediaObs
                                                                         .doOnError(throwable -> observableEmitter.onError(throwable))
                                                                         .doOnNext(voidResponse -> observableEmitter.onNext(true))
-                                                                        .doOnComplete(() ->  observableEmitter.onComplete())
+                                                                        .doOnComplete(() -> observableEmitter.onComplete())
                                                                         .subscribe();
                                                             } else {
                                                                 //throw new BynderUploadException("Converter did not finished. Upload not completed");
@@ -251,24 +251,37 @@ public class FileUploader {
      */
     private Observable<Boolean> hasFinishedSuccessfully(final String importId) throws InterruptedException {
         return Observable.create(observableEmitter -> {
-            for (int i = MAX_POLLING_ITERATIONS; i > 0; --i) {
-                pollStatus(Arrays.asList(importId))
-                        .doOnError(throwable -> observableEmitter.onError(throwable))
-                        .doOnNext(pollStatusResponse -> {
-                            PollStatus pollStatus = pollStatusResponse.body();
-                            if (pollStatus != null) {
-                                if (pollStatus.getItemsDone().contains(importId)) {
-                                    observableEmitter.onNext(true);
-                                }
-                                if (pollStatus.getItemsFailed().contains(importId)) {
-                                    observableEmitter.onNext(true);
-                                }
-                            }
+            PollingStatus pollingStatus = new PollingStatus(MAX_POLLING_ITERATIONS);
+            pollStatus(Arrays.asList(importId))
+                    .repeatUntil(() -> {
+                        if (!pollingStatus.nextAttempt()){
+                            observableEmitter.onNext(false);
+                            observableEmitter.onComplete();
+                            return true;
+                        }
+                        else {
                             Thread.sleep(POLLING_IDDLE_TIME);
-                        });
-            }
-            observableEmitter.onNext(false);
-            observableEmitter.onComplete();
+                            observableEmitter.onComplete();
+                            return false;
+                        }
+                    })
+                    .doOnError(throwable -> observableEmitter.onError(throwable))
+                    .doOnNext(pollStatusResponse -> {
+                        PollStatus pollStatus = pollStatusResponse.body();
+                        if (pollStatus != null) {
+                            if (pollStatus.getItemsDone().contains(importId)) {
+                                observableEmitter.onNext(true);
+                                observableEmitter.onComplete();
+                                return;
+                            }
+                            if (pollStatus.getItemsFailed().contains(importId)) {
+                                observableEmitter.onNext(false);
+                                observableEmitter.onComplete();
+                                return;
+                            }
+                        }
+                    })
+                    .subscribe();
         });
     }
 }

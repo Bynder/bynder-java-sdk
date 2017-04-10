@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +92,10 @@ public final class Utils {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.interceptors().clear();
         httpClient.addInterceptor(new SigningInterceptor(consumer));
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        httpClient.addInterceptor(interceptor);
 
         // increase timeout
         httpClient.readTimeout(30, TimeUnit.SECONDS);

@@ -6,11 +6,6 @@
  */
 package com.bynder.sdk.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,6 +43,8 @@ import com.bynder.sdk.util.AppProperties;
 
 import io.reactivex.Observable;
 import retrofit2.Response;
+
+import static org.junit.Assert.*;
 
 /**
  * Class to test {@link AssetBankManager} implementation against the API.
@@ -534,7 +531,7 @@ public class AssetBankManagerIT {
 
         observable
                 .doOnComplete(() -> LOG.info("SUCCESS"))
-                .doOnError(throwable -> Assert.fail(throwable.getMessage()))
+                .doOnError(throwable -> fail(throwable.getMessage()))
                 .doOnNext(aBoolean -> {
                     if (!aBoolean)
                     {

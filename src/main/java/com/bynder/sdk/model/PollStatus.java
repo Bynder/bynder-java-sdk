@@ -24,6 +24,10 @@ public class PollStatus {
      * Returns the items for which the conversion succeeded.
      */
     private HashSet<String> itemsDone;
+    /**
+     * Returns the items for which the conversion was rejected.
+     */
+    private HashSet<String> itemsRejected;
 
     public HashSet<String> getItemsFailed() {
         return itemsFailed;
@@ -31,5 +35,9 @@ public class PollStatus {
 
     public HashSet<String> getItemsDone() {
         return itemsDone;
+    }
+
+    public HashSet<String> getItemsRejected() {
+        return itemsRejected;
     }
 }

@@ -7,24 +7,26 @@
 package com.bynder.sdk.service.upload;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import com.bynder.sdk.model.UploadRequest;
 
 public class UploadProcessData {
 
     private int numberOfChunks;
-    private byte[] buffer;
+    private FileInputStream fis;
     private int chunkNumber = 0;
     private UploadRequest uploadRequest;
     private File file;
-//    private String mediaId;
-//    private String brandId;
+    private int maxChunkSize;
 
-    public UploadProcessData(/*final String mediaId, final String brandId, */final File file, final byte[] buffer, final int maxChunkSize, final UploadRequest uploadRequest) {
-//        this.mediaId = mediaId;
-//        this.brandId = brandId;
+    public UploadProcessData(final File file, FileInputStream fis, final int maxChunkSize, final UploadRequest uploadRequest) {
         this.file = file;
-        this.buffer = buffer;
+        this.fis = fis;
+        this.maxChunkSize = maxChunkSize;
         this.uploadRequest = uploadRequest;
         this.numberOfChunks = (Math.toIntExact(file.length()) + maxChunkSize - 1) / maxChunkSize;
     }
@@ -36,14 +38,6 @@ public class UploadProcessData {
     public boolean isCompleted() {
         return chunkNumber == numberOfChunks;
     }
-
-//    public String getMediaId() {
-//        return mediaId;
-//    }
-//
-//    public String getBrandId() {
-//        return brandId;
-//    }
 
     public File getFile() {
         return file;
@@ -57,7 +51,12 @@ public class UploadProcessData {
         return chunkNumber;
     }
 
-    public byte[] getBuffer() {
+    public byte[] getBuffer() throws IOException {
+        int length = Math.min(maxChunkSize,fis.available());
+        byte[] buffer = new byte[length];
+        fis.available();
+
+        fis.read(buffer);
         return buffer;
     }
 

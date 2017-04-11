@@ -36,7 +36,7 @@ import retrofit2.Response;
 /**
  * Implementation of {@link AssetBankManager}.
  */
-public class AssetBankManagerImpl implements AssetBankManager {
+public class AssetBankManagerImpl extends BaseService implements AssetBankManager {
 
     /**
      * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
@@ -138,6 +138,6 @@ public class AssetBankManagerImpl implements AssetBankManager {
      */
     @Override
     public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) throws BynderUploadException, InterruptedException {
-        return fileUploader.uploadFile(uploadQuery);
+        return fileUploader.startUploadProcess(uploadQuery);
     }
 }

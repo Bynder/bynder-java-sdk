@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import io.reactivex.plugins.RxJavaPlugins;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
@@ -526,20 +527,25 @@ public class AssetBankManagerIT {
     // TO BE DELETED
     @Test
     public void uploadTest() throws BynderUploadException, InterruptedException {
-        List<Brand> brands = assetBankManager.getBrands().blockingSingle().body();
-        Observable<Boolean> observable = assetBankManager.uploadFile(new UploadQuery("/Users/diegobarrerarodriguez/Downloads/687474703a2f2f692e696d6775722e636f6d2f4149696d5138432e6a7067.jpeg", brands.get(0).getId(), null));
-
-        observable
-                .doOnComplete(() -> LOG.info("SUCCESS"))
-                .doOnError(throwable -> fail(throwable.getMessage()))
-                .doOnNext(aBoolean -> {
-                    if (!aBoolean)
-                    {
-                        Assert.fail("upload returned success: false");
-                    }
+        Observable<Response<List<Brand>>> brandsObs = assetBankManager.getBrands();
+        brandsObs
+                .doOnError(throwable -> LOG.error(throwable.getMessage()))
+                .doOnNext(listResponse ->
+                {
+                    List<Brand> brands = listResponse.body();
+                    Observable<Boolean> observable = assetBankManager.uploadFile(new UploadQuery("/Users/diegobarrerarodriguez/Downloads/roll_safe.jpg", brands.get(0).getId(), null));
+                    observable
+                            .doOnComplete(() -> LOG.info("SUCCESS"))
+                            .doOnError(throwable -> LOG.error(throwable.getMessage()))
+                            .doOnNext(aBoolean -> {
+                                if (!aBoolean)
+                                {
+                                    Assert.fail("upload returned success: false");
+                                }
+                            })
+                            .subscribe();
                 })
                 .subscribe();
 
-        Thread.sleep(40000);
     }
 }

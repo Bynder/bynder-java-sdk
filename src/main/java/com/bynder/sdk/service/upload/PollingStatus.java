@@ -6,13 +6,30 @@ package com.bynder.sdk.service.upload;
 public class PollingStatus {
 
     private int mAttemptsRemaining;
+    private boolean isDone;
+    private boolean isSuccessful;
 
-    public PollingStatus(int attempts){
+    public PollingStatus(int attempts) {
         mAttemptsRemaining = attempts - 1;
+        isDone = false;
+        isSuccessful = false;
     }
 
-    public boolean nextAttempt(){
+    public boolean nextAttempt() {
         mAttemptsRemaining--;
         return mAttemptsRemaining > 0;
+    }
+
+    public void setDone(boolean success) {
+        isDone = true;
+        isSuccessful = success;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public boolean isSuccessful() {
+        return isSuccessful;
     }
 }

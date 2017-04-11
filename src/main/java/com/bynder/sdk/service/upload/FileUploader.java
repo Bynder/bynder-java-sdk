@@ -7,11 +7,13 @@
 package com.bynder.sdk.service.upload;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import io.reactivex.ObservableEmitter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +78,7 @@ public class FileUploader {
      * @throws InterruptedException
      * @throws RuntimeException
      */
-    public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
+    public Observable<Boolean> startUploadProcess(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
         return Observable.create(observableEmitter -> {
             Observable<Response<String>> s3Obs = initializeAmazonService();
             s3Obs
@@ -84,55 +86,68 @@ public class FileUploader {
                     .doOnNext(stringResponse -> {
                         this.amazonService = new AmazonServiceImpl(stringResponse.body());
 
-                        UploadRequest uploadRequest = getUploadInformation(uploadQuery.getFilepath()).blockingSingle().body();
-                        File file = new File(uploadQuery.getFilepath());
-                        if (!file.exists()) {
-                            observableEmitter.onError(new FileNotFoundException(file.getName() + " not found"));
-                            observableEmitter.onComplete();
-                            return;
-                        }
-
-                        Observable<Integer> chunksObs = uploadParts(file, uploadRequest);
-                        chunksObs
-                                .doOnError(throwable -> LOG.error(throwable.getMessage()))
-                                .doOnNext(chunks -> {
-                                    Observable<Response<FinaliseResponse>> finaliseResponse = finaliseUploaded(uploadRequest, chunks);
-                                    finaliseResponse
-                                            .doOnError(throwable -> observableEmitter.onError(throwable))
-                                            .doOnNext(finaliseResponseResponse -> {
-                                                String importId = finaliseResponseResponse.body().getImportId();
-                                                //Response<Void> response = null;
-                                                hasFinishedSuccessfully(importId)
-                                                        .doOnError(throwable -> observableEmitter.onError(throwable))
-                                                        .doOnNext(hasFinishedSuccessfully -> {
-                                                            if (hasFinishedSuccessfully) {
-                                                                Observable<Response<Void>> saveMediaObs;
-                                                                if (uploadQuery.getMediaId() == null) {
-                                                                    /*response = */
-                                                                    saveMediaObs = saveMedia(importId, uploadQuery.getBrandId(), file.getName());
-                                                                } else {
-                                                                    saveMediaObs = saveMediaVersion(uploadQuery.getMediaId(), importId);
-                                                                }
-                                                                saveMediaObs
-                                                                        .doOnError(throwable -> observableEmitter.onError(throwable))
-                                                                        .doOnNext(voidResponse -> observableEmitter.onNext(true))
-                                                                        .doOnComplete(() -> observableEmitter.onComplete())
-                                                                        .subscribe();
-                                                            } else {
-                                                                //throw new BynderUploadException("Converter did not finished. Upload not completed");
-                                                                observableEmitter.onError(new BynderUploadException("Converter did not finished. Upload not completed"));
-                                                                observableEmitter.onComplete();
-                                                            }
-                                                        })
-                                                        .subscribe();
-
-                                            })
-                                            .subscribe();
+                        Observable<Response<UploadRequest>> uploadRequestObs = getUploadInformation(uploadQuery.getFilepath());
+                        uploadRequestObs
+                                .doOnError(throwable -> observableEmitter.onError(throwable))
+                                .doOnNext(uploadRequestResponse -> {
+                                    UploadRequest uploadRequest = uploadRequestResponse.body();
+                                    File file = new File(uploadQuery.getFilepath());
+                                    if (!file.exists()) {
+                                        observableEmitter.onError(new FileNotFoundException(file.getName() + " not found"));
+                                        observableEmitter.onComplete();
+                                        return;
+                                    }
+                                    startUploadProcess(uploadQuery, observableEmitter, uploadRequest, file);
                                 })
                                 .subscribe();
                     })
                     .subscribe();
         });
+    }
+
+    private void startUploadProcess(UploadQuery uploadQuery, ObservableEmitter<Boolean> observableEmitter, UploadRequest uploadRequest, File file) {
+        Observable<Integer> chunksObs = uploadParts(file, uploadRequest);
+        chunksObs
+                .doOnError(throwable -> LOG.error(throwable.getMessage()))
+                .doOnNext(chunks -> {
+                    Observable<Response<FinaliseResponse>> finaliseResponse = finaliseUploaded(uploadRequest, chunks);
+                    finaliseResponse
+                            .doOnError(throwable -> observableEmitter.onError(throwable))
+                            .doOnNext(finaliseResponseResponse -> {
+                                processFinaliseResponse(uploadQuery, observableEmitter, file, finaliseResponseResponse);
+                            })
+                            .subscribe();
+                })
+                .subscribe();
+    }
+
+    private void processFinaliseResponse(UploadQuery uploadQuery, ObservableEmitter<Boolean> observableEmitter, File file, Response<FinaliseResponse> finaliseResponseResponse) throws InterruptedException {
+        String importId = finaliseResponseResponse.body().getImportId();
+        hasFinishedSuccessfully(importId)
+                .doOnError(throwable -> observableEmitter.onError(throwable))
+                .doOnNext(hasFinishedSuccessfully -> {
+                    if (hasFinishedSuccessfully) {
+                        saveMedia(uploadQuery, observableEmitter, file, importId);
+                    } else {
+                        observableEmitter.onError(new BynderUploadException("Converter did not finishe. Upload not completed"));
+                        observableEmitter.onComplete();
+                    }
+                })
+                .subscribe();
+    }
+
+    private void saveMedia(UploadQuery uploadQuery, ObservableEmitter<Boolean> observableEmitter, File file, String importId) {
+        Observable<Response<Void>> saveMediaObs;
+        if (uploadQuery.getMediaId() == null) {
+            saveMediaObs = saveMedia(importId, uploadQuery.getBrandId(), file.getName());
+        } else {
+            saveMediaObs = saveMediaVersion(uploadQuery.getMediaId(), importId);
+        }
+        saveMediaObs
+                .doOnError(throwable -> observableEmitter.onError(throwable))
+                .doOnNext(voidResponse -> observableEmitter.onNext(true))
+                .doOnComplete(() -> observableEmitter.onComplete())
+                .subscribe();
     }
 
     /**
@@ -200,23 +215,22 @@ public class FileUploader {
      * @param uploadRequest Upload authorization information.
      */
     private Observable<Integer> uploadParts(final File file, final UploadRequest uploadRequest) {
-        int chunkNumber = 0;
-        byte[] buffer = new byte[MAX_CHUNK_SIZE];
-        int numberOfChunks = (Math.toIntExact(file.length()) + MAX_CHUNK_SIZE - 1) / MAX_CHUNK_SIZE;
-
-        UploadProcessData data = new UploadProcessData(file, buffer, MAX_CHUNK_SIZE, uploadRequest);
         return Observable
                 .create(observableEmitter -> {
+                    FileInputStream fis = new FileInputStream(file);
+                    UploadProcessData data = new UploadProcessData(file, fis, MAX_CHUNK_SIZE, uploadRequest);
+
                     data.incrementChunk();
                     processChunk(data)
                             .repeatUntil(() -> {
-                                if (data.isCompleted()) {
+                                boolean isDataCompleted = data.isCompleted();
+                                if (isDataCompleted) {
                                     observableEmitter.onNext(data.getNumberOfChunks());
                                     observableEmitter.onComplete();
                                 } else {
                                     data.incrementChunk();
                                 }
-                                return data.isCompleted();
+                                return isDataCompleted;
                             })
                             .doOnError(throwable -> observableEmitter.onError(throwable))
                             .subscribe();
@@ -225,21 +239,29 @@ public class FileUploader {
 
     private Observable<Boolean> processChunk(UploadProcessData data) {
         return Observable.create(observableEmitter -> {
-            Observable<Response<Void>> uploadToAmazon = amazonService.uploadPartToAmazon(data.getFile().getName(), data.getUploadRequest(), data.getChunkNumber(), data.getBuffer(), data.getNumberOfChunks());
-            uploadToAmazon
-                    .doOnError(throwable -> observableEmitter.onError(throwable))
-                    .doOnNext(voidResponse -> {
-                        Observable<Response<Void>> chunkObs = registerChunk(data.getUploadRequest(), data.getChunkNumber());
-                        chunkObs
-                                .doOnNext(voidResponse1 -> {
-                                    observableEmitter.onNext(true);
-                                    observableEmitter.onComplete();
-                                })
-                                .doOnError(throwable -> observableEmitter.onError(throwable))
-                                .subscribe();
-                    })
-                    .subscribe();
+            try {
+                Observable<Response<Void>> uploadToAmazon = amazonService.uploadPartToAmazon(data.getFile().getName(), data.getUploadRequest(), data.getChunkNumber(), data.getBuffer(), data.getNumberOfChunks());
+                uploadToAmazon
+                        .doOnError(throwable -> observableEmitter.onError(throwable))
+                        .doOnNext(voidResponse -> {
+                            registerChunk(data, observableEmitter);
+                        })
+                        .subscribe();
+            } catch (Exception e) {
+                observableEmitter.onError(e);
+            }
         });
+    }
+
+    private void registerChunk(UploadProcessData data, ObservableEmitter<Boolean> observableEmitter) {
+        Observable<Response<Void>> chunkObs = registerChunk(data.getUploadRequest(), data.getChunkNumber());
+        chunkObs
+                .doOnNext(voidResponse1 -> {
+                    observableEmitter.onNext(true);
+                    observableEmitter.onComplete();
+                })
+                .doOnError(throwable -> observableEmitter.onError(throwable))
+                .subscribe();
     }
 
     /**
@@ -254,14 +276,17 @@ public class FileUploader {
             PollingStatus pollingStatus = new PollingStatus(MAX_POLLING_ITERATIONS);
             pollStatus(Arrays.asList(importId))
                     .repeatUntil(() -> {
-                        if (!pollingStatus.nextAttempt()){
-                            observableEmitter.onNext(false);
+                        if (pollingStatus.isDone()) {
+                            observableEmitter.onNext(pollingStatus.isSuccessful());
                             observableEmitter.onComplete();
                             return true;
                         }
-                        else {
-                            Thread.sleep(POLLING_IDDLE_TIME);
+                        if (!pollingStatus.nextAttempt()) {
+                            observableEmitter.onNext(false);
                             observableEmitter.onComplete();
+                            return true;
+                        } else {
+                            Thread.sleep(POLLING_IDDLE_TIME);
                             return false;
                         }
                     })
@@ -270,14 +295,10 @@ public class FileUploader {
                         PollStatus pollStatus = pollStatusResponse.body();
                         if (pollStatus != null) {
                             if (pollStatus.getItemsDone().contains(importId)) {
-                                observableEmitter.onNext(true);
-                                observableEmitter.onComplete();
-                                return;
+                                pollingStatus.setDone(true);
                             }
                             if (pollStatus.getItemsFailed().contains(importId)) {
-                                observableEmitter.onNext(false);
-                                observableEmitter.onComplete();
-                                return;
+                                pollingStatus.setDone(false);
                             }
                         }
                     })

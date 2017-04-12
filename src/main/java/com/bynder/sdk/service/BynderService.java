@@ -12,7 +12,7 @@ import com.bynder.sdk.model.User;
 import io.reactivex.Observable;
 
 /**
- * Interface to login to Bynder and to get instance of {@link AssetBankManager}.
+ * Interface to login to Bynder and to get instance of {@link AssetBankService}.
  */
 public interface BynderService {
 
@@ -63,7 +63,7 @@ public interface BynderService {
     /**
      * Gets an instance of the asset bank manager to perform Bynder Asset Bank operations.
      *
-     * @return Instance of {@link AssetBankManager}.
+     * @return Instance of {@link AssetBankService}.
      */
-    AssetBankManager getAssetBankManager();
+    AssetBankService getAssetBankService();
 }

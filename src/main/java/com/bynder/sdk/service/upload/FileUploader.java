@@ -78,7 +78,7 @@ public class FileUploader {
      * @throws InterruptedException
      * @throws RuntimeException
      */
-    public Observable<Boolean> startUploadProcess(final UploadQuery uploadQuery) throws InterruptedException, BynderUploadException {
+    public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) {
         return Observable.create(observableEmitter -> {
             Observable<Response<String>> s3Obs = initializeAmazonService();
             s3Obs

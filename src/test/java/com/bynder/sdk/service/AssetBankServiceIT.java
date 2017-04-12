@@ -1,58 +1,38 @@
 /**
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
- *
+ * <p>
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
 package com.bynder.sdk.service;
+
+import com.bynder.sdk.model.*;
+import com.bynder.sdk.query.*;
+import com.bynder.sdk.service.exception.BynderUploadException;
+import com.bynder.sdk.service.impl.BynderServiceImpl;
+import com.bynder.sdk.util.AppProperties;
+import io.reactivex.Observable;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpStatus;
+import org.junit.*;
+import org.junit.rules.TestName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import retrofit2.Response;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import io.reactivex.plugins.RxJavaPlugins;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpStatus;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.AssumptionViolatedException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.bynder.sdk.model.Brand;
-import com.bynder.sdk.model.DownloadUrl;
-import com.bynder.sdk.model.Media;
-import com.bynder.sdk.model.MediaType;
-import com.bynder.sdk.model.Metaproperty;
-import com.bynder.sdk.model.MetapropertyOption;
-import com.bynder.sdk.model.Tag;
-import com.bynder.sdk.query.AddMetapropertyToMediaQuery;
-import com.bynder.sdk.query.MediaDownloadQuery;
-import com.bynder.sdk.query.MediaInfoQuery;
-import com.bynder.sdk.query.MediaPropertiesQuery;
-import com.bynder.sdk.query.MediaQuery;
-import com.bynder.sdk.query.MetapropertyQuery;
-import com.bynder.sdk.query.UploadQuery;
-import com.bynder.sdk.service.exception.BynderUploadException;
-import com.bynder.sdk.service.impl.BynderServiceImpl;
-import com.bynder.sdk.util.AppProperties;
-
-import io.reactivex.Observable;
-import retrofit2.Response;
-
 import static org.junit.Assert.*;
 
 /**
- * Class to test {@link AssetBankManager} implementation against the API.
+ * Class to test {@link AssetBankService} implementation against the API.
  */
-public class AssetBankManagerIT {
+public class AssetBankServiceIT {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AssetBankManagerIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AssetBankServiceIT.class);
 
     private final int MAX_TEST_ITERATIONS = 20;
     private final int TEST_IDDLE_TIME = 2000;
@@ -73,28 +53,28 @@ public class AssetBankManagerIT {
     // regex to avoid media assets names and descriptions with special characters
     private final Pattern pattern = Pattern.compile("[a-z0-9 ]", Pattern.CASE_INSENSITIVE);
 
-    private AssetBankManager assetBankManager;
+    private AssetBankService assetBankService;
     private final AppProperties appProperties = new AppProperties();
 
     @Rule
     public TestName testName = new TestName();
 
     /**
-     * Before each test an instance of {@link AssetBankManager} is created using the settings
+     * Before each test an instance of {@link AssetBankService} is created using the settings
      * defined in the src/main/resources/app.properties file.
      */
     @Before
     public void setUp() throws Exception {
-        assetBankManager = BynderServiceImpl.create(appProperties.getSettings()).getAssetBankManager();
+        assetBankService = BynderServiceImpl.create(appProperties.getSettings()).getAssetBankService();
     }
 
     /**
-     * Tests that when {@link AssetBankManager#getBrands()} is called the response returned by the
+     * Tests that when {@link AssetBankService#getBrands()} is called the response returned by the
      * Bynder API is the correct one.
      */
     @Test
     public void getBrandsTest() {
-        Response<List<Brand>> response = assetBankManager.getBrands().blockingSingle();
+        Response<List<Brand>> response = assetBankService.getBrands().blockingSingle();
         assertNotNull(response);
         assertEquals(HttpStatus.SC_OK, response.code());
 
@@ -113,12 +93,12 @@ public class AssetBankManagerIT {
     }
 
     /**
-     * Tests that when {@link AssetBankManager#getTags()} is called the response returned by the
+     * Tests that when {@link AssetBankService#getTags()} is called the response returned by the
      * Bynder API is the correct one.
      */
     @Test
     public void getTagsTest() {
-        Response<List<Tag>> response = assetBankManager.getTags().blockingSingle();
+        Response<List<Tag>> response = assetBankService.getTags().blockingSingle();
         assertNotNull(response);
         assertEquals(HttpStatus.SC_OK, response.code());
 
@@ -138,12 +118,12 @@ public class AssetBankManagerIT {
     }
 
     /**
-     * Tests that when {@link AssetBankManager#getMetaproperties(MetapropertyQuery)} is called with
+     * Tests that when {@link AssetBankService#getMetaproperties(MetapropertyQuery)} is called with
      * count parameter set to FALSE the response returned by the Bynder API is the correct one.
      */
     @Test
     public void getMetapropertiesWithoutCountTest() {
-        Response<Map<String, Metaproperty>> response = assetBankManager.getMetaproperties(new MetapropertyQuery(Boolean.FALSE)).blockingSingle();
+        Response<Map<String, Metaproperty>> response = assetBankService.getMetaproperties(new MetapropertyQuery(Boolean.FALSE)).blockingSingle();
         assertNotNull(response);
         assertEquals(HttpStatus.SC_OK, response.code());
 
@@ -177,12 +157,12 @@ public class AssetBankManagerIT {
     }
 
     /**
-     * Tests that when {@link AssetBankManager#getMetaproperties(MetapropertyQuery)} is called with
+     * Tests that when {@link AssetBankService#getMetaproperties(MetapropertyQuery)} is called with
      * count parameter set to TRUE the response returned by the Bynder API is the correct one.
      */
     @Test
     public void getMetapropertiesWithCountTest() {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(100).setPage(1)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankService.getMediaList(new MediaQuery().setLimit(100).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -211,7 +191,7 @@ public class AssetBankManagerIT {
             throw e;
         }
 
-        Response<Map<String, Metaproperty>> metapropertiesResponse = assetBankManager.getMetaproperties(new MetapropertyQuery(Boolean.TRUE)).blockingSingle();
+        Response<Map<String, Metaproperty>> metapropertiesResponse = assetBankService.getMetaproperties(new MetapropertyQuery(Boolean.TRUE)).blockingSingle();
         assertNotNull(metapropertiesResponse);
         assertEquals(HttpStatus.SC_OK, metapropertiesResponse.code());
 
@@ -236,12 +216,12 @@ public class AssetBankManagerIT {
     }
 
     /**
-     * Tests that when {@link AssetBankManager#getMediaList(MediaQuery)} is called the response
+     * Tests that when {@link AssetBankService#getMediaList(MediaQuery)} is called the response
      * returned by the Bynder API is the correct one.
      */
     @Test
     public void getMediaListTest() {
-        Response<List<Media>> response = assetBankManager.getMediaList(new MediaQuery().setLimit(1).setPage(1)).blockingSingle();
+        Response<List<Media>> response = assetBankService.getMediaList(new MediaQuery().setLimit(1).setPage(1)).blockingSingle();
         assertNotNull(response);
         assertEquals(HttpStatus.SC_OK, response.code());
 
@@ -261,12 +241,12 @@ public class AssetBankManagerIT {
     }
 
     /**
-     * Tests that when {@link AssetBankManager#getMediaInfo(MediaInfoQuery)} is called the response
+     * Tests that when {@link AssetBankService#getMediaInfo(MediaInfoQuery)} is called the response
      * returned by the Bynder API is the correct one.
      */
     @Test
     public void getMediaInfoTest() {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(1).setPage(1)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankService.getMediaList(new MediaQuery().setLimit(1).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -285,7 +265,7 @@ public class AssetBankManagerIT {
 
         String mediaId = mediaList.get(0).getId();
 
-        Response<Media> mediaInfoResponse = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId).setVersions(Boolean.FALSE)).blockingSingle();
+        Response<Media> mediaInfoResponse = assetBankService.getMediaInfo(new MediaInfoQuery(mediaId).setVersions(Boolean.FALSE)).blockingSingle();
         assertNotNull(mediaInfoResponse);
         assertEquals(HttpStatus.SC_OK, mediaInfoResponse.code());
 
@@ -297,7 +277,7 @@ public class AssetBankManagerIT {
         assertNull(media.getMediaItems());
 
         // get media info with media items versions
-        mediaInfoResponse = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId).setVersions(Boolean.TRUE)).blockingSingle();
+        mediaInfoResponse = assetBankService.getMediaInfo(new MediaInfoQuery(mediaId).setVersions(Boolean.TRUE)).blockingSingle();
         assertNotNull(mediaInfoResponse);
         assertEquals(HttpStatus.SC_OK, mediaInfoResponse.code());
         assertNotNull(mediaInfoResponse.body().getMediaItems());
@@ -305,12 +285,12 @@ public class AssetBankManagerIT {
     }
 
     /**
-     * Tests that when {@link AssetBankManager#getMediaDownloadUrl(MediaDownloadQuery)} is called
+     * Tests that when {@link AssetBankService#getMediaDownloadUrl(MediaDownloadQuery)} is called
      * the response returned by the Bynder API is the correct one.
      */
     @Test
     public void getMediaDownloadUrlTest() {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(1).setPage(1)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(1).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -324,7 +304,7 @@ public class AssetBankManagerIT {
             throw e;
         }
 
-        Response<DownloadUrl> mediaDownloadUrlResponse = assetBankManager.getMediaDownloadUrl(new MediaDownloadQuery(imageAssets.get(0).getId(), null)).blockingSingle();
+        Response<DownloadUrl> mediaDownloadUrlResponse = assetBankService.getMediaDownloadUrl(new MediaDownloadQuery(imageAssets.get(0).getId(), null)).blockingSingle();
         assertNotNull(mediaDownloadUrlResponse);
         assertEquals(HttpStatus.SC_OK, mediaDownloadUrlResponse.code());
         assertNotNull(mediaDownloadUrlResponse.body());
@@ -332,13 +312,13 @@ public class AssetBankManagerIT {
     }
 
     /**
-     * Tests that when {@link AssetBankManager#setMediaProperties(MediaPropertiesQuery)} is called
+     * Tests that when {@link AssetBankService#setMediaProperties(MediaPropertiesQuery)} is called
      * to update the description of a media asset the response returned by the Bynder API is the
      * correct one.
      */
     @Test
     public void setMediaDescriptionTest() throws InterruptedException {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(100).setPage(1)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankService.getMediaList(new MediaQuery().setLimit(100).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -362,16 +342,16 @@ public class AssetBankManagerIT {
             }
         }
 
-        int statusCode = assetBankManager.setMediaProperties(new MediaPropertiesQuery(mediaId, null, MEDIA_ASSET_DESCRIPTION, null, null, null)).blockingSingle().code();
+        int statusCode = assetBankService.setMediaProperties(new MediaPropertiesQuery(mediaId, null, MEDIA_ASSET_DESCRIPTION, null, null, null)).blockingSingle().code();
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
         for (int i = MAX_TEST_ITERATIONS; i > 0; --i) {
-            Media media = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId)).blockingSingle().body();
+            Media media = assetBankService.getMediaInfo(new MediaInfoQuery(mediaId)).blockingSingle().body();
             if (MEDIA_ASSET_DESCRIPTION.equals(media.getDescription())) {
                 break;
             }
             if (i == 1) {
-                statusCode = assetBankManager.setMediaProperties(new MediaPropertiesQuery(mediaId, null, mediaDescription, null, null, null)).blockingSingle().code();
+                statusCode = assetBankService.setMediaProperties(new MediaPropertiesQuery(mediaId, null, mediaDescription, null, null, null)).blockingSingle().code();
                 if (statusCode == HttpStatus.SC_ACCEPTED) {
                     Assert.fail(String.format("Description of Media [%s] took too long to be updated and it was reverted to its original value", media.getId()));
                 } else {
@@ -381,18 +361,18 @@ public class AssetBankManagerIT {
             Thread.sleep(TEST_IDDLE_TIME);
         }
 
-        statusCode = assetBankManager.setMediaProperties(new MediaPropertiesQuery(mediaId, null, mediaDescription, null, null, null)).blockingSingle().code();
+        statusCode = assetBankService.setMediaProperties(new MediaPropertiesQuery(mediaId, null, mediaDescription, null, null, null)).blockingSingle().code();
         assertEquals(String.format("Description of Media [%s] couldn't be reverted to its original value: %s", mediaId, mediaDescription), HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     /**
-     * Tests that when {@link AssetBankManager#setMediaProperties(MediaPropertiesQuery)} is called
+     * Tests that when {@link AssetBankService#setMediaProperties(MediaPropertiesQuery)} is called
      * to update the archive status of a media asset the response returned by the Bynder API is the
      * correct one.
      */
     @Test
     public void setMediaArchiveStatusTest() throws InterruptedException {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(1).setPage(1)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankService.getMediaList(new MediaQuery().setLimit(1).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -410,16 +390,16 @@ public class AssetBankManagerIT {
         Boolean mediaArchive = mediaList.get(0).getArchive();
         Boolean archiveNewValue = !mediaArchive;
 
-        int statusCode = assetBankManager.setMediaProperties(new MediaPropertiesQuery(mediaId, null, null, null, archiveNewValue, null)).blockingSingle().code();
+        int statusCode = assetBankService.setMediaProperties(new MediaPropertiesQuery(mediaId, null, null, null, archiveNewValue, null)).blockingSingle().code();
         assertEquals(HttpStatus.SC_ACCEPTED, statusCode);
 
         for (int i = MAX_TEST_ITERATIONS; i > 0; --i) {
-            Media media = assetBankManager.getMediaInfo(new MediaInfoQuery(mediaId)).blockingSingle().body();
+            Media media = assetBankService.getMediaInfo(new MediaInfoQuery(mediaId)).blockingSingle().body();
             if (media.getArchive() == archiveNewValue) {
                 break;
             }
             if (i == 1) {
-                statusCode = assetBankManager.setMediaProperties(new MediaPropertiesQuery(mediaId, null, null, null, mediaArchive, null)).blockingSingle().code();
+                statusCode = assetBankService.setMediaProperties(new MediaPropertiesQuery(mediaId, null, null, null, mediaArchive, null)).blockingSingle().code();
                 if (statusCode == HttpStatus.SC_ACCEPTED) {
                     Assert.fail(String.format("Archive status of Media [%s] took too long to be updated and it was reverted to its original value", media.getId()));
                 } else {
@@ -429,17 +409,17 @@ public class AssetBankManagerIT {
             Thread.sleep(TEST_IDDLE_TIME);
         }
 
-        statusCode = assetBankManager.setMediaProperties(new MediaPropertiesQuery(mediaId, null, null, null, mediaArchive, null)).blockingSingle().code();
+        statusCode = assetBankService.setMediaProperties(new MediaPropertiesQuery(mediaId, null, null, null, mediaArchive, null)).blockingSingle().code();
         assertEquals(String.format("Archive status of Media [%s] couldn't be reverted to its original value: %s", mediaId, mediaArchive), HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     /**
-     * Tests that when {@link AssetBankManager#addMetapropertyToMedia(AddMetapropertyToMediaQuery)}
+     * Tests that when {@link AssetBankService#addMetapropertyToMedia(AddMetapropertyToMediaQuery)}
      * is called the response returned by the Bynder API is the correct one.
      */
     @Test
     public void addMetapropertyToMediaTest() throws InterruptedException {
-        Response<List<Media>> mediaListResponse = assetBankManager.getMediaList(new MediaQuery().setLimit(100).setPage(1)).blockingSingle();
+        Response<List<Media>> mediaListResponse = assetBankService.getMediaList(new MediaQuery().setLimit(100).setPage(1)).blockingSingle();
         assertNotNull(mediaListResponse);
         assertEquals(HttpStatus.SC_OK, mediaListResponse.code());
 
@@ -468,7 +448,7 @@ public class AssetBankManagerIT {
             throw e;
         }
 
-        Response<Map<String, Metaproperty>> metapropertiesResponse = assetBankManager.getMetaproperties(new MetapropertyQuery(Boolean.FALSE)).blockingSingle();
+        Response<Map<String, Metaproperty>> metapropertiesResponse = assetBankService.getMetaproperties(new MetapropertyQuery(Boolean.FALSE)).blockingSingle();
         assertNotNull(metapropertiesResponse);
         assertEquals(HttpStatus.SC_OK, metapropertiesResponse.code());
 
@@ -488,7 +468,7 @@ public class AssetBankManagerIT {
         for (Entry<String, Metaproperty> entry : metaproperties.entrySet()) {
             if (entry.getValue().getOptions().size() > 0) {
                 String[] metapropertyOptions = {entry.getValue().getOptions().get(0).getId()};
-                statusCode = assetBankManager.addMetapropertyToMedia(new AddMetapropertyToMediaQuery(media.getId(), entry.getValue().getId(), metapropertyOptions)).blockingSingle().code();
+                statusCode = assetBankService.addMetapropertyToMedia(new AddMetapropertyToMediaQuery(media.getId(), entry.getValue().getId(), metapropertyOptions)).blockingSingle().code();
                 metapropertyId = entry.getValue().getId();
                 metapropertyOptionId = entry.getValue().getOptions().get(0).getId();
                 break;
@@ -504,13 +484,13 @@ public class AssetBankManagerIT {
         }
 
         for (int i = MAX_TEST_ITERATIONS; i > 0; --i) {
-            media = assetBankManager.getMediaInfo(new MediaInfoQuery(media.getId())).blockingSingle().body();
+            media = assetBankService.getMediaInfo(new MediaInfoQuery(media.getId())).blockingSingle().body();
             if (media.getPropertyOptions().contains(metapropertyOptionId)) {
                 break;
             }
             if (i == 1) {
                 statusCode =
-                        assetBankManager.addMetapropertyToMedia(new AddMetapropertyToMediaQuery(media.getId(), metapropertyId, StringUtils.EMPTY.split(StringUtils.EMPTY))).blockingSingle().code();
+                        assetBankService.addMetapropertyToMedia(new AddMetapropertyToMediaQuery(media.getId(), metapropertyId, StringUtils.EMPTY.split(StringUtils.EMPTY))).blockingSingle().code();
                 if (statusCode == HttpStatus.SC_ACCEPTED) {
                     Assert.fail(String.format("Metaproperty options of Media [%s] took too long to be updated and it was reverted", media.getId()));
                 } else {
@@ -520,26 +500,25 @@ public class AssetBankManagerIT {
             Thread.sleep(TEST_IDDLE_TIME);
         }
 
-        statusCode = assetBankManager.addMetapropertyToMedia(new AddMetapropertyToMediaQuery(media.getId(), metapropertyId, StringUtils.EMPTY.split(StringUtils.EMPTY))).blockingSingle().code();
+        statusCode = assetBankService.addMetapropertyToMedia(new AddMetapropertyToMediaQuery(media.getId(), metapropertyId, StringUtils.EMPTY.split(StringUtils.EMPTY))).blockingSingle().code();
         assertEquals(String.format("Metaproperty options of Media [%s] took too long to be updated and it couldn't be reverted", media.getId()), HttpStatus.SC_ACCEPTED, statusCode);
     }
 
     // TO BE DELETED
     @Test
     public void uploadTest() throws BynderUploadException, InterruptedException {
-        Observable<Response<List<Brand>>> brandsObs = assetBankManager.getBrands();
+        Observable<Response<List<Brand>>> brandsObs = assetBankService.getBrands();
         brandsObs
                 .doOnError(throwable -> LOG.error(throwable.getMessage()))
                 .doOnNext(listResponse ->
                 {
                     List<Brand> brands = listResponse.body();
-                    Observable<Boolean> observable = assetBankManager.uploadFile(new UploadQuery("/Users/diegobarrerarodriguez/Downloads/roll_safe.jpg", brands.get(0).getId(), null));
+                    Observable<Boolean> observable = assetBankService.uploadFile(new UploadQuery("/Users/diegobarrerarodriguez/Downloads/roll_safe.jpg", brands.get(0).getId(), null));
                     observable
                             .doOnComplete(() -> LOG.info("SUCCESS"))
                             .doOnError(throwable -> LOG.error(throwable.getMessage()))
                             .doOnNext(aBoolean -> {
-                                if (!aBoolean)
-                                {
+                                if (!aBoolean) {
                                     Assert.fail("upload returned success: false");
                                 }
                             })

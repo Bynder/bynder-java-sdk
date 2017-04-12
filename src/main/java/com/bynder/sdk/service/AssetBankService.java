@@ -29,7 +29,7 @@ import retrofit2.Response;
 /**
  * Interface to represent operations that can be done to the Bynder Asset Bank.
  */
-public interface AssetBankManager {
+public interface AssetBankService {
 
     /**
      * Get Brands.
@@ -112,5 +112,5 @@ public interface AssetBankManager {
      * @throws BynderUploadException Thrown when upload does not finish within the expected time.
      * @throws InterruptedException
      */
-    Observable<Boolean> uploadFile(UploadQuery uploadQuery) throws BynderUploadException, InterruptedException;
+    Observable<Boolean> uploadFile(UploadQuery uploadQuery) ;
 }

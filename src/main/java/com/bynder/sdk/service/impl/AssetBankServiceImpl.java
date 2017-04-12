@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.bynder.sdk.service.AssetBankService;
 import org.apache.commons.lang.StringUtils;
 
 import com.bynder.sdk.api.BynderApi;
@@ -25,8 +26,6 @@ import com.bynder.sdk.query.MediaPropertiesQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
-import com.bynder.sdk.service.AssetBankManager;
-import com.bynder.sdk.service.exception.BynderUploadException;
 import com.bynder.sdk.service.upload.FileUploader;
 import com.bynder.sdk.util.Utils;
 
@@ -34,9 +33,9 @@ import io.reactivex.Observable;
 import retrofit2.Response;
 
 /**
- * Implementation of {@link AssetBankManager}.
+ * Implementation of {@link AssetBankService}.
  */
-public class AssetBankManagerImpl extends BaseService implements AssetBankManager {
+public class AssetBankServiceImpl extends BaseService implements AssetBankService {
 
     /**
      * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
@@ -52,13 +51,13 @@ public class AssetBankManagerImpl extends BaseService implements AssetBankManage
      *
      * @param bynderApi Instance to handle the HTTP communication with the Bynder API.
      */
-    public AssetBankManagerImpl(final BynderApi bynderApi) {
+    public AssetBankServiceImpl(final BynderApi bynderApi) {
         this.bynderApi = bynderApi;
         this.fileUploader = new FileUploader(bynderApi);
     }
 
     /**
-     * Check {@link AssetBankManager} for more information.
+     * Check {@link AssetBankService} for more information.
      */
     @Override
     public Observable<Response<List<Brand>>> getBrands() {
@@ -66,7 +65,7 @@ public class AssetBankManagerImpl extends BaseService implements AssetBankManage
     }
 
     /**
-     * Check {@link AssetBankManager} for more information.
+     * Check {@link AssetBankService} for more information.
      */
     @Override
     public Observable<Response<List<Tag>>> getTags() {
@@ -74,7 +73,7 @@ public class AssetBankManagerImpl extends BaseService implements AssetBankManage
     }
 
     /**
-     * Check {@link AssetBankManager} for more information.
+     * Check {@link AssetBankService} for more information.
      */
     @Override
     public Observable<Response<Map<String, Metaproperty>>> getMetaproperties(final MetapropertyQuery metapropertyQuery) {
@@ -83,7 +82,7 @@ public class AssetBankManagerImpl extends BaseService implements AssetBankManage
     }
 
     /**
-     * Check {@link AssetBankManager} for more information.
+     * Check {@link AssetBankService} for more information.
      */
     @Override
     public Observable<Response<List<Media>>> getMediaList(final MediaQuery mediaQuery) {
@@ -92,7 +91,7 @@ public class AssetBankManagerImpl extends BaseService implements AssetBankManage
     }
 
     /**
-     * Check {@link AssetBankManager} for more information.
+     * Check {@link AssetBankService} for more information.
      */
     @Override
     public Observable<Response<Media>> getMediaInfo(final MediaInfoQuery mediaInfoQuery) {
@@ -101,7 +100,7 @@ public class AssetBankManagerImpl extends BaseService implements AssetBankManage
     }
 
     /**
-     * Check {@link AssetBankManager} for more information.
+     * Check {@link AssetBankService} for more information.
      */
     @Override
     public Observable<Response<DownloadUrl>> getMediaDownloadUrl(final MediaDownloadQuery mediaDownloadQuery) {
@@ -113,7 +112,7 @@ public class AssetBankManagerImpl extends BaseService implements AssetBankManage
     }
 
     /**
-     * Check {@link AssetBankManager} for more information.
+     * Check {@link AssetBankService} for more information.
      */
     @Override
     public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) {
@@ -122,7 +121,7 @@ public class AssetBankManagerImpl extends BaseService implements AssetBankManage
     }
 
     /**
-     * Check {@link AssetBankManager} for more information.
+     * Check {@link AssetBankService} for more information.
      */
     @Override
     public Observable<Response<Void>> addMetapropertyToMedia(final AddMetapropertyToMediaQuery addMetapropertyToMediaQuery) {
@@ -134,10 +133,10 @@ public class AssetBankManagerImpl extends BaseService implements AssetBankManage
     }
 
     /**
-     * Check {@link AssetBankManager} for more information.
+     * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) throws BynderUploadException, InterruptedException {
-        return fileUploader.startUploadProcess(uploadQuery);
+    public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) {
+        return fileUploader.uploadFile(uploadQuery);
     }
 }

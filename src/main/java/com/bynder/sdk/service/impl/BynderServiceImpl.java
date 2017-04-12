@@ -15,7 +15,7 @@ import com.bynder.sdk.model.Credentials;
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
 import com.bynder.sdk.query.LoginQuery;
-import com.bynder.sdk.service.AssetBankManager;
+import com.bynder.sdk.service.AssetBankService;
 import com.bynder.sdk.service.BynderService;
 import com.bynder.sdk.util.Utils;
 
@@ -44,7 +44,7 @@ public class BynderServiceImpl extends BaseService implements BynderService {
     /**
      * Instance of the asset bank manager.
      */
-    private AssetBankManager assetBankManager;
+    private AssetBankService assetBankService;
 
     /**
      * Initializes a new instance of the class.
@@ -139,12 +139,12 @@ public class BynderServiceImpl extends BaseService implements BynderService {
      * Check {@link BynderService} for more information.
      */
     @Override
-    public AssetBankManager getAssetBankManager() {
-        if (assetBankManager == null) {
-            assetBankManager = new AssetBankManagerImpl(bynderApi);
+    public AssetBankService getAssetBankService() {
+        if (assetBankService == null) {
+            assetBankService = new AssetBankServiceImpl(bynderApi);
         }
 
-        return assetBankManager;
+        return assetBankService;
     }
 
     /**

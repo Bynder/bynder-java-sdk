@@ -85,11 +85,12 @@ public class FileUploader {
     public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) {
         return Observable.create(observableEmitter -> {
             Observable<Response<String>> s3Obs = initializeAmazonService();
-            s3Obs.doOnError(throwable -> observableEmitter.onError(throwable)).doOnNext(stringResponse -> {
+            s3Obs.subscribe(stringResponse -> {
                 this.amazonService = new AmazonServiceImpl(stringResponse.body());
 
                 Observable<Response<UploadRequest>> uploadRequestObs = getUploadInformation(new RequestUploadQuery(uploadQuery.getFilepath()));
-                uploadRequestObs.doOnError(throwable -> observableEmitter.onError(throwable)).doOnNext(uploadRequestResponse -> {
+
+                uploadRequestObs.subscribe(uploadRequestResponse -> {
                     UploadRequest uploadRequest = uploadRequestResponse.body();
                     File file = new File(uploadQuery.getFilepath());
                     if (!file.exists()) {
@@ -98,34 +99,33 @@ public class FileUploader {
                         return;
                     }
                     startUploadProcess(uploadQuery, observableEmitter, uploadRequest, file);
-                }).subscribe();
-            }).subscribe();
+                }, throwable -> observableEmitter.onError(throwable));
+            }, throwable -> observableEmitter.onError(throwable));
         });
     }
 
     private void startUploadProcess(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final UploadRequest uploadRequest, final File file) {
         Observable<Integer> chunksObs = uploadParts(file, uploadRequest);
-        chunksObs.doOnError(throwable -> LOG.error(throwable.getMessage())).doOnNext(chunks -> {
-            String filename = String.format("%s/p%s", uploadRequest.getS3Filename(), Integer.toString(chunks));
+        chunksObs.subscribe(chunks -> {
             Observable<Response<FinaliseResponse>> finaliseResponse =
-                    finaliseUploaded(new FinaliseUploadQuery(uploadRequest.getS3File().getUploadId(), uploadRequest.getS3File().getTargetId(), filename, chunks));
-            finaliseResponse.doOnError(throwable -> observableEmitter.onError(throwable)).doOnNext(finaliseResponseResponse -> {
+                    finaliseUploaded(new FinaliseUploadQuery(uploadRequest.getS3File().getUploadId(), uploadRequest.getS3File().getTargetId(), uploadRequest.getS3Filename(), chunks));
+            finaliseResponse.subscribe(finaliseResponseResponse -> {
                 processFinaliseResponse(uploadQuery, observableEmitter, file, finaliseResponseResponse);
-            }).subscribe();
-        }).subscribe();
+            }, throwable -> observableEmitter.onError(throwable));
+        }, throwable -> LOG.error(throwable.getMessage()));
     }
 
     private void processFinaliseResponse(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final Response<FinaliseResponse> finaliseResponseResponse)
             throws InterruptedException {
         String importId = finaliseResponseResponse.body().getImportId();
-        hasFinishedSuccessfully(importId).doOnError(throwable -> observableEmitter.onError(throwable)).doOnNext(hasFinishedSuccessfully -> {
+        hasFinishedSuccessfully(importId).subscribe(hasFinishedSuccessfully -> {
             if (hasFinishedSuccessfully) {
                 saveMedia(uploadQuery, observableEmitter, file, importId);
             } else {
                 observableEmitter.onError(new BynderUploadException("Converter did not finishe. Upload not completed"));
                 observableEmitter.onComplete();
             }
-        }).subscribe();
+        }, throwable -> observableEmitter.onError(throwable));
     }
 
     private void saveMedia(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final String importId)
@@ -136,8 +136,8 @@ public class FileUploader {
         } else {
             saveMediaObs = saveMedia(new SaveMediaQuery(importId).setMediaId(uploadQuery.getMediaId()));
         }
-        saveMediaObs.doOnError(throwable -> observableEmitter.onError(throwable)).doOnNext(voidResponse -> observableEmitter.onNext(true)).doOnComplete(() -> observableEmitter.onComplete())
-                .subscribe();
+
+        saveMediaObs.subscribe(voidResponse -> observableEmitter.onNext(true), throwable -> observableEmitter.onError(throwable), () -> observableEmitter.onComplete());
     }
 
     /**
@@ -230,7 +230,8 @@ public class FileUploader {
                     data.incrementChunk();
                 }
                 return isDataCompleted;
-            }).doOnError(throwable -> observableEmitter.onError(throwable)).subscribe();
+            }).subscribe(aBoolean -> {
+            }, throwable -> observableEmitter.onError(throwable));
         });
     }
 
@@ -239,9 +240,7 @@ public class FileUploader {
             try {
                 Observable<Response<Void>> uploadToAmazon =
                         amazonService.uploadPartToAmazon(data.getFile().getName(), data.getUploadRequest(), data.getChunkNumber(), data.getBuffer(), data.getNumberOfChunks());
-                uploadToAmazon.doOnError(throwable -> observableEmitter.onError(throwable)).doOnNext(voidResponse -> {
-                    registerChunk(data, observableEmitter);
-                }).subscribe();
+                uploadToAmazon.subscribe(voidResponse -> registerChunk(data, observableEmitter), throwable -> observableEmitter.onError(throwable));
             } catch (Exception e) {
                 observableEmitter.onError(e);
             }
@@ -252,10 +251,10 @@ public class FileUploader {
         String filename = String.format("%s/p%s", data.getUploadRequest().getS3Filename(), Integer.toString(data.getChunkNumber()));
         Observable<Response<Void>> chunkObs =
                 registerChunk(new RegisterChunkQuery(data.getUploadRequest().getS3File().getUploadId(), data.getChunkNumber(), data.getUploadRequest().getS3File().getTargetId(), filename));
-        chunkObs.doOnNext(voidResponse1 -> {
+        chunkObs.subscribe(voidResponse -> {
             observableEmitter.onNext(true);
             observableEmitter.onComplete();
-        }).doOnError(throwable -> observableEmitter.onError(throwable)).subscribe();
+        }, throwable -> observableEmitter.onError(throwable));
     }
 
     /**
@@ -282,7 +281,7 @@ public class FileUploader {
                     Thread.sleep(POLLING_IDDLE_TIME);
                     return false;
                 }
-            }).doOnError(throwable -> observableEmitter.onError(throwable)).doOnNext(pollStatusResponse -> {
+            }).subscribe(pollStatusResponse -> {
                 PollStatus pollStatus = pollStatusResponse.body();
                 if (pollStatus != null) {
                     if (pollStatus.getItemsDone().contains(importId)) {
@@ -292,7 +291,7 @@ public class FileUploader {
                         pollingStatus.setDone(false);
                     }
                 }
-            }).subscribe();
+            }, throwable -> observableEmitter.onError(throwable));
         });
     }
 }

@@ -14,7 +14,6 @@ import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.Tag;
-import com.bynder.sdk.query.AddMetapropertyToMediaQuery;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
 import com.bynder.sdk.query.MediaPropertiesQuery;
@@ -52,8 +51,11 @@ public interface AssetBankService {
      *        metaproperty options or not.
      *
      * @return {@link Observable} with Map of String, {@link Metaproperty} key/value pairs.
+     *
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
-    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(MetapropertyQuery metapropertyQuery);
+    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(MetapropertyQuery metapropertyQuery) throws IllegalArgumentException, IllegalAccessException;
 
     /**
      * Gets a list of media using query information.
@@ -61,8 +63,11 @@ public interface AssetBankService {
      * @param mediaQuery Information to correctly filter/paginate media.
      *
      * @return {@link Observable} with list of {@link Media}.
+     *
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
-    Observable<Response<List<Media>>> getMediaList(MediaQuery mediaQuery);
+    Observable<Response<List<Media>>> getMediaList(MediaQuery mediaQuery) throws IllegalArgumentException, IllegalAccessException;
 
     /**
      * Gets all the information for a specific media. This is needed to get the media items of a
@@ -71,8 +76,11 @@ public interface AssetBankService {
      * @param mediaInfoQuery Information about the media we want to get the information of.
      *
      * @return {@link Observable} with {@link Media} information.
+     *
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
-    Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery);
+    Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery) throws IllegalArgumentException, IllegalAccessException;
 
     /**
      * Gets the download file URL for a specific media asset file. If the media item id was not
@@ -91,18 +99,11 @@ public interface AssetBankService {
      *        updated.
      *
      * @return {@link Observable} with the request {@link Response} information.
-     */
-    Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery);
-
-    /**
-     * Adds metaproperty options to a media asset.
      *
-     * @param addMetapropertyToMediaQuery Information about the media asset and metaproperty options
-     *        to be added to it.
-     *
-     * @return {@link Observable} with the request {@link Response} information.
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
-    Observable<Response<Void>> addMetapropertyToMedia(AddMetapropertyToMediaQuery addMetapropertyToMediaQuery);
+    Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery) throws IllegalArgumentException, IllegalAccessException;
 
     /**
      * Uploads a file to Bynder.
@@ -112,5 +113,5 @@ public interface AssetBankService {
      * @throws BynderUploadException Thrown when upload does not finish within the expected time.
      * @throws InterruptedException
      */
-    Observable<Boolean> uploadFile(UploadQuery uploadQuery) ;
+    Observable<Boolean> uploadFile(UploadQuery uploadQuery);
 }

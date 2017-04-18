@@ -26,7 +26,7 @@ import retrofit2.Response;
 /**
  * Implementation of {@link BynderService}.
  */
-public class BynderServiceImpl extends BaseService implements BynderService {
+public class BynderServiceImpl implements BynderService {
 
     /**
      * Base URL needed to instantiate the {@link BynderApi} interface and generate authorize URL.
@@ -42,7 +42,7 @@ public class BynderServiceImpl extends BaseService implements BynderService {
      */
     private BynderApi bynderApi;
     /**
-     * Instance of the asset bank manager.
+     * Instance of the asset bank service.
      */
     private AssetBankService assetBankService;
 
@@ -75,7 +75,7 @@ public class BynderServiceImpl extends BaseService implements BynderService {
      * Check {@link BynderService} for more information.
      */
     @Override
-    public Observable<User> login(final String username, final String password) {
+    public Observable<User> login(final String username, final String password) throws IllegalArgumentException, IllegalAccessException {
         return login(new LoginQuery(username, password));
     }
 
@@ -165,7 +165,7 @@ public class BynderServiceImpl extends BaseService implements BynderService {
      *
      * @return {@link User} information.
      */
-    private Observable<User> login(final LoginQuery loginQuery) {
+    private Observable<User> login(final LoginQuery loginQuery) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(loginQuery);
         Observable<Response<User>> loginObservable = bynderApi.login(params);
 

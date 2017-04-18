@@ -6,10 +6,12 @@
  */
 package com.bynder.sdk.model;
 
+import java.util.Map;
+
 import com.bynder.sdk.api.BynderApi;
 
 /**
- * Model returned by {@link BynderApi#finaliseUploaded(String, String, String, int)}.
+ * Model returned by {@link BynderApi#finaliseUploaded(Map)}.
  */
 public class FinaliseResponse {
 

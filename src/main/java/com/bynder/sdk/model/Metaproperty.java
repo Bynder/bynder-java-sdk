@@ -8,11 +8,12 @@ package com.bynder.sdk.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.bynder.sdk.api.BynderApi;
 
 /**
- * Metaproperty model returned by {@link BynderApi#getMetaproperties(Boolean)}.
+ * Metaproperty model returned by {@link BynderApi#getMetaproperties(Map)}.
  */
 public class Metaproperty {
 

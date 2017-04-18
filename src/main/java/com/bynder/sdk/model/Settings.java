@@ -44,6 +44,12 @@ public class Settings {
         this.tokenSecret = tokenSecret;
     }
 
+    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret) {
+        this.baseUrl = baseUrl;
+        this.consumerKey = consumerKey;
+        this.consumerSecret = consumerSecret;
+    }
+
     public URL getBaseUrl() {
         return baseUrl;
     }

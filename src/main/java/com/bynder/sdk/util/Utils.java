@@ -6,21 +6,22 @@
  */
 package com.bynder.sdk.util;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.logging.HttpLoggingInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 
 import com.bynder.sdk.query.ApiField;
+import com.bynder.sdk.query.ConversionType;
+import com.bynder.sdk.query.MetapropertyField;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -33,9 +34,9 @@ import se.akerfeldt.okhttp.signpost.SigningInterceptor;
  */
 public final class Utils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
-
-    // separators
+    /**
+     * Separators.
+     */
     public static final String STR_AND = "&";
     public static final String STR_COMMA = ",";
     public static final String STR_EQUALS = "=";
@@ -45,6 +46,14 @@ public final class Utils {
      */
     private Utils() {}
 
+    /**
+     * Builds a {@link Map} from a API response string containing a key and value separated by a
+     * commercial and.
+     *
+     * @param response Response string returned by the API.
+     *
+     * @return {@link Map} with key and value pair.
+     */
     public static Map<String, String> buildMapFromResponse(final String response) {
         Map<String, String> map = new HashMap<>();
         String[] keyValuePairs = response.split(STR_AND);
@@ -138,21 +147,31 @@ public final class Utils {
      *
      * @param query Query object.
      *
-     * @return Map with name/value pairs to send to the API.
+     * @return Map with parameters name/value pairs to send to the API.
+     *
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
-    public static Map<String, String> getApiParameters(final Object query) {
+    public static Map<String, String> getApiParameters(final Object query) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = new HashMap<>();
         Field[] fields = query.getClass().getDeclaredFields();
 
         for (Field field : fields) {
             field.setAccessible(true);
-            try {
-                Annotation[] annotations = field.getDeclaredAnnotations();
-                if (field.get(query) != null && annotations.length > 0 && annotations[0] instanceof ApiField) {
-                    params.put(field.getName(), field.get(query).toString());
+
+            ApiField apiField = field.getAnnotation(ApiField.class);
+            if (field.get(query) != null && apiField != null) {
+                if (apiField.conversionType() == ConversionType.NONE) {
+                    params.put(apiField.name(), field.get(query).toString());
+                } else {
+                    if (apiField.conversionType() == ConversionType.METAPROPERTY_FIELD) {
+                        MetapropertyField metapropertyField = (MetapropertyField) field.get(query);
+                        params.put(String.format("%s.%s", apiField.name(), metapropertyField.getMetapropertyId()), StringUtils.join(metapropertyField.getOptionsIds(), Utils.STR_COMMA));
+                    } else if (apiField.conversionType() == ConversionType.LIST_FIELD) {
+                        List<String> listField = (List<String>) field.get(query);
+                        params.put(apiField.name(), StringUtils.join(listField, Utils.STR_COMMA));
+                    }
                 }
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                LOG.error(e.getMessage());
             }
             field.setAccessible(false);
         }

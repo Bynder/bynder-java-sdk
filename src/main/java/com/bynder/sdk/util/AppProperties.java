@@ -28,7 +28,7 @@ public final class AppProperties {
     private final Properties appProperties = new Properties();
 
     /**
-     * Initializes a new instance of the class by loading the content in the
+     * Initialises a new instance of the class by loading the content in the
      * src/main/resources/app.properties file.
      */
     public AppProperties() {
@@ -50,9 +50,22 @@ public final class AppProperties {
      * src/main/resources/app.properties file.
      *
      * @return {@link Settings} instance.
+     *
      * @throws MalformedURLException
      */
     public Settings getSettings() throws MalformedURLException {
         return new Settings(new URL(getProperty("BASE_URL")), getProperty("CONSUMER_KEY"), getProperty("CONSUMER_SECRET"), getProperty("ACCESS_TOKEN_KEY"), getProperty("ACCESS_TOKEN_SECRET"));
+    }
+
+    /**
+     * Gets a {@link Settings} instance using the properties define in the
+     * src/main/resources/app.properties file.
+     *
+     * @return {@link Settings} instance.
+     *
+     * @throws MalformedURLException
+     */
+    public Settings getSettingsForLogin() throws MalformedURLException {
+        return new Settings(new URL(getProperty("BASE_URL")), getProperty("CONSUMER_KEY"), getProperty("CONSUMER_SECRET"), getProperty("REQUEST_TOKEN_KEY"), getProperty("REQUEST_TOKEN_SECRET"));
     }
 }

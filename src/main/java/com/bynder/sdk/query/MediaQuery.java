@@ -18,30 +18,30 @@ public class MediaQuery {
     /**
      * The type of the media asset. Possible values: image, document, audio, video.
      */
-    @ApiField
+    @ApiField(name = "type")
     private MediaType type;
     /**
      * Keyword that the media asset has to have to appear in the results. Search filenames, tags,
      * extensions, collection names, guidelines, brandstore, campaigns in workflow, enriched PDFs,
      * word documents.
      */
-    @ApiField
+    @ApiField(name = "keyword")
     private String keyword;
     /**
      * Limit of results per request. Maximum: 1000. Default: 50.
      */
-    @ApiField
+    @ApiField(name = "limit")
     private Integer limit;
     /**
      * Page to be retrieved.
      */
-    @ApiField
+    @ApiField(name = "page")
     private Integer page;
     /**
      * Metaproperty option ids that the media asset has to have.
      */
-    @ApiField
-    private List<String> propertyOptionId;
+    @ApiField(name = "propertyOptionId", conversionType = ConversionType.LIST_FIELD)
+    private List<String> propertyOptionIds;
 
     public MediaType getType() {
         return type;
@@ -79,12 +79,12 @@ public class MediaQuery {
         return this;
     }
 
-    public List<String> getPropertyOptionId() {
-        return propertyOptionId;
+    public List<String> getPropertyOptionIds() {
+        return propertyOptionIds;
     }
 
-    public MediaQuery setPropertyOptionId(final List<String> propertyOptionId) {
-        this.propertyOptionId = propertyOptionId;
+    public MediaQuery setPropertyOptionIds(final List<String> propertyOptionIds) {
+        this.propertyOptionIds = propertyOptionIds;
         return this;
     }
 }

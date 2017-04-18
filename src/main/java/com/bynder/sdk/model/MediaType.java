@@ -6,11 +6,13 @@
  */
 package com.bynder.sdk.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Enum to represent type of media.
  */
 public enum MediaType {
-    DOCUMENT("document"), IMAGE("image"), VIDEO("video"), AUDIO("audio");
+    @SerializedName("document") DOCUMENT("document"), @SerializedName("image") IMAGE("image"), @SerializedName("video") VIDEO("video"), @SerializedName("audio") AUDIO("audio");
 
     private final String type;
 

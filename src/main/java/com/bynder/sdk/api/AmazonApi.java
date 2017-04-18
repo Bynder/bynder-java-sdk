@@ -26,7 +26,7 @@ public interface AmazonApi {
      * Uploads a file part to Amazon.
      *
      * @param params Parameters from the {@link MultipartParameters} provided in the response of
-     *        {@link BynderApi#getUploadInformation(String)}.
+     *        {@link BynderApi#getUploadInformation(Map)}.
      *
      * @return {@link Observable} with the {@link Response}.
      */

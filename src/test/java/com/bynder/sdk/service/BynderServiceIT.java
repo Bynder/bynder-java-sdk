@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bynder.sdk.model.Settings;
+import com.bynder.sdk.model.User;
 import com.bynder.sdk.service.impl.BynderServiceImpl;
 import com.bynder.sdk.util.AppProperties;
 import com.bynder.sdk.util.Utils;
@@ -53,8 +54,15 @@ public class BynderServiceIT {
      */
     @Before
     public void setUp() throws Exception {
-        bynderService = BynderServiceImpl
-                .create(new Settings(new URL(appProperties.getProperty(BASE_URL)), appProperties.getProperty("CONSUMER_KEY"), appProperties.getProperty("CONSUMER_SECRET"), null, null));
+        bynderService = BynderServiceImpl.create(new Settings(new URL(appProperties.getProperty(BASE_URL)), appProperties.getProperty("CONSUMER_KEY"), appProperties.getProperty("CONSUMER_SECRET")));
+    }
+
+    @Test
+    public void loginTest() throws Exception {
+        bynderService = BynderServiceImpl.create(appProperties.getSettingsForLogin());
+        User user = bynderService.login(appProperties.getProperty("USERNAME"), appProperties.getProperty("PASSWORD")).blockingSingle();
+        assertNotNull(user);
+        assertTrue(user.hasAccess());
     }
 
     /**

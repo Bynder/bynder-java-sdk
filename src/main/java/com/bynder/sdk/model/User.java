@@ -6,11 +6,13 @@
  */
 package com.bynder.sdk.model;
 
+import java.util.Map;
+
 import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Model returned when success login through API {@link BynderApi#login(String, String)}.
+ * Model returned when success login through API {@link BynderApi#login(Map)}.
  */
 public class User {
 

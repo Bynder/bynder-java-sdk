@@ -14,12 +14,13 @@ public class MediaInfoQuery {
     /**
      * Id of the media from which we want to retrieve information.
      */
+    @ApiField(name = "id")
     private String mediaId;
     /**
      * This property has to be set to 1 (TRUE) for the API response to include the media items of
      * the media asset.
      */
-    @ApiField
+    @ApiField(name = "versions")
     private Boolean versions;
 
     public MediaInfoQuery(final String mediaId) {

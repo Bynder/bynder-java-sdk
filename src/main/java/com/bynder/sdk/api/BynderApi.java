@@ -21,13 +21,11 @@ import com.bynder.sdk.model.User;
 
 import io.reactivex.Observable;
 import retrofit2.Response;
-import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 /**
@@ -55,7 +53,7 @@ public interface BynderApi {
     Observable<Response<String>> getRequestToken();
 
     /**
-     * Gets a temporary access token pair once the user already authorized the request token pair.
+     * Gets a temporary access token pair once the user already authorised the request token pair.
      * If successful the request token pair is immediately expired.
      *
      * @return {@link Observable} with the access token pair information.
@@ -102,16 +100,15 @@ public interface BynderApi {
     /**
      * Gets all the media information for a specific media id.
      *
-     * @param id Media id from which we want to retrieve information.
      * @param params {@link QueryMap} with parameters.
      *
      * @return {@link Observable} with {@link Media} information.
      */
-    @GET("v4/media/{id}/")
-    Observable<Response<Media>> getMediaInfo(@Path("id") String id, @QueryMap Map<String, String> params);
+    @GET("v4/media/")
+    Observable<Response<Media>> getMediaInfo(@QueryMap Map<String, String> params);
 
     /**
-     * Gets the download file URL for a specific media.
+     * Gets the download file URL for a specific media id.
      *
      * @param mediaId Media id of which we want to get the download URL.
      *
@@ -132,19 +129,7 @@ public interface BynderApi {
     Observable<Response<DownloadUrl>> getMediaDownloadUrl(@Path("id") String mediaId, @Path("itemId") String mediaItemId);
 
     /**
-     * Updates the media metadata/properties for a specific media id.
-     *
-     * @param id Media id of which we want to update.
-     * @param params {@link FieldMap} with parameters.
-     *
-     * @return {@link Observable} with the {@link Response}.
-     */
-    @FormUrlEncoded
-    @POST("v4/media/{id}/")
-    Observable<Response<Void>> setMediaProperties(@Path("id") String id, @FieldMap Map<String, String> params);
-
-    /**
-     * Adds metaproperty options to a media with a specific media id.
+     * Updates the media properties (metadata) for a specific media id.
      *
      * @param params {@link FieldMap} with parameters.
      *
@@ -152,19 +137,19 @@ public interface BynderApi {
      */
     @FormUrlEncoded
     @POST("v4/media/")
-    Observable<Response<Void>> addMetapropertyToMedia(@FieldMap Map<String, String> params);
+    Observable<Response<Void>> setMediaProperties(@FieldMap Map<String, String> params);
 
     /**
-     * Initializes a file upload with Bynder and returns authorization information to allow
+     * Initialises a file upload with Bynder and returns authorisation information to allow
      * uploading to the Amazon S3 bucket-endpoint.
      *
-     * @param filename Name of the file to be uploaded.
+     * @param params {@link FieldMap} with parameters.
      *
-     * @return {@link Observable} with {@link UploadRequest} authorization information.
+     * @return {@link Observable} with {@link UploadRequest} authorisation information.
      */
     @FormUrlEncoded
     @POST("upload/init/")
-    Observable<Response<UploadRequest>> getUploadInformation(@Field("filename") String filename);
+    Observable<Response<UploadRequest>> getUploadInformation(@FieldMap Map<String, String> params);
 
     /**
      * Gets the URL of the Amazon S3 bucket-endpoint in the region closest to the server. This URL
@@ -178,66 +163,44 @@ public interface BynderApi {
     /**
      * Registers an uploaded chunk in Bynder.
      *
-     * @param id Upload id for the file being uploaded.
-     * @param chunkNumber Number of the chunk that was uploaded.
-     * @param targetId Target id in the authorization information returned by the
-     *        {@link #getUploadInformation(String)}.
-     * @param filename Base location of the uploaded chunk. Format: {s3Filename}/p{chunkNumber}.
+     * @param params {@link FieldMap} with parameters.
      *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
-    @POST("v4/upload/{id}/")
-    Observable<Response<Void>> registerChunk(@Path("id") String id, @Field("chunkNumber") int chunkNumber, @Field("targetid") String targetId, @Field("filename") String filename);
+    @POST("v4/upload/")
+    Observable<Response<Void>> registerChunk(@FieldMap Map<String, String> params);
 
     /**
-     * Finalizes a completely uploaded file.
+     * Finalises a completely uploaded file.
      *
-     * @param id Upload id for the file being uploaded.
-     * @param targetId Target id in the authorization information returned by the
-     *        {@link #getUploadInformation(String)}.
-     * @param s3Filename Base location of the uploaded file. Format: {s3Filename}/p{chunks}.
-     * @param chunks Total number of chunks uploaded.
+     * @param params {@link FieldMap} with parameters.
      *
      * @return {@link Observable} with {@link FinaliseResponse} information.
      */
     @FormUrlEncoded
-    @POST("v4/upload/{id}/")
-    Observable<Response<FinaliseResponse>> finaliseUploaded(@Path("id") String id, @Field("targetid") String targetId, @Field("s3_filename") String s3Filename, @Field("chunks") int chunks);
+    @POST("v4/upload/")
+    Observable<Response<FinaliseResponse>> finaliseUploaded(@FieldMap Map<String, String> params);
 
     /**
-     * Gets poll processing status of finalized files.
+     * Gets poll processing status of finalised files.
      *
-     * @param items Comma separated import ids of a finalized file, as returned by the
-     *        {@link #finaliseUploaded(String, String, String, int)}.
+     * @param params {@link QueryMap} with parameters.
      *
      * @return {@link Observable} with {@link PollStatus} information.
      */
     @GET("v4/upload/poll/")
-    Observable<Response<PollStatus>> getPollStatus(@Query("items") String items);
+    Observable<Response<PollStatus>> getPollStatus(@QueryMap Map<String, String> params);
 
     /**
-     * Saves a new media asset in Bynder.
+     * Saves a new media asset in Bynder. If media id is specified in the query a new version of the
+     * asset will be saved. Otherwise a new asset will be saved.
      *
-     * @param importId Import id of a finalized and processed upload to save.
-     * @param brandId Brand id to save the media asset to.
-     * @param name Name of the media asset.
+     * @param params {@link FieldMap} with parameters.
      *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
-    @POST("v4/media/save/{importId}/")
-    Observable<Response<Void>> saveMedia(@Path("importId") String importId, @Field("brandId") String brandId, @Field("name") String name);
-
-    /**
-     * Saves a new version of a media asset in Bynder.
-     *
-     * @param id Media id for which to save the new version.
-     * @param importId Import id of a finalized and processed upload to save.
-     *
-     * @return {@link Observable} with the {@link Response}.
-     */
-    @FormUrlEncoded
-    @POST("v4/media/{id}/save/")
-    Observable<Response<Void>> saveMediaVersion(@Path("id") String id, @Field("importId") String importId);
+    @POST("v4/media/save/")
+    Observable<Response<Void>> saveMedia(@FieldMap Map<String, String> params);
 }

@@ -25,10 +25,9 @@ public class UploadQuery {
      */
     private String mediaId;
 
-    public UploadQuery(final String filepath, final String brandId, final String mediaId) {
+    public UploadQuery(final String filepath, final String brandId) {
         this.filepath = filepath;
         this.brandId = brandId;
-        this.mediaId = mediaId;
     }
 
     public String getFilepath() {
@@ -41,5 +40,10 @@ public class UploadQuery {
 
     public String getMediaId() {
         return mediaId;
+    }
+
+    public UploadQuery setMediaId(final String mediaId) {
+        this.mediaId = mediaId;
+        return this;
     }
 }

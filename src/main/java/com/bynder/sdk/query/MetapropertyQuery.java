@@ -15,14 +15,15 @@ public class MetapropertyQuery {
      * This property has to be set to 1 (TRUE) for the API to calculate and include the media count
      * for each metaproperty option in the response.
      */
-    @ApiField
+    @ApiField(name = "count")
     private Boolean count;
-
-    public MetapropertyQuery(final Boolean count) {
-        this.count = count;
-    }
 
     public Boolean getCount() {
         return count;
+    }
+
+    public MetapropertyQuery setCount(final Boolean count) {
+        this.count = count;
+        return this;
     }
 }

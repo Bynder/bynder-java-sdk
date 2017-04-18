@@ -14,8 +14,8 @@ import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Media model returned by {@link BynderApi#getMediaList(String, String, Integer, Integer, String)}
- * and {@link BynderApi#getMediaInfo(String, Boolean)}.
+ * Media model returned by {@link BynderApi#getMediaList(Map)} and
+ * {@link BynderApi#getMediaInfo(Map)}.
  */
 public class Media {
 
@@ -48,13 +48,13 @@ public class Media {
      */
     private String dateModified;
     /**
-     * Publication date.
+     * Date published.
      */
     private String datePublished;
     /**
      * Media type. Possible values are: image, document, audio and video.
      */
-    private String type;
+    private MediaType type;
     /**
      * Id of the brand the media belongs to.
      */
@@ -98,8 +98,8 @@ public class Media {
     private Map<String, String> thumbnails;
     /**
      * Media items for the media. Including derivatives, additional and original. To get this
-     * information we have to call {@link BynderApi#getMediaInfo(String, Boolean)} with the media id
-     * and versions equal to true.
+     * information we have to call {@link BynderApi#getMediaInfo(Map)} with the media id and
+     * versions equal to true.
      */
     private List<MediaItem> mediaItems;
 
@@ -135,7 +135,7 @@ public class Media {
         return datePublished;
     }
 
-    public String getType() {
+    public MediaType getType() {
         return type;
     }
 

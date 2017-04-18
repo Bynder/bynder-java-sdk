@@ -37,7 +37,7 @@ public class Credentials {
     private String initialTokenSecret;
 
     /**
-     * Initializes new instance with specified values.
+     * Initialises new instance with specified values.
      *
      * @param consumerKey Consumer key.
      * @param consumerSecret Consumer secret.
@@ -81,10 +81,10 @@ public class Credentials {
     }
 
     /**
-     * Sets new access token key/secret
+     * Sets new access token key/secret.
      *
-     * @param token new access token key
-     * @param tokenSecret new access token secret
+     * @param token new access token key.
+     * @param tokenSecret new access token secret.
      */
     public void set(final String token, final String tokenSecret) {
         this.token = token;

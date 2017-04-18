@@ -6,12 +6,8 @@
  */
 package com.bynder.sdk.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.bynder.sdk.service.AssetBankService;
-import org.apache.commons.lang.StringUtils;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.Brand;
@@ -19,13 +15,13 @@ import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.Tag;
-import com.bynder.sdk.query.AddMetapropertyToMediaQuery;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
 import com.bynder.sdk.query.MediaPropertiesQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
+import com.bynder.sdk.service.AssetBankService;
 import com.bynder.sdk.service.upload.FileUploader;
 import com.bynder.sdk.util.Utils;
 
@@ -35,7 +31,7 @@ import retrofit2.Response;
 /**
  * Implementation of {@link AssetBankService}.
  */
-public class AssetBankServiceImpl extends BaseService implements AssetBankService {
+public class AssetBankServiceImpl implements AssetBankService {
 
     /**
      * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
@@ -76,7 +72,7 @@ public class AssetBankServiceImpl extends BaseService implements AssetBankServic
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Map<String, Metaproperty>>> getMetaproperties(final MetapropertyQuery metapropertyQuery) {
+    public Observable<Response<Map<String, Metaproperty>>> getMetaproperties(final MetapropertyQuery metapropertyQuery) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(metapropertyQuery);
         return bynderApi.getMetaproperties(params);
     }
@@ -85,7 +81,7 @@ public class AssetBankServiceImpl extends BaseService implements AssetBankServic
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<List<Media>>> getMediaList(final MediaQuery mediaQuery) {
+    public Observable<Response<List<Media>>> getMediaList(final MediaQuery mediaQuery) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaQuery);
         return bynderApi.getMediaList(params);
     }
@@ -94,9 +90,9 @@ public class AssetBankServiceImpl extends BaseService implements AssetBankServic
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Media>> getMediaInfo(final MediaInfoQuery mediaInfoQuery) {
+    public Observable<Response<Media>> getMediaInfo(final MediaInfoQuery mediaInfoQuery) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaInfoQuery);
-        return bynderApi.getMediaInfo(mediaInfoQuery.getMediaId(), params);
+        return bynderApi.getMediaInfo(params);
     }
 
     /**
@@ -115,21 +111,9 @@ public class AssetBankServiceImpl extends BaseService implements AssetBankServic
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) {
+    public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaPropertiesQuery);
-        return bynderApi.setMediaProperties(mediaPropertiesQuery.getMediaId(), params);
-    }
-
-    /**
-     * Check {@link AssetBankService} for more information.
-     */
-    @Override
-    public Observable<Response<Void>> addMetapropertyToMedia(final AddMetapropertyToMediaQuery addMetapropertyToMediaQuery) {
-        Map<String, String> params = new HashMap<>();
-        params.put("id", addMetapropertyToMediaQuery.getMediaId());
-        params.put(String.format("metaproperty.%s", addMetapropertyToMediaQuery.getMetapropertyId()), StringUtils.join(addMetapropertyToMediaQuery.getOptionsIds(), Utils.STR_COMMA));
-
-        return bynderApi.addMetapropertyToMedia(params);
+        return bynderApi.setMediaProperties(params);
     }
 
     /**

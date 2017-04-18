@@ -26,7 +26,7 @@ public class Brand {
      */
     private String description;
     /**
-     * URL for the image/logo.
+     * String with URL for the Brand image/logo.
      */
     private String image;
 

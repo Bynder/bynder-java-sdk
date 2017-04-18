@@ -12,7 +12,7 @@ import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Media Item model returned by {@link BynderApi#getMediaInfo(String, Boolean)}.
+ * Media Item model returned by {@link BynderApi#getMediaInfo(Map)}.
  */
 public class MediaItem {
 

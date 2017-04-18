@@ -14,15 +14,16 @@ public class MediaDownloadQuery {
     /**
      * Media id.
      */
+    @ApiField(name = "id")
     private String mediaId;
     /**
      * Media item id. If null the URL returned will be the URL of the original media.
      */
+    @ApiField(name = "itemId")
     private String mediaItemId;
 
-    public MediaDownloadQuery(final String mediaId, final String mediaItemId) {
+    public MediaDownloadQuery(final String mediaId) {
         this.mediaId = mediaId;
-        this.mediaItemId = mediaItemId;
     }
 
     public String getMediaId() {
@@ -31,5 +32,10 @@ public class MediaDownloadQuery {
 
     public String getMediaItemId() {
         return mediaItemId;
+    }
+
+    public MediaDownloadQuery setMediaItemId(final String mediaItemId) {
+        this.mediaItemId = mediaItemId;
+        return this;
     }
 }

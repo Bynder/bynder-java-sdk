@@ -24,8 +24,11 @@ public interface BynderService {
      * @param password Password.
      *
      * @return Observable with {@link User} information.
+     *
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
-    Observable<User> login(String username, String password);
+    Observable<User> login(String username, String password) throws IllegalArgumentException, IllegalAccessException;
 
     /**
      * Gets temporary request token pair used to build the authorise URL and login through the
@@ -61,7 +64,7 @@ public interface BynderService {
     void logout();
 
     /**
-     * Gets an instance of the asset bank manager to perform Bynder Asset Bank operations.
+     * Gets an instance of the asset bank service to perform Bynder Asset Bank operations.
      *
      * @return Instance of {@link AssetBankService}.
      */

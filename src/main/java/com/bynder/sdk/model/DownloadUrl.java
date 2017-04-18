@@ -6,7 +6,7 @@
  */
 package com.bynder.sdk.model;
 
-import java.net.URI;
+import java.net.URL;
 
 import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
@@ -18,12 +18,12 @@ import com.google.gson.annotations.SerializedName;
 public class DownloadUrl {
 
     /**
-     * URL of the media asset.
+     * Temporary download URL of the media asset.
      */
     @SerializedName(value = "s3_file")
-    private URI s3File;
+    private URL s3File;
 
-    public URI getS3File() {
+    public URL getS3File() {
         return s3File;
     }
 }

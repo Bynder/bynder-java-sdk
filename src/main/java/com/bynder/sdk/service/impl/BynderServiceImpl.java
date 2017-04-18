@@ -26,7 +26,7 @@ import retrofit2.Response;
 /**
  * Implementation of {@link BynderService}.
  */
-public class BynderServiceImpl extends BaseService implements BynderService {
+public class BynderServiceImpl implements BynderService {
 
     /**
      * Base URL needed to instantiate the {@link BynderApi} interface and generate authorize URL.

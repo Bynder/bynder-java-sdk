@@ -508,23 +508,20 @@ public class AssetBankServiceIT {
     @Test
     public void uploadTest() throws BynderUploadException, InterruptedException {
         Observable<Response<List<Brand>>> brandsObs = assetBankService.getBrands();
-        brandsObs
-                .doOnError(throwable -> LOG.error(throwable.getMessage()))
-                .doOnNext(listResponse ->
-                {
+        brandsObs.subscribe(
+                listResponse -> {
                     List<Brand> brands = listResponse.body();
                     Observable<Boolean> observable = assetBankService.uploadFile(new UploadQuery("/Users/diegobarrerarodriguez/Downloads/roll_safe.jpg", brands.get(0).getId(), null));
-                    observable
-                            .doOnComplete(() -> LOG.info("SUCCESS"))
-                            .doOnError(throwable -> LOG.error(throwable.getMessage()))
-                            .doOnNext(aBoolean -> {
+                    observable.subscribe(
+                            aBoolean -> {
                                 if (!aBoolean) {
                                     Assert.fail("upload returned success: false");
                                 }
-                            })
-                            .subscribe();
-                })
-                .subscribe();
-
+                            },
+                            throwable -> LOG.error(throwable.getMessage()),
+                            () -> LOG.info("SUCCESS")
+                    );
+                },
+                throwable -> LOG.error(throwable.getMessage()));
     }
 }

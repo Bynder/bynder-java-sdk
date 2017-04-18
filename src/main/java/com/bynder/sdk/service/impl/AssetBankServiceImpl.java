@@ -35,7 +35,7 @@ import retrofit2.Response;
 /**
  * Implementation of {@link AssetBankService}.
  */
-public class AssetBankServiceImpl extends BaseService implements AssetBankService {
+public class AssetBankServiceImpl implements AssetBankService {
 
     /**
      * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.

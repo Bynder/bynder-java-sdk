@@ -64,7 +64,7 @@ Before executing any request to the Bynder API, it is necessary to instantiate t
 
 The following example shows how to use the **BynderServiceImpl.create** static method to create an instance of **BynderService** using the **Settings** object as parameter:
 ```java
-BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.getbynder.com/api/",
+BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.getbynder.com",
                                                                     "your consumer key",
                                                                     "your consumer secret",
                                                                     "your access token key",

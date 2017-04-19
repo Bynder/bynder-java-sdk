@@ -31,7 +31,7 @@ public class AmazonServiceImpl implements AmazonService {
     private final AmazonApi amazonApi;
 
     /**
-     * Initializes a new instance of the class.
+     * Initialises a new instance of the class.
      *
      * @param awsBucket AWS bucket with the URL to upload the part to.
      */

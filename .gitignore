@@ -1,6 +1,9 @@
 # Properties for testing
 **/app.properties
 
+# Integration tests
+src/test/java/com/bynder/sdk/service/
+
 # Compilation files
 .*
 target/

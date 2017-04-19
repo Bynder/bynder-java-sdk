@@ -16,7 +16,7 @@ import com.google.gson.JsonParseException;
 import retrofit2.Retrofit;
 
 /**
- * Class responsible for converting integers to booleans when deserializing the json response
+ * Class responsible for converting integers to booleans when deserializing the Json response
  * returned by the API. This class is used when the {@link Retrofit} object is instantiated.
  */
 public class BooleanTypeAdapter implements JsonDeserializer<Boolean> {

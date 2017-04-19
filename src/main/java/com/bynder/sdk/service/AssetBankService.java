@@ -20,7 +20,6 @@ import com.bynder.sdk.query.MediaPropertiesQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
-import com.bynder.sdk.service.exception.BynderUploadException;
 
 import io.reactivex.Observable;
 import retrofit2.Response;
@@ -73,7 +72,7 @@ public interface AssetBankService {
      * Gets all the information for a specific media. This is needed to get the media items of a
      * media asset.
      *
-     * @param mediaInfoQuery Information about the media we want to get the information of.
+     * @param mediaInfoQuery Information about the media we want to get the information from.
      *
      * @return {@link Observable} with {@link Media} information.
      *
@@ -109,9 +108,6 @@ public interface AssetBankService {
      * Uploads a file to Bynder.
      *
      * @param uploadQuery Information needed to upload the file.
-     *
-     * @throws BynderUploadException Thrown when upload does not finish within the expected time.
-     * @throws InterruptedException
      */
     Observable<Boolean> uploadFile(UploadQuery uploadQuery);
 }

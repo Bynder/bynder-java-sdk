@@ -7,6 +7,7 @@
 package com.bynder.sdk.util;
 
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ import se.akerfeldt.okhttp.signpost.SigningInterceptor;
 public final class Utils {
 
     /**
-     * Separators.
+     * String separators.
      */
     public static final String STR_AND = "&";
     public static final String STR_COMMA = ",";
@@ -48,7 +49,7 @@ public final class Utils {
 
     /**
      * Builds a {@link Map} from a API response string containing a key and value separated by a
-     * commercial and.
+     * "&".
      *
      * @param response Response string returned by the API.
      *
@@ -66,7 +67,6 @@ public final class Utils {
                 throw new InvalidParameterException();
             }
         }
-
         return map;
     }
 
@@ -86,7 +86,6 @@ public final class Utils {
         if (tokenKey != null && tokenSecret != null) {
             consumer.setTokenWithSecret(tokenKey, tokenSecret);
         }
-
         return consumer;
     }
 
@@ -106,7 +105,6 @@ public final class Utils {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.addInterceptor(interceptor);
 
-        // increase timeout
         httpClient.readTimeout(30, TimeUnit.SECONDS);
         httpClient.connectTimeout(30, TimeUnit.SECONDS);
 
@@ -125,12 +123,12 @@ public final class Utils {
      *
      * @return Instance of the API interface class implementation.
      */
-    public static <T> T createApiService(final Class<T> apiInterface, final String baseUrl, final String consumerKey, final String consumerSecret, final String tokenKey, final String tokenSecret) {
+    public static <T> T createApiService(final Class<T> apiInterface, final URL baseUrl, final String consumerKey, final String consumerSecret, final String tokenKey, final String tokenSecret) {
         OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(consumerKey, consumerSecret, tokenKey, tokenSecret);
         OkHttpClient httpClient = createHttpClient(oauthConsumer);
 
         Builder builder = new Builder();
-        builder.baseUrl(baseUrl);
+        builder.baseUrl(baseUrl.toString());
         builder.addConverterFactory(new StringConverterFactory());
         builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());
         builder.addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create()));
@@ -142,8 +140,8 @@ public final class Utils {
     }
 
     /**
-     * Given a query object it gets its parameters. The parameters are basically the fields of the
-     * query object that have {@link ApiField} annotation.
+     * Given a query object this method gets its API parameters. The parameters are basically the
+     * fields of the query object that have {@link ApiField} annotation.
      *
      * @param query Query object.
      *
@@ -157,25 +155,39 @@ public final class Utils {
         Field[] fields = query.getClass().getDeclaredFields();
 
         for (Field field : fields) {
-            field.setAccessible(true);
+            convertField(field, query, params);
+        }
+        return params;
+    }
 
-            ApiField apiField = field.getAnnotation(ApiField.class);
-            if (field.get(query) != null && apiField != null) {
-                if (apiField.conversionType() == ConversionType.NONE) {
-                    params.put(apiField.name(), field.get(query).toString());
-                } else {
-                    if (apiField.conversionType() == ConversionType.METAPROPERTY_FIELD) {
-                        MetapropertyField metapropertyField = (MetapropertyField) field.get(query);
-                        params.put(String.format("%s.%s", apiField.name(), metapropertyField.getMetapropertyId()), StringUtils.join(metapropertyField.getOptionsIds(), Utils.STR_COMMA));
-                    } else if (apiField.conversionType() == ConversionType.LIST_FIELD) {
-                        List<String> listField = (List<String>) field.get(query);
-                        params.put(apiField.name(), StringUtils.join(listField, Utils.STR_COMMA));
-                    }
+    /**
+     * Method called for each field in a query object. It extracts the different fields with
+     * {@link ApiField} annotation and, if needed, converts it according to the conversion type
+     * defined.
+     *
+     * @param field Field information.
+     * @param query Query object.
+     * @param params Parameters name/value pairs to send to the API.
+     *
+     * @throws IllegalAccessException
+     */
+    private static void convertField(final Field field, final Object query, final Map<String, String> params) throws IllegalAccessException {
+        field.setAccessible(true);
+        ApiField apiField = field.getAnnotation(ApiField.class);
+
+        if (field.get(query) != null && apiField != null) {
+            if (apiField.conversionType() == ConversionType.NONE) {
+                params.put(apiField.name(), field.get(query).toString());
+            } else {
+                if (apiField.conversionType() == ConversionType.METAPROPERTY_FIELD) {
+                    MetapropertyField metapropertyField = (MetapropertyField) field.get(query);
+                    params.put(String.format("%s.%s", apiField.name(), metapropertyField.getMetapropertyId()), StringUtils.join(metapropertyField.getOptionsIds(), Utils.STR_COMMA));
+                } else if (apiField.conversionType() == ConversionType.LIST_FIELD) {
+                    List<?> listField = (List<?>) field.get(query);
+                    params.put(apiField.name(), StringUtils.join(listField, Utils.STR_COMMA));
                 }
             }
-            field.setAccessible(false);
         }
-
-        return params;
+        field.setAccessible(false);
     }
 }

@@ -12,7 +12,7 @@ package com.bynder.sdk.query;
 public class UploadQuery {
 
     /**
-     * File path of the file we want to update.
+     * File path of the file we want to upload.
      */
     private String filepath;
     /**

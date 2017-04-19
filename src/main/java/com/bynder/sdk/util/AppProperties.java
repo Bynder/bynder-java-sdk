@@ -58,7 +58,7 @@ public final class AppProperties {
     }
 
     /**
-     * Gets a {@link Settings} instance using the properties define in the
+     * Gets a {@link Settings} instance for login using the properties define in the
      * src/main/resources/app.properties file.
      *
      * @return {@link Settings} instance.

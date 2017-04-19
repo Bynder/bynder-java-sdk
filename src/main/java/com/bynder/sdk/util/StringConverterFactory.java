@@ -36,7 +36,6 @@ public class StringConverterFactory extends Converter.Factory {
                     if (value.contentType().type().contains("text")) {
                         return value.string();
                     }
-
                     GsonConverterFactory gsonConverterFactory = GsonConverterFactory.create();
                     return gsonConverterFactory.responseBodyConverter(type, annotations, retrofit).convert(value).toString();
                 }

@@ -43,7 +43,7 @@ public class AssetBankServiceImpl implements AssetBankService {
     private final FileUploader fileUploader;
 
     /**
-     * Initializes a new instance of the class.
+     * Initialises a new instance of the class.
      *
      * @param bynderApi Instance to handle the HTTP communication with the Bynder API.
      */

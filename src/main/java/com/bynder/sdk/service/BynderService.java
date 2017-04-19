@@ -39,7 +39,7 @@ public interface BynderService {
     Observable<String> getRequestToken();
 
     /**
-     * Gets the URL needed to open the browser so the user can login and authorize the temporary
+     * Gets the URL needed to open the browser so the user can login and authorise the temporary
      * request token pair.
      *
      * @param callbackUrl Callback URL to be redirected to when login is successful.

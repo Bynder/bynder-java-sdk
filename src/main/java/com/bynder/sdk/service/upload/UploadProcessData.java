@@ -9,34 +9,46 @@ package com.bynder.sdk.service.upload;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import com.bynder.sdk.model.UploadRequest;
 
+/**
+ * Model to represent the upload process data of a file being uploaded to Bynder.
+ */
 public class UploadProcessData {
 
-    private int numberOfChunks;
-    private FileInputStream fis;
-    private int chunkNumber = 0;
-    private UploadRequest uploadRequest;
+    /**
+     * File being uploaded.
+     */
     private File file;
+    /**
+     * Input bytes of the file being uploaded.
+     */
+    private FileInputStream fileInputStream;
+    /**
+     * Upload authorisation information.
+     */
+    private UploadRequest uploadRequest;
+    /**
+     * Max chunk size.
+     */
     private int maxChunkSize;
+    /**
+     * Total number of chunks.
+     */
+    private int numberOfChunks;
+    /**
+     * Number of the chunk be uploaded.
+     */
+    private int chunkNumber;
 
-    public UploadProcessData(final File file, FileInputStream fis, final int maxChunkSize, final UploadRequest uploadRequest) {
+    public UploadProcessData(final File file, final FileInputStream fileInputStream, final UploadRequest uploadRequest, final int maxChunkSize) {
         this.file = file;
-        this.fis = fis;
-        this.maxChunkSize = maxChunkSize;
+        this.fileInputStream = fileInputStream;
         this.uploadRequest = uploadRequest;
+        this.maxChunkSize = maxChunkSize;
         this.numberOfChunks = (Math.toIntExact(file.length()) + maxChunkSize - 1) / maxChunkSize;
-    }
-
-    public void incrementChunk() {
-        chunkNumber++;
-    }
-
-    public boolean isCompleted() {
-        return chunkNumber == numberOfChunks;
+        this.chunkNumber = 0;
     }
 
     public File getFile() {
@@ -51,16 +63,23 @@ public class UploadProcessData {
         return chunkNumber;
     }
 
-    public byte[] getBuffer() throws IOException {
-        int length = Math.min(maxChunkSize,fis.available());
-        byte[] buffer = new byte[length];
-        fis.available();
-
-        fis.read(buffer);
-        return buffer;
-    }
-
     public int getNumberOfChunks() {
         return numberOfChunks;
+    }
+
+    public void incrementChunk() {
+        chunkNumber++;
+    }
+
+    public boolean isCompleted() {
+        return chunkNumber == numberOfChunks;
+    }
+
+    public byte[] getBuffer() throws IOException {
+        int length = Math.min(maxChunkSize, fileInputStream.available());
+        byte[] buffer = new byte[length];
+        fileInputStream.available();
+        fileInputStream.read(buffer);
+        return buffer;
     }
 }

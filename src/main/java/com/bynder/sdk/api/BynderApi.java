@@ -180,7 +180,7 @@ public interface BynderApi {
      */
     @FormUrlEncoded
     @POST("v4/upload/")
-    Observable<Response<FinaliseResponse>> finaliseUploaded(@FieldMap Map<String, String> params);
+    Observable<Response<FinaliseResponse>> finaliseUpload(@FieldMap Map<String, String> params);
 
     /**
      * Gets poll processing status of finalised files.

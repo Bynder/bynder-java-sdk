@@ -8,13 +8,8 @@ package com.bynder.sdk.service.upload;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.FinaliseResponse;
@@ -40,27 +35,25 @@ import retrofit2.Response;
  */
 public class FileUploader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FileUploader.class);
-
     /**
-     * Max chunk size
+     * Max chunk size.
      */
     private static final int MAX_CHUNK_SIZE = 1024 * 1024 * 5;
     /**
-     * Max polling iterations to wait for the media asset to be converted.
+     * Max polling iterations to wait for the file to be converted.
      */
     private static final int MAX_POLLING_ITERATIONS = 60;
     /**
      * Idle time between polling iterations.
      */
-    private static final int POLLING_IDDLE_TIME = 2000;
+    private static final int POLLING_IDLE_TIME = 2000;
 
     /**
      * Instance of {@link BynderApi} which handles the HTTP communication.
      */
     private final BynderApi bynderApi;
     /**
-     * Amazon service used to upload parts.
+     * Amazon service used to upload parts (chunks).
      */
     private AmazonService amazonService;
 
@@ -76,25 +69,21 @@ public class FileUploader {
     /**
      * Uploads a file with the information specified in the query parameter.
      *
-     * @param uploadQuery Upload query information to upload a file.
-     * @throws BynderUploadException Thrown when upload does not finish within the expected time.
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws RuntimeException
+     * @param uploadQuery Upload query with the information to upload the file.
+     *
+     * @return {@link Observable} with Boolean indicating if upload was successful or not.
      */
     public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) {
         return Observable.create(observableEmitter -> {
-            Observable<Response<String>> s3Obs = initializeAmazonService();
-            s3Obs.subscribe(stringResponse -> {
-                this.amazonService = new AmazonServiceImpl(stringResponse.body());
-
-                Observable<Response<UploadRequest>> uploadRequestObs = getUploadInformation(new RequestUploadQuery(uploadQuery.getFilepath()));
-
-                uploadRequestObs.subscribe(uploadRequestResponse -> {
+            Observable<Response<String>> s3EndpointObs = getClosestS3Endpoint();
+            s3EndpointObs.subscribe(awsBucketResponse -> {
+                this.amazonService = new AmazonServiceImpl(awsBucketResponse.body());
+                Observable<Response<UploadRequest>> uploadInformationObs = getUploadInformation(new RequestUploadQuery(uploadQuery.getFilepath()));
+                uploadInformationObs.subscribe(uploadRequestResponse -> {
                     UploadRequest uploadRequest = uploadRequestResponse.body();
                     File file = new File(uploadQuery.getFilepath());
                     if (!file.exists()) {
-                        observableEmitter.onError(new FileNotFoundException(file.getName() + " not found"));
+                        observableEmitter.onError(new BynderUploadException(String.format("File: %s not found. Upload not completed.", file.getName())));
                         observableEmitter.onComplete();
                         return;
                     }
@@ -104,31 +93,168 @@ public class FileUploader {
         });
     }
 
+    /**
+     * Starts the process to upload a file to Bynder, after the {@link AmazonService} was
+     * successfully instantiated with the closest s3 endpoint and the upload was successfully
+     * initialise in Bynder.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
+     * @param uploadRequest Upload authorisation information.
+     * @param file File to be uploaded.
+     */
     private void startUploadProcess(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final UploadRequest uploadRequest, final File file) {
-        Observable<Integer> chunksObs = uploadParts(file, uploadRequest);
-        chunksObs.subscribe(chunks -> {
-            Observable<Response<FinaliseResponse>> finaliseResponse =
-                    finaliseUploaded(new FinaliseUploadQuery(uploadRequest.getS3File().getUploadId(), uploadRequest.getS3File().getTargetId(), uploadRequest.getS3Filename(), chunks));
-            finaliseResponse.subscribe(finaliseResponseResponse -> {
-                processFinaliseResponse(uploadQuery, observableEmitter, file, finaliseResponseResponse);
-            }, throwable -> observableEmitter.onError(throwable));
-        }, throwable -> LOG.error(throwable.getMessage()));
+        Observable<Integer> uploadPartsObs = uploadParts(file, uploadRequest);
+        uploadPartsObs.subscribe(chunksResponse -> {
+            Observable<Response<FinaliseResponse>> finaliseUploadedFileObs =
+                    finaliseUpload(new FinaliseUploadQuery(uploadRequest.getS3File().getUploadId(), uploadRequest.getS3File().getTargetId(), uploadRequest.getS3Filename(), chunksResponse));
+            finaliseUploadedFileObs.subscribe(finaliseResponse -> processFinaliseResponse(uploadQuery, observableEmitter, file, finaliseResponse), throwable -> observableEmitter.onError(throwable));
+        }, throwable -> observableEmitter.onError(throwable));
     }
 
-    private void processFinaliseResponse(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final Response<FinaliseResponse> finaliseResponseResponse)
+    /**
+     * Uploads the parts (chunks) to Amazon and registers them in Bynder.
+     *
+     * @param file File to be uploaded.
+     * @param uploadRequest Upload authorisation information.
+     */
+    private Observable<Integer> uploadParts(final File file, final UploadRequest uploadRequest) {
+        return Observable.create(observableEmitter -> {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            UploadProcessData uploadProcessData = new UploadProcessData(file, fileInputStream, uploadRequest, MAX_CHUNK_SIZE);
+            uploadProcessData.incrementChunk();
+            processChunk(uploadProcessData).repeatUntil(() -> {
+                boolean isProcessed = uploadProcessData.isCompleted();
+                if (isProcessed) {
+                    observableEmitter.onNext(uploadProcessData.getNumberOfChunks());
+                    observableEmitter.onComplete();
+                } else {
+                    uploadProcessData.incrementChunk();
+                }
+                return isProcessed;
+            }).subscribe(booleanResponse -> {
+            }, throwable -> observableEmitter.onError(throwable));
+        });
+    }
+
+    /**
+     * Calls the {@link AmazonService} to upload the chunk to Amazon and after registers the
+     * uploaded chunk in Bynder.
+     *
+     * @param uploadProcessData Upload process data of the file being uploaded.
+     *
+     * @return {@link Observable} with Boolean indicating if upload was successful or not.
+     */
+    private Observable<Boolean> processChunk(final UploadProcessData uploadProcessData) {
+        return Observable.create(observableEmitter -> {
+            try {
+                Observable<Response<Void>> uploadPartToAmazonObs = amazonService.uploadPartToAmazon(uploadProcessData.getFile().getName(), uploadProcessData.getUploadRequest(),
+                        uploadProcessData.getChunkNumber(), uploadProcessData.getBuffer(), uploadProcessData.getNumberOfChunks());
+                uploadPartToAmazonObs.subscribe(voidResponse -> registerUploadedChunk(uploadProcessData, observableEmitter), throwable -> observableEmitter.onError(throwable));
+            } catch (Exception e) {
+                observableEmitter.onError(e);
+            }
+        });
+    }
+
+    /**
+     * Calls {@link FileUploader#registerChunk(RegisterChunkQuery)} to register the uploaded chunk
+     * in Bynder.
+     *
+     * @param uploadProcessData Upload process data of the file being uploaded.
+     * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
+     *
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     */
+    private void registerUploadedChunk(final UploadProcessData uploadProcessData, final ObservableEmitter<Boolean> observableEmitter) throws IllegalArgumentException, IllegalAccessException {
+        String filename = String.format("%s/p%s", uploadProcessData.getUploadRequest().getS3Filename(), Integer.toString(uploadProcessData.getChunkNumber()));
+        Observable<Response<Void>> registerChunkObs = registerChunk(new RegisterChunkQuery(uploadProcessData.getUploadRequest().getS3File().getUploadId(), uploadProcessData.getChunkNumber(),
+                uploadProcessData.getUploadRequest().getS3File().getTargetId(), filename));
+        registerChunkObs.subscribe(voidResponse -> {
+            observableEmitter.onNext(true);
+            observableEmitter.onComplete();
+        }, throwable -> observableEmitter.onError(throwable));
+    }
+
+    /**
+     * Calls the {@link FileUploader#hasFinishedSuccessfully(String)} using the information from the
+     * {@link FinaliseResponse} to check if the upload was completed successfully.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
+     * @param file File uploaded.
+     * @param finaliseResponse Finalise response returned by
+     *        {@link FileUploader#finaliseUpload(FinaliseUploadQuery)}.
+     *
+     * @throws InterruptedException
+     */
+    private void processFinaliseResponse(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final Response<FinaliseResponse> finaliseResponse)
             throws InterruptedException {
-        String importId = finaliseResponseResponse.body().getImportId();
+        String importId = finaliseResponse.body().getImportId();
         hasFinishedSuccessfully(importId).subscribe(hasFinishedSuccessfully -> {
             if (hasFinishedSuccessfully) {
-                saveMedia(uploadQuery, observableEmitter, file, importId);
+                saveUploadedMedia(uploadQuery, observableEmitter, file, importId);
             } else {
-                observableEmitter.onError(new BynderUploadException("Converter did not finishe. Upload not completed"));
+                observableEmitter.onError(new BynderUploadException("Converter did not finished. Upload not completed."));
                 observableEmitter.onComplete();
             }
         }, throwable -> observableEmitter.onError(throwable));
     }
 
-    private void saveMedia(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final String importId)
+    /**
+     * Method to check if file has finished converting within expected timeout.
+     *
+     * @param importId Import id of the upload.
+     *
+     * @return True if file has finished converting successfully. False otherwise.
+     *
+     * @throws InterruptedException
+     */
+    private Observable<Boolean> hasFinishedSuccessfully(final String importId) throws InterruptedException {
+        return Observable.create(observableEmitter -> {
+            FileConverterStatus fileConverterStatus = new FileConverterStatus(MAX_POLLING_ITERATIONS);
+            getPollStatus(new PollStatusQuery(Arrays.asList(importId))).repeatUntil(() -> {
+                if (fileConverterStatus.isDone()) {
+                    observableEmitter.onNext(fileConverterStatus.isSuccessful());
+                    observableEmitter.onComplete();
+                    return true;
+                }
+                if (!fileConverterStatus.nextAttempt()) {
+                    observableEmitter.onNext(false);
+                    observableEmitter.onComplete();
+                    return true;
+                } else {
+                    Thread.sleep(POLLING_IDLE_TIME);
+                    return false;
+                }
+            }).subscribe(pollStatusResponse -> {
+                PollStatus pollStatus = pollStatusResponse.body();
+                if (pollStatus != null) {
+                    if (pollStatus.getItemsDone().contains(importId)) {
+                        fileConverterStatus.setDone(true);
+                    }
+                    if (pollStatus.getItemsFailed().contains(importId)) {
+                        fileConverterStatus.setDone(false);
+                    }
+                }
+            }, throwable -> observableEmitter.onError(throwable));
+        });
+    }
+
+    /**
+     * Calls {@link FileUploader#saveMedia(SaveMediaQuery)} to save the completely uploaded file in
+     * Bynder.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
+     * @param file File uploaded.
+     * @param importId Import id of the upload.
+     *
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     */
+    private void saveUploadedMedia(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final String importId)
             throws IllegalArgumentException, IllegalAccessException {
         Observable<Response<Void>> saveMediaObs;
         if (uploadQuery.getMediaId() == null) {
@@ -136,15 +262,7 @@ public class FileUploader {
         } else {
             saveMediaObs = saveMedia(new SaveMediaQuery(importId).setMediaId(uploadQuery.getMediaId()));
         }
-
         saveMediaObs.subscribe(voidResponse -> observableEmitter.onNext(true), throwable -> observableEmitter.onError(throwable), () -> observableEmitter.onComplete());
-    }
-
-    /**
-     * Gets the closest Amazon S3 upload endpoint and initializes {@link AmazonService}.
-     */
-    private Observable<Response<String>> initializeAmazonService() {
-        return getClosestS3Endpoint();
     }
 
     /**
@@ -155,7 +273,7 @@ public class FileUploader {
     }
 
     /**
-     * Check {@link BynderApi#getUploadInformation(String)} for more information.
+     * Check {@link BynderApi#getUploadInformation(Map)} for more information.
      *
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
@@ -177,14 +295,14 @@ public class FileUploader {
     }
 
     /**
-     * Check {@link BynderApi#finaliseUploaded(Map)} for more information.
+     * Check {@link BynderApi#finaliseUpload(Map)} for more information.
      *
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      */
-    private Observable<Response<FinaliseResponse>> finaliseUploaded(final FinaliseUploadQuery finaliseUploadQuery) throws IllegalArgumentException, IllegalAccessException {
+    private Observable<Response<FinaliseResponse>> finaliseUpload(final FinaliseUploadQuery finaliseUploadQuery) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(finaliseUploadQuery);
-        return bynderApi.finaliseUploaded(params);
+        return bynderApi.finaliseUpload(params);
     }
 
     /**
@@ -193,7 +311,7 @@ public class FileUploader {
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      */
-    private Observable<Response<PollStatus>> pollStatus(final PollStatusQuery pollStatusQuery) throws IllegalArgumentException, IllegalAccessException {
+    private Observable<Response<PollStatus>> getPollStatus(final PollStatusQuery pollStatusQuery) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(pollStatusQuery);
         return bynderApi.getPollStatus(params);
     }
@@ -207,91 +325,5 @@ public class FileUploader {
     private Observable<Response<Void>> saveMedia(final SaveMediaQuery saveMediaQuery) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(saveMediaQuery);
         return bynderApi.saveMedia(params);
-    }
-
-    /**
-     * Uploads the parts to Amazon and registers them in Bynder.
-     *
-     * @param file Path of the file to be uploaded.
-     * @param uploadRequest Upload authorization information.
-     */
-    private Observable<Integer> uploadParts(final File file, final UploadRequest uploadRequest) {
-        return Observable.create(observableEmitter -> {
-            FileInputStream fis = new FileInputStream(file);
-            UploadProcessData data = new UploadProcessData(file, fis, MAX_CHUNK_SIZE, uploadRequest);
-
-            data.incrementChunk();
-            processChunk(data).repeatUntil(() -> {
-                boolean isDataCompleted = data.isCompleted();
-                if (isDataCompleted) {
-                    observableEmitter.onNext(data.getNumberOfChunks());
-                    observableEmitter.onComplete();
-                } else {
-                    data.incrementChunk();
-                }
-                return isDataCompleted;
-            }).subscribe(aBoolean -> {
-            }, throwable -> observableEmitter.onError(throwable));
-        });
-    }
-
-    private Observable<Boolean> processChunk(final UploadProcessData data) {
-        return Observable.create(observableEmitter -> {
-            try {
-                Observable<Response<Void>> uploadToAmazon =
-                        amazonService.uploadPartToAmazon(data.getFile().getName(), data.getUploadRequest(), data.getChunkNumber(), data.getBuffer(), data.getNumberOfChunks());
-                uploadToAmazon.subscribe(voidResponse -> registerChunk(data, observableEmitter), throwable -> observableEmitter.onError(throwable));
-            } catch (Exception e) {
-                observableEmitter.onError(e);
-            }
-        });
-    }
-
-    private void registerChunk(final UploadProcessData data, final ObservableEmitter<Boolean> observableEmitter) throws IllegalArgumentException, IllegalAccessException {
-        String filename = String.format("%s/p%s", data.getUploadRequest().getS3Filename(), Integer.toString(data.getChunkNumber()));
-        Observable<Response<Void>> chunkObs =
-                registerChunk(new RegisterChunkQuery(data.getUploadRequest().getS3File().getUploadId(), data.getChunkNumber(), data.getUploadRequest().getS3File().getTargetId(), filename));
-        chunkObs.subscribe(voidResponse -> {
-            observableEmitter.onNext(true);
-            observableEmitter.onComplete();
-        }, throwable -> observableEmitter.onError(throwable));
-    }
-
-    /**
-     * Method to check if file has finished converting within expected timeout.
-     *
-     * @param importId Import id of the upload.
-     * @return True if file has finished converting successfully. False otherwise.
-     * @throws InterruptedException
-     */
-    private Observable<Boolean> hasFinishedSuccessfully(final String importId) throws InterruptedException {
-        return Observable.create(observableEmitter -> {
-            PollingStatus pollingStatus = new PollingStatus(MAX_POLLING_ITERATIONS);
-            pollStatus(new PollStatusQuery(Arrays.asList(importId))).repeatUntil(() -> {
-                if (pollingStatus.isDone()) {
-                    observableEmitter.onNext(pollingStatus.isSuccessful());
-                    observableEmitter.onComplete();
-                    return true;
-                }
-                if (!pollingStatus.nextAttempt()) {
-                    observableEmitter.onNext(false);
-                    observableEmitter.onComplete();
-                    return true;
-                } else {
-                    Thread.sleep(POLLING_IDDLE_TIME);
-                    return false;
-                }
-            }).subscribe(pollStatusResponse -> {
-                PollStatus pollStatus = pollStatusResponse.body();
-                if (pollStatus != null) {
-                    if (pollStatus.getItemsDone().contains(importId)) {
-                        pollingStatus.setDone(true);
-                    }
-                    if (pollStatus.getItemsFailed().contains(importId)) {
-                        pollingStatus.setDone(false);
-                    }
-                }
-            }, throwable -> observableEmitter.onError(throwable));
-        });
     }
 }

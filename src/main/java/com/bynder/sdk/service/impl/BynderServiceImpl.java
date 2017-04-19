@@ -6,6 +6,7 @@
  */
 package com.bynder.sdk.service.impl;
 
+import java.net.URL;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,11 +30,11 @@ import retrofit2.Response;
 public class BynderServiceImpl implements BynderService {
 
     /**
-     * Base URL needed to instantiate the {@link BynderApi} interface and generate authorize URL.
+     * Base URL needed to instantiate the {@link BynderApi} interface and generate authorise URL.
      */
-    private final String baseUrl;
+    private final URL baseUrl;
     /**
-     * Credentials used to login, instantiate the {@link BynderApi} interface and generate authorize
+     * Credentials used to login, instantiate the {@link BynderApi} interface and generate authorise
      * URL.
      */
     private Credentials credentials;
@@ -47,12 +48,12 @@ public class BynderServiceImpl implements BynderService {
     private AssetBankService assetBankService;
 
     /**
-     * Initializes a new instance of the class.
+     * Initialises a new instance of the class.
      *
      * @param baseUrl Base URL where we want to point the API calls.
      * @param credentials Credentials to use to call the API.
      */
-    private BynderServiceImpl(final String baseUrl, final Credentials credentials) {
+    private BynderServiceImpl(final URL baseUrl, final Credentials credentials) {
         this.baseUrl = baseUrl;
         this.credentials = credentials;
 
@@ -68,7 +69,7 @@ public class BynderServiceImpl implements BynderService {
      */
     public static BynderService create(final Settings settings) {
         Credentials credentials = new Credentials(settings.getConsumerKey(), settings.getConsumerSecret(), settings.getToken(), settings.getTokenSecret());
-        return new BynderServiceImpl(settings.getBaseUrl().toString(), credentials);
+        return new BynderServiceImpl(settings.getBaseUrl(), credentials);
     }
 
     /**
@@ -101,7 +102,7 @@ public class BynderServiceImpl implements BynderService {
      */
     @Override
     public String getAuthoriseUrl(final String callbackUrl) {
-        StringBuilder stringBuilder = new StringBuilder(baseUrl).append("v4/oauth/authorise/?oauth_token=").append(credentials.getToken());
+        StringBuilder stringBuilder = new StringBuilder(baseUrl.toString()).append("v4/oauth/authorise/?oauth_token=").append(credentials.getToken());
 
         if (StringUtils.isNotEmpty(callbackUrl)) {
             stringBuilder.append("&callback=").append(callbackUrl);
@@ -163,7 +164,10 @@ public class BynderServiceImpl implements BynderService {
      *
      * @param loginQuery Information to call the login API endpoint.
      *
-     * @return {@link User} information.
+     * @return Observable with {@link User} information.
+     *
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
     private Observable<User> login(final LoginQuery loginQuery) throws IllegalArgumentException, IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(loginQuery);

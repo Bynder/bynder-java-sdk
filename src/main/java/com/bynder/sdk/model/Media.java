@@ -76,6 +76,10 @@ public class Media {
      */
     private long fileSize;
     /**
+     * Media public status.
+     */
+    private Boolean isPublic;
+    /**
      * Tags of the media.
      */
     private List<String> tags;
@@ -157,6 +161,10 @@ public class Media {
 
     public long getFileSize() {
         return fileSize;
+    }
+
+    public Boolean isPublic() {
+        return isPublic;
     }
 
     public List<String> getTags() {

@@ -41,7 +41,7 @@ public interface BynderApi {
      * @return {@link Observable} with the {@link User} information.
      */
     @FormUrlEncoded
-    @POST("v4/users/login/")
+    @POST("/api/v4/users/login/")
     Observable<Response<User>> login(@FieldMap Map<String, String> params);
 
     /**
@@ -49,7 +49,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with the request token pair information.
      */
-    @POST("v4/oauth/request_token/")
+    @POST("/api/v4/oauth/request_token/")
     Observable<Response<String>> getRequestToken();
 
     /**
@@ -58,7 +58,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with the access token pair information.
      */
-    @POST("v4/oauth/access_token/")
+    @POST("/api/v4/oauth/access_token/")
     Observable<Response<String>> getAccessToken();
 
     /**
@@ -66,7 +66,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with list of {@link Brand}.
      */
-    @GET("v4/brands/")
+    @GET("/api/v4/brands/")
     Observable<Response<List<Brand>>> getBrands();
 
     /**
@@ -74,7 +74,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with list of {@link Tag}.
      */
-    @GET("v4/tags/")
+    @GET("/api/v4/tags/")
     Observable<Response<List<Tag>>> getTags();
 
     /**
@@ -84,7 +84,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with Map of metaproperties.
      */
-    @GET("v4/metaproperties/")
+    @GET("/api/v4/metaproperties/")
     Observable<Response<Map<String, Metaproperty>>> getMetaproperties(@QueryMap Map<String, String> params);
 
     /**
@@ -94,7 +94,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with list of {@link Media}.
      */
-    @GET("v4/media/")
+    @GET("/api/v4/media/")
     Observable<Response<List<Media>>> getMediaList(@QueryMap Map<String, String> params);
 
     /**
@@ -104,7 +104,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with {@link Media} information.
      */
-    @GET("v4/media/")
+    @GET("/api/v4/media/")
     Observable<Response<Media>> getMediaInfo(@QueryMap Map<String, String> params);
 
     /**
@@ -114,7 +114,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with the {@link DownloadUrl} information of the media.
      */
-    @GET("v4/media/{id}/download/")
+    @GET("/api/v4/media/{id}/download/")
     Observable<Response<DownloadUrl>> getMediaDownloadUrl(@Path("id") String mediaId);
 
     /**
@@ -125,7 +125,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with the {@link DownloadUrl} information of the media item.
      */
-    @GET("v4/media/{id}/download/{itemId}/")
+    @GET("/api/v4/media/{id}/download/{itemId}/")
     Observable<Response<DownloadUrl>> getMediaDownloadUrl(@Path("id") String mediaId, @Path("itemId") String mediaItemId);
 
     /**
@@ -136,7 +136,7 @@ public interface BynderApi {
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
-    @POST("v4/media/")
+    @POST("/api/v4/media/")
     Observable<Response<Void>> setMediaProperties(@FieldMap Map<String, String> params);
 
     /**
@@ -148,7 +148,7 @@ public interface BynderApi {
      * @return {@link Observable} with {@link UploadRequest} authorisation information.
      */
     @FormUrlEncoded
-    @POST("upload/init/")
+    @POST("/api/upload/init/")
     Observable<Response<UploadRequest>> getUploadInformation(@FieldMap Map<String, String> params);
 
     /**
@@ -157,7 +157,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with the URL.
      */
-    @GET("upload/endpoint/")
+    @GET("/api/upload/endpoint/")
     Observable<Response<String>> getClosestS3Endpoint();
 
     /**
@@ -168,7 +168,7 @@ public interface BynderApi {
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
-    @POST("v4/upload/")
+    @POST("/api/v4/upload/")
     Observable<Response<Void>> registerChunk(@FieldMap Map<String, String> params);
 
     /**
@@ -179,7 +179,7 @@ public interface BynderApi {
      * @return {@link Observable} with {@link FinaliseResponse} information.
      */
     @FormUrlEncoded
-    @POST("v4/upload/")
+    @POST("/api/v4/upload/")
     Observable<Response<FinaliseResponse>> finaliseUpload(@FieldMap Map<String, String> params);
 
     /**
@@ -189,7 +189,7 @@ public interface BynderApi {
      *
      * @return {@link Observable} with {@link PollStatus} information.
      */
-    @GET("v4/upload/poll/")
+    @GET("/api/v4/upload/poll/")
     Observable<Response<PollStatus>> getPollStatus(@QueryMap Map<String, String> params);
 
     /**
@@ -201,6 +201,6 @@ public interface BynderApi {
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
-    @POST("v4/media/save/")
+    @POST("/api/v4/media/save/")
     Observable<Response<Void>> saveMedia(@FieldMap Map<String, String> params);
 }

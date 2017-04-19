@@ -7,6 +7,7 @@
 package com.bynder.sdk.util;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -27,16 +28,20 @@ public class BooleanTypeAdapter implements JsonDeserializer<Boolean> {
      */
     @Override
     public Boolean deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
-        if (Boolean.class.equals(typeOfT)) {
+        if (Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()).contains(json.toString())) {
             return json.getAsBoolean();
         } else {
-            int code = json.getAsInt();
+            try {
+                int code = json.getAsInt();
 
-            if (code == 0) {
-                return false;
-            } else if (code == 1) {
-                return true;
-            } else {
+                if (code == 0) {
+                    return false;
+                } else if (code == 1) {
+                    return true;
+                } else {
+                    return null;
+                }
+            } catch (NumberFormatException e) {
                 return null;
             }
         }

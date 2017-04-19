@@ -102,7 +102,7 @@ public class BynderServiceImpl implements BynderService {
      */
     @Override
     public String getAuthoriseUrl(final String callbackUrl) {
-        StringBuilder stringBuilder = new StringBuilder(baseUrl.toString()).append("v4/oauth/authorise/?oauth_token=").append(credentials.getToken());
+        StringBuilder stringBuilder = new StringBuilder(baseUrl.toString()).append("/api/v4/oauth/authorise/?oauth_token=").append(credentials.getToken());
 
         if (StringUtils.isNotEmpty(callbackUrl)) {
             stringBuilder.append("&callback=").append(callbackUrl);

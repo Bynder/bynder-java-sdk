@@ -8,18 +8,18 @@ At the moment this SDK provides a default library with the following methods:
 
 #### Login
 ```java
-User login(String username, String password);
+Observable<User> login(String username, String password);
 
-Map<String, String> getRequestToken();
-
-Map<String, String> getAccessToken();
+Observable<String> getRequestToken();
 
 String getAuthoriseUrl(final String callbackUrl);
+
+Observable<String> getAccessToken();
 
 void logout();
 ```
 
-#### Asset Bank Manager
+#### Asset Bank Service
 ```java
 Observable<Response<List<Brand>>> getBrands();
 
@@ -35,9 +35,7 @@ Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDo
 
 Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery);
 
-Observable<Response<Void>> addMetapropertyToMedia(AddMetapropertyToMediaQuery addMetapropertyToMediaQuery);
-
-Response<Void> uploadFile(UploadQuery uploadQuery) throws BynderUploadException, InterruptedException;
+Observable<Boolean> uploadFile(UploadQuery uploadQuery);
 ```
 
 ## Installation
@@ -77,10 +75,16 @@ After instantiating the **BynderService** class successfully it is possible to c
 
 #### Reactive way to get the Observable
 ```java
-Observable<Response<List<Tag>>> observable = bynderService.getTags();
+//Get an instance of the asset bank service to perform Bynder Asset Bank operations.
+AssetBankService assetBankService = bynderService.getAssetBankService();
+
+Observable<Response<List<Tag>>> observable = assetBankService.getTags();
 ```
 
 #### Synchronous way to wait for the Observable to complete and emit the single item
 ```java
-Response<List<Tag>> response = bynderService.getTags().blockingSingle();
+//Get an instance of the asset bank service to perform Bynder Asset Bank operations.
+AssetBankService assetBankService = bynderService.getAssetBankService();
+
+Response<List<Tag>> response = assetBankService.getTags().blockingSingle();
 ```

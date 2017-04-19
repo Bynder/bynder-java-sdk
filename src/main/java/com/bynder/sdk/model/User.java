@@ -49,8 +49,4 @@ public class User {
     public Boolean hasAccess() {
         return hasAccess;
     }
-
-    public void setAccess(final Boolean hasAccess) {
-        this.hasAccess = hasAccess;
-    }
 }

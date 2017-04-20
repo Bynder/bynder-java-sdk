@@ -6,6 +6,10 @@
  */
 package com.bynder.sdk.service;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
 
@@ -28,6 +32,7 @@ public interface BynderService {
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      */
+    @Deprecated
     Observable<User> login(String username, String password) throws IllegalArgumentException, IllegalAccessException;
 
     /**
@@ -44,9 +49,12 @@ public interface BynderService {
      *
      * @param callbackUrl Callback URL to be redirected to when login is successful.
      *
-     * @return String with the authorise URL we need to open the browser with in order to login.
+     * @return Authorise URL we need to open the browser with in order to login.
+     *
+     * @throws MalformedURLException
+     * @throws URISyntaxException
      */
-    String getAuthoriseUrl(final String callbackUrl);
+    URL getAuthoriseUrl(final String callbackUrl) throws MalformedURLException, URISyntaxException;
 
     /**
      * Gets temporary access token pair once the user has already accessed the authorise URL and

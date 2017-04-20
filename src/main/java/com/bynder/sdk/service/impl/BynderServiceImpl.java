@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.service.impl;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
@@ -97,14 +99,15 @@ public class BynderServiceImpl implements BynderService {
      * Check {@link BynderService} for more information.
      */
     @Override
-    public String getAuthoriseUrl(final String callbackUrl) {
-        StringBuilder stringBuilder = new StringBuilder(baseUrl.toString()).append("/api/v4/oauth/authorise/?oauth_token=").append(credentials.getToken());
+    public URL getAuthoriseUrl(final String callbackUrl) throws MalformedURLException, URISyntaxException {
+        StringBuilder stringBuilder = new StringBuilder("/api/v4/oauth/authorise/?oauth_token=").append(credentials.getToken());
 
         if (StringUtils.isNotEmpty(callbackUrl)) {
             stringBuilder.append("&callback=").append(callbackUrl);
         }
 
-        return stringBuilder.toString();
+        URL authoriseUrl = new URL(baseUrl, stringBuilder.toString());
+        return authoriseUrl;
     }
 
     /**

@@ -57,7 +57,7 @@ public class BynderServiceImpl implements BynderService {
         this.baseUrl = baseUrl;
         this.credentials = credentials;
 
-        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials.getConsumerKey(), credentials.getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
+        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials);
     }
 
     /**
@@ -156,7 +156,7 @@ public class BynderServiceImpl implements BynderService {
     private void updateTokensFromResponse(final String response) {
         Map<String, String> oauthTokens = Utils.buildMapFromResponse(response);
         credentials.set(oauthTokens.get("oauth_token"), oauthTokens.get("oauth_token_secret"));
-        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials.getConsumerKey(), credentials.getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
+        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials);
     }
 
     /**
@@ -178,7 +178,7 @@ public class BynderServiceImpl implements BynderService {
             public User apply(final Response<User> response) throws Exception {
                 User user = response.body();
                 credentials.set(user.getTokenKey(), user.getTokenSecret());
-                bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials.getConsumerKey(), credentials.getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
+                bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials);
                 return user;
             }
         });

@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.bynder.sdk.model.Credentials;
 import com.bynder.sdk.query.ApiField;
 import com.bynder.sdk.query.ConversionType;
 import com.bynder.sdk.query.MetapropertyField;
@@ -79,7 +80,7 @@ public class UtilsTest {
      */
     @Test
     public void createApiServiceTest() throws MalformedURLException {
-        TestApi testApi = Utils.createApiService(TestApi.class, new URL("https://example.bynder.com"), "consumerKey", "consumerSecret", "tokenKey", "tokenSecret");
+        TestApi testApi = Utils.createApiService(TestApi.class, new URL("https://example.bynder.com"), new Credentials("consumerKey", "consumerSecret", "tokenKey", "tokenSecret"));
         assertNotNull(testApi);
         assertTrue(testApi.getTestMethod() instanceof Observable<?>);
     }

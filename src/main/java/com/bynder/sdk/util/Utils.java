@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.bynder.sdk.model.Credentials;
 import com.bynder.sdk.query.ApiField;
 import com.bynder.sdk.query.ConversionType;
 import com.bynder.sdk.query.MetapropertyField;
@@ -116,15 +117,12 @@ public final class Utils {
      *
      * @param apiInterface API interface class.
      * @param baseUrl Domain URL where we want to point the API calls.
-     * @param consumerKey Consumer key.
-     * @param consumerSecret Consumer secret.
-     * @param tokenKey Token key.
-     * @param tokenSecret Token secret.
+     * @param credentials Token credentials to call the API.
      *
      * @return Instance of the API interface class implementation.
      */
-    public static <T> T createApiService(final Class<T> apiInterface, final URL baseUrl, final String consumerKey, final String consumerSecret, final String tokenKey, final String tokenSecret) {
-        OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(consumerKey, consumerSecret, tokenKey, tokenSecret);
+    public static <T> T createApiService(final Class<T> apiInterface, final URL baseUrl, final Credentials credentials) {
+        OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(credentials.getConsumerKey(), credentials.getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
         OkHttpClient httpClient = createHttpClient(oauthConsumer);
 
         Builder builder = new Builder();

@@ -23,10 +23,12 @@ import com.bynder.sdk.service.impl.BynderServiceImpl;
 public class BynderServiceTest {
 
     private Settings settings;
+    private BynderService bynderService;
 
     @Before
     public void setUp() throws Exception {
-        settings = new Settings(new URL("https://example.getbynder.com"), "consumerKey", "consumerSecret", "tokenKey", "tokenSecret");
+        settings = new Settings(new URL("https://example.bynder.com"), "consumerKey", "consumerSecret", "tokenKey", "tokenSecret");
+        bynderService = BynderServiceImpl.create(settings);
     }
 
     /**
@@ -34,7 +36,6 @@ public class BynderServiceTest {
      */
     @Test
     public void getAuthoriseUrlWithoutCallbackTest() throws MalformedURLException {
-        BynderService bynderService = BynderServiceImpl.create(settings);
         String authoriseUrl = bynderService.getAuthoriseUrl(null);
         assertEquals(String.format("%s/api/v4/oauth/authorise/?oauth_token=%s", settings.getBaseUrl().toString(), settings.getToken()), authoriseUrl);
     }
@@ -45,7 +46,6 @@ public class BynderServiceTest {
      */
     @Test
     public void getAuthoriseUrlWithCallbackTest() throws MalformedURLException {
-        BynderService bynderService = BynderServiceImpl.create(settings);
         String callbackUrl = "http://localhost/";
         String authoriseUrl = bynderService.getAuthoriseUrl(callbackUrl);
         assertEquals(String.format("%s/api/v4/oauth/authorise/?oauth_token=%s&callback=%s", settings.getBaseUrl().toString(), settings.getToken(), callbackUrl), authoriseUrl);

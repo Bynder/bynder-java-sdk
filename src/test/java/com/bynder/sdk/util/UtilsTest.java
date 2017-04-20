@@ -79,7 +79,7 @@ public class UtilsTest {
      */
     @Test
     public void createApiServiceTest() throws MalformedURLException {
-        TestApi testApi = Utils.createApiService(TestApi.class, new URL("https://example.getbynder.com"), "consumerKey", "consumerSecret", "tokenKey", "tokenSecret");
+        TestApi testApi = Utils.createApiService(TestApi.class, new URL("https://example.bynder.com"), "consumerKey", "consumerSecret", "tokenKey", "tokenSecret");
         assertNotNull(testApi);
         assertTrue(testApi.getTestMethod() instanceof Observable<?>);
     }

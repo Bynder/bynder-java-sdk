@@ -21,7 +21,6 @@ import com.bynder.sdk.service.BynderService;
 import com.bynder.sdk.util.Utils;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 import retrofit2.Response;
 
 /**
@@ -87,13 +86,10 @@ public class BynderServiceImpl implements BynderService {
     public Observable<String> getRequestToken() {
         Observable<Response<String>> requestTokenObservable = bynderApi.getRequestToken();
 
-        return requestTokenObservable.map(new Function<Response<String>, String>() {
-            @Override
-            public String apply(final Response<String> response) throws Exception {
-                String requestToken = response.body();
-                updateTokensFromResponse(requestToken);
-                return requestToken;
-            }
+        return requestTokenObservable.map(response -> {
+            String requestToken = response.body();
+            updateTokensFromResponse(requestToken);
+            return requestToken;
         });
     }
 
@@ -118,13 +114,10 @@ public class BynderServiceImpl implements BynderService {
     public Observable<String> getAccessToken() {
         Observable<Response<String>> accessTokenObservable = bynderApi.getAccessToken();
 
-        return accessTokenObservable.map(new Function<Response<String>, String>() {
-            @Override
-            public String apply(final Response<String> response) throws Exception {
-                String accessToken = response.body();
-                updateTokensFromResponse(accessToken);
-                return accessToken;
-            }
+        return accessTokenObservable.map(response -> {
+            String accessToken = response.body();
+            updateTokensFromResponse(accessToken);
+            return accessToken;
         });
     }
 
@@ -173,14 +166,11 @@ public class BynderServiceImpl implements BynderService {
         Map<String, String> params = Utils.getApiParameters(loginQuery);
         Observable<Response<User>> loginObservable = bynderApi.login(params);
 
-        return loginObservable.map(new Function<Response<User>, User>() {
-            @Override
-            public User apply(final Response<User> response) throws Exception {
-                User user = response.body();
-                credentials.set(user.getTokenKey(), user.getTokenSecret());
-                bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials);
-                return user;
-            }
+        return loginObservable.map(response -> {
+            User user = response.body();
+            credentials.set(user.getTokenKey(), user.getTokenSecret());
+            bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials);
+            return user;
         });
     }
 }

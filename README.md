@@ -12,7 +12,7 @@ Observable<User> login(String username, String password);
 
 Observable<String> getRequestToken();
 
-String getAuthoriseUrl(final String callbackUrl);
+URL getAuthoriseUrl(final String callbackUrl);
 
 Observable<String> getAccessToken();
 
@@ -64,7 +64,7 @@ Before executing any request to the Bynder API, it is necessary to instantiate t
 
 The following example shows how to use the **BynderServiceImpl.create** static method to create an instance of **BynderService** using the **Settings** object as parameter:
 ```java
-BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.getbynder.com",
+BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.bynder.com",
                                                                     "your consumer key",
                                                                     "your consumer secret",
                                                                     "your access token key",

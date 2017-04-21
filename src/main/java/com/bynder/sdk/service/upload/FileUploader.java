@@ -194,7 +194,7 @@ public class FileUploader {
         String importId = finaliseResponse.body().getImportId();
         hasFinishedSuccessfully(importId).subscribe(hasFinishedSuccessfully -> {
             if (hasFinishedSuccessfully) {
-                saveUploadedMedia(uploadQuery, observableEmitter, file, importId);
+                saveUploadedMedia(uploadQuery, observableEmitter, file, importId, uploadQuery.isAudit());
             } else {
                 observableEmitter.onError(new BynderUploadException("Converter did not finished. Upload not completed."));
                 observableEmitter.onComplete();
@@ -254,13 +254,13 @@ public class FileUploader {
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    private void saveUploadedMedia(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final String importId)
+    private void saveUploadedMedia(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final String importId, final boolean audit)
             throws IllegalArgumentException, IllegalAccessException {
         Observable<Response<Void>> saveMediaObs;
         if (uploadQuery.getMediaId() == null) {
-            saveMediaObs = saveMedia(new SaveMediaQuery(importId).setBrandId(uploadQuery.getBrandId()).setName(file.getName()));
+            saveMediaObs = saveMedia(new SaveMediaQuery(importId, audit).setBrandId(uploadQuery.getBrandId()).setName(file.getName()));
         } else {
-            saveMediaObs = saveMedia(new SaveMediaQuery(importId).setMediaId(uploadQuery.getMediaId()));
+            saveMediaObs = saveMedia(new SaveMediaQuery(importId, audit).setMediaId(uploadQuery.getMediaId()));
         }
         saveMediaObs.subscribe(voidResponse -> observableEmitter.onNext(true), throwable -> observableEmitter.onError(throwable), () -> observableEmitter.onComplete());
     }

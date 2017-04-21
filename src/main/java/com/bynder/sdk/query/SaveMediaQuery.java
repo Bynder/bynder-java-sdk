@@ -34,9 +34,15 @@ public class SaveMediaQuery {
      */
     @ApiField(name = "id")
     private String mediaId;
+    /**
+     *  Flags if the asset should be sent to the waiting room.
+     */
+    @ApiField(name = "audit")
+    private boolean audit;
 
-    public SaveMediaQuery(final String importId) {
+    public SaveMediaQuery(final String importId, final boolean audit) {
         this.importId = importId;
+        this.audit = audit;
     }
 
     public String getImportId() {

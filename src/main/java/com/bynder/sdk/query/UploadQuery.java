@@ -24,10 +24,15 @@ public class UploadQuery {
      * media. Otherwise a new media asset will be added to the asset bank.
      */
     private String mediaId;
+    /**
+     *  Flags if the asset should be sent to the waiting room.
+     */
+    private boolean audit;
 
-    public UploadQuery(final String filepath, final String brandId) {
+    public UploadQuery(final String filepath, final String brandId, final boolean audit) {
         this.filepath = filepath;
         this.brandId = brandId;
+        this.audit = audit;
     }
 
     public String getFilepath() {
@@ -45,5 +50,9 @@ public class UploadQuery {
     public UploadQuery setMediaId(final String mediaId) {
         this.mediaId = mediaId;
         return this;
+    }
+
+    public boolean isAudit() {
+        return audit;
     }
 }

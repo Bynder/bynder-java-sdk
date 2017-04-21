@@ -52,7 +52,7 @@ public class UploadQuery {
         return this;
     }
 
-    public boolean isAudit() {
+    public Boolean isAudit() {
         return audit;
     }
 

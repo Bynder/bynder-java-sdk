@@ -67,8 +67,8 @@ The following example shows how to use the **BynderServiceImpl.create(Settings s
 BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.bynder.com",
                                                                     "consumer key",
                                                                     "consumer secret",
-                                                                    "access token key",
-                                                                    "access token secret"));
+                                                                    "token",
+                                                                    "token secret"));
 ```
 
 After instantiating the **BynderService** class successfully it is possible to call any of the methods listed in the section **Current Status**. Example:

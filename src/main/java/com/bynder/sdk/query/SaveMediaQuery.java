@@ -34,6 +34,11 @@ public class SaveMediaQuery {
      */
     @ApiField(name = "id")
     private String mediaId;
+    /**
+     *  Flags if the media asset should be sent to the waiting room.
+     */
+    @ApiField(name = "audit")
+    private Boolean audit;
 
     public SaveMediaQuery(final String importId) {
         this.importId = importId;
@@ -67,6 +72,11 @@ public class SaveMediaQuery {
 
     public SaveMediaQuery setMediaId(final String mediaId) {
         this.mediaId = mediaId;
+        return this;
+    }
+
+    public SaveMediaQuery setAudit(final Boolean audit) {
+        this.audit = audit;
         return this;
     }
 }

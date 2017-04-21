@@ -62,29 +62,37 @@ This command tells Maven to build all the modules and to install it in the local
 ## How does it work
 Before executing any request to the Bynder API, it is necessary to instantiate the class **BynderService**.
 
-The following example shows how to use the **BynderServiceImpl.create** static method to create an instance of **BynderService** using the **Settings** object as parameter:
+The following example shows how to use the **BynderServiceImpl.create(Settings settings)** static method to create an instance of **BynderService** using the **Settings** object as parameter:
 ```java
 BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.bynder.com",
-                                                                    "your consumer key",
-                                                                    "your consumer secret",
-                                                                    "your access token key",
-                                                                    "your access token secret"));
+                                                                    "consumer key",
+                                                                    "consumer secret",
+                                                                    "access token key",
+                                                                    "access token secret"));
 ```
 
 After instantiating the **BynderService** class successfully it is possible to call any of the methods listed in the section **Current Status**. Example:
 
 #### Reactive way to get the Observable
 ```java
-//Get an instance of the asset bank service to perform Bynder Asset Bank operations.
+// Get an instance of the asset bank service to perform Bynder Asset Bank operations.
 AssetBankService assetBankService = bynderService.getAssetBankService();
 
-Observable<Response<List<Tag>>> observable = assetBankService.getTags();
+// Get all tags (request without query)
+Observable<Response<List<Tag>>> tagsObservable = assetBankService.getTags();
+
+// Get media (request with query)
+Observable<Response<List<Media>>> mediaObservable = assetBankService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(100).setPage(1));
 ```
 
 #### Synchronous way to wait for the Observable to complete and emit the single item
 ```java
-//Get an instance of the asset bank service to perform Bynder Asset Bank operations.
+// Get an instance of the asset bank service to perform Bynder Asset Bank operations.
 AssetBankService assetBankService = bynderService.getAssetBankService();
 
-Response<List<Tag>> response = assetBankService.getTags().blockingSingle();
+// Get all tags (request without query)
+Response<List<Tag>> tagsResponse = assetBankService.getTags().blockingSingle();
+
+// Get media (request with query)
+Response<List<Media>> mediaResponse = assetBankService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(100).setPage(1)).blockingSingle();
 ```

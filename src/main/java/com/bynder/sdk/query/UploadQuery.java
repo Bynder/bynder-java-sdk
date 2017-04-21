@@ -32,7 +32,6 @@ public class UploadQuery {
     public UploadQuery(final String filepath, final String brandId) {
         this.filepath = filepath;
         this.brandId = brandId;
-        this.audit = false;
     }
 
     public String getFilepath() {

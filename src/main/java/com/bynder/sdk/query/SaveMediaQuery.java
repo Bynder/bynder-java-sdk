@@ -42,7 +42,6 @@ public class SaveMediaQuery {
 
     public SaveMediaQuery(final String importId) {
         this.importId = importId;
-        this.audit = false;
     }
 
     public String getImportId() {

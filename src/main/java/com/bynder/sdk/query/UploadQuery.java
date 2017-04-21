@@ -25,14 +25,14 @@ public class UploadQuery {
      */
     private String mediaId;
     /**
-     *  Flags if the asset should be sent to the waiting room.
+     *  Flags if the media asset should be sent to the waiting room.
      */
-    private boolean audit;
+    private Boolean audit;
 
-    public UploadQuery(final String filepath, final String brandId, final boolean audit) {
+    public UploadQuery(final String filepath, final String brandId) {
         this.filepath = filepath;
         this.brandId = brandId;
-        this.audit = audit;
+        this.audit = false;
     }
 
     public String getFilepath() {
@@ -54,5 +54,10 @@ public class UploadQuery {
 
     public boolean isAudit() {
         return audit;
+    }
+
+    public UploadQuery setAudit(final Boolean audit) {
+        this.audit = audit;
+        return this;
     }
 }

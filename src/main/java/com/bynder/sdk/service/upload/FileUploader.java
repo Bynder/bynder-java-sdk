@@ -258,9 +258,9 @@ public class FileUploader {
             throws IllegalArgumentException, IllegalAccessException {
         Observable<Response<Void>> saveMediaObs;
         if (uploadQuery.getMediaId() == null) {
-            saveMediaObs = saveMedia(new SaveMediaQuery(importId, audit).setBrandId(uploadQuery.getBrandId()).setName(file.getName()));
+            saveMediaObs = saveMedia(new SaveMediaQuery(importId).setBrandId(uploadQuery.getBrandId()).setName(file.getName()).setAudit(audit));
         } else {
-            saveMediaObs = saveMedia(new SaveMediaQuery(importId, audit).setMediaId(uploadQuery.getMediaId()));
+            saveMediaObs = saveMedia(new SaveMediaQuery(importId).setMediaId(uploadQuery.getMediaId()).setAudit(audit));
         }
         saveMediaObs.subscribe(voidResponse -> observableEmitter.onNext(true), throwable -> observableEmitter.onError(throwable), () -> observableEmitter.onComplete());
     }

@@ -6,12 +6,14 @@
  */
 package com.bynder.sdk.service;
 
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Map;
 
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
+import com.bynder.sdk.util.Utils;
 
 import io.reactivex.Observable;
 
@@ -29,11 +31,11 @@ public interface BynderService {
      *
      * @return Observable with {@link User} information.
      *
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
      */
     @Deprecated
-    Observable<User> login(String username, String password) throws IllegalArgumentException, IllegalAccessException;
+    Observable<User> login(String username, String password) throws IllegalAccessException;
 
     /**
      * Gets temporary request token pair used to build the authorise URL and login through the
@@ -51,10 +53,10 @@ public interface BynderService {
      *
      * @return Authorise URL we need to open the browser with in order to login.
      *
-     * @throws MalformedURLException
-     * @throws URISyntaxException
+     * @throws MalformedURLException If no protocol is specified, or an unknown protocol is found,
+     *         or spec is null while instantiating the URL.
      */
-    URL getAuthoriseUrl(final String callbackUrl) throws MalformedURLException, URISyntaxException;
+    URL getAuthoriseUrl(final String callbackUrl) throws MalformedURLException;
 
     /**
      * Gets temporary access token pair once the user has already accessed the authorise URL and

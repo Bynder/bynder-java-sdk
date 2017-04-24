@@ -72,7 +72,7 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Map<String, Metaproperty>>> getMetaproperties(final MetapropertyQuery metapropertyQuery) throws IllegalArgumentException, IllegalAccessException {
+    public Observable<Response<Map<String, Metaproperty>>> getMetaproperties(final MetapropertyQuery metapropertyQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(metapropertyQuery);
         return bynderApi.getMetaproperties(params);
     }
@@ -81,7 +81,7 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<List<Media>>> getMediaList(final MediaQuery mediaQuery) throws IllegalArgumentException, IllegalAccessException {
+    public Observable<Response<List<Media>>> getMediaList(final MediaQuery mediaQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaQuery);
         return bynderApi.getMediaList(params);
     }
@@ -90,7 +90,7 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Media>> getMediaInfo(final MediaInfoQuery mediaInfoQuery) throws IllegalArgumentException, IllegalAccessException {
+    public Observable<Response<Media>> getMediaInfo(final MediaInfoQuery mediaInfoQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaInfoQuery);
         return bynderApi.getMediaInfo(params);
     }
@@ -111,7 +111,7 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) throws IllegalArgumentException, IllegalAccessException {
+    public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaPropertiesQuery);
         return bynderApi.setMediaProperties(params);
     }

@@ -1,5 +1,8 @@
-# Secret stuff
-**/secret.properties
+# Properties for testing
+**/app.properties
+
+# Integration tests
+**/*IT.java
 
 # Compilation files
 .*

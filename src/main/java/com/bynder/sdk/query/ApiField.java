@@ -19,12 +19,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ApiField {
     /**
-     * Name of the property defined in the API.
+     * @return Name of the property defined in the API.
      */
     String name();
 
     /**
-     * ConversionType to be used to convert the property.
+     * @return ConversionType to be used to convert the property.
      */
     ConversionType conversionType() default ConversionType.NONE;
 }

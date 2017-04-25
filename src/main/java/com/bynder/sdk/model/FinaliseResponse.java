@@ -11,7 +11,7 @@ import java.util.Map;
 import com.bynder.sdk.api.BynderApi;
 
 /**
- * Model returned by {@link BynderApi#finaliseUploaded(Map)}.
+ * Model returned by {@link BynderApi#finaliseUpload(Map)}.
  */
 public class FinaliseResponse {
 

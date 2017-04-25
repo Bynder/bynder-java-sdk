@@ -51,7 +51,8 @@ public final class AppProperties {
      *
      * @return {@link Settings} instance.
      *
-     * @throws MalformedURLException
+     * @throws MalformedURLException If no protocol is specified, or an unknown protocol is found,
+     *         or spec is null while instantiating the URL.
      */
     public Settings getSettings() throws MalformedURLException {
         return new Settings(new URL(getProperty("BASE_URL")), getProperty("CONSUMER_KEY"), getProperty("CONSUMER_SECRET"), getProperty("ACCESS_TOKEN_KEY"), getProperty("ACCESS_TOKEN_SECRET"));
@@ -63,7 +64,8 @@ public final class AppProperties {
      *
      * @return {@link Settings} instance.
      *
-     * @throws MalformedURLException
+     * @throws MalformedURLException If no protocol is specified, or an unknown protocol is found,
+     *         or spec is null while instantiating the URL.
      */
     public Settings getSettingsForLogin() throws MalformedURLException {
         return new Settings(new URL(getProperty("BASE_URL")), getProperty("CONSUMER_KEY"), getProperty("CONSUMER_SECRET"), getProperty("REQUEST_TOKEN_KEY"), getProperty("REQUEST_TOKEN_SECRET"));

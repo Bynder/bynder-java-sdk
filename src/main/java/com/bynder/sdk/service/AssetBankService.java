@@ -6,6 +6,7 @@
  */
 package com.bynder.sdk.service;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import com.bynder.sdk.query.MediaPropertiesQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
+import com.bynder.sdk.util.Utils;
 
 import io.reactivex.Observable;
 import retrofit2.Response;
@@ -51,10 +53,10 @@ public interface AssetBankService {
      *
      * @return {@link Observable} with Map of String, {@link Metaproperty} key/value pairs.
      *
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
      */
-    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(MetapropertyQuery metapropertyQuery) throws IllegalArgumentException, IllegalAccessException;
+    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(MetapropertyQuery metapropertyQuery) throws IllegalAccessException;
 
     /**
      * Gets a list of media using query information.
@@ -63,10 +65,10 @@ public interface AssetBankService {
      *
      * @return {@link Observable} with list of {@link Media}.
      *
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
      */
-    Observable<Response<List<Media>>> getMediaList(MediaQuery mediaQuery) throws IllegalArgumentException, IllegalAccessException;
+    Observable<Response<List<Media>>> getMediaList(MediaQuery mediaQuery) throws IllegalAccessException;
 
     /**
      * Gets all the information for a specific media. This is needed to get the media items of a
@@ -76,10 +78,10 @@ public interface AssetBankService {
      *
      * @return {@link Observable} with {@link Media} information.
      *
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
      */
-    Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery) throws IllegalArgumentException, IllegalAccessException;
+    Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery) throws IllegalAccessException;
 
     /**
      * Gets the download file URL for a specific media asset file. If the media item id was not
@@ -99,15 +101,17 @@ public interface AssetBankService {
      *
      * @return {@link Observable} with the request {@link Response} information.
      *
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
      */
-    Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery) throws IllegalArgumentException, IllegalAccessException;
+    Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery) throws IllegalAccessException;
 
     /**
-     * Uploads a file to Bynder.
+     * Uploads a file with the information specified in the query parameter.
      *
-     * @param uploadQuery Information needed to upload the file.
+     * @param uploadQuery Upload query with the information to upload the file.
+     *
+     * @return {@link Observable} with Boolean indicating if upload was successful or not.
      */
     Observable<Boolean> uploadFile(UploadQuery uploadQuery);
 }

@@ -50,7 +50,7 @@ public final class Utils {
 
     /**
      * Builds a {@link Map} from a API response string containing a key and value separated by a
-     * "&".
+     * &amp;.
      *
      * @param response Response string returned by the API.
      *
@@ -115,6 +115,7 @@ public final class Utils {
     /**
      * Creates an implementation of the API endpoints defined by the service interface.
      *
+     * @param <T> Class type of the API interface.
      * @param apiInterface API interface class.
      * @param baseUrl Domain URL where we want to point the API calls.
      * @param credentials Token credentials to call the API.
@@ -145,10 +146,10 @@ public final class Utils {
      *
      * @return Map with parameters name/value pairs to send to the API.
      *
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
      */
-    public static Map<String, String> getApiParameters(final Object query) throws IllegalArgumentException, IllegalAccessException {
+    public static Map<String, String> getApiParameters(final Object query) throws IllegalAccessException {
         Map<String, String> params = new HashMap<>();
         Field[] fields = query.getClass().getDeclaredFields();
 
@@ -167,7 +168,7 @@ public final class Utils {
      * @param query Query object.
      * @param params Parameters name/value pairs to send to the API.
      *
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException If the Field object is inaccessible.
      */
     private static void convertField(final Field field, final Object query, final Map<String, String> params) throws IllegalAccessException {
         field.setAccessible(true);

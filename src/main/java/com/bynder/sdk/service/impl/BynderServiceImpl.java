@@ -7,7 +7,6 @@
 package com.bynder.sdk.service.impl;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
@@ -77,7 +76,7 @@ public class BynderServiceImpl implements BynderService {
      * Check {@link BynderService} for more information.
      */
     @Override
-    public Observable<User> login(final String username, final String password) throws IllegalArgumentException, IllegalAccessException {
+    public Observable<User> login(final String username, final String password) throws IllegalAccessException {
         return login(new LoginQuery(username, password));
     }
 
@@ -99,7 +98,7 @@ public class BynderServiceImpl implements BynderService {
      * Check {@link BynderService} for more information.
      */
     @Override
-    public URL getAuthoriseUrl(final String callbackUrl) throws MalformedURLException, URISyntaxException {
+    public URL getAuthoriseUrl(final String callbackUrl) throws MalformedURLException {
         StringBuilder stringBuilder = new StringBuilder("/api/v4/oauth/authorise/?oauth_token=").append(credentials.getToken());
 
         if (StringUtils.isNotEmpty(callbackUrl)) {
@@ -165,7 +164,7 @@ public class BynderServiceImpl implements BynderService {
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      */
-    private Observable<User> login(final LoginQuery loginQuery) throws IllegalArgumentException, IllegalAccessException {
+    private Observable<User> login(final LoginQuery loginQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(loginQuery);
         Observable<Response<User>> loginObservable = bynderApi.login(params);
 

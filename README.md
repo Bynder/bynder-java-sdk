@@ -42,6 +42,7 @@ Observable<Boolean> uploadFile(UploadQuery uploadQuery);
 
 ### Using lastest release
 The most recent release is Bynder Java SDK 1.0.0, released April 25, 2017.
+- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.0.0
 
 To add a dependency on the SDK using Maven, use the following:
 ```xml

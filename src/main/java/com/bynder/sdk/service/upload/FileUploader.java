@@ -164,10 +164,9 @@ public class FileUploader {
      * @param uploadProcessData Upload process data of the file being uploaded.
      * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
      *
-     * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    private void registerUploadedChunk(final UploadProcessData uploadProcessData, final ObservableEmitter<Boolean> observableEmitter) throws IllegalArgumentException, IllegalAccessException {
+    private void registerUploadedChunk(final UploadProcessData uploadProcessData, final ObservableEmitter<Boolean> observableEmitter) throws IllegalAccessException {
         String filename = String.format("%s/p%s", uploadProcessData.getUploadRequest().getS3Filename(), Integer.toString(uploadProcessData.getChunkNumber()));
         Observable<Response<Void>> registerChunkObs = registerChunk(new RegisterChunkQuery(uploadProcessData.getUploadRequest().getS3File().getUploadId(), uploadProcessData.getChunkNumber(),
                 uploadProcessData.getUploadRequest().getS3File().getTargetId(), filename));
@@ -189,8 +188,7 @@ public class FileUploader {
      *
      * @throws InterruptedException
      */
-    private void processFinaliseResponse(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final Response<FinaliseResponse> finaliseResponse)
-            throws InterruptedException {
+    private void processFinaliseResponse(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final Response<FinaliseResponse> finaliseResponse) {
         String importId = finaliseResponse.body().getImportId();
         hasFinishedSuccessfully(importId).subscribe(hasFinishedSuccessfully -> {
             if (hasFinishedSuccessfully) {
@@ -208,10 +206,8 @@ public class FileUploader {
      * @param importId Import id of the upload.
      *
      * @return True if file has finished converting successfully. False otherwise.
-     *
-     * @throws InterruptedException
      */
-    private Observable<Boolean> hasFinishedSuccessfully(final String importId) throws InterruptedException {
+    private Observable<Boolean> hasFinishedSuccessfully(final String importId) {
         return Observable.create(observableEmitter -> {
             FileConverterStatus fileConverterStatus = new FileConverterStatus(MAX_POLLING_ITERATIONS);
             getPollStatus(new PollStatusQuery(Arrays.asList(importId))).repeatUntil(() -> {
@@ -251,11 +247,9 @@ public class FileUploader {
      * @param file File uploaded.
      * @param importId Import id of the upload.
      *
-     * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    private void saveUploadedMedia(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final String importId)
-            throws IllegalArgumentException, IllegalAccessException {
+    private void saveUploadedMedia(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final String importId) throws IllegalAccessException {
         Observable<Response<Void>> saveMediaObs;
         if (uploadQuery.getMediaId() == null) {
             saveMediaObs = saveMedia(new SaveMediaQuery(importId).setBrandId(uploadQuery.getBrandId()).setName(file.getName()).setAudit(uploadQuery.isAudit()));
@@ -276,9 +270,8 @@ public class FileUploader {
      * Check {@link BynderApi#getUploadInformation(Map)} for more information.
      *
      * @throws IllegalAccessException
-     * @throws IllegalArgumentException
      */
-    private Observable<Response<UploadRequest>> getUploadInformation(final RequestUploadQuery requestUploadQuery) throws IllegalArgumentException, IllegalAccessException {
+    private Observable<Response<UploadRequest>> getUploadInformation(final RequestUploadQuery requestUploadQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(requestUploadQuery);
         return bynderApi.getUploadInformation(params);
     }
@@ -287,9 +280,8 @@ public class FileUploader {
      * Check {@link BynderApi#registerChunk(Map)} for more information.
      *
      * @throws IllegalAccessException
-     * @throws IllegalArgumentException
      */
-    private Observable<Response<Void>> registerChunk(final RegisterChunkQuery registerChunkQuery) throws IllegalArgumentException, IllegalAccessException {
+    private Observable<Response<Void>> registerChunk(final RegisterChunkQuery registerChunkQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(registerChunkQuery);
         return bynderApi.registerChunk(params);
     }
@@ -298,9 +290,8 @@ public class FileUploader {
      * Check {@link BynderApi#finaliseUpload(Map)} for more information.
      *
      * @throws IllegalAccessException
-     * @throws IllegalArgumentException
      */
-    private Observable<Response<FinaliseResponse>> finaliseUpload(final FinaliseUploadQuery finaliseUploadQuery) throws IllegalArgumentException, IllegalAccessException {
+    private Observable<Response<FinaliseResponse>> finaliseUpload(final FinaliseUploadQuery finaliseUploadQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(finaliseUploadQuery);
         return bynderApi.finaliseUpload(params);
     }
@@ -309,9 +300,8 @@ public class FileUploader {
      * Check {@link BynderApi#getPollStatus(Map)} for more information.
      *
      * @throws IllegalAccessException
-     * @throws IllegalArgumentException
      */
-    private Observable<Response<PollStatus>> getPollStatus(final PollStatusQuery pollStatusQuery) throws IllegalArgumentException, IllegalAccessException {
+    private Observable<Response<PollStatus>> getPollStatus(final PollStatusQuery pollStatusQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(pollStatusQuery);
         return bynderApi.getPollStatus(params);
     }
@@ -320,9 +310,8 @@ public class FileUploader {
      * Check {@link BynderApi#saveMedia(Map)} for more information.
      *
      * @throws IllegalAccessException
-     * @throws IllegalArgumentException
      */
-    private Observable<Response<Void>> saveMedia(final SaveMediaQuery saveMediaQuery) throws IllegalArgumentException, IllegalAccessException {
+    private Observable<Response<Void>> saveMedia(final SaveMediaQuery saveMediaQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(saveMediaQuery);
         return bynderApi.saveMedia(params);
     }

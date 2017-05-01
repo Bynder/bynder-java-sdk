@@ -12,7 +12,6 @@ import java.util.Arrays;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 
 import retrofit2.Retrofit;
 
@@ -27,7 +26,7 @@ public class BooleanTypeAdapter implements JsonDeserializer<Boolean> {
      * more information.
      */
     @Override
-    public Boolean deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+    public Boolean deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) {
         if (Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()).contains(json.toString())) {
             return json.getAsBoolean();
         } else {

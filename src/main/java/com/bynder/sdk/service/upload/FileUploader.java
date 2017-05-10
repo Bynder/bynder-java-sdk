@@ -84,7 +84,6 @@ public class FileUploader {
                         File file = new File(uploadQuery.getFilepath());
                         if (!file.exists()) {
                             observableEmitter.onError(new BynderUploadException(String.format("File: %s not found. Upload not completed.", file.getName())));
-                            observableEmitter.onComplete();
                             return;
                         }
                         startUploadProcess(uploadQuery, observableEmitter, uploadRequest, file);
@@ -200,7 +199,6 @@ public class FileUploader {
                 saveUploadedMedia(uploadQuery, observableEmitter, file, importId);
             } else {
                 observableEmitter.onError(new BynderUploadException("Converter did not finished. Upload not completed."));
-                observableEmitter.onComplete();
             }
         }, throwable -> observableEmitter.onError(throwable));
     }

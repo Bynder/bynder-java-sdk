@@ -76,21 +76,24 @@ public class FileUploader {
      */
     public Observable<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
         return Observable.create(observableEmitter -> {
-            Observable<Response<String>> s3EndpointObs = getClosestS3Endpoint();
-            s3EndpointObs.subscribe(awsBucketResponse -> {
-                this.amazonService = new AmazonServiceImpl(awsBucketResponse.body());
-                Observable<Response<UploadRequest>> uploadInformationObs = getUploadInformation(new RequestUploadQuery(uploadQuery.getFilepath()));
-                uploadInformationObs.subscribe(uploadRequestResponse -> {
-                    UploadRequest uploadRequest = uploadRequestResponse.body();
-                    File file = new File(uploadQuery.getFilepath());
-                    if (!file.exists()) {
-                        observableEmitter.onError(new BynderUploadException(String.format("File: %s not found. Upload not completed.", file.getName())));
-                        observableEmitter.onComplete();
-                        return;
-                    }
-                    startUploadProcess(uploadQuery, observableEmitter, uploadRequest, file);
+            try {
+                Observable<Response<String>> s3EndpointObs = getClosestS3Endpoint();
+                s3EndpointObs.subscribe(awsBucketResponse -> {
+                    this.amazonService = new AmazonServiceImpl(awsBucketResponse.body());
+                    Observable<Response<UploadRequest>> uploadInformationObs = getUploadInformation(new RequestUploadQuery(uploadQuery.getFilepath()));
+                    uploadInformationObs.subscribe(uploadRequestResponse -> {
+                        UploadRequest uploadRequest = uploadRequestResponse.body();
+                        File file = new File(uploadQuery.getFilepath());
+                        if (!file.exists()) {
+                            observableEmitter.onError(new BynderUploadException(String.format("File: %s not found. Upload not completed.", file.getName())));
+                            return;
+                        }
+                        startUploadProcess(uploadQuery, observableEmitter, uploadRequest, file);
+                    }, throwable -> observableEmitter.onError(throwable));
                 }, throwable -> observableEmitter.onError(throwable));
-            }, throwable -> observableEmitter.onError(throwable));
+            } catch (Exception e) {
+                observableEmitter.onError(e);
+            }
         });
     }
 
@@ -121,20 +124,24 @@ public class FileUploader {
      */
     private Observable<Integer> uploadParts(final File file, final UploadRequest uploadRequest) {
         return Observable.create(observableEmitter -> {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            UploadProcessData uploadProcessData = new UploadProcessData(file, fileInputStream, uploadRequest, MAX_CHUNK_SIZE);
-            uploadProcessData.incrementChunk();
-            processChunk(uploadProcessData).repeatUntil(() -> {
-                boolean isProcessed = uploadProcessData.isCompleted();
-                if (isProcessed) {
-                    observableEmitter.onNext(uploadProcessData.getNumberOfChunks());
-                    observableEmitter.onComplete();
-                } else {
-                    uploadProcessData.incrementChunk();
-                }
-                return isProcessed;
-            }).subscribe(booleanResponse -> {
-            }, throwable -> observableEmitter.onError(throwable));
+            try {
+                FileInputStream fileInputStream = new FileInputStream(file);
+                UploadProcessData uploadProcessData = new UploadProcessData(file, fileInputStream, uploadRequest, MAX_CHUNK_SIZE);
+                uploadProcessData.incrementChunk();
+                processChunk(uploadProcessData).repeatUntil(() -> {
+                    boolean isProcessed = uploadProcessData.isCompleted();
+                    if (isProcessed) {
+                        observableEmitter.onNext(uploadProcessData.getNumberOfChunks());
+                        observableEmitter.onComplete();
+                    } else {
+                        uploadProcessData.incrementChunk();
+                    }
+                    return isProcessed;
+                }).subscribe(booleanResponse -> {
+                }, throwable -> observableEmitter.onError(throwable));
+            } catch (Exception e) {
+                observableEmitter.onError(e);
+            }
         });
     }
 
@@ -197,7 +204,6 @@ public class FileUploader {
                 saveUploadedMedia(uploadQuery, observableEmitter, file, importId);
             } else {
                 observableEmitter.onError(new BynderUploadException("Converter did not finished. Upload not completed."));
-                observableEmitter.onComplete();
             }
         }, throwable -> observableEmitter.onError(throwable));
     }
@@ -211,32 +217,36 @@ public class FileUploader {
      */
     private Observable<Boolean> hasFinishedSuccessfully(final String importId) {
         return Observable.create(observableEmitter -> {
-            FileConverterStatus fileConverterStatus = new FileConverterStatus(MAX_POLLING_ITERATIONS);
-            getPollStatus(new PollStatusQuery(Arrays.asList(importId))).repeatUntil(() -> {
-                if (fileConverterStatus.isDone()) {
-                    observableEmitter.onNext(fileConverterStatus.isSuccessful());
-                    observableEmitter.onComplete();
-                    return true;
-                }
-                if (!fileConverterStatus.nextAttempt()) {
-                    observableEmitter.onNext(false);
-                    observableEmitter.onComplete();
-                    return true;
-                } else {
-                    Thread.sleep(POLLING_IDLE_TIME);
-                    return false;
-                }
-            }).subscribe(pollStatusResponse -> {
-                PollStatus pollStatus = pollStatusResponse.body();
-                if (pollStatus != null) {
-                    if (pollStatus.getItemsDone().contains(importId)) {
-                        fileConverterStatus.setDone(true);
+            try {
+                FileConverterStatus fileConverterStatus = new FileConverterStatus(MAX_POLLING_ITERATIONS);
+                getPollStatus(new PollStatusQuery(Arrays.asList(importId))).repeatUntil(() -> {
+                    if (fileConverterStatus.isDone()) {
+                        observableEmitter.onNext(fileConverterStatus.isSuccessful());
+                        observableEmitter.onComplete();
+                        return true;
                     }
-                    if (pollStatus.getItemsFailed().contains(importId)) {
-                        fileConverterStatus.setDone(false);
+                    if (!fileConverterStatus.nextAttempt()) {
+                        observableEmitter.onNext(false);
+                        observableEmitter.onComplete();
+                        return true;
+                    } else {
+                        Thread.sleep(POLLING_IDLE_TIME);
+                        return false;
                     }
-                }
-            }, throwable -> observableEmitter.onError(throwable));
+                }).subscribe(pollStatusResponse -> {
+                    PollStatus pollStatus = pollStatusResponse.body();
+                    if (pollStatus != null) {
+                        if (pollStatus.getItemsDone().contains(importId)) {
+                            fileConverterStatus.setDone(true);
+                        }
+                        if (pollStatus.getItemsFailed().contains(importId)) {
+                            fileConverterStatus.setDone(false);
+                        }
+                    }
+                }, throwable -> observableEmitter.onError(throwable));
+            } catch (Exception e) {
+                observableEmitter.onError(e);
+            }
         });
     }
 

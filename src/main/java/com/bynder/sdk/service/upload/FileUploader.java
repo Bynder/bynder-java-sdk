@@ -70,6 +70,7 @@ public class FileUploader {
      * Uploads a file with the information specified in the query parameter.
      *
      * @param uploadQuery Upload query with the information to upload the file.
+     *
      * @return {@link Observable} with Boolean indicating if upload was successful or not.
      */
     public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) {
@@ -148,6 +149,7 @@ public class FileUploader {
      * uploaded chunk in Bynder.
      *
      * @param uploadProcessData Upload process data of the file being uploaded.
+     *
      * @return {@link Observable} with Boolean indicating if upload was successful or not.
      */
     private Observable<Boolean> processChunk(final UploadProcessData uploadProcessData) {
@@ -168,6 +170,7 @@ public class FileUploader {
      *
      * @param uploadProcessData Upload process data of the file being uploaded.
      * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
+     *
      * @throws IllegalAccessException
      */
     private void registerUploadedChunk(final UploadProcessData uploadProcessData, final ObservableEmitter<Boolean> observableEmitter) throws IllegalAccessException {
@@ -189,6 +192,7 @@ public class FileUploader {
      * @param file File uploaded.
      * @param finaliseResponse Finalise response returned by
      *        {@link FileUploader#finaliseUpload(FinaliseUploadQuery)}.
+     *
      * @throws InterruptedException
      */
     private void processFinaliseResponse(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final Response<FinaliseResponse> finaliseResponse) {
@@ -206,6 +210,7 @@ public class FileUploader {
      * Method to check if file has finished converting within expected timeout.
      *
      * @param importId Import id of the upload.
+     *
      * @return True if file has finished converting successfully. False otherwise.
      */
     private Observable<Boolean> hasFinishedSuccessfully(final String importId) {
@@ -251,6 +256,7 @@ public class FileUploader {
      * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
      * @param file File uploaded.
      * @param importId Import id of the upload.
+     *
      * @throws IllegalAccessException
      */
     private void saveUploadedMedia(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final String importId) throws IllegalAccessException {

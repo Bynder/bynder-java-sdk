@@ -71,9 +71,9 @@ Clone the repository:
 $ git clone git@github.com:Bynder/bynder-java-sdk.git
 ```
 
-Build the project from its root with the following Maven command:
+Build the project from its root with the following Maven command (skipping the GPG signing):
 ```bash
-$ mvn clean install
+$ mvn clean install -Dgpg.skip
 ```
 
 This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.

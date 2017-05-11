@@ -100,10 +100,10 @@ public class FileUploader {
      * successfully instantiated with the closest s3 endpoint and the upload was successfully
      * initialise in Bynder.
      *
-     * @param uploadQuery       Upload query with the information to upload the file.
+     * @param uploadQuery Upload query with the information to upload the file.
      * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
-     * @param uploadRequest     Upload authorisation information.
-     * @param file              File to be uploaded.
+     * @param uploadRequest Upload authorisation information.
+     * @param file File to be uploaded.
      */
     private void startUploadProcess(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final UploadRequest uploadRequest, final File file) {
         Observable<Integer> uploadPartsObs = uploadParts(file, uploadRequest);
@@ -117,7 +117,7 @@ public class FileUploader {
     /**
      * Uploads the parts (chunks) to Amazon and registers them in Bynder.
      *
-     * @param file          File to be uploaded.
+     * @param file File to be uploaded.
      * @param uploadRequest Upload authorisation information.
      */
     private Observable<Integer> uploadParts(final File file, final UploadRequest uploadRequest) {
@@ -127,16 +127,15 @@ public class FileUploader {
                 UploadProcessData uploadProcessData = new UploadProcessData(file, fileInputStream, uploadRequest, MAX_CHUNK_SIZE);
                 uploadProcessData.incrementChunk();
                 processChunk(uploadProcessData).repeatUntil(() -> {
-                            boolean isProcessed = uploadProcessData.isCompleted();
-                            if (isProcessed) {
-                                observableEmitter.onNext(uploadProcessData.getNumberOfChunks());
-                                observableEmitter.onComplete();
-                            } else {
-                                uploadProcessData.incrementChunk();
-                            }
-                            return isProcessed;
-                        }
-                ).subscribe(booleanResponse -> {
+                    boolean isProcessed = uploadProcessData.isCompleted();
+                    if (isProcessed) {
+                        observableEmitter.onNext(uploadProcessData.getNumberOfChunks());
+                        observableEmitter.onComplete();
+                    } else {
+                        uploadProcessData.incrementChunk();
+                    }
+                    return isProcessed;
+                }).subscribe(booleanResponse -> {
                 }, throwable -> observableEmitter.onError(throwable));
             } catch (Exception e) {
                 observableEmitter.onError(e);
@@ -185,11 +184,11 @@ public class FileUploader {
      * Calls the {@link FileUploader#hasFinishedSuccessfully(String)} using the information from the
      * {@link FinaliseResponse} to check if the upload was completed successfully.
      *
-     * @param uploadQuery       Upload query with the information to upload the file.
+     * @param uploadQuery Upload query with the information to upload the file.
      * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
-     * @param file              File uploaded.
-     * @param finaliseResponse  Finalise response returned by
-     *                          {@link FileUploader#finaliseUpload(FinaliseUploadQuery)}.
+     * @param file File uploaded.
+     * @param finaliseResponse Finalise response returned by
+     *        {@link FileUploader#finaliseUpload(FinaliseUploadQuery)}.
      * @throws InterruptedException
      */
     private void processFinaliseResponse(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final Response<FinaliseResponse> finaliseResponse) {
@@ -248,10 +247,10 @@ public class FileUploader {
      * Calls {@link FileUploader#saveMedia(SaveMediaQuery)} to save the completely uploaded file in
      * Bynder.
      *
-     * @param uploadQuery       Upload query with the information to upload the file.
+     * @param uploadQuery Upload query with the information to upload the file.
      * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
-     * @param file              File uploaded.
-     * @param importId          Import id of the upload.
+     * @param file File uploaded.
+     * @param importId Import id of the upload.
      * @throws IllegalAccessException
      */
     private void saveUploadedMedia(final UploadQuery uploadQuery, final ObservableEmitter<Boolean> observableEmitter, final File file, final String importId) throws IllegalAccessException {

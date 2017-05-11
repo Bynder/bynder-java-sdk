@@ -15,6 +15,7 @@ import com.bynder.sdk.model.FinaliseResponse;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.PollStatus;
+import com.bynder.sdk.model.SaveMediaResponse;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.UploadRequest;
 import com.bynder.sdk.model.User;
@@ -198,9 +199,9 @@ public interface BynderApi {
      *
      * @param params {@link FieldMap} with parameters.
      *
-     * @return {@link Observable} with the {@link Response}.
+     * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
     @FormUrlEncoded
     @POST("/api/v4/media/save/")
-    Observable<Response<Void>> saveMedia(@FieldMap Map<String, String> params);
+    Observable<Response<SaveMediaResponse>> saveMedia(@FieldMap Map<String, String> params);
 }

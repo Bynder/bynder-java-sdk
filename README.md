@@ -35,26 +35,45 @@ Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDo
 
 Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery);
 
-Observable<Boolean> uploadFile(UploadQuery uploadQuery);
+Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
 ```
 
 ## Installation
 
+### Using lastest release
+The most recent release is Bynder Java SDK 1.0.0, released April 25, 2017.
+- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.0.0
+
+To add a dependency on the SDK using Maven, use the following:
+```xml
+<dependency>
+  <groupId>com.bynder</groupId>
+  <artifactId>bynder-java-sdk</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+To add a dependency using Gradle:
+```
+dependencies {
+  compile 'com.bynder:bynder-java-sdk:1.0.0'
+}
+```
+
+### Using source code
 Components used to install and run the project:
 * Java JDK (version 1.8.0_60)
 * Apache Maven 3.3.3
 
 **Important:** Don't forget to define the environmental variables for Java and Maven!
 
-### Installation steps
 Clone the repository:
 ```bash
 $ git clone git@github.com:Bynder/bynder-java-sdk.git
 ```
 
-Build the project from its root with the following Maven command:
+Build the project from its root with the following Maven command (skipping the GPG signing):
 ```bash
-$ mvn clean install
+$ mvn clean install -Dgpg.skip
 ```
 
 This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.

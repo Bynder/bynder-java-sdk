@@ -162,7 +162,6 @@ public class BynderServiceImpl implements BynderService {
      * @return Observable with {@link User} information.
      *
      * @throws IllegalAccessException
-     * @throws IllegalArgumentException
      */
     private Observable<User> login(final LoginQuery loginQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(loginQuery);

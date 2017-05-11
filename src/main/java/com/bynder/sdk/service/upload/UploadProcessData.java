@@ -47,7 +47,7 @@ public class UploadProcessData {
         this.fileInputStream = fileInputStream;
         this.uploadRequest = uploadRequest;
         this.maxChunkSize = maxChunkSize;
-        this.numberOfChunks = (Math.toIntExact(file.length()) + maxChunkSize - 1) / maxChunkSize;
+        this.numberOfChunks = (int) ((file.length() + maxChunkSize - 1) / maxChunkSize);
         this.chunkNumber = 0;
     }
 

@@ -14,6 +14,7 @@ import com.bynder.sdk.model.Brand;
 import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
+import com.bynder.sdk.model.SaveMediaResponse;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
@@ -120,7 +121,7 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Boolean> uploadFile(final UploadQuery uploadQuery) {
+    public Observable<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
         return fileUploader.uploadFile(uploadQuery);
     }
 }

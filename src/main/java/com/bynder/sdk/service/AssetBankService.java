@@ -14,6 +14,7 @@ import com.bynder.sdk.model.Brand;
 import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
+import com.bynder.sdk.model.SaveMediaResponse;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
@@ -111,7 +112,7 @@ public interface AssetBankService {
      *
      * @param uploadQuery Upload query with the information to upload the file.
      *
-     * @return {@link Observable} with Boolean indicating if upload was successful or not.
+     * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
-    Observable<Boolean> uploadFile(UploadQuery uploadQuery);
+    Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
 }

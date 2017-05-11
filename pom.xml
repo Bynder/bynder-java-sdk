@@ -14,6 +14,17 @@
         Making it easier to connect to the Bynder API and executing requests on it.</description>
     <url>https://developer.bynder.com</url>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <licenses>
         <license>
             <name>MIT License</name>
@@ -46,7 +57,7 @@
         <dependency>
             <groupId>io.reactivex.rxjava2</groupId>
             <artifactId>rxjava</artifactId>
-            <version>2.0.8</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>

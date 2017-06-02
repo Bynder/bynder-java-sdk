@@ -115,3 +115,11 @@ Response<List<Tag>> tagsResponse = assetBankService.getTags().blockingSingle();
 // Get media (request with query)
 Response<List<Media>> mediaResponse = assetBankService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(100).setPage(1)).blockingSingle();
 ```
+
+#### ProGuard Rules
+If you are using proguard, remember to add the following lines to your ProGuard rules file.
+```java
+# Bynder Java SDK
+-keep class com.bynder.sdk.model.** { *; }
+-keep class com.bynder.sdk.query.** { *; }
+```

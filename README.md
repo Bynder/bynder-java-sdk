@@ -78,6 +78,14 @@ $ mvn clean install -Dgpg.skip
 
 This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.
 
+#### ProGuard Rules
+If you are using ProGuard, remember to add the following lines to your ProGuard rules file.
+```java
+# Bynder Java SDK
+-keep class com.bynder.sdk.model.** { *; }
+-keep class com.bynder.sdk.query.** { *; }
+```
+
 ## How does it work
 Before executing any request to the Bynder API, it is necessary to instantiate the class **BynderService**.
 
@@ -114,12 +122,4 @@ Response<List<Tag>> tagsResponse = assetBankService.getTags().blockingSingle();
 
 // Get media (request with query)
 Response<List<Media>> mediaResponse = assetBankService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(100).setPage(1)).blockingSingle();
-```
-
-#### ProGuard Rules
-If you are using proguard, remember to add the following lines to your ProGuard rules file.
-```java
-# Bynder Java SDK
--keep class com.bynder.sdk.model.** { *; }
--keep class com.bynder.sdk.query.** { *; }
 ```

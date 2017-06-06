@@ -78,7 +78,7 @@ $ mvn clean install -Dgpg.skip
 
 This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.
 
-#### Using ProGuard
+### Using ProGuard
 If you are using ProGuard, remember to add the following lines to your ProGuard rules file.
 ```java
 # Bynder Java SDK

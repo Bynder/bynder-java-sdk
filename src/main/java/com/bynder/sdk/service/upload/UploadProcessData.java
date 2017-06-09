@@ -78,7 +78,6 @@ public class UploadProcessData {
     public byte[] getBuffer() throws IOException {
         int length = Math.min(maxChunkSize, fileInputStream.available());
         byte[] buffer = new byte[length];
-        fileInputStream.available();
         fileInputStream.read(buffer);
         return buffer;
     }

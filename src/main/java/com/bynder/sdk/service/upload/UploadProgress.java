@@ -5,10 +5,26 @@ import com.bynder.sdk.model.SaveMediaResponse;
 /**
  * Created by diegobarrerarodriguez on 07/06/2017.
  */
+
+/**
+ * Model to represent the progress of an Asset upload
+ */
 public class UploadProgress {
+    /**
+     * Whether the upload has finished or notk
+     */
     private boolean finished = false;
+    /**
+     * The Byte progress of the upload
+     */
     private ByteProgress progress;
+    /**
+     * The SaveMediaResponse of the upload, filled in when the upload is finished
+     */
     private SaveMediaResponse saveMediaResponse;
+    /**
+     * The number of chunks already successfully uploaded
+     */
     private int uploadedChunks;
 
     public UploadProgress(long totalBytes) {
@@ -42,6 +58,11 @@ public class UploadProgress {
         uploadedChunks++;
     }
 
+    /**
+     * Whether all Bytes of the Asset have been uploaded.
+     * Not the same as isFinished()
+     * @return
+     */
     public boolean areChunksFinished() {
         return progress.getTransmittedBytes() == progress.getTotalBytes();
     }

@@ -103,11 +103,12 @@ public class FileUploader {
     public Observable<UploadProgress> uploadFileWithProgress(final UploadQuery uploadQuery) {
         return Observable.create(observableEmitter -> {
             try {
-                // S3 Stuff
+                // S3 endpoint
                 Observable<Response<String>> s3EndpointObs = getClosestS3Endpoint();
                 s3EndpointObs.subscribe(
                         awsBucketResponse -> {
                             this.amazonService = new AmazonServiceImpl(awsBucketResponse.body());
+                            // Get Upload Information
                             Observable<Response<UploadRequest>> uploadInformationObs = getUploadInformation(new RequestUploadQuery(uploadQuery.getFilepath()));
                             uploadInformationObs.subscribe(
                                     uploadRequestResponse -> {

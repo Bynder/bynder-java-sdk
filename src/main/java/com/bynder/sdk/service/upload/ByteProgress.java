@@ -5,21 +5,21 @@ package com.bynder.sdk.service.upload;
  */
 
 /**
- * Model to represent the progress in Bytes of an Asset upload
+ * Model to represent the progress in Bytes of an Asset upload.
  */
 public class ByteProgress {
     /**
-     * The bytes already transmitted
+     * The bytes already transmitted.
      */
     private long transmittedBytes;
     /**
-     * The total bytes of the file
+     * The total bytes of the file.
      */
     private long totalBytes;
 
     /**
      *
-     * @param bytes The size in bytes of the file being uploaded
+     * @param bytes The size in bytes of the file being uploaded.
      */
     public ByteProgress(long bytes) {
         totalBytes = bytes;
@@ -27,8 +27,9 @@ public class ByteProgress {
     }
 
     /**
-     * Add progress
-     * @param bytes The bytes uploaded in the last chunk
+     * Add progress.
+     *
+     * @param bytes The bytes uploaded in the last chunk.
      */
     public void addProgress(long bytes)
     {

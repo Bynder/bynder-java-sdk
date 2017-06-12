@@ -118,7 +118,7 @@ public interface AssetBankService {
     Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
 
     /**
-     * Uploads a file with Progress Report the information specified in the query parameter.
+     * Uploads a file with Progress Report.
      *
      * @param uploadQuery Upload query with the information to upload the file.
      *

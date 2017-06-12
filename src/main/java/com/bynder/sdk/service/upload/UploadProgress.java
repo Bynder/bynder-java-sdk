@@ -3,27 +3,23 @@ package com.bynder.sdk.service.upload;
 import com.bynder.sdk.model.SaveMediaResponse;
 
 /**
- * Created by diegobarrerarodriguez on 07/06/2017.
- */
-
-/**
- * Model to represent the progress of an Asset upload
+ * Model to represent the progress of an Asset upload.
  */
 public class UploadProgress {
     /**
-     * Whether the upload has finished or notk
+     * Whether the upload has finished or not.
      */
     private boolean finished = false;
     /**
-     * The Byte progress of the upload
+     * The Byte progress of the upload.
      */
     private ByteProgress progress;
     /**
-     * The SaveMediaResponse of the upload, filled in when the upload is finished
+     * The SaveMediaResponse of the upload, filled in when the upload is finished.
      */
     private SaveMediaResponse saveMediaResponse;
     /**
-     * The number of chunks already successfully uploaded
+     * The number of chunks already successfully uploaded.
      */
     private int uploadedChunks;
 
@@ -40,18 +36,18 @@ public class UploadProgress {
         this.finished = finished;
     }
 
-    public SaveMediaResponse getSaveMediaItem() {
+    public SaveMediaResponse getSaveMediaResponse() {
         return saveMediaResponse;
     }
 
-    public void setSaveMediaItem(SaveMediaResponse saveMediaResponse) {
+    public void setSaveMediaResponse(SaveMediaResponse saveMediaResponse) {
         this.saveMediaResponse = saveMediaResponse;
     }
 
     /**
-     * Adds a chunk of the specified size to the progress of the upload
+     * Adds a chunk of the specified size to the progress of the upload.
      *
-     * @param bytes The size in bytes of the chunk successfully uploaded
+     * @param bytes The size in bytes of the chunk successfully uploaded.
      */
     void addProgress(long bytes) {
         progress.addProgress(bytes);
@@ -60,8 +56,9 @@ public class UploadProgress {
 
     /**
      * Whether all Bytes of the Asset have been uploaded.
-     * Not the same as isFinished()
-     * @return
+     * Not the same as isFinished().
+     *
+     * @return boolean indicating whether chunk transmission is finished.
      */
     public boolean areChunksFinished() {
         return progress.getTransmittedBytes() == progress.getTotalBytes();

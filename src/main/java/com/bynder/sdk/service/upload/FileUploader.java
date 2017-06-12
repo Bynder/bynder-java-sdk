@@ -71,6 +71,7 @@ public class FileUploader {
      * Uploads a file with the information specified in the query parameter.
      *
      * @param uploadQuery Upload query with the information to upload the file.
+     *
      * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
     public Observable<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
@@ -80,7 +81,7 @@ public class FileUploader {
                 uploadProgressObservable.subscribe(
                         uploadProgress -> {
                             if (uploadProgress.isFinished()) {
-                                emitter.onNext(uploadProgress.getSaveMediaItem());
+                                emitter.onNext(uploadProgress.getSaveMediaResponse());
                             }
                         },
                         throwable -> emitter.onError(throwable),
@@ -96,6 +97,7 @@ public class FileUploader {
      * while providing information on the progress of the upload via the Observable returned.
      *
      * @param uploadQuery Upload query with the information to upload the file.
+     *
      * @return {@link Observable} with the {@link UploadProgress} information.
      */
     public Observable<UploadProgress> uploadFileWithProgress(final UploadQuery uploadQuery) {
@@ -139,7 +141,7 @@ public class FileUploader {
                                                                                     saveUploadedMedia(uploadQuery, file, importId).subscribe(
                                                                                             saveMediaResponse -> {
                                                                                                 // Successful Upload
-                                                                                                uploadProgress.setSaveMediaItem(saveMediaResponse);
+                                                                                                uploadProgress.setSaveMediaResponse(saveMediaResponse);
                                                                                                 uploadProgress.setFinished(true);
                                                                                                 observableEmitter.onNext(uploadProgress);
                                                                                                 observableEmitter.onComplete();
@@ -172,6 +174,7 @@ public class FileUploader {
      * Uploads the parts (chunks) to Amazon and registers them in Bynder.
      *
      * @param file File to be uploaded.
+     *
      * @return {@link Observable} with the {@link UploadProgress} information.
      */
     private Observable<UploadProgress> uploadParts(final File file, final UploadRequest uploadRequest) {
@@ -208,6 +211,7 @@ public class FileUploader {
      * uploaded chunk in Bynder.
      *
      * @param uploadProcessData Upload process data of the file being uploaded.
+     *
      * @return {@link Observable} with Integer indicating the number of bytes that were uploaded in the current chunk.
      */
     private Observable<Integer> processChunk(final UploadProcessData uploadProcessData) {
@@ -235,6 +239,7 @@ public class FileUploader {
      *
      * @param uploadProcessData Upload process data of the file being uploaded.
      * @param observableEmitter Observable returned by {@link FileUploader#uploadFile(UploadQuery)}.
+     *
      * @throws IllegalAccessException
      */
     private void registerUploadedChunk(final UploadProcessData uploadProcessData, final ObservableEmitter<Integer> observableEmitter, final Integer chunkSize)
@@ -254,6 +259,7 @@ public class FileUploader {
      * Method to check if file has finished converting within expected timeout.
      *
      * @param importId Import id of the upload.
+     *
      * @return {@link Observable} with a Boolean indicating whether the file finished converting successfully.
      */
     private Observable<Boolean> checkUploadFinished(final String importId) {
@@ -296,26 +302,24 @@ public class FileUploader {
      * Bynder.
      *
      * @param uploadQuery Upload query with the information to upload the file.
-     * @param file        File uploaded.
-     * @param importId    Import id of the upload.
+     * @param file File uploaded.
+     * @param importId Import id of the upload.
+     *
      * @return {@link Observable} with the {@link SaveMediaResponse} information.
+     *
      * @throws IllegalAccessException
      */
     private Observable<SaveMediaResponse> saveUploadedMedia(final UploadQuery uploadQuery, final File file, final String importId) throws IllegalAccessException {
         return Observable.create(emitter -> {
-            try {
-                Observable<Response<SaveMediaResponse>> saveMediaObs;
-                if (uploadQuery.getMediaId() == null) {
-                    saveMediaObs = saveMedia(new SaveMediaQuery(importId).setBrandId(uploadQuery.getBrandId()).setName(file.getName()).setAudit(uploadQuery.isAudit()));
-                } else {
-                    saveMediaObs = saveMedia(new SaveMediaQuery(importId).setMediaId(uploadQuery.getMediaId()).setAudit(uploadQuery.isAudit()));
-                }
-                saveMediaObs.subscribe(saveMediaResponse -> emitter.onNext(saveMediaResponse.body()),
-                        throwable -> emitter.onError(throwable),
-                        () -> emitter.onComplete());
-            } catch (Exception e) {
-                emitter.onError(e);
+            Observable<Response<SaveMediaResponse>> saveMediaObs;
+            if (uploadQuery.getMediaId() == null) {
+                saveMediaObs = saveMedia(new SaveMediaQuery(importId).setBrandId(uploadQuery.getBrandId()).setName(file.getName()).setAudit(uploadQuery.isAudit()));
+            } else {
+                saveMediaObs = saveMedia(new SaveMediaQuery(importId).setMediaId(uploadQuery.getMediaId()).setAudit(uploadQuery.isAudit()));
             }
+            saveMediaObs.subscribe(saveMediaResponse -> emitter.onNext(saveMediaResponse.body()),
+                    throwable -> emitter.onError(throwable),
+                    () -> emitter.onComplete());
         });
     }
 

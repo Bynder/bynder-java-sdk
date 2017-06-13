@@ -11,10 +11,6 @@ public class UploadProgress {
      */
     private boolean finished = false;
     /**
-     * The Byte progress of the upload.
-     */
-    private ByteProgress progress;
-    /**
      * The SaveMediaResponse of the upload, filled in when the upload is finished.
      */
     private SaveMediaResponse saveMediaResponse;
@@ -22,10 +18,19 @@ public class UploadProgress {
      * The number of chunks already successfully uploaded.
      */
     private int uploadedChunks;
+    /**
+     * The bytes already transmitted.
+     */
+    private long transmittedBytes;
+    /**
+     * The total bytes of the file.
+     */
+    private long totalBytes;
 
     public UploadProgress(long totalBytes) {
-        progress = new ByteProgress(totalBytes);
-        uploadedChunks = 0;
+        this.uploadedChunks = 0;
+        this.totalBytes = totalBytes;
+        this.transmittedBytes = 0;
     }
 
     public boolean isFinished() {
@@ -50,7 +55,7 @@ public class UploadProgress {
      * @param bytes The size in bytes of the chunk successfully uploaded.
      */
     void addProgress(long bytes) {
-        progress.addProgress(bytes);
+        transmittedBytes += bytes;
         uploadedChunks++;
     }
 
@@ -61,7 +66,7 @@ public class UploadProgress {
      * @return boolean indicating whether chunk transmission is finished.
      */
     public boolean areChunksFinished() {
-        return progress.getTransmittedBytes() == progress.getTotalBytes();
+        return transmittedBytes == totalBytes;
     }
 
     public int getUploadedChunks() {
@@ -69,10 +74,10 @@ public class UploadProgress {
     }
 
     public long getTransmittedBytes() {
-        return progress.getTransmittedBytes();
+        return transmittedBytes;
     }
 
     public long getTotalBytes() {
-        return progress.getTotalBytes();
+        return totalBytes;
     }
 }

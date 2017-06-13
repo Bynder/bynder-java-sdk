@@ -9,7 +9,7 @@ public class UploadProgress {
     /**
      * Whether the upload has finished or not.
      */
-    private boolean finished = false;
+    private boolean finished;
     /**
      * The SaveMediaResponse of the upload, filled in when the upload is finished.
      */
@@ -31,6 +31,7 @@ public class UploadProgress {
         this.uploadedChunks = 0;
         this.totalBytes = totalBytes;
         this.transmittedBytes = 0;
+        this.finished = false;
     }
 
     public boolean isFinished() {

@@ -22,6 +22,7 @@ import com.bynder.sdk.query.MediaPropertiesQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
+import com.bynder.sdk.service.upload.UploadProgress;
 import com.bynder.sdk.util.Utils;
 
 import io.reactivex.Observable;
@@ -115,4 +116,13 @@ public interface AssetBankService {
      * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
     Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
+
+    /**
+     * Uploads a file with Progress Report.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     *
+     * @return {@link Observable} with the {@link UploadProgress} information.
+     */
+    Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
 }

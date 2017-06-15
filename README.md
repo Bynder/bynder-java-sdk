@@ -36,6 +36,8 @@ Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDo
 Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery);
 
 Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
+
+Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
 ```
 
 ## Installation

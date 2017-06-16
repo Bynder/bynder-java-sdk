@@ -24,6 +24,7 @@ import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
 import com.bynder.sdk.service.AssetBankService;
 import com.bynder.sdk.service.upload.FileUploader;
+import com.bynder.sdk.service.upload.UploadProgress;
 import com.bynder.sdk.util.Utils;
 
 import io.reactivex.Observable;
@@ -123,5 +124,13 @@ public class AssetBankServiceImpl implements AssetBankService {
     @Override
     public Observable<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
         return fileUploader.uploadFile(uploadQuery);
+    }
+
+    /**
+     * Check {@link AssetBankService} for more information.
+     */
+    @Override
+    public Observable<UploadProgress> uploadFileWithProgress(final UploadQuery uploadQuery) {
+        return fileUploader.uploadFileWithProgress(uploadQuery);
     }
 }

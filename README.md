@@ -36,6 +36,8 @@ Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDo
 Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery);
 
 Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
+
+Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
 ```
 
 ## Installation
@@ -77,6 +79,14 @@ $ mvn clean install -Dgpg.skip
 ```
 
 This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.
+
+### Using ProGuard
+If you are using ProGuard, remember to add the following lines to your ProGuard rules file.
+```java
+# Bynder Java SDK
+-keep class com.bynder.sdk.model.** { *; }
+-keep class com.bynder.sdk.query.** { *; }
+```
 
 ## How does it work
 Before executing any request to the Bynder API, it is necessary to instantiate the class **BynderService**.

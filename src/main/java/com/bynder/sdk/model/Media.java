@@ -80,6 +80,10 @@ public class Media {
      */
     private Boolean isPublic;
     /**
+     * Media original URL.
+     */
+    private String original;
+    /**
      * Tags of the media.
      */
     private List<String> tags;
@@ -165,6 +169,10 @@ public class Media {
 
     public Boolean isPublic() {
         return isPublic;
+    }
+
+    public String getOriginal() {
+        return original;
     }
 
     public List<String> getTags() {

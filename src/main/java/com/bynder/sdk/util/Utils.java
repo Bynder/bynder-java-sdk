@@ -20,6 +20,7 @@ import com.bynder.sdk.model.Credentials;
 import com.bynder.sdk.query.ApiField;
 import com.bynder.sdk.query.ConversionType;
 import com.bynder.sdk.query.MetapropertyField;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
@@ -184,6 +185,10 @@ public final class Utils {
                 } else if (apiField.conversionType() == ConversionType.LIST_FIELD) {
                     List<?> listField = (List<?>) field.get(query);
                     params.put(apiField.name(), StringUtils.join(listField, Utils.STR_COMMA));
+                } else if (apiField.conversionType() == ConversionType.JSON_FIELD) {
+                    List<?> listField = (List<?>) field.get(query);
+                    Gson gson = new Gson();
+                    params.put(apiField.name(), gson.toJson(listField));
                 }
             }
         }

@@ -22,7 +22,7 @@ public class Tag {
      */
     private String tag;
     /**
-     * Media count of media assets with the tag.
+     * Media count of assets with the tag.
      */
     private int mediaCount;
 

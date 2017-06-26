@@ -16,6 +16,7 @@ import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.SaveMediaResponse;
 import com.bynder.sdk.model.Tag;
+import com.bynder.sdk.query.MediaDeleteQuery;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
 import com.bynder.sdk.query.MediaPropertiesQuery;
@@ -101,21 +102,30 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<DownloadUrl>> getMediaDownloadUrl(final MediaDownloadQuery mediaDownloadQuery) {
-        if (mediaDownloadQuery.getMediaItemId() == null) {
-            return bynderApi.getMediaDownloadUrl(mediaDownloadQuery.getMediaId());
-        } else {
-            return bynderApi.getMediaDownloadUrl(mediaDownloadQuery.getMediaId(), mediaDownloadQuery.getMediaItemId());
-        }
+    public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) throws IllegalAccessException {
+        Map<String, String> params = Utils.getApiParameters(mediaPropertiesQuery);
+        return bynderApi.setMediaProperties(params);
     }
 
     /**
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) throws IllegalAccessException {
-        Map<String, String> params = Utils.getApiParameters(mediaPropertiesQuery);
-        return bynderApi.setMediaProperties(params);
+    public Observable<Response<Void>> deleteMedia(final MediaDeleteQuery mediaDeleteQuery) throws IllegalAccessException {
+        Map<String, String> params = Utils.getApiParameters(mediaDeleteQuery);
+        return bynderApi.deleteMedia(params);
+    }
+
+    /**
+     * Check {@link AssetBankService} for more information.
+     */
+    @Override
+    public Observable<Response<DownloadUrl>> getMediaDownloadUrl(final MediaDownloadQuery mediaDownloadQuery) {
+        if (mediaDownloadQuery.getMediaItemId() == null) {
+            return bynderApi.getMediaDownloadUrl(mediaDownloadQuery.getMediaId());
+        } else {
+            return bynderApi.getMediaDownloadUrl(mediaDownloadQuery.getMediaId(), mediaDownloadQuery.getMediaItemId());
+        }
     }
 
     /**

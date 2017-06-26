@@ -19,6 +19,7 @@ import com.bynder.sdk.model.User;
 import com.bynder.sdk.query.LoginQuery;
 import com.bynder.sdk.service.AssetBankService;
 import com.bynder.sdk.service.BynderService;
+import com.bynder.sdk.service.CollectionService;
 import com.bynder.sdk.util.Utils;
 
 import io.reactivex.Observable;
@@ -46,6 +47,10 @@ public class BynderServiceImpl implements BynderService {
      * Instance of the asset bank service.
      */
     private AssetBankService assetBankService;
+    /**
+     * Instance of the collection service.
+     */
+    private CollectionService collectionService;
 
     /**
      * Initialises a new instance of the class.
@@ -141,6 +146,18 @@ public class BynderServiceImpl implements BynderService {
         }
 
         return assetBankService;
+    }
+
+    /**
+     * Check {@link BynderService} for more information.
+     */
+    @Override
+    public CollectionService getCollectionService() {
+        if (collectionService == null) {
+            collectionService = new CollectionServiceImpl(bynderApi);
+        }
+
+        return collectionService;
     }
 
     /**

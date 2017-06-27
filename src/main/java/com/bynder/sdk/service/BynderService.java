@@ -79,4 +79,11 @@ public interface BynderService {
      * @return Instance of {@link AssetBankService}.
      */
     AssetBankService getAssetBankService();
+
+    /**
+     * Gets an instance of the collection service to perform Bynder Collections related operations.
+     *
+     * @return Instance of {@link CollectionService}.
+     */
+    CollectionService getCollectionService();
 }

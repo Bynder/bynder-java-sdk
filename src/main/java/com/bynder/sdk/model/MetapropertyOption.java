@@ -31,7 +31,7 @@ public class MetapropertyOption {
      */
     private List<MetapropertyOption> options = new ArrayList<>();
     /**
-     * Media count of media assets with the metaproperty option.
+     * Media count of assets with the metaproperty option.
      */
     private int mediaCount;
     /**

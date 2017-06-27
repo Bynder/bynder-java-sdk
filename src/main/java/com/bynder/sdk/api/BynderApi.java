@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.bynder.sdk.model.Brand;
+import com.bynder.sdk.model.Collection;
 import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.FinaliseResponse;
 import com.bynder.sdk.model.Media;
@@ -22,6 +23,7 @@ import com.bynder.sdk.model.User;
 
 import io.reactivex.Observable;
 import retrofit2.Response;
+import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -109,6 +111,27 @@ public interface BynderApi {
     Observable<Response<Media>> getMediaInfo(@QueryMap Map<String, String> params);
 
     /**
+     * Updates the media properties (metadata) for a specific media id.
+     *
+     * @param params {@link FieldMap} with parameters.
+     *
+     * @return {@link Observable} with the {@link Response}.
+     */
+    @FormUrlEncoded
+    @POST("/api/v4/media/")
+    Observable<Response<Void>> setMediaProperties(@FieldMap Map<String, String> params);
+
+    /**
+     * Deletes a media asset.
+     *
+     * @param params {@link QueryMap} with parameters.
+     *
+     * @return {@link Observable} with the {@link Response}.
+     */
+    @DELETE("/api/v4/media/")
+    Observable<Response<Void>> deleteMedia(@QueryMap Map<String, String> params);
+
+    /**
      * Gets the download file URL for a specific media id.
      *
      * @param mediaId Media id of which we want to get the download URL.
@@ -130,15 +153,90 @@ public interface BynderApi {
     Observable<Response<DownloadUrl>> getMediaDownloadUrl(@Path("id") String mediaId, @Path("itemId") String mediaItemId);
 
     /**
-     * Updates the media properties (metadata) for a specific media id.
+     * Gets list of the collections.
+     *
+     * @param params {@link QueryMap} with parameters.
+     *
+     * @return {@link Observable} with list of {@link Collection}.
+     */
+    @GET("/api/v4/collections/")
+    Observable<Response<List<Collection>>> getCollections(@QueryMap Map<String, String> params);
+
+    /**
+     * Gets all the collection information for a specific collection id.
+     *
+     * @param params {@link QueryMap} with parameters.
+     *
+     * @return {@link Observable} with {@link Collection} information.
+     */
+    @GET("/api/v4/collections/")
+    Observable<Response<Collection>> getCollectionInfo(@QueryMap Map<String, String> params);
+
+    /**
+     * Creates a collection.
      *
      * @param params {@link FieldMap} with parameters.
      *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
-    @POST("/api/v4/media/")
-    Observable<Response<Void>> setMediaProperties(@FieldMap Map<String, String> params);
+    @POST("/api/v4/collections/")
+    Observable<Response<Void>> createCollection(@FieldMap Map<String, String> params);
+
+    /**
+     * Deletes a collection.
+     *
+     * @param params {@link QueryMap} with parameters.
+     *
+     * @return {@link Observable} with the {@link Response}.
+     */
+    @DELETE("/api/v4/collections/")
+    Observable<Response<Void>> deleteCollection(@QueryMap Map<String, String> params);
+
+    /**
+     * Gets a list of the media assets ids of a collection.
+     *
+     * @param collectionId Collection id of which we want to get the media assets ids.
+     *
+     * @return {@link Observable} with list of media assets ids.
+     */
+    @GET("/api/v4/collections/{id}/media/")
+    Observable<Response<List<String>>> getCollectionMediaIds(@Path("id") String collectionId);
+
+    /**
+     * Adds media assets to a collection.
+     *
+     * @param collectionId Collection id to which we want to add media assets.
+     * @param params {@link FieldMap} with parameters.
+     *
+     * @return {@link Observable} with the {@link Response}.
+     */
+    @FormUrlEncoded
+    @POST("/api/v4/collections/{id}/media/")
+    Observable<Response<Void>> addMediaToCollection(@Path("id") String collectionId, @FieldMap Map<String, String> params);
+
+    /**
+     * Removes media assets from a collection.
+     *
+     * @param collectionId Collection id from which we want to remove media assets.
+     * @param params {@link QueryMap} with parameters.
+     *
+     * @return {@link Observable} with the {@link Response}.
+     */
+    @DELETE("/api/v4/collections/{id}/media/")
+    Observable<Response<Void>> removeMediaFromCollection(@Path("id") String collectionId, @QueryMap Map<String, String> params);
+
+    /**
+     * Shares a collection.
+     *
+     * @param collectionId Id of the collection we want to share.
+     * @param params {@link FieldMap} with parameters.
+     *
+     * @return {@link Observable} with the {@link Response}.
+     */
+    @FormUrlEncoded
+    @POST("/api/v4/collections/{id}/share/")
+    Observable<Response<Void>> shareCollection(@Path("id") String collectionId, @FieldMap Map<String, String> params);
 
     /**
      * Initialises a file upload with Bynder and returns authorisation information to allow

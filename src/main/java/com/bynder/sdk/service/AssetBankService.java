@@ -16,6 +16,7 @@ import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.SaveMediaResponse;
 import com.bynder.sdk.model.Tag;
+import com.bynder.sdk.query.MediaDeleteQuery;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
 import com.bynder.sdk.query.MediaPropertiesQuery;
@@ -86,16 +87,6 @@ public interface AssetBankService {
     Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery) throws IllegalAccessException;
 
     /**
-     * Gets the download file URL for a specific media asset file. If the media item id was not
-     * specified, it will return the download URL of the media specified by media id.
-     *
-     * @param mediaDownloadQuery Information with the media we want to get the URL from.
-     *
-     * @return {@link Observable} with the {@link DownloadUrl} information of the media asset file.
-     */
-    Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDownloadQuery);
-
-    /**
      * Updates the properties of a media asset.
      *
      * @param mediaPropertiesQuery Information with the media asset properties new values to be
@@ -107,6 +98,28 @@ public interface AssetBankService {
      *         information.
      */
     Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery) throws IllegalAccessException;
+
+    /**
+     * Deletes a media asset.
+     *
+     * @param mediaDeleteQuery Information to identify the media asset we want to delete.
+     *
+     * @return {@link Observable} with the request {@link Response} information.
+     *
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
+     */
+    Observable<Response<Void>> deleteMedia(MediaDeleteQuery mediaDeleteQuery) throws IllegalAccessException;
+
+    /**
+     * Gets the download file URL for a specific media asset file. If the media item id was not
+     * specified, it will return the download URL of the media specified by media id.
+     *
+     * @param mediaDownloadQuery Information with the media we want to get the URL from.
+     *
+     * @return {@link Observable} with the {@link DownloadUrl} information of the media asset file.
+     */
+    Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDownloadQuery);
 
     /**
      * Uploads a file with the information specified in the query parameter.

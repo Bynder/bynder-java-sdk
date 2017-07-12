@@ -28,6 +28,12 @@ public class MediaQuery {
     @ApiField(name = "keyword")
     private String keyword;
     /**
+     * This property has to be set to 1 (TRUE) for the API to retrieved only media assets marked as
+     * public.
+     */
+    @ApiField(name = "isPublic")
+    private Boolean isPublic;
+    /**
      * Limit of results per request. Maximum: 1000. Default: 50.
      */
     @ApiField(name = "limit")
@@ -58,6 +64,15 @@ public class MediaQuery {
 
     public MediaQuery setKeyword(final String keyword) {
         this.keyword = keyword;
+        return this;
+    }
+
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+
+    public MediaQuery setIsPublic(final Boolean isPublic) {
+        this.isPublic = isPublic;
         return this;
     }
 

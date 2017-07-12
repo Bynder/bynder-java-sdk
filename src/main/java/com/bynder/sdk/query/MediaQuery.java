@@ -31,7 +31,7 @@ public class MediaQuery {
      * This property has to be set to 1 (TRUE) for the API to retrieved only media assets marked as
      * public.
      */
-    @ApiField(name = "isPublic")
+    @ApiField(name = "isPublic", conversionType = ConversionType.BOOLEAN_FIELD)
     private Boolean isPublic;
     /**
      * Limit of results per request. Maximum: 1000. Default: 50.

@@ -189,6 +189,9 @@ public final class Utils {
                     List<?> listField = (List<?>) field.get(query);
                     Gson gson = new Gson();
                     params.put(apiField.name(), gson.toJson(listField));
+                } else if (apiField.conversionType() == ConversionType.BOOLEAN_FIELD) {
+                    Boolean booleanField = (Boolean) field.get(query);
+                    params.put(apiField.name(), booleanField.booleanValue() == true ? "1" : "0");
                 }
             }
         }

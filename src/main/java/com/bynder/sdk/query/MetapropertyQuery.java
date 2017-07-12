@@ -19,7 +19,6 @@ public class MetapropertyQuery {
      */
     @ApiField(name = "count")
     private Boolean count;
-
     /**
      * Filters the count results by media asset type. It only makes sense to be defined if the count
      * parameter was set to 1. Possible values: image, document, audio, video.

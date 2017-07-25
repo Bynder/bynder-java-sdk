@@ -19,6 +19,7 @@ import com.bynder.sdk.model.PollStatus;
 import com.bynder.sdk.model.SaveMediaResponse;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.UploadRequest;
+import com.bynder.sdk.model.Usage;
 import com.bynder.sdk.model.User;
 
 import io.reactivex.Observable;
@@ -151,6 +152,12 @@ public interface BynderApi {
      */
     @GET("/api/v4/media/{id}/download/{itemId}/")
     Observable<Response<DownloadUrl>> getMediaDownloadUrl(@Path("id") String mediaId, @Path("itemId") String mediaItemId);
+
+    /**
+     *
+     */
+    @GET("/api/media/usage/")
+    Observable<Response<Usage>> createUsage(@QueryMap Map<String, String> params);
 
     /**
      * Gets list of the collections.

@@ -16,6 +16,7 @@ import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.SaveMediaResponse;
 import com.bynder.sdk.model.Tag;
+import com.bynder.sdk.model.Usage;
 import com.bynder.sdk.query.MediaDeleteQuery;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
@@ -23,6 +24,7 @@ import com.bynder.sdk.query.MediaPropertiesQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
+import com.bynder.sdk.query.UsageCreateQuery;
 import com.bynder.sdk.service.upload.UploadProgress;
 import com.bynder.sdk.util.Utils;
 
@@ -120,6 +122,12 @@ public interface AssetBankService {
      * @return {@link Observable} with the {@link DownloadUrl} information of the media asset file.
      */
     Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDownloadQuery);
+
+    /**
+     * @throws IllegalAccessException
+     *
+     */
+    Observable<Response<Usage>> createUsage(UsageCreateQuery usageCreateQuery) throws IllegalAccessException;
 
     /**
      * Uploads a file with the information specified in the query parameter.

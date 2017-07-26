@@ -29,7 +29,7 @@ public class UsageCreateQuery {
     /**
      * URI with the location of the asset in the integration.
      */
-    @ApiField(name = "location")
+    @ApiField(name = "uri")
     private String location;
     /**
      * Additional information about the asset usage.

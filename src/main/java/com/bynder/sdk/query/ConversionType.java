@@ -10,5 +10,5 @@ package com.bynder.sdk.query;
  * Enum to represent the type of conversion.
  */
 public enum ConversionType {
-    LIST_FIELD, METAPROPERTY_FIELD, JSON_FIELD, NONE
+    LIST_FIELD, METAPROPERTY_FIELD, JSON_FIELD, BOOLEAN_FIELD, NONE
 }

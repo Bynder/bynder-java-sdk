@@ -25,6 +25,8 @@ import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
 import com.bynder.sdk.query.UsageCreateQuery;
+import com.bynder.sdk.query.UsageDeleteQuery;
+import com.bynder.sdk.query.UsageQuery;
 import com.bynder.sdk.service.upload.UploadProgress;
 import com.bynder.sdk.util.Utils;
 
@@ -124,10 +126,40 @@ public interface AssetBankService {
     Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDownloadQuery);
 
     /**
-     * @throws IllegalAccessException
+     * Creates a usage record for a media asset.
      *
+     * @param usageCreateQuery Information about the asset usage we want to create.
+     *
+     * @return {@link Observable} with {@link Usage} information.
+     *
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
      */
     Observable<Response<Usage>> createUsage(UsageCreateQuery usageCreateQuery) throws IllegalAccessException;
+
+    /**
+     * Gets all the media assets usage records.
+     *
+     * @param usageQuery Information about the asset usage we want to get the information from.
+     *
+     * @return {@link Observable} with list of {@link Usage}.
+     *
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
+     */
+    Observable<Response<List<Usage>>> getUsage(UsageQuery usageQuery) throws IllegalAccessException;
+
+    /**
+     * Deletes a usage record of a media asset.
+     *
+     * @param usageDeleteQuery Information about the asset usage we want to delete.
+     *
+     * @return {@link Observable} with the request {@link Response} information.
+     *
+     * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
+     *         information.
+     */
+    Observable<Response<Void>> deleteUsage(UsageDeleteQuery usageDeleteQuery) throws IllegalAccessException;
 
     /**
      * Uploads a file with the information specified in the query parameter.

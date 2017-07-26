@@ -8,39 +8,66 @@ package com.bynder.sdk.model;
 
 import java.util.Map;
 
+import com.bynder.sdk.api.BynderApi;
+import com.google.gson.annotations.SerializedName;
+
+/**
+ * Usage model returned by {@link BynderApi#createUsage(Map)} and {@link BynderApi#getUsage(Map)}.
+ */
 public class Usage {
 
+    /**
+     * Usage id.
+     */
     private String id;
-    private String assetId;
+    /**
+     * Integration id.
+     */
     private String integrationId;
+    /**
+     * Asset id.
+     */
+    private String assetId;
+    /**
+     * Integration information.
+     */
     private Map<String, String> integration;
-    private String uri;
+    /**
+     * Timestamp of the asset usage creation.
+     */
     private String timestamp;
+    /**
+     * URI with the location of the asset in the integration.
+     */
+    @SerializedName(value = "uri")
+    private String location;
+    /**
+     * Additional information about the asset usage.
+     */
     private String additional;
 
     public String getId() {
         return id;
     }
 
-    public String getAssetId() {
-        return assetId;
-    }
-
     public String getIntegrationId() {
         return integrationId;
     }
 
+    public String getAssetId() {
+        return assetId;
+    }
 
     public Map<String, String> getIntegration() {
         return integration;
     }
 
-    public String getUri() {
-        return uri;
-    }
-
     public String getTimestamp() {
         return timestamp;
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     public String getAdditional() {

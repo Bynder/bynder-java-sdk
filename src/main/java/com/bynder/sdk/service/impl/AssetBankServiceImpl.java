@@ -25,6 +25,8 @@ import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
 import com.bynder.sdk.query.UsageCreateQuery;
+import com.bynder.sdk.query.UsageDeleteQuery;
+import com.bynder.sdk.query.UsageQuery;
 import com.bynder.sdk.service.AssetBankService;
 import com.bynder.sdk.service.upload.FileUploader;
 import com.bynder.sdk.service.upload.UploadProgress;
@@ -131,12 +133,30 @@ public class AssetBankServiceImpl implements AssetBankService {
     }
 
     /**
-     *
+     * Check {@link AssetBankService} for more information.
      */
     @Override
     public Observable<Response<Usage>> createUsage(final UsageCreateQuery usageCreateQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(usageCreateQuery);
         return bynderApi.createUsage(params);
+    }
+
+    /**
+     * Check {@link AssetBankService} for more information.
+     */
+    @Override
+    public Observable<Response<List<Usage>>> getUsage(final UsageQuery usageQuery) throws IllegalAccessException {
+        Map<String, String> params = Utils.getApiParameters(usageQuery);
+        return bynderApi.getUsage(params);
+    }
+
+    /**
+     * Check {@link AssetBankService} for more information.
+     */
+    @Override
+    public Observable<Response<Void>> deleteUsage(final UsageDeleteQuery usageDeleteQuery) throws IllegalAccessException {
+        Map<String, String> params = Utils.getApiParameters(usageDeleteQuery);
+        return bynderApi.deleteUsage(params);
     }
 
     /**

@@ -16,6 +16,7 @@ import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.SaveMediaResponse;
 import com.bynder.sdk.model.Tag;
+import com.bynder.sdk.model.Usage;
 import com.bynder.sdk.query.MediaDeleteQuery;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
@@ -23,6 +24,9 @@ import com.bynder.sdk.query.MediaPropertiesQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UploadQuery;
+import com.bynder.sdk.query.UsageCreateQuery;
+import com.bynder.sdk.query.UsageDeleteQuery;
+import com.bynder.sdk.query.UsageQuery;
 import com.bynder.sdk.service.AssetBankService;
 import com.bynder.sdk.service.upload.FileUploader;
 import com.bynder.sdk.service.upload.UploadProgress;
@@ -126,6 +130,33 @@ public class AssetBankServiceImpl implements AssetBankService {
         } else {
             return bynderApi.getMediaDownloadUrl(mediaDownloadQuery.getMediaId(), mediaDownloadQuery.getMediaItemId());
         }
+    }
+
+    /**
+     * Check {@link AssetBankService} for more information.
+     */
+    @Override
+    public Observable<Response<Usage>> createUsage(final UsageCreateQuery usageCreateQuery) throws IllegalAccessException {
+        Map<String, String> params = Utils.getApiParameters(usageCreateQuery);
+        return bynderApi.createUsage(params);
+    }
+
+    /**
+     * Check {@link AssetBankService} for more information.
+     */
+    @Override
+    public Observable<Response<List<Usage>>> getUsage(final UsageQuery usageQuery) throws IllegalAccessException {
+        Map<String, String> params = Utils.getApiParameters(usageQuery);
+        return bynderApi.getUsage(params);
+    }
+
+    /**
+     * Check {@link AssetBankService} for more information.
+     */
+    @Override
+    public Observable<Response<Void>> deleteUsage(final UsageDeleteQuery usageDeleteQuery) throws IllegalAccessException {
+        Map<String, String> params = Utils.getApiParameters(usageDeleteQuery);
+        return bynderApi.deleteUsage(params);
     }
 
     /**

@@ -19,6 +19,7 @@ import com.bynder.sdk.model.PollStatus;
 import com.bynder.sdk.model.SaveMediaResponse;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.UploadRequest;
+import com.bynder.sdk.model.Usage;
 import com.bynder.sdk.model.User;
 
 import io.reactivex.Observable;
@@ -151,6 +152,37 @@ public interface BynderApi {
      */
     @GET("/api/v4/media/{id}/download/{itemId}/")
     Observable<Response<DownloadUrl>> getMediaDownloadUrl(@Path("id") String mediaId, @Path("itemId") String mediaItemId);
+
+    /**
+     * Creates a usage record for a media asset.
+     *
+     * @param params {@link FieldMap} with parameters.
+     *
+     * @return {@link Observable} with {@link Usage} information.
+     */
+    @FormUrlEncoded
+    @POST("/api/media/usage/")
+    Observable<Response<Usage>> createUsage(@FieldMap Map<String, String> params);
+
+    /**
+     * Gets all the media assets usage records.
+     *
+     * @param params {@link QueryMap} with parameters.
+     *
+     * @return {@link Observable} with list of {@link Usage}.
+     */
+    @GET("/api/media/usage/")
+    Observable<Response<List<Usage>>> getUsage(@QueryMap Map<String, String> params);
+
+    /**
+     * Deletes a usage record of a media asset.
+     *
+     * @param params {@link QueryMap} with parameters.
+     *
+     * @return {@link Observable} with the {@link Response}.
+     */
+    @DELETE("/api/media/usage/")
+    Observable<Response<Void>> deleteUsage(@QueryMap Map<String, String> params);
 
     /**
      * Gets list of the collections.

@@ -37,6 +37,12 @@ Observable<Response<Void>> deleteMedia(MediaDeleteQuery mediaDeleteQuery);
 
 Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDownloadQuery);
 
+Observable<Response<Usage>> createUsage(UsageCreateQuery usageCreateQuery);
+
+Observable<Response<List<Usage>>> getUsage(UsageQuery usageQuery);
+
+Observable<Response<Void>> deleteUsage(UsageDeleteQuery usageDeleteQuery);
+
 Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
 
 Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);

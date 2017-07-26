@@ -21,7 +21,6 @@ public class UsageDeleteQuery {
      */
     @ApiField(name = "asset_id")
     private String assetId;
-
     /**
      * URI with the location of the asset in the integration.
      */

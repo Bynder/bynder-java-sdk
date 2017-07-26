@@ -23,10 +23,12 @@ public class Usage {
     /**
      * Integration id.
      */
+    @SerializedName(value = "integration_id")
     private String integrationId;
     /**
      * Asset id.
      */
+    @SerializedName(value = "asset_id")
     private String assetId;
     /**
      * Integration information.

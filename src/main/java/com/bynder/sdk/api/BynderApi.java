@@ -156,12 +156,13 @@ public interface BynderApi {
     /**
      * Creates a usage record for a media asset.
      *
-     * @param params {@link QueryMap} with parameters.
+     * @param params {@link FieldMap} with parameters.
      *
      * @return {@link Observable} with {@link Usage} information.
      */
-    @GET("/api/media/usage/")
-    Observable<Response<Usage>> createUsage(@QueryMap Map<String, String> params);
+    @FormUrlEncoded
+    @POST("/api/media/usage/")
+    Observable<Response<Usage>> createUsage(@FieldMap Map<String, String> params);
 
     /**
      * Gets all the media assets usage records.

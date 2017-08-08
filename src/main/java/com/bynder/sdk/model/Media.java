@@ -104,6 +104,9 @@ public class Media {
      * Generated thumbnails for the media.
      */
     private Map<String, String> thumbnails;
+
+    private Map<String, Double> activeOriginalFocusPoint;
+
     /**
      * Media items for the media. Including derivatives, additional and original. To get this
      * information we have to call {@link BynderApi#getMediaInfo(Map)} with the media id and
@@ -198,4 +201,9 @@ public class Media {
     public List<MediaItem> getMediaItems() {
         return mediaItems;
     }
+
+    public Map<String, Double> getActiveOriginalFocusPoint() {
+        return activeOriginalFocusPoint;
+    }
+
 }

@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
- *
+ * <p>
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
@@ -35,13 +35,25 @@ public class Settings {
      * Oauth token secret.
      */
     private String tokenSecret;
+    /**
+     * options for the http connection to Bynder.
+     */
+    private HttpConnectionSettings httpConnectionSettings;
 
-    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token, final String tokenSecret) {
+
+    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token,
+                    final String tokenSecret) {
         this.baseUrl = baseUrl;
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
         this.token = token;
         this.tokenSecret = tokenSecret;
+    }
+
+    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token,
+                    final String tokenSecret, final HttpConnectionSettings httpConnectionSettings) {
+        this(baseUrl, consumerKey, consumerSecret, token, tokenSecret);
+        this.httpConnectionSettings = httpConnectionSettings;
     }
 
     public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret) {
@@ -68,5 +80,9 @@ public class Settings {
 
     public String getTokenSecret() {
         return tokenSecret;
+    }
+
+    public HttpConnectionSettings getHttpConnectionSettings() {
+        return httpConnectionSettings;
     }
 }

@@ -79,12 +79,12 @@ public class UtilsTest {
     }
 
     /**
-     * Tests that {@link Utils#createApiService(Class, URL, String, String, String, String)}
+     * Tests that {@link Utils#createApiService(Class, URL, String, String, String, String, com.bynder.sdk.model.HttpConnectionSettings)}
      * correctly creates the API endpoints defined in a given interface.
      */
     @Test
     public void createApiServiceTest() throws MalformedURLException {
-        TestApi testApi = Utils.createApiService(TestApi.class, new URL("https://example.bynder.com"), new Credentials("consumerKey", "consumerSecret", "tokenKey", "tokenSecret"));
+        TestApi testApi = Utils.createApiService(TestApi.class, new URL("https://example.bynder.com"), new Credentials("consumerKey", "consumerSecret", "tokenKey", "tokenSecret"), null);
         assertNotNull(testApi);
         assertTrue(testApi.getTestMethod() instanceof Observable<?>);
     }

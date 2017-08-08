@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 
 import com.bynder.sdk.model.Credentials;
+import com.bynder.sdk.model.HttpConnectionSettings;
 import com.bynder.sdk.query.ApiField;
 import com.bynder.sdk.query.ConversionType;
 import com.bynder.sdk.query.MetapropertyField;
@@ -95,10 +96,12 @@ public final class Utils {
      * Creates an instance of {@link OkHttpClient}.
      *
      * @param consumer {@link OkHttpOAuthConsumer} instance.
+     * @param httpConnectionSettings settings for the http connection to Bynder
      *
      * @return {@link OkHttpClient} instance used for API requests.
      */
-    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer) {
+    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer, HttpConnectionSettings
+            httpConnectionSettings) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.interceptors().clear();
         httpClient.addInterceptor(new SigningInterceptor(consumer));
@@ -106,10 +109,19 @@ public final class Utils {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.addInterceptor(interceptor);
-
-        httpClient.readTimeout(30, TimeUnit.SECONDS);
-        httpClient.connectTimeout(30, TimeUnit.SECONDS);
-
+        if (httpConnectionSettings == null) {
+            httpConnectionSettings = new HttpConnectionSettings();
+        }
+        if (httpConnectionSettings.getCustomInterceptor() != null) {
+            httpClient.addInterceptor(httpConnectionSettings.getCustomInterceptor());
+        }
+        httpClient.retryOnConnectionFailure(httpConnectionSettings.isRetryOnConnectionFailure());
+        httpClient.readTimeout(httpConnectionSettings.getReadTimeoutSeconds(), TimeUnit.SECONDS);
+        httpClient.connectTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
+        if (httpConnectionSettings.getSslContext() != null && httpConnectionSettings.getTrustManager() != null) {
+            httpClient.sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(),
+                    httpConnectionSettings.getTrustManager());
+        }
         return httpClient.build();
     }
 
@@ -120,12 +132,14 @@ public final class Utils {
      * @param apiInterface API interface class.
      * @param baseUrl Domain URL where we want to point the API calls.
      * @param credentials Token credentials to call the API.
+     * @param httpConnectionSettings settings for the http connection to Bynder
      *
      * @return Instance of the API interface class implementation.
      */
-    public static <T> T createApiService(final Class<T> apiInterface, final URL baseUrl, final Credentials credentials) {
-        OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(credentials.getConsumerKey(), credentials.getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
-        OkHttpClient httpClient = createHttpClient(oauthConsumer);
+    public static <T> T createApiService(final Class<T> apiInterface, final URL baseUrl, final Credentials credentials, HttpConnectionSettings httpConnectionSettings) {
+        OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(credentials.getConsumerKey(), credentials
+                .getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
+        OkHttpClient httpClient = createHttpClient(oauthConsumer, httpConnectionSettings);
 
         Builder builder = new Builder();
         builder.baseUrl(baseUrl.toString());

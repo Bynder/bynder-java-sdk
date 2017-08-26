@@ -6,8 +6,6 @@
  */
 package com.bynder.sdk.model;
 
-import java.util.List;
-
 import com.bynder.sdk.api.BynderApi;
 
 /**
@@ -50,7 +48,7 @@ public class Derivative {
     /**
      * Derivative allowed file types.
      */
-    private List<String> allowedTypes;
+    private String allowedTypes;
 
     public String getPrefix() {
         return prefix;
@@ -84,7 +82,7 @@ public class Derivative {
         return isExtent;
     }
 
-    public List<String> getAllowedTypes() {
+    public String getAllowedTypes() {
         return allowedTypes;
     }
 }

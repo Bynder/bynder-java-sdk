@@ -41,6 +41,10 @@ public class Metaproperty {
      * Order in which the metaproperty should appear.
      */
     private int zindex;
+    /**
+     * Metaproperty type.
+     */
+    private String type;
 
     public String getId() {
         return id;
@@ -64,5 +68,9 @@ public class Metaproperty {
 
     public int getZindex() {
         return zindex;
+    }
+
+    public String getType() {
+        return type;
     }
 }

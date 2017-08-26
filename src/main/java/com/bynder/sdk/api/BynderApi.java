@@ -11,6 +11,7 @@ import java.util.Map;
 
 import com.bynder.sdk.model.Brand;
 import com.bynder.sdk.model.Collection;
+import com.bynder.sdk.model.Derivative;
 import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.FinaliseResponse;
 import com.bynder.sdk.model.Media;
@@ -64,6 +65,14 @@ public interface BynderApi {
      */
     @POST("/api/v4/oauth/access_token/")
     Observable<Response<String>> getAccessToken();
+
+    /**
+     * Gets list of the account derivatives.
+     *
+     * @return {@link Observable} with list of {@link Derivative}.
+     */
+    @GET("/api/v4/account/derivatives/")
+    Observable<Response<List<Derivative>>> getDerivatives();
 
     /**
      * Gets list of the brands.

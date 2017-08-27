@@ -21,11 +21,6 @@ public class Usage {
      */
     private String id;
     /**
-     * Integration id.
-     */
-    @SerializedName(value = "integration_id")
-    private String integrationId;
-    /**
      * Asset id.
      */
     @SerializedName(value = "asset_id")
@@ -50,10 +45,6 @@ public class Usage {
 
     public String getId() {
         return id;
-    }
-
-    public String getIntegrationId() {
-        return integrationId;
     }
 
     public String getAssetId() {

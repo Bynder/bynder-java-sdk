@@ -17,6 +17,8 @@ URL getAuthoriseUrl(final String callbackUrl);
 Observable<String> getAccessToken();
 
 void logout();
+
+Observable<Response<List<Derivative>>> getDerivatives();
 ```
 
 #### Asset Bank Service

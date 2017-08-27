@@ -8,12 +8,14 @@ package com.bynder.sdk.service.impl;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.Credentials;
+import com.bynder.sdk.model.Derivative;
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
 import com.bynder.sdk.query.LoginQuery;
@@ -134,6 +136,11 @@ public class BynderServiceImpl implements BynderService {
     @Override
     public void logout() {
         this.credentials.reset();
+    }
+
+    @Override
+    public Observable<Response<List<Derivative>>> getDerivatives() {
+        return bynderApi.getDerivatives();
     }
 
     /**

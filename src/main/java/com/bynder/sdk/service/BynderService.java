@@ -9,13 +9,16 @@ package com.bynder.sdk.service;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
+import com.bynder.sdk.model.Derivative;
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
 import com.bynder.sdk.util.Utils;
 
 import io.reactivex.Observable;
+import retrofit2.Response;
 
 /**
  * Interface to login to Bynder and to get instance of {@link AssetBankService}.
@@ -72,6 +75,13 @@ public interface BynderService {
      * still work.
      */
     void logout();
+
+    /**
+     * Gets the list of the derivatives configured for the current account.
+     *
+     * @return Observable with the list of {@link Derivative}.
+     */
+    Observable<Response<List<Derivative>>> getDerivatives();
 
     /**
      * Gets an instance of the asset bank service to perform Bynder Asset Bank operations.

@@ -83,7 +83,8 @@ public final class Utils {
      *
      * @return {@link OkHttpOAuthConsumer} instance to create the HTTP client.
      */
-    private static OkHttpOAuthConsumer createHttpOAuthConsumer(final String consumerKey, final String consumerSecret, final String tokenKey, final String tokenSecret) {
+    private static OkHttpOAuthConsumer createHttpOAuthConsumer(final String consumerKey, final String consumerSecret, final String tokenKey, final
+    String tokenSecret) {
         OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(consumerKey, consumerSecret);
 
         if (tokenKey != null && tokenSecret != null) {
@@ -96,12 +97,22 @@ public final class Utils {
      * Creates an instance of {@link OkHttpClient}.
      *
      * @param consumer {@link OkHttpOAuthConsumer} instance.
-     * @param httpConnectionSettings settings for the http connection to Bynder
      *
      * @return {@link OkHttpClient} instance used for API requests.
      */
-    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer, HttpConnectionSettings
-            httpConnectionSettings) {
+    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer) {
+        return createHttpClient(consumer, null);
+    }
+
+    /**
+     * Creates an instance of {@link OkHttpClient}.
+     *
+     * @param consumer {@link OkHttpOAuthConsumer} instance.
+     * @param httpConnectionSettings Settings for the http connection to Bynder
+     *
+     * @return {@link OkHttpClient} instance used for API requests.
+     */
+    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer, HttpConnectionSettings httpConnectionSettings) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.interceptors().clear();
         httpClient.addInterceptor(new SigningInterceptor(consumer));
@@ -119,8 +130,7 @@ public final class Utils {
         httpClient.readTimeout(httpConnectionSettings.getReadTimeoutSeconds(), TimeUnit.SECONDS);
         httpClient.connectTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
         if (httpConnectionSettings.getSslContext() != null && httpConnectionSettings.getTrustManager() != null) {
-            httpClient.sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(),
-                    httpConnectionSettings.getTrustManager());
+            httpClient.sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(), httpConnectionSettings.getTrustManager());
         }
         return httpClient.build();
     }
@@ -132,7 +142,7 @@ public final class Utils {
      * @param apiInterface API interface class.
      * @param baseUrl Domain URL where we want to point the API calls.
      * @param credentials Token credentials to call the API.
-     * @param httpConnectionSettings settings for the http connection to Bynder
+     * @param httpConnectionSettings Settings for the http connection to Bynder
      *
      * @return Instance of the API interface class implementation.
      */

@@ -36,13 +36,12 @@ public class Settings {
      */
     private String tokenSecret;
     /**
-     * options for the http connection to Bynder.
+     * Options for the http connection to Bynder.
      */
     private HttpConnectionSettings httpConnectionSettings;
 
 
-    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token,
-                    final String tokenSecret) {
+    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token, final String tokenSecret) {
         this.baseUrl = baseUrl;
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
@@ -50,8 +49,8 @@ public class Settings {
         this.tokenSecret = tokenSecret;
     }
 
-    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token,
-                    final String tokenSecret, final HttpConnectionSettings httpConnectionSettings) {
+    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token, final String tokenSecret,
+                    final HttpConnectionSettings httpConnectionSettings) {
         this(baseUrl, consumerKey, consumerSecret, token, tokenSecret);
         this.httpConnectionSettings = httpConnectionSettings;
     }

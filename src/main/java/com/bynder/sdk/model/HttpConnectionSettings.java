@@ -13,37 +13,33 @@ public class HttpConnectionSettings {
     public static final int DEFAULT_TIMEOUT_SECONDS = 30;
 
     /**
-     * SSLContext for the connection to Bynder.
-     * Allows for example to send a client SSL cert.
-     * Can be only used if a trustManager is provided.
+     * SSL Context for the connection to Bynder.
+     * Allows for example to send a client SSL certificate.
+     * Can only be used if a trustManager is provided.
      */
     private SSLContext sslContext;
     /**
-     * SSL TrustManager to be used for the connection to Bynder.
+     * SSL trust manager to be used for the connection to Bynder.
      */
     private X509TrustManager trustManager;
     /**
-     * A custom OkHttp Interceptor. Can for example be used to transform urls to an ESB.
+     * A custom OkHttp Interceptor. Can be used to transform URLs to an ESB.
      */
     private Interceptor customInterceptor;
 
-    //read timeout in seconds for http connections to bynder
+    /**
+     * Read timeout in seconds for http connections to bynder.
+     */
     private int readTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
-    //connect timeout in seconds for http connections to bynder
+    /**
+     * Connect timeout in seconds for http connections to bynder
+     */
     private int connectTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
-    //retry connection to bynder if it fails the first time
+    /**
+     * Retry connection to bynder if it fails the first time
+     */
     private boolean retryOnConnectionFailure = true;
 
-    /**
-     * @param sslContext               ssl context to be used for https connections to bynder
-     * @param trustManager             ssl trust manager for the https connection to bynder
-     * @param customInterceptor        custom ok http interceptor to transform http requests. this can be used to
-     *                                 implement
-     *                                 connections through a proxy.
-     * @param readTimeoutSeconds       read timeout in seconds for http connections to bynder
-     * @param connectTimeoutSeconds    connect timeout in seconds for http connections to bynder
-     * @param retryOnConnectionFailure retry connection to bynder if it fails the first time
-     */
     public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager, final Interceptor
             customInterceptor, final int readTimeoutSeconds, final int connectTimeoutSeconds, final boolean
             retryOnConnectionFailure) {
@@ -56,10 +52,9 @@ public class HttpConnectionSettings {
     }
 
     /**
-     * empty constructor for quick access to default settings.
+     * Empty constructor, allows quick access to default settings.
      */
-    public HttpConnectionSettings() {
-    }
+    public HttpConnectionSettings() {}
 
     public SSLContext getSslContext() {
         return sslContext;

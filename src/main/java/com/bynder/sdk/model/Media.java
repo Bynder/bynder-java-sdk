@@ -104,8 +104,11 @@ public class Media {
      * Generated thumbnails for the media.
      */
     private Map<String, String> thumbnails;
-
-    private Map<String, Double> activeOriginalFocusPoint;
+    /**
+     * focus point for the current media(image)
+     * map contains two key: 'x' and 'y' for the respective focus point coordinates.
+     */
+    private Map<String, Double> focusPoint;
 
     /**
      * Media items for the media. Including derivatives, additional and original. To get this
@@ -202,8 +205,8 @@ public class Media {
         return mediaItems;
     }
 
-    public Map<String, Double> getActiveOriginalFocusPoint() {
-        return activeOriginalFocusPoint;
+    public Map<String, Double> getFocusPoint() {
+        return focusPoint;
     }
 
 }

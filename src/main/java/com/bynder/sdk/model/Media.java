@@ -105,8 +105,8 @@ public class Media {
      */
     private Map<String, String> thumbnails;
     /**
-     * Focus point for the current media(image)
-     * The Map contains two keys: 'x' and 'y' for the respective focus point coordinates.
+     * Focus point of the media.
+     * The Map contains two keys: "x" and "y" for the respective focus point coordinates.
      */
     @SerializedName(value = "activeOriginalFocusPoint")
     private Map<String, Double> focusPoint;
@@ -209,5 +209,4 @@ public class Media {
     public Map<String, Double> getFocusPoint() {
         return focusPoint;
     }
-
 }

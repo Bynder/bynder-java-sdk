@@ -129,6 +129,23 @@ BynderService bynderService = BynderServiceImpl.create(new Settings("https://exa
                                                                     "token secret"));
 ```
 
+If you need to configure extra HTTP connection settings like SSL context (to allow the implementation of mutual SSL), timeouts and custom interceptor, create an instance of **HttpConnectionSettings** and add it to the **Settings** constructor:
+```java
+HttpConnectionSettings httpConnectionSettings = new HttpConnectionSettings(sslContext,
+                                                                           trustManager,
+                                                                           customInterceptor,
+                                                                           readTimeoutSeconds,
+                                                                           connectTimeoutSeconds,
+                                                                           retryOnConnectionFailure);
+
+BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.bynder.com",
+                                                                    "consumer key",
+                                                                    "consumer secret",
+                                                                    "token",
+                                                                    "token secret",
+                                                                    httpConnectionSettings));
+```
+
 After instantiating the **BynderService** class successfully it is possible to call any of the methods listed in the section **Current Status**. Example:
 
 #### Reactive way to get the Observable

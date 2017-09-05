@@ -35,6 +35,11 @@ public class Settings {
      * Oauth token secret.
      */
     private String tokenSecret;
+    /**
+     * Settings for the HTTP connection to Bynder.
+     */
+    private HttpConnectionSettings httpConnectionSettings;
+
 
     public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token, final String tokenSecret) {
         this.baseUrl = baseUrl;
@@ -42,6 +47,12 @@ public class Settings {
         this.consumerSecret = consumerSecret;
         this.token = token;
         this.tokenSecret = tokenSecret;
+        this.httpConnectionSettings = new HttpConnectionSettings();
+    }
+
+    public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret, final String token, final String tokenSecret, final HttpConnectionSettings httpConnectionSettings) {
+        this(baseUrl, consumerKey, consumerSecret, token, tokenSecret);
+        this.httpConnectionSettings = httpConnectionSettings;
     }
 
     public Settings(final URL baseUrl, final String consumerKey, final String consumerSecret) {
@@ -68,5 +79,9 @@ public class Settings {
 
     public String getTokenSecret() {
         return tokenSecret;
+    }
+
+    public HttpConnectionSettings getHttpConnectionSettings() {
+        return httpConnectionSettings;
     }
 }

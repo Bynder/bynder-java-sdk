@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.Credentials;
 import com.bynder.sdk.model.Derivative;
+import com.bynder.sdk.model.HttpConnectionSettings;
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
 import com.bynder.sdk.query.LoginQuery;
@@ -42,6 +43,10 @@ public class BynderServiceImpl implements BynderService {
      */
     private Credentials credentials;
     /**
+     * Settings for the HTTP connection to Bynder.
+     */
+    private HttpConnectionSettings httpConnectionSettings;
+    /**
      * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
      */
     private BynderApi bynderApi;
@@ -59,12 +64,13 @@ public class BynderServiceImpl implements BynderService {
      *
      * @param baseUrl Base URL where we want to point the API calls.
      * @param credentials Credentials to use to call the API.
+     * @param httpConnectionSettings Settings for the http connection to Bynder
      */
-    private BynderServiceImpl(final URL baseUrl, final Credentials credentials) {
+    private BynderServiceImpl(final URL baseUrl, final Credentials credentials, final HttpConnectionSettings httpConnectionSettings) {
         this.baseUrl = baseUrl;
         this.credentials = credentials;
-
-        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials);
+        this.httpConnectionSettings = httpConnectionSettings;
+        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials, httpConnectionSettings);
     }
 
     /**
@@ -76,7 +82,7 @@ public class BynderServiceImpl implements BynderService {
      */
     public static BynderService create(final Settings settings) {
         Credentials credentials = new Credentials(settings.getConsumerKey(), settings.getConsumerSecret(), settings.getToken(), settings.getTokenSecret());
-        return new BynderServiceImpl(settings.getBaseUrl(), credentials);
+        return new BynderServiceImpl(settings.getBaseUrl(), credentials, settings.getHttpConnectionSettings());
     }
 
     /**
@@ -175,7 +181,7 @@ public class BynderServiceImpl implements BynderService {
     private void updateTokensFromResponse(final String response) {
         Map<String, String> oauthTokens = Utils.buildMapFromResponse(response);
         credentials.set(oauthTokens.get("oauth_token"), oauthTokens.get("oauth_token_secret"));
-        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials);
+        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials, httpConnectionSettings);
     }
 
     /**
@@ -194,7 +200,7 @@ public class BynderServiceImpl implements BynderService {
         return loginObservable.map(response -> {
             User user = response.body();
             credentials.set(user.getTokenKey(), user.getTokenSecret());
-            bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials);
+            bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials, httpConnectionSettings);
             return user;
         });
     }

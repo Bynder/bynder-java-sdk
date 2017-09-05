@@ -102,9 +102,9 @@ Clone the repository:
 $ git clone git@github.com:Bynder/bynder-java-sdk.git
 ```
 
-Build the project from its root with the following Maven command (skipping the GPG signing):
+Build the project from its root with the following Maven command (skipping the GPG signing and Javadocs generation):
 ```bash
-$ mvn clean install -Dgpg.skip
+$ mvn clean install -Dgpg.skip -Dmaven.javadoc.skip
 ```
 
 This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.
@@ -127,6 +127,23 @@ BynderService bynderService = BynderServiceImpl.create(new Settings("https://exa
                                                                     "consumer secret",
                                                                     "token",
                                                                     "token secret"));
+```
+
+If you need to configure extra HTTP connection settings like SSL context (to allow the implementation of mutual SSL), timeouts and custom interceptor, create an instance of **HttpConnectionSettings** and add it to the **Settings** constructor:
+```java
+HttpConnectionSettings httpConnectionSettings = new HttpConnectionSettings(sslContext,
+                                                                           trustManager,
+                                                                           customInterceptor,
+                                                                           readTimeoutSeconds,
+                                                                           connectTimeoutSeconds,
+                                                                           retryOnConnectionFailure);
+
+BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.bynder.com",
+                                                                    "consumer key",
+                                                                    "consumer secret",
+                                                                    "token",
+                                                                    "token secret",
+                                                                    httpConnectionSettings));
 ```
 
 After instantiating the **BynderService** class successfully it is possible to call any of the methods listed in the section **Current Status**. Example:

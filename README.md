@@ -72,27 +72,27 @@ Observable<Response<Void>> shareCollection(CollectionShareQuery collectionShareQ
 ## Installation
 
 ### Using lastest release
-The most recent release is Bynder Java SDK 1.0.5, released Aug 27, 2017.
-- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.0.5
+The most recent release is Bynder Java SDK 1.0.6, released Sep 5, 2017.
+- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.0.6
 
 To add a dependency on the SDK using Maven, use the following:
 ```xml
 <dependency>
   <groupId>com.bynder</groupId>
   <artifactId>bynder-java-sdk</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
 </dependency>
 ```
 To add a dependency using Gradle:
 ```
 dependencies {
-  compile 'com.bynder:bynder-java-sdk:1.0.5'
+  compile 'com.bynder:bynder-java-sdk:1.0.6'
 }
 ```
 
 ### Using source code
 Components used to install and run the project:
-* Java JDK (version 1.8.0_60)
+* Java JDK (version 1.8.0_141)
 * Apache Maven 3.3.3
 
 **Important:** Don't forget to define the environmental variables for Java and Maven!
@@ -102,9 +102,9 @@ Clone the repository:
 $ git clone git@github.com:Bynder/bynder-java-sdk.git
 ```
 
-Build the project from its root with the following Maven command (skipping the GPG signing):
+Build the project from its root with the following Maven command (skipping the GPG signing and Javadocs generation):
 ```bash
-$ mvn clean install -Dgpg.skip
+$ mvn clean install -Dgpg.skip -Dmaven.javadoc.skip
 ```
 
 This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.
@@ -127,6 +127,23 @@ BynderService bynderService = BynderServiceImpl.create(new Settings("https://exa
                                                                     "consumer secret",
                                                                     "token",
                                                                     "token secret"));
+```
+
+If you need to configure extra HTTP connection settings like SSL context (to allow the implementation of mutual SSL), timeouts and custom interceptor, create an instance of **HttpConnectionSettings** and add it to the **Settings** constructor:
+```java
+HttpConnectionSettings httpConnectionSettings = new HttpConnectionSettings(sslContext,
+                                                                           trustManager,
+                                                                           customInterceptor,
+                                                                           readTimeoutSeconds,
+                                                                           connectTimeoutSeconds,
+                                                                           retryOnConnectionFailure);
+
+BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.bynder.com",
+                                                                    "consumer key",
+                                                                    "consumer secret",
+                                                                    "token",
+                                                                    "token secret",
+                                                                    httpConnectionSettings));
 ```
 
 After instantiating the **BynderService** class successfully it is possible to call any of the methods listed in the section **Current Status**. Example:

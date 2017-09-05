@@ -105,6 +105,12 @@ public class Media {
      */
     private Map<String, String> thumbnails;
     /**
+     * Focus point of the media.
+     */
+    @SerializedName(value = "activeOriginalFocusPoint")
+    private Map<String, Double> focusPoint;
+
+    /**
      * Media items for the media. Including derivatives, additional and original. To get this
      * information we have to call {@link BynderApi#getMediaInfo(Map)} with the media id and
      * versions equal to true.
@@ -197,5 +203,9 @@ public class Media {
 
     public List<MediaItem> getMediaItems() {
         return mediaItems;
+    }
+
+    public Map<String, Double> getFocusPoint() {
+        return focusPoint;
     }
 }

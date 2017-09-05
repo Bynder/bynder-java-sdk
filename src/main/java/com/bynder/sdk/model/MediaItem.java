@@ -6,6 +6,7 @@
  */
 package com.bynder.sdk.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.bynder.sdk.api.BynderApi;
@@ -57,6 +58,10 @@ public class MediaItem {
      * Generated thumbnails for the media item.
      */
     private Map<String, String> thumbnails;
+    /**
+     * Focus point of the media item.
+     */
+    private Map<String, Double> focusPoint = new HashMap<>();
 
     public String getId() {
         return id;
@@ -96,5 +101,9 @@ public class MediaItem {
 
     public Map<String, String> getThumbnails() {
         return thumbnails;
+    }
+
+    public Map<String, Double> getFocusPoint() {
+        return focusPoint;
     }
 }

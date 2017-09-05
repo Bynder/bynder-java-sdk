@@ -83,8 +83,7 @@ public final class Utils {
      *
      * @return {@link OkHttpOAuthConsumer} instance to create the HTTP client.
      */
-    private static OkHttpOAuthConsumer createHttpOAuthConsumer(final String consumerKey, final String consumerSecret, final String tokenKey, final
-    String tokenSecret) {
+    private static OkHttpOAuthConsumer createHttpOAuthConsumer(final String consumerKey, final String consumerSecret, final String tokenKey, final String tokenSecret) {
         OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(consumerKey, consumerSecret);
 
         if (tokenKey != null && tokenSecret != null) {
@@ -97,22 +96,11 @@ public final class Utils {
      * Creates an instance of {@link OkHttpClient}.
      *
      * @param consumer {@link OkHttpOAuthConsumer} instance.
+     * @param httpConnectionSettings Settings for the HTTP connection to Bynder.
      *
      * @return {@link OkHttpClient} instance used for API requests.
      */
-    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer) {
-        return createHttpClient(consumer, null);
-    }
-
-    /**
-     * Creates an instance of {@link OkHttpClient}.
-     *
-     * @param consumer {@link OkHttpOAuthConsumer} instance.
-     * @param httpConnectionSettings Settings for the http connection to Bynder
-     *
-     * @return {@link OkHttpClient} instance used for API requests.
-     */
-    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer, HttpConnectionSettings httpConnectionSettings) {
+    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer, final HttpConnectionSettings httpConnectionSettings) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.interceptors().clear();
         httpClient.addInterceptor(new SigningInterceptor(consumer));
@@ -120,15 +108,15 @@ public final class Utils {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.addInterceptor(interceptor);
-        if (httpConnectionSettings == null) {
-            httpConnectionSettings = new HttpConnectionSettings();
-        }
+
         if (httpConnectionSettings.getCustomInterceptor() != null) {
             httpClient.addInterceptor(httpConnectionSettings.getCustomInterceptor());
         }
+
         httpClient.retryOnConnectionFailure(httpConnectionSettings.isRetryOnConnectionFailure());
         httpClient.readTimeout(httpConnectionSettings.getReadTimeoutSeconds(), TimeUnit.SECONDS);
         httpClient.connectTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
+
         if (httpConnectionSettings.getSslContext() != null && httpConnectionSettings.getTrustManager() != null) {
             httpClient.sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(), httpConnectionSettings.getTrustManager());
         }
@@ -146,9 +134,8 @@ public final class Utils {
      *
      * @return Instance of the API interface class implementation.
      */
-    public static <T> T createApiService(final Class<T> apiInterface, final URL baseUrl, final Credentials credentials, HttpConnectionSettings httpConnectionSettings) {
-        OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(credentials.getConsumerKey(), credentials
-                .getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
+    public static <T> T createApiService(final Class<T> apiInterface, final URL baseUrl, final Credentials credentials, final HttpConnectionSettings httpConnectionSettings) {
+        OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(credentials.getConsumerKey(), credentials.getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
         OkHttpClient httpClient = createHttpClient(oauthConsumer, httpConnectionSettings);
 
         Builder builder = new Builder();

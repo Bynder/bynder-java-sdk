@@ -43,6 +43,10 @@ public class BynderServiceImpl implements BynderService {
      */
     private Credentials credentials;
     /**
+     * Settings for the HTTP connection to Bynder.
+     */
+    private HttpConnectionSettings httpConnectionSettings;
+    /**
      * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
      */
     private BynderApi bynderApi;
@@ -54,20 +58,6 @@ public class BynderServiceImpl implements BynderService {
      * Instance of the collection service.
      */
     private CollectionService collectionService;
-    /**
-     * Options for the http connection to Bynder.
-     */
-    private HttpConnectionSettings httpConnectionSettings;
-
-    /**
-     * Initialises a new instance of the class.
-     *
-     * @param baseUrl Base URL where we want to point the API calls.
-     * @param credentials Credentials to use to call the API.
-     */
-    private BynderServiceImpl(final URL baseUrl, final Credentials credentials) {
-        this(baseUrl, credentials, null);
-    }
 
     /**
      * Initialises a new instance of the class.

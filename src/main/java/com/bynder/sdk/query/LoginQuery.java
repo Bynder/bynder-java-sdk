@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -15,12 +15,12 @@ public class LoginQuery {
      * Username.
      */
     @ApiField(name = "username")
-    private String username;
+    private final String username;
     /**
      * Password.
      */
     @ApiField(name = "password")
-    private String password;
+    private final String password;
 
     public LoginQuery(final String username, final String password) {
         this.username = username;

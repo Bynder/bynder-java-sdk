@@ -1,13 +1,10 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
 package com.bynder.sdk.api;
-
-import java.util.List;
-import java.util.Map;
 
 import com.bynder.sdk.model.Brand;
 import com.bynder.sdk.model.Collection;
@@ -22,8 +19,9 @@ import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.UploadRequest;
 import com.bynder.sdk.model.Usage;
 import com.bynder.sdk.model.User;
-
 import io.reactivex.Observable;
+import java.util.List;
+import java.util.Map;
 import retrofit2.Response;
 import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
@@ -42,7 +40,6 @@ public interface BynderApi {
      * Logs in to Bynder with a username and password pair.
      *
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with the {@link User} information.
      */
     @FormUrlEncoded
@@ -94,17 +91,16 @@ public interface BynderApi {
      * Gets map of the metaproperties. The key of the map returned is the name of the metaproperty.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with Map of metaproperties.
      */
     @GET("/api/v4/metaproperties/")
-    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(@QueryMap Map<String, String> params);
+    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(
+        @QueryMap Map<String, String> params);
 
     /**
      * Gets a list of media assets filtered by parameters.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with list of {@link Media}.
      */
     @GET("/api/v4/media/")
@@ -114,7 +110,6 @@ public interface BynderApi {
      * Gets all the media information for a specific media id.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with {@link Media} information.
      */
     @GET("/api/v4/media/")
@@ -124,7 +119,6 @@ public interface BynderApi {
      * Updates the media properties (metadata) for a specific media id.
      *
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
@@ -135,7 +129,6 @@ public interface BynderApi {
      * Deletes a media asset.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with the {@link Response}.
      */
     @DELETE("/api/v4/media/")
@@ -145,7 +138,6 @@ public interface BynderApi {
      * Gets the download file URL for a specific media id.
      *
      * @param mediaId Media id of which we want to get the download URL.
-     *
      * @return {@link Observable} with the {@link DownloadUrl} information of the media.
      */
     @GET("/api/v4/media/{id}/download/")
@@ -156,17 +148,16 @@ public interface BynderApi {
      *
      * @param mediaId Media id of which the media item belongs to.
      * @param mediaItemId Media item id of which we want to get the download URL.
-     *
      * @return {@link Observable} with the {@link DownloadUrl} information of the media item.
      */
     @GET("/api/v4/media/{id}/download/{itemId}/")
-    Observable<Response<DownloadUrl>> getMediaDownloadUrl(@Path("id") String mediaId, @Path("itemId") String mediaItemId);
+    Observable<Response<DownloadUrl>> getMediaDownloadUrl(@Path("id") String mediaId,
+        @Path("itemId") String mediaItemId);
 
     /**
      * Creates a usage record for a media asset.
      *
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with {@link Usage} information.
      */
     @FormUrlEncoded
@@ -177,7 +168,6 @@ public interface BynderApi {
      * Gets all the media assets usage records.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with list of {@link Usage}.
      */
     @GET("/api/media/usage/")
@@ -187,7 +177,6 @@ public interface BynderApi {
      * Deletes a usage record of a media asset.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with the {@link Response}.
      */
     @DELETE("/api/media/usage/")
@@ -197,7 +186,6 @@ public interface BynderApi {
      * Gets list of the collections.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with list of {@link Collection}.
      */
     @GET("/api/v4/collections/")
@@ -207,7 +195,6 @@ public interface BynderApi {
      * Gets all the collection information for a specific collection id.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with {@link Collection} information.
      */
     @GET("/api/v4/collections/")
@@ -217,7 +204,6 @@ public interface BynderApi {
      * Creates a collection.
      *
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
@@ -228,7 +214,6 @@ public interface BynderApi {
      * Deletes a collection.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with the {@link Response}.
      */
     @DELETE("/api/v4/collections/")
@@ -238,7 +223,6 @@ public interface BynderApi {
      * Gets a list of the media assets ids of a collection.
      *
      * @param collectionId Collection id of which we want to get the media assets ids.
-     *
      * @return {@link Observable} with list of media assets ids.
      */
     @GET("/api/v4/collections/{id}/media/")
@@ -249,42 +233,41 @@ public interface BynderApi {
      *
      * @param collectionId Collection id to which we want to add media assets.
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
     @POST("/api/v4/collections/{id}/media/")
-    Observable<Response<Void>> addMediaToCollection(@Path("id") String collectionId, @FieldMap Map<String, String> params);
+    Observable<Response<Void>> addMediaToCollection(@Path("id") String collectionId,
+        @FieldMap Map<String, String> params);
 
     /**
      * Removes media assets from a collection.
      *
      * @param collectionId Collection id from which we want to remove media assets.
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with the {@link Response}.
      */
     @DELETE("/api/v4/collections/{id}/media/")
-    Observable<Response<Void>> removeMediaFromCollection(@Path("id") String collectionId, @QueryMap Map<String, String> params);
+    Observable<Response<Void>> removeMediaFromCollection(@Path("id") String collectionId,
+        @QueryMap Map<String, String> params);
 
     /**
      * Shares a collection.
      *
      * @param collectionId Id of the collection we want to share.
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
     @POST("/api/v4/collections/{id}/share/")
-    Observable<Response<Void>> shareCollection(@Path("id") String collectionId, @FieldMap Map<String, String> params);
+    Observable<Response<Void>> shareCollection(@Path("id") String collectionId,
+        @FieldMap Map<String, String> params);
 
     /**
      * Initialises a file upload with Bynder and returns authorisation information to allow
      * uploading to the Amazon S3 bucket-endpoint.
      *
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with {@link UploadRequest} authorisation information.
      */
     @FormUrlEncoded
@@ -304,7 +287,6 @@ public interface BynderApi {
      * Registers an uploaded chunk in Bynder.
      *
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
@@ -315,7 +297,6 @@ public interface BynderApi {
      * Finalises a completely uploaded file.
      *
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with {@link FinaliseResponse} information.
      */
     @FormUrlEncoded
@@ -326,7 +307,6 @@ public interface BynderApi {
      * Gets poll processing status of finalised files.
      *
      * @param params {@link QueryMap} with parameters.
-     *
      * @return {@link Observable} with {@link PollStatus} information.
      */
     @GET("/api/v4/upload/poll/")
@@ -337,7 +317,6 @@ public interface BynderApi {
      * asset will be saved. Otherwise a new asset will be saved.
      *
      * @param params {@link FieldMap} with parameters.
-     *
      * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
     @FormUrlEncoded

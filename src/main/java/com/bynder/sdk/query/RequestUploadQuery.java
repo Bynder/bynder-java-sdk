@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -15,7 +15,7 @@ public class RequestUploadQuery {
      * Filename of the file for which we want to initialise the upload.
      */
     @ApiField(name = "filename")
-    private String filename;
+    private final String filename;
 
     public RequestUploadQuery(final String filename) {
         this.filename = filename;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,17 +6,15 @@
  */
 package com.bynder.sdk.util;
 
+import com.bynder.sdk.model.Settings;
+import com.bynder.sdk.service.BynderService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.bynder.sdk.model.Settings;
-import com.bynder.sdk.service.BynderService;
 
 /**
  * Application properties to instantiate {@link BynderService} and run the integration tests.
@@ -50,12 +48,13 @@ public final class AppProperties {
      * src/main/resources/app.properties file.
      *
      * @return {@link Settings} instance.
-     *
      * @throws MalformedURLException If no protocol is specified, or an unknown protocol is found,
-     *         or spec is null while instantiating the URL.
+     * or spec is null while instantiating the URL.
      */
     public Settings getSettings() throws MalformedURLException {
-        return new Settings(new URL(getProperty("BASE_URL")), getProperty("CONSUMER_KEY"), getProperty("CONSUMER_SECRET"), getProperty("ACCESS_TOKEN_KEY"), getProperty("ACCESS_TOKEN_SECRET"));
+        return new Settings(new URL(getProperty("BASE_URL")), getProperty("CONSUMER_KEY"),
+            getProperty("CONSUMER_SECRET"), getProperty("ACCESS_TOKEN_KEY"),
+            getProperty("ACCESS_TOKEN_SECRET"));
     }
 
     /**
@@ -63,11 +62,12 @@ public final class AppProperties {
      * src/main/resources/app.properties file.
      *
      * @return {@link Settings} instance.
-     *
      * @throws MalformedURLException If no protocol is specified, or an unknown protocol is found,
-     *         or spec is null while instantiating the URL.
+     * or spec is null while instantiating the URL.
      */
     public Settings getSettingsForLogin() throws MalformedURLException {
-        return new Settings(new URL(getProperty("BASE_URL")), getProperty("CONSUMER_KEY"), getProperty("CONSUMER_SECRET"), getProperty("REQUEST_TOKEN_KEY"), getProperty("REQUEST_TOKEN_SECRET"));
+        return new Settings(new URL(getProperty("BASE_URL")), getProperty("CONSUMER_KEY"),
+            getProperty("CONSUMER_SECRET"), getProperty("REQUEST_TOKEN_KEY"),
+            getProperty("REQUEST_TOKEN_SECRET"));
     }
 }

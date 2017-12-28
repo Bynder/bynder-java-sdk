@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,11 +6,10 @@
  */
 package com.bynder.sdk.model;
 
-import java.util.List;
-import java.util.Map;
-
 import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Model returned by {@link BynderApi#saveMedia(Map)}.

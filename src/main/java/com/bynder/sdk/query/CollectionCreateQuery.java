@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -15,7 +15,7 @@ public class CollectionCreateQuery {
      * Name of the collection.
      */
     @ApiField(name = "name")
-    private String name;
+    private final String name;
 
     /**
      * Description of the collection.

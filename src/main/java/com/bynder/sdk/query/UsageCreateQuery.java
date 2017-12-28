@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -15,12 +15,12 @@ public class UsageCreateQuery {
      * Id of the integration.
      */
     @ApiField(name = "integration_id")
-    private String integrationId;
+    private final String integrationId;
     /**
      * Id of the asset.
      */
     @ApiField(name = "asset_id")
-    private String assetId;
+    private final String assetId;
     /**
      * Timestamp of the asset usage creation.
      */

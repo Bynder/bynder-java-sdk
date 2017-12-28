@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -35,13 +35,13 @@ public class FileConverterStatus {
         return attemptsRemaining > 0;
     }
 
+    public boolean isDone() {
+        return isDone;
+    }
+
     public void setDone(final boolean success) {
         isDone = true;
         isSuccessful = success;
-    }
-
-    public boolean isDone() {
-        return isDone;
     }
 
     public boolean isSuccessful() {

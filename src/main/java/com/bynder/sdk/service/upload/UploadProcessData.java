@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,11 +6,10 @@
  */
 package com.bynder.sdk.service.upload;
 
+import com.bynder.sdk.model.UploadRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import com.bynder.sdk.model.UploadRequest;
 
 /**
  * Model to represent the upload process data of a file being uploaded to Bynder.
@@ -20,29 +19,30 @@ public class UploadProcessData {
     /**
      * File being uploaded.
      */
-    private File file;
+    private final File file;
     /**
      * Input bytes of the file being uploaded.
      */
-    private FileInputStream fileInputStream;
+    private final FileInputStream fileInputStream;
     /**
      * Upload authorisation information.
      */
-    private UploadRequest uploadRequest;
+    private final UploadRequest uploadRequest;
     /**
      * Max chunk size.
      */
-    private int maxChunkSize;
+    private final int maxChunkSize;
     /**
      * Total number of chunks.
      */
-    private int numberOfChunks;
+    private final int numberOfChunks;
     /**
      * Number of the chunk be uploaded.
      */
     private int chunkNumber;
 
-    public UploadProcessData(final File file, final FileInputStream fileInputStream, final UploadRequest uploadRequest, final int maxChunkSize) {
+    public UploadProcessData(final File file, final FileInputStream fileInputStream,
+        final UploadRequest uploadRequest, final int maxChunkSize) {
         this.file = file;
         this.fileInputStream = fileInputStream;
         this.uploadRequest = uploadRequest;

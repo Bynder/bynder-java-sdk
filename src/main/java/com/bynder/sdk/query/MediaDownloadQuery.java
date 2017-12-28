@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -15,7 +15,7 @@ public class MediaDownloadQuery {
      * Media id.
      */
     @ApiField(name = "id")
-    private String mediaId;
+    private final String mediaId;
     /**
      * Media item id. If null the URL returned will be the URL of the original media.
      */

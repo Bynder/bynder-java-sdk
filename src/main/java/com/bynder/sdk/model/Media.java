@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,12 +6,11 @@
  */
 package com.bynder.sdk.model;
 
+import com.bynder.sdk.api.BynderApi;
+import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.bynder.sdk.api.BynderApi;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Media model returned by {@link BynderApi#getMediaList(Map)} and
@@ -19,6 +18,10 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Media {
 
+    /**
+     * Property options assigned to the media.
+     */
+    private final List<String> propertyOptions = new ArrayList<>();
     /**
      * Media id.
      */
@@ -96,10 +99,6 @@ public class Media {
      * Video preview URLs.
      */
     private List<String> videoPreviewURLs;
-    /**
-     * Property options assigned to the media.
-     */
-    private List<String> propertyOptions = new ArrayList<>();
     /**
      * Generated thumbnails for the media.
      */

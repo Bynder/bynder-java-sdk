@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -16,19 +16,19 @@ public class CollectionShareQuery {
     /**
      * Id of the collection we want to share.
      */
-    private String collectionId;
+    private final String collectionId;
 
     /**
      * Email addresses of the recipients.
      */
     @ApiField(name = "recipients", conversionType = ConversionType.LIST_FIELD)
-    private List<String> recipients;
+    private final List<String> recipients;
 
     /**
      * Permission right of the recipients.
      */
     @ApiField(name = "collectionOptions")
-    private CollectionRecipientRight right;
+    private final CollectionRecipientRight right;
 
     /**
      * Indicates if the recipients need to login to view the collection.
@@ -60,7 +60,8 @@ public class CollectionShareQuery {
     @ApiField(name = "message")
     private String message;
 
-    public CollectionShareQuery(final String collectionId, final List<String> recipients, final CollectionRecipientRight right) {
+    public CollectionShareQuery(final String collectionId, final List<String> recipients,
+        final CollectionRecipientRight right) {
         this.collectionId = collectionId;
         this.recipients = recipients;
         this.right = right;

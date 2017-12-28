@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -9,7 +9,6 @@ package com.bynder.sdk.util;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
@@ -26,7 +25,8 @@ public class StringConverterFactory extends Converter.Factory {
      * information.
      */
     @Override
-    public Converter<ResponseBody, ?> responseBodyConverter(final Type type, final Annotation[] annotations, final Retrofit retrofit) {
+    public Converter<ResponseBody, ?> responseBodyConverter(final Type type,
+        final Annotation[] annotations, final Retrofit retrofit) {
         if (!String.class.equals(type)) {
             return null;
         } else {
@@ -37,7 +37,8 @@ public class StringConverterFactory extends Converter.Factory {
                         return value.string();
                     }
                     GsonConverterFactory gsonConverterFactory = GsonConverterFactory.create();
-                    return gsonConverterFactory.responseBodyConverter(type, annotations, retrofit).convert(value).toString();
+                    return gsonConverterFactory.responseBodyConverter(type, annotations, retrofit)
+                        .convert(value).toString();
                 }
             };
         }

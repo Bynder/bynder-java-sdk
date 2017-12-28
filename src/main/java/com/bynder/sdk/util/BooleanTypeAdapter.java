@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,13 +6,11 @@
  */
 package com.bynder.sdk.util;
 
-import java.lang.reflect.Type;
-import java.util.Arrays;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import retrofit2.Retrofit;
 
 /**
@@ -26,8 +24,10 @@ public class BooleanTypeAdapter implements JsonDeserializer<Boolean> {
      * more information.
      */
     @Override
-    public Boolean deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) {
-        if (Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()).contains(json.toString())) {
+    public Boolean deserialize(final JsonElement json, final Type typeOfT,
+        final JsonDeserializationContext context) {
+        if (Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString())
+            .contains(json.toString())) {
             return json.getAsBoolean();
         } else {
             try {

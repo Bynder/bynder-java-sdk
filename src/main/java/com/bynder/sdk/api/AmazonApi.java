@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,11 +6,9 @@
  */
 package com.bynder.sdk.api;
 
-import java.util.Map;
-
 import com.bynder.sdk.model.MultipartParameters;
-
 import io.reactivex.Observable;
+import java.util.Map;
 import okhttp3.RequestBody;
 import retrofit2.Response;
 import retrofit2.http.Multipart;
@@ -26,8 +24,7 @@ public interface AmazonApi {
      * Uploads a file part to Amazon.
      *
      * @param params Parameters from the {@link MultipartParameters} provided in the response of
-     *        {@link BynderApi#getUploadInformation(Map)}.
-     *
+     * {@link BynderApi#getUploadInformation(Map)}.
      * @return {@link Observable} with the {@link Response}.
      */
     @Multipart

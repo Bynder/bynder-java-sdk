@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,17 +6,20 @@
  */
 package com.bynder.sdk.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Media Item model returned by {@link BynderApi#getMediaInfo(Map)}.
  */
 public class MediaItem {
 
+    /**
+     * Focus point of the media item.
+     */
+    private final Map<String, Double> focusPoint = new HashMap<>();
     /**
      * Id of the media item.
      */
@@ -58,10 +61,6 @@ public class MediaItem {
      * Generated thumbnails for the media item.
      */
     private Map<String, String> thumbnails;
-    /**
-     * Focus point of the media item.
-     */
-    private Map<String, Double> focusPoint = new HashMap<>();
 
     public String getId() {
         return id;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -15,7 +15,7 @@ public class SaveMediaQuery {
      * Import id of a finalised and processed upload to save.
      */
     @ApiField(name = "importId")
-    private String importId;
+    private final String importId;
 
     /**
      * Brand id to save the media asset to.
@@ -35,7 +35,7 @@ public class SaveMediaQuery {
     @ApiField(name = "id")
     private String mediaId;
     /**
-     *  Flags if the media asset should be sent to the waiting room.
+     * Flags if the media asset should be sent to the waiting room.
      */
     @ApiField(name = "audit")
     private Boolean audit;

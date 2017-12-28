@@ -1,13 +1,10 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
 package com.bynder.sdk.service.impl;
-
-import java.util.List;
-import java.util.Map;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.Collection;
@@ -19,8 +16,9 @@ import com.bynder.sdk.query.CollectionRemoveMediaQuery;
 import com.bynder.sdk.query.CollectionShareQuery;
 import com.bynder.sdk.service.CollectionService;
 import com.bynder.sdk.util.Utils;
-
 import io.reactivex.Observable;
+import java.util.List;
+import java.util.Map;
 import retrofit2.Response;
 
 /**
@@ -46,7 +44,8 @@ public class CollectionServiceImpl implements CollectionService {
      * Check {@link CollectionService} for more information.
      */
     @Override
-    public Observable<Response<List<Collection>>> getCollections(final CollectionQuery collectionQuery) throws IllegalAccessException {
+    public Observable<Response<List<Collection>>> getCollections(
+        final CollectionQuery collectionQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(collectionQuery);
         return bynderApi.getCollections(params);
     }
@@ -55,7 +54,8 @@ public class CollectionServiceImpl implements CollectionService {
      * Check {@link CollectionService} for more information.
      */
     @Override
-    public Observable<Response<Collection>> getCollectionInfo(final CollectionInfoQuery collectionInfoQuery) throws IllegalAccessException {
+    public Observable<Response<Collection>> getCollectionInfo(
+        final CollectionInfoQuery collectionInfoQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(collectionInfoQuery);
         return bynderApi.getCollectionInfo(params);
     }
@@ -64,7 +64,8 @@ public class CollectionServiceImpl implements CollectionService {
      * Check {@link CollectionService} for more information.
      */
     @Override
-    public Observable<Response<Void>> createCollection(final CollectionCreateQuery collectionCreateQuery) throws IllegalAccessException {
+    public Observable<Response<Void>> createCollection(
+        final CollectionCreateQuery collectionCreateQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(collectionCreateQuery);
         return bynderApi.createCollection(params);
     }
@@ -73,7 +74,8 @@ public class CollectionServiceImpl implements CollectionService {
      * Check {@link CollectionService} for more information.
      */
     @Override
-    public Observable<Response<Void>> deleteCollection(final CollectionInfoQuery collectionInfoQuery) throws IllegalAccessException {
+    public Observable<Response<Void>> deleteCollection(
+        final CollectionInfoQuery collectionInfoQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(collectionInfoQuery);
         return bynderApi.deleteCollection(params);
     }
@@ -82,7 +84,8 @@ public class CollectionServiceImpl implements CollectionService {
      * Check {@link CollectionService} for more information.
      */
     @Override
-    public Observable<Response<List<String>>> getCollectionMediaIds(final CollectionInfoQuery collectionInfoQuery) {
+    public Observable<Response<List<String>>> getCollectionMediaIds(
+        final CollectionInfoQuery collectionInfoQuery) {
         return bynderApi.getCollectionMediaIds(collectionInfoQuery.getCollectionId());
     }
 
@@ -90,7 +93,8 @@ public class CollectionServiceImpl implements CollectionService {
      * Check {@link CollectionService} for more information.
      */
     @Override
-    public Observable<Response<Void>> addMediaToCollection(final CollectionAddMediaQuery collectionAddMediaQuery) throws IllegalAccessException {
+    public Observable<Response<Void>> addMediaToCollection(
+        final CollectionAddMediaQuery collectionAddMediaQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(collectionAddMediaQuery);
         return bynderApi.addMediaToCollection(collectionAddMediaQuery.getCollectionId(), params);
     }
@@ -99,16 +103,19 @@ public class CollectionServiceImpl implements CollectionService {
      * Check {@link CollectionService} for more information.
      */
     @Override
-    public Observable<Response<Void>> removeMediaFromCollection(final CollectionRemoveMediaQuery collectionRemoveMediaQuery) throws IllegalAccessException {
+    public Observable<Response<Void>> removeMediaFromCollection(
+        final CollectionRemoveMediaQuery collectionRemoveMediaQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(collectionRemoveMediaQuery);
-        return bynderApi.removeMediaFromCollection(collectionRemoveMediaQuery.getCollectionId(), params);
+        return bynderApi
+            .removeMediaFromCollection(collectionRemoveMediaQuery.getCollectionId(), params);
     }
 
     /**
      * Check {@link CollectionService} for more information.
      */
     @Override
-    public Observable<Response<Void>> shareCollection(final CollectionShareQuery collectionShareQuery) throws IllegalAccessException {
+    public Observable<Response<Void>> shareCollection(
+        final CollectionShareQuery collectionShareQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(collectionShareQuery);
         return bynderApi.shareCollection(collectionShareQuery.getCollectionId(), params);
     }

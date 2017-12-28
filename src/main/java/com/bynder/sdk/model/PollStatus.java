@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,10 +6,9 @@
  */
 package com.bynder.sdk.model;
 
+import com.bynder.sdk.api.BynderApi;
 import java.util.HashSet;
 import java.util.Map;
-
-import com.bynder.sdk.api.BynderApi;
 
 /**
  * Model returned by {@link BynderApi#getPollStatus(Map)}. This model is only and should be only

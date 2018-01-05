@@ -12,6 +12,7 @@ import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.SaveMediaResponse;
+import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.Usage;
 import com.bynder.sdk.query.MediaDeleteQuery;
@@ -165,6 +166,14 @@ public class AssetBankServiceImpl implements AssetBankService {
         throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(usageDeleteQuery);
         return bynderApi.deleteUsage(params);
+    }
+
+    /**
+     * Check {@link AssetBankService} for more information.
+     */
+    @Override
+    public Observable<Response<List<Smartfilter>>> getSmartfilters() {
+        return bynderApi.getSmartfilters();
     }
 
     /**

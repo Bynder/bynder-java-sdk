@@ -15,6 +15,7 @@ import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.PollStatus;
 import com.bynder.sdk.model.SaveMediaResponse;
+import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.UploadRequest;
 import com.bynder.sdk.model.Usage;
@@ -181,6 +182,14 @@ public interface BynderApi {
      */
     @DELETE("/api/media/usage/")
     Observable<Response<Void>> deleteUsage(@QueryMap Map<String, String> params);
+
+    /**
+     * Gets list of the smartfilters.
+     *
+     * @return {@link Observable} with List of smartfilters.
+     */
+    @GET("/api/v4/smartfilters/")
+    Observable<Response<List<Smartfilter>>> getSmartfilters();
 
     /**
      * Gets list of the collections.

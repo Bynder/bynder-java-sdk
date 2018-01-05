@@ -11,6 +11,7 @@ import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.SaveMediaResponse;
+import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.Usage;
 import com.bynder.sdk.query.MediaDeleteQuery;
@@ -148,6 +149,13 @@ public interface AssetBankService {
      */
     Observable<Response<Void>> deleteUsage(UsageDeleteQuery usageDeleteQuery)
         throws IllegalAccessException;
+
+    /**
+     * Get Smartfilters.
+     *
+     * @return {@link Observable} with List of {@link Smartfilter};
+     */
+    Observable<Response<List<Smartfilter>>> getSmartfilters();
 
     /**
      * Uploads a file with the information specified in the query parameter.

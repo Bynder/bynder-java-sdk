@@ -1,20 +1,10 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
 package com.bynder.sdk.util;
-
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.security.InvalidParameterException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.bynder.sdk.model.Credentials;
 import com.bynder.sdk.model.HttpConnectionSettings;
@@ -23,9 +13,16 @@ import com.bynder.sdk.query.ConversionType;
 import com.bynder.sdk.query.MetapropertyField;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.security.InvalidParameterException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.apache.commons.lang.StringUtils;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -48,14 +45,14 @@ public final class Utils {
     /**
      * Prevents the instantiation of the class.
      */
-    private Utils() {}
+    private Utils() {
+    }
 
     /**
      * Builds a {@link Map} from a API response string containing a key and value separated by a
      * &amp;.
      *
      * @param response Response string returned by the API.
-     *
      * @return {@link Map} with key and value pair.
      */
     public static Map<String, String> buildMapFromResponse(final String response) {
@@ -80,10 +77,10 @@ public final class Utils {
      * @param consumerSecret Consumer secret.
      * @param tokenKey Token key.
      * @param tokenSecret Token secret.
-     *
      * @return {@link OkHttpOAuthConsumer} instance to create the HTTP client.
      */
-    private static OkHttpOAuthConsumer createHttpOAuthConsumer(final String consumerKey, final String consumerSecret, final String tokenKey, final String tokenSecret) {
+    private static OkHttpOAuthConsumer createHttpOAuthConsumer(final String consumerKey,
+        final String consumerSecret, final String tokenKey, final String tokenSecret) {
         OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(consumerKey, consumerSecret);
 
         if (tokenKey != null && tokenSecret != null) {
@@ -97,10 +94,10 @@ public final class Utils {
      *
      * @param consumer {@link OkHttpOAuthConsumer} instance.
      * @param httpConnectionSettings Settings for the HTTP connection to Bynder.
-     *
      * @return {@link OkHttpClient} instance used for API requests.
      */
-    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer, final HttpConnectionSettings httpConnectionSettings) {
+    private static OkHttpClient createHttpClient(final OkHttpOAuthConsumer consumer,
+        final HttpConnectionSettings httpConnectionSettings) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.interceptors().clear();
         httpClient.addInterceptor(new SigningInterceptor(consumer));
@@ -115,10 +112,13 @@ public final class Utils {
 
         httpClient.retryOnConnectionFailure(httpConnectionSettings.isRetryOnConnectionFailure());
         httpClient.readTimeout(httpConnectionSettings.getReadTimeoutSeconds(), TimeUnit.SECONDS);
-        httpClient.connectTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
+        httpClient
+            .connectTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
 
-        if (httpConnectionSettings.getSslContext() != null && httpConnectionSettings.getTrustManager() != null) {
-            httpClient.sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(), httpConnectionSettings.getTrustManager());
+        if (httpConnectionSettings.getSslContext() != null
+            && httpConnectionSettings.getTrustManager() != null) {
+            httpClient.sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(),
+                httpConnectionSettings.getTrustManager());
         }
         return httpClient.build();
     }
@@ -131,18 +131,21 @@ public final class Utils {
      * @param baseUrl Domain URL where we want to point the API calls.
      * @param credentials Token credentials to call the API.
      * @param httpConnectionSettings Settings for the http connection to Bynder
-     *
      * @return Instance of the API interface class implementation.
      */
-    public static <T> T createApiService(final Class<T> apiInterface, final URL baseUrl, final Credentials credentials, final HttpConnectionSettings httpConnectionSettings) {
-        OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(credentials.getConsumerKey(), credentials.getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
+    public static <T> T createApiService(final Class<T> apiInterface, final URL baseUrl,
+        final Credentials credentials, final HttpConnectionSettings httpConnectionSettings) {
+        OkHttpOAuthConsumer oauthConsumer = createHttpOAuthConsumer(credentials.getConsumerKey(),
+            credentials.getConsumerSecret(), credentials.getToken(), credentials.getTokenSecret());
         OkHttpClient httpClient = createHttpClient(oauthConsumer, httpConnectionSettings);
 
         Builder builder = new Builder();
         builder.baseUrl(baseUrl.toString());
         builder.addConverterFactory(new StringConverterFactory());
         builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());
-        builder.addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter()).create()));
+        builder.addConverterFactory(GsonConverterFactory.create(
+            new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter())
+                .create()));
         builder.client(httpClient);
 
         Retrofit retrofit = builder.build();
@@ -155,13 +158,12 @@ public final class Utils {
      * fields of the query object that have {@link ApiField} annotation.
      *
      * @param query Query object.
-     *
      * @return Map with parameters name/value pairs to send to the API.
-     *
      * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
-     *         information.
+     * information.
      */
-    public static Map<String, String> getApiParameters(final Object query) throws IllegalAccessException {
+    public static Map<String, String> getApiParameters(final Object query)
+        throws IllegalAccessException {
         Map<String, String> params = new HashMap<>();
         Field[] fields = query.getClass().getDeclaredFields();
 
@@ -179,10 +181,10 @@ public final class Utils {
      * @param field Field information.
      * @param query Query object.
      * @param params Parameters name/value pairs to send to the API.
-     *
      * @throws IllegalAccessException If the Field object is inaccessible.
      */
-    private static void convertField(final Field field, final Object query, final Map<String, String> params) throws IllegalAccessException {
+    private static void convertField(final Field field, final Object query,
+        final Map<String, String> params) throws IllegalAccessException {
         field.setAccessible(true);
         ApiField apiField = field.getAnnotation(ApiField.class);
 
@@ -192,7 +194,10 @@ public final class Utils {
             } else {
                 if (apiField.conversionType() == ConversionType.METAPROPERTY_FIELD) {
                     MetapropertyField metapropertyField = (MetapropertyField) field.get(query);
-                    params.put(String.format("%s.%s", apiField.name(), metapropertyField.getMetapropertyId()), StringUtils.join(metapropertyField.getOptionsIds(), Utils.STR_COMMA));
+                    params.put(String
+                            .format("%s.%s", apiField.name(), metapropertyField.getMetapropertyId
+                                ()),
+                        StringUtils.join(metapropertyField.getOptionsIds(), Utils.STR_COMMA));
                 } else if (apiField.conversionType() == ConversionType.LIST_FIELD) {
                     List<?> listField = (List<?>) field.get(query);
                     params.put(apiField.name(), StringUtils.join(listField, Utils.STR_COMMA));
@@ -202,7 +207,7 @@ public final class Utils {
                     params.put(apiField.name(), gson.toJson(listField));
                 } else if (apiField.conversionType() == ConversionType.BOOLEAN_FIELD) {
                     Boolean booleanField = (Boolean) field.get(query);
-                    params.put(apiField.name(), booleanField.booleanValue() == true ? "1" : "0");
+                    params.put(apiField.name(), booleanField ? "1" : "0");
                 }
             }
         }

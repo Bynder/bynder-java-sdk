@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2017 Bynder B.V. All rights reserved.
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for full license
+ * information.
+ */
 package com.bynder.sdk.model;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
-
 import okhttp3.Interceptor;
 
 /**
@@ -11,7 +16,18 @@ import okhttp3.Interceptor;
 public class HttpConnectionSettings {
 
     public static final int DEFAULT_TIMEOUT_SECONDS = 30;
-
+    /**
+     * Read timeout in seconds.
+     */
+    private final int readTimeoutSeconds;
+    /**
+     * Connect timeout in seconds.
+     */
+    private final int connectTimeoutSeconds;
+    /**
+     * Retry connection in case it fails the first time.
+     */
+    private final boolean retryOnConnectionFailure;
     /**
      * SSL Context: allows to send a client SSL certificate. Can only be used if the trustManager
      * was defined.
@@ -25,21 +41,10 @@ public class HttpConnectionSettings {
      * Custom OkHttp Interceptor: can be used to transform URLs to an ESB.
      */
     private Interceptor customInterceptor;
-    /**
-     * Read timeout in seconds.
-     */
-    private int readTimeoutSeconds;
-    /**
-     * Connect timeout in seconds.
-     */
-    private int connectTimeoutSeconds;
-    /**
-     * Retry connection in case it fails the first time.
-     */
-    private boolean retryOnConnectionFailure;
 
-    public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager, final Interceptor customInterceptor, final int readTimeoutSeconds, final int connectTimeoutSeconds,
-            final boolean retryOnConnectionFailure) {
+    public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager,
+        final Interceptor customInterceptor, final int readTimeoutSeconds,
+        final int connectTimeoutSeconds, final boolean retryOnConnectionFailure) {
         this.sslContext = sslContext;
         this.trustManager = trustManager;
         this.customInterceptor = customInterceptor;

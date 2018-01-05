@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,9 +6,8 @@
  */
 package com.bynder.sdk.model;
 
-import java.util.Map;
-
 import com.bynder.sdk.api.BynderApi;
+import java.util.Map;
 
 /**
  * Model returned by {@link BynderApi#finaliseUpload(Map)}.

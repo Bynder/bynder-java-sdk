@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -15,7 +15,7 @@ public class MediaInfoQuery {
      * Id of the media from which we want to retrieve information.
      */
     @ApiField(name = "id")
-    private String mediaId;
+    private final String mediaId;
     /**
      * This property has to be set to 1 (TRUE) for the API response to include the media items of
      * the media asset.

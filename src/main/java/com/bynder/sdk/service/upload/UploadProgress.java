@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Bynder B.V. All rights reserved.
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for full license
+ * information.
+ */
 package com.bynder.sdk.service.upload;
 
 import com.bynder.sdk.model.SaveMediaResponse;
@@ -6,6 +12,11 @@ import com.bynder.sdk.model.SaveMediaResponse;
  * Model to represent the progress of an Asset upload.
  */
 public class UploadProgress {
+
+    /**
+     * The total bytes of the file.
+     */
+    private final long totalBytes;
     /**
      * Whether the upload has finished or not.
      */
@@ -22,10 +33,6 @@ public class UploadProgress {
      * The bytes already transmitted.
      */
     private long transmittedBytes;
-    /**
-     * The total bytes of the file.
-     */
-    private long totalBytes;
 
     public UploadProgress(long totalBytes) {
         this.uploadedChunks = 0;

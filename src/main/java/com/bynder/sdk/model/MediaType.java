@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -12,7 +12,8 @@ import com.google.gson.annotations.SerializedName;
  * Enum to represent type of media.
  */
 public enum MediaType {
-    @SerializedName("document") DOCUMENT("document"), @SerializedName("image") IMAGE("image"), @SerializedName("video") VIDEO("video"), @SerializedName("audio") AUDIO("audio");
+    @SerializedName("document") DOCUMENT("document"), @SerializedName("image") IMAGE(
+        "image"), @SerializedName("video") VIDEO("video"), @SerializedName("audio") AUDIO("audio");
 
     private final String type;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,10 +6,9 @@
  */
 package com.bynder.sdk.model;
 
-import java.net.URL;
-
 import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
+import java.net.URL;
 
 /**
  * Collection model returned by {@link BynderApi#getCollections(java.util.Map)} and

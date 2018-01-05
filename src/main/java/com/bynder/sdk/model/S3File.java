@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,10 +6,9 @@
  */
 package com.bynder.sdk.model;
 
-import java.util.Map;
-
 import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
+import java.util.Map;
 
 /**
  * Model to represent the S3 file information returned in the response of

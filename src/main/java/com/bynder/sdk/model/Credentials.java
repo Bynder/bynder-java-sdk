@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -14,11 +14,19 @@ public class Credentials {
     /**
      * Consumer key.
      */
-    private String consumerKey;
+    private final String consumerKey;
     /**
      * Consumer secret.
      */
-    private String consumerSecret;
+    private final String consumerSecret;
+    /**
+     * Initial token key. Used when we want to reset credentials.
+     */
+    private final String initialToken;
+    /**
+     * Initial token secret. Used when we want to reset credentials.
+     */
+    private final String initialTokenSecret;
     /**
      * Access token key.
      */
@@ -27,14 +35,6 @@ public class Credentials {
      * Access token secret.
      */
     private String tokenSecret;
-    /**
-     * Initial token key. Used when we want to reset credentials.
-     */
-    private String initialToken;
-    /**
-     * Initial token secret. Used when we want to reset credentials.
-     */
-    private String initialTokenSecret;
 
     /**
      * Initialises new instance with specified values.
@@ -42,11 +42,12 @@ public class Credentials {
      * @param consumerKey Consumer key.
      * @param consumerSecret Consumer secret.
      * @param token Token key. This can be null if we are going to log in into Bynder through the
-     *        browser.
+     * browser.
      * @param tokenSecret Token secret. This can be null if we are going to log in into Bynder
-     *        through the browser.
+     * through the browser.
      */
-    public Credentials(final String consumerKey, final String consumerSecret, final String token, final String tokenSecret) {
+    public Credentials(final String consumerKey, final String consumerSecret, final String token,
+        final String tokenSecret) {
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
         this.token = token;

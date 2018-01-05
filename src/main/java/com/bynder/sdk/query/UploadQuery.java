@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -14,18 +14,18 @@ public class UploadQuery {
     /**
      * File path of the file we want to upload.
      */
-    private String filepath;
+    private final String filepath;
     /**
      * Brand id where we want to store the file.
      */
-    private String brandId;
+    private final String brandId;
     /**
      * Media id. If specified it will add the media asset file as new version of the specified
      * media. Otherwise a new media asset will be added to the asset bank.
      */
     private String mediaId;
     /**
-     *  Flags if the media asset should be sent to the waiting room.
+     * Flags if the media asset should be sent to the waiting room.
      */
     private Boolean audit;
 

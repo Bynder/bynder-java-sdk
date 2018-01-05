@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -12,13 +12,11 @@ package com.bynder.sdk.service;
 
 import static org.junit.Assert.assertEquals;
 
-import java.net.URL;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.service.impl.BynderServiceImpl;
+import java.net.URL;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Class to test {@link BynderService} login methods.
@@ -30,7 +28,8 @@ public class BynderServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        settings = new Settings(new URL("https://example.bynder.com"), "consumerKey", "consumerSecret", "tokenKey", "tokenSecret");
+        settings = new Settings(new URL("https://example.bynder.com"), "consumerKey",
+            "consumerSecret", "tokenKey", "tokenSecret");
         bynderService = BynderServiceImpl.create(settings);
     }
 
@@ -40,8 +39,8 @@ public class BynderServiceTest {
     @Test
     public void getAuthoriseUrlWithoutCallbackTest() throws Exception {
         URL authoriseUrl = bynderService.getAuthoriseUrl(null);
-        StringBuilder stringBuilder = new StringBuilder("/api/v4/oauth/authorise/?oauth_token=").append(settings.getToken());
-        assertEquals(new URL(settings.getBaseUrl(), stringBuilder.toString()), authoriseUrl);
+        String path = "/api/v4/oauth/authorise/?oauth_token=".concat(settings.getToken());
+        assertEquals(new URL(settings.getBaseUrl(), path), authoriseUrl);
     }
 
     /**
@@ -52,7 +51,8 @@ public class BynderServiceTest {
     public void getAuthoriseUrlWithCallbackTest() throws Exception {
         String callbackUrl = "http://localhost/";
         URL authoriseUrl = bynderService.getAuthoriseUrl(callbackUrl);
-        StringBuilder stringBuilder = new StringBuilder("/api/v4/oauth/authorise/?oauth_token=").append(settings.getToken()).append("&callback=").append(callbackUrl);
-        assertEquals(new URL(settings.getBaseUrl(), stringBuilder.toString()), authoriseUrl);
+        String path = "/api/v4/oauth/authorise/?oauth_token=".concat(settings.getToken())
+            .concat("&callback=").concat(callbackUrl);
+        assertEquals(new URL(settings.getBaseUrl(), path), authoriseUrl);
     }
 }

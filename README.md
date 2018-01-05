@@ -6,7 +6,7 @@ The main goal of this SDK is to speed up the integration of Bynder customers who
 
 At the moment this SDK provides a default library with the following methods:
 
-#### Login
+#### Bynder Service
 ```java
 Observable<User> login(String username, String password);
 
@@ -19,6 +19,10 @@ Observable<String> getAccessToken();
 void logout();
 
 Observable<Response<List<Derivative>>> getDerivatives();
+
+AssetBankService getAssetBankService();
+
+CollectionService getCollectionService();
 ```
 
 #### Asset Bank Service
@@ -44,6 +48,8 @@ Observable<Response<Usage>> createUsage(UsageCreateQuery usageCreateQuery);
 Observable<Response<List<Usage>>> getUsage(UsageQuery usageQuery);
 
 Observable<Response<Void>> deleteUsage(UsageDeleteQuery usageDeleteQuery);
+
+Observable<Response<List<Smartfilter>>> getSmartfilters();
 
 Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
 

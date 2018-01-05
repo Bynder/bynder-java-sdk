@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,9 +6,8 @@
  */
 package com.bynder.sdk.query;
 
-import java.util.List;
-
 import com.bynder.sdk.model.MediaType;
+import java.util.List;
 
 /**
  * Query to filter media results.

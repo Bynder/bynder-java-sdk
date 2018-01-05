@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -15,6 +15,10 @@ import java.util.List;
 public class MetapropertyOption {
 
     /**
+     * Child metaproperty options.
+     */
+    private final List<MetapropertyOption> options = new ArrayList<>();
+    /**
      * Id of the metaproperty option.
      */
     private String id;
@@ -26,10 +30,6 @@ public class MetapropertyOption {
      * Label of the metaproperty option.
      */
     private String label;
-    /**
-     * Child metaproperty options.
-     */
-    private List<MetapropertyOption> options = new ArrayList<>();
     /**
      * Media count of assets with the metaproperty option.
      */

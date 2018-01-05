@@ -1,17 +1,10 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
 package com.bynder.sdk.service.impl;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.Credentials;
@@ -24,8 +17,12 @@ import com.bynder.sdk.service.AssetBankService;
 import com.bynder.sdk.service.BynderService;
 import com.bynder.sdk.service.CollectionService;
 import com.bynder.sdk.util.Utils;
-
 import io.reactivex.Observable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import retrofit2.Response;
 
 /**
@@ -41,11 +38,11 @@ public class BynderServiceImpl implements BynderService {
      * Credentials used to login, instantiate the {@link BynderApi} interface and generate authorise
      * URL.
      */
-    private Credentials credentials;
+    private final Credentials credentials;
     /**
      * Settings for the HTTP connection to Bynder.
      */
-    private HttpConnectionSettings httpConnectionSettings;
+    private final HttpConnectionSettings httpConnectionSettings;
     /**
      * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
      */
@@ -66,30 +63,34 @@ public class BynderServiceImpl implements BynderService {
      * @param credentials Credentials to use to call the API.
      * @param httpConnectionSettings Settings for the http connection to Bynder
      */
-    private BynderServiceImpl(final URL baseUrl, final Credentials credentials, final HttpConnectionSettings httpConnectionSettings) {
+    private BynderServiceImpl(final URL baseUrl, final Credentials credentials,
+        final HttpConnectionSettings httpConnectionSettings) {
         this.baseUrl = baseUrl;
         this.credentials = credentials;
         this.httpConnectionSettings = httpConnectionSettings;
-        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials, httpConnectionSettings);
+        bynderApi = Utils
+            .createApiService(BynderApi.class, baseUrl, credentials, httpConnectionSettings);
     }
 
     /**
      * Creates an instance of {@link BynderService} using {@link Settings} as parameter.
      *
      * @param settings Settings to correctly configure the {@link BynderService} instance.
-     *
      * @return {@link BynderService} instance to communicate with Bynder API.
      */
     public static BynderService create(final Settings settings) {
-        Credentials credentials = new Credentials(settings.getConsumerKey(), settings.getConsumerSecret(), settings.getToken(), settings.getTokenSecret());
-        return new BynderServiceImpl(settings.getBaseUrl(), credentials, settings.getHttpConnectionSettings());
+        Credentials credentials = new Credentials(settings.getConsumerKey(),
+            settings.getConsumerSecret(), settings.getToken(), settings.getTokenSecret());
+        return new BynderServiceImpl(settings.getBaseUrl(), credentials,
+            settings.getHttpConnectionSettings());
     }
 
     /**
      * Check {@link BynderService} for more information.
      */
     @Override
-    public Observable<User> login(final String username, final String password) throws IllegalAccessException {
+    public Observable<User> login(final String username, final String password)
+        throws IllegalAccessException {
         return login(new LoginQuery(username, password));
     }
 
@@ -112,7 +113,8 @@ public class BynderServiceImpl implements BynderService {
      */
     @Override
     public URL getAuthoriseUrl(final String callbackUrl) throws MalformedURLException {
-        StringBuilder stringBuilder = new StringBuilder("/api/v4/oauth/authorise/?oauth_token=").append(credentials.getToken());
+        StringBuilder stringBuilder = new StringBuilder("/api/v4/oauth/authorise/?oauth_token=")
+            .append(credentials.getToken());
 
         if (StringUtils.isNotEmpty(callbackUrl)) {
             stringBuilder.append("&callback=").append(callbackUrl);
@@ -181,17 +183,15 @@ public class BynderServiceImpl implements BynderService {
     private void updateTokensFromResponse(final String response) {
         Map<String, String> oauthTokens = Utils.buildMapFromResponse(response);
         credentials.set(oauthTokens.get("oauth_token"), oauthTokens.get("oauth_token_secret"));
-        bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials, httpConnectionSettings);
+        bynderApi = Utils
+            .createApiService(BynderApi.class, baseUrl, credentials, httpConnectionSettings);
     }
 
     /**
      * Returns {@link User} containing user information. Sends the request to {@link BynderApi}.
      *
      * @param loginQuery Information to call the login API endpoint.
-     *
      * @return Observable with {@link User} information.
-     *
-     * @throws IllegalAccessException
      */
     private Observable<User> login(final LoginQuery loginQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(loginQuery);
@@ -200,7 +200,8 @@ public class BynderServiceImpl implements BynderService {
         return loginObservable.map(response -> {
             User user = response.body();
             credentials.set(user.getTokenKey(), user.getTokenSecret());
-            bynderApi = Utils.createApiService(BynderApi.class, baseUrl, credentials, httpConnectionSettings);
+            bynderApi = Utils
+                .createApiService(BynderApi.class, baseUrl, credentials, httpConnectionSettings);
             return user;
         });
     }

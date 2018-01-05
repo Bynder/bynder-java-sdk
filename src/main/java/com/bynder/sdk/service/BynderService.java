@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,18 +6,16 @@
  */
 package com.bynder.sdk.service;
 
+import com.bynder.sdk.model.Derivative;
+import com.bynder.sdk.model.Settings;
+import com.bynder.sdk.model.User;
+import com.bynder.sdk.util.Utils;
+import io.reactivex.Observable;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-
-import com.bynder.sdk.model.Derivative;
-import com.bynder.sdk.model.Settings;
-import com.bynder.sdk.model.User;
-import com.bynder.sdk.util.Utils;
-
-import io.reactivex.Observable;
 import retrofit2.Response;
 
 /**
@@ -31,11 +29,9 @@ public interface BynderService {
      *
      * @param username Username/email.
      * @param password Password.
-     *
      * @return Observable with {@link User} information.
-     *
      * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
-     *         information.
+     * information.
      */
     @Deprecated
     Observable<User> login(String username, String password) throws IllegalAccessException;
@@ -53,11 +49,9 @@ public interface BynderService {
      * request token pair.
      *
      * @param callbackUrl Callback URL to be redirected to when login is successful.
-     *
      * @return Authorise URL we need to open the browser with in order to login.
-     *
      * @throws MalformedURLException If no protocol is specified, or an unknown protocol is found,
-     *         or spec is null while instantiating the URL.
+     * or spec is null while instantiating the URL.
      */
     URL getAuthoriseUrl(final String callbackUrl) throws MalformedURLException;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
@@ -6,15 +6,13 @@
  */
 package com.bynder.sdk.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.Brand;
 import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.SaveMediaResponse;
+import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.Usage;
 import com.bynder.sdk.query.MediaDeleteQuery;
@@ -31,8 +29,9 @@ import com.bynder.sdk.service.AssetBankService;
 import com.bynder.sdk.service.upload.FileUploader;
 import com.bynder.sdk.service.upload.UploadProgress;
 import com.bynder.sdk.util.Utils;
-
 import io.reactivex.Observable;
+import java.util.List;
+import java.util.Map;
 import retrofit2.Response;
 
 /**
@@ -79,7 +78,8 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Map<String, Metaproperty>>> getMetaproperties(final MetapropertyQuery metapropertyQuery) throws IllegalAccessException {
+    public Observable<Response<Map<String, Metaproperty>>> getMetaproperties(
+        final MetapropertyQuery metapropertyQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(metapropertyQuery);
         return bynderApi.getMetaproperties(params);
     }
@@ -88,7 +88,8 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<List<Media>>> getMediaList(final MediaQuery mediaQuery) throws IllegalAccessException {
+    public Observable<Response<List<Media>>> getMediaList(final MediaQuery mediaQuery)
+        throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaQuery);
         return bynderApi.getMediaList(params);
     }
@@ -97,7 +98,8 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Media>> getMediaInfo(final MediaInfoQuery mediaInfoQuery) throws IllegalAccessException {
+    public Observable<Response<Media>> getMediaInfo(final MediaInfoQuery mediaInfoQuery)
+        throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaInfoQuery);
         return bynderApi.getMediaInfo(params);
     }
@@ -106,7 +108,8 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Void>> setMediaProperties(final MediaPropertiesQuery mediaPropertiesQuery) throws IllegalAccessException {
+    public Observable<Response<Void>> setMediaProperties(
+        final MediaPropertiesQuery mediaPropertiesQuery) throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaPropertiesQuery);
         return bynderApi.setMediaProperties(params);
     }
@@ -115,7 +118,8 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Void>> deleteMedia(final MediaDeleteQuery mediaDeleteQuery) throws IllegalAccessException {
+    public Observable<Response<Void>> deleteMedia(final MediaDeleteQuery mediaDeleteQuery)
+        throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(mediaDeleteQuery);
         return bynderApi.deleteMedia(params);
     }
@@ -124,11 +128,13 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<DownloadUrl>> getMediaDownloadUrl(final MediaDownloadQuery mediaDownloadQuery) {
+    public Observable<Response<DownloadUrl>> getMediaDownloadUrl(
+        final MediaDownloadQuery mediaDownloadQuery) {
         if (mediaDownloadQuery.getMediaItemId() == null) {
             return bynderApi.getMediaDownloadUrl(mediaDownloadQuery.getMediaId());
         } else {
-            return bynderApi.getMediaDownloadUrl(mediaDownloadQuery.getMediaId(), mediaDownloadQuery.getMediaItemId());
+            return bynderApi.getMediaDownloadUrl(mediaDownloadQuery.getMediaId(),
+                mediaDownloadQuery.getMediaItemId());
         }
     }
 
@@ -136,7 +142,8 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Usage>> createUsage(final UsageCreateQuery usageCreateQuery) throws IllegalAccessException {
+    public Observable<Response<Usage>> createUsage(final UsageCreateQuery usageCreateQuery)
+        throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(usageCreateQuery);
         return bynderApi.createUsage(params);
     }
@@ -145,7 +152,8 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<List<Usage>>> getUsage(final UsageQuery usageQuery) throws IllegalAccessException {
+    public Observable<Response<List<Usage>>> getUsage(final UsageQuery usageQuery)
+        throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(usageQuery);
         return bynderApi.getUsage(params);
     }
@@ -154,9 +162,18 @@ public class AssetBankServiceImpl implements AssetBankService {
      * Check {@link AssetBankService} for more information.
      */
     @Override
-    public Observable<Response<Void>> deleteUsage(final UsageDeleteQuery usageDeleteQuery) throws IllegalAccessException {
+    public Observable<Response<Void>> deleteUsage(final UsageDeleteQuery usageDeleteQuery)
+        throws IllegalAccessException {
         Map<String, String> params = Utils.getApiParameters(usageDeleteQuery);
         return bynderApi.deleteUsage(params);
+    }
+
+    /**
+     * Check {@link AssetBankService} for more information.
+     */
+    @Override
+    public Observable<Response<List<Smartfilter>>> getSmartfilters() {
+        return bynderApi.getSmartfilters();
     }
 
     /**

@@ -1,6 +1,6 @@
 # Bynder Java SDK
 
-The main goal of this SDK is to speed up the integration of Bynder customers who use JAVA. Making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.
+The main goal of this SDK is to speed up the integration of Bynder customers who use Java, making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.
 
 ## Current status
 
@@ -77,7 +77,7 @@ Observable<Response<Void>> shareCollection(CollectionShareQuery collectionShareQ
 
 ## Installation
 
-### Using lastest release
+### Using latest release
 The most recent release is Bynder Java SDK 1.0.7, released Jan 5, 2018.
 - API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.0.7
 
@@ -98,7 +98,7 @@ dependencies {
 
 ### Using source code
 Components used to install and run the project:
-* Java JDK (version 1.8.0_141)
+* Java JDK (version 1.8.0_151)
 * Apache Maven 3.3.3
 
 **Important:** Don't forget to define the environmental variables for Java and Maven!

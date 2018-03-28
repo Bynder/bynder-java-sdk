@@ -101,7 +101,7 @@ Components used to install and run the project:
 * Java JDK (version 1.8.0_151)
 * Apache Maven 3.3.3
 
-**Important:** Don't forget to define the environmental variables for Java and Maven!
+**Important:** Don't forget to define the environment variables for Java and Maven!
 
 Clone the repository:
 ```bash

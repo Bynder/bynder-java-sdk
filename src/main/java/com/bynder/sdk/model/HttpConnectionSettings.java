@@ -73,7 +73,7 @@ public class HttpConnectionSettings {
         this.readTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
         this.connectTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
         this.retryOnConnectionFailure = true;
-        this.loggingInterceptorEnabled = true;
+        this.loggingInterceptorEnabled = false;
     }
 
     public SSLContext getSslContext() {

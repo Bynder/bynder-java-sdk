@@ -51,7 +51,8 @@ public class HttpConnectionSettings {
     public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager,
         final Interceptor customInterceptor, final int readTimeoutSeconds,
         final int connectTimeoutSeconds, final boolean retryOnConnectionFailure) {
-      this(sslContext, trustManager, customInterceptor, readTimeoutSeconds, connectTimeoutSeconds, retryOnConnectionFailure, true);
+      this(sslContext, trustManager, customInterceptor, readTimeoutSeconds, connectTimeoutSeconds, 
+          retryOnConnectionFailure, false);
     }
 
     public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager,

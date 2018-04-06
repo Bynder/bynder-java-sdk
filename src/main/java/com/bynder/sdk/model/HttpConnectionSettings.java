@@ -9,6 +9,7 @@ package com.bynder.sdk.model;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import okhttp3.Interceptor;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Configuration holder for HTTP connection related settings for the connection to Bynder.
@@ -29,6 +30,11 @@ public class HttpConnectionSettings {
      */
     private final boolean retryOnConnectionFailure;
     /**
+     * Whether or not to enable a {@link HttpLoggingInterceptor} on the http client used, 
+     * logging the body of all requests at default log level.
+     */
+    private final boolean loggingInterceptorEnabled;
+    /**
      * SSL Context: allows to send a client SSL certificate. Can only be used if the trustManager
      * was defined.
      */
@@ -41,16 +47,23 @@ public class HttpConnectionSettings {
      * Custom OkHttp Interceptor: can be used to transform URLs to an ESB.
      */
     private Interceptor customInterceptor;
-
+    
     public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager,
         final Interceptor customInterceptor, final int readTimeoutSeconds,
         final int connectTimeoutSeconds, final boolean retryOnConnectionFailure) {
+      this(sslContext, trustManager, customInterceptor, readTimeoutSeconds, connectTimeoutSeconds, retryOnConnectionFailure, true);
+    }
+    
+    public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager,
+        final Interceptor customInterceptor, final int readTimeoutSeconds,
+        final int connectTimeoutSeconds, final boolean retryOnConnectionFailure, boolean includeLoggingInterceptor) {
         this.sslContext = sslContext;
         this.trustManager = trustManager;
         this.customInterceptor = customInterceptor;
         this.readTimeoutSeconds = readTimeoutSeconds;
         this.connectTimeoutSeconds = connectTimeoutSeconds;
         this.retryOnConnectionFailure = retryOnConnectionFailure;
+        this.loggingInterceptorEnabled = includeLoggingInterceptor;
     }
 
     /**
@@ -60,6 +73,7 @@ public class HttpConnectionSettings {
         this.readTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
         this.connectTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
         this.retryOnConnectionFailure = true;
+        this.loggingInterceptorEnabled = true;
     }
 
     public SSLContext getSslContext() {
@@ -85,4 +99,9 @@ public class HttpConnectionSettings {
     public boolean isRetryOnConnectionFailure() {
         return retryOnConnectionFailure;
     }
+    
+    public boolean isLoggingInterceptorEnabled() {
+        return loggingInterceptorEnabled;
+    }
+    
 }

@@ -102,9 +102,11 @@ public final class Utils {
         httpClient.interceptors().clear();
         httpClient.addInterceptor(new SigningInterceptor(consumer));
 
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        httpClient.addInterceptor(interceptor);
+        if (httpConnectionSettings.isLoggingInterceptorEnabled()) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpClient.addInterceptor(interceptor);
+        }
 
         if (httpConnectionSettings.getCustomInterceptor() != null) {
             httpClient.addInterceptor(httpConnectionSettings.getCustomInterceptor());

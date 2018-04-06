@@ -30,7 +30,7 @@ public class HttpConnectionSettings {
      */
     private final boolean retryOnConnectionFailure;
     /**
-     * Whether or not to enable a {@link HttpLoggingInterceptor} on the http client used, 
+     * Whether or not to enable a {@link HttpLoggingInterceptor} on the HTTP client used, 
      * logging the body of all requests at default log level.
      */
     private final boolean loggingInterceptorEnabled;
@@ -53,7 +53,7 @@ public class HttpConnectionSettings {
         final int connectTimeoutSeconds, final boolean retryOnConnectionFailure) {
       this(sslContext, trustManager, customInterceptor, readTimeoutSeconds, connectTimeoutSeconds, retryOnConnectionFailure, true);
     }
-    
+
     public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager,
         final Interceptor customInterceptor, final int readTimeoutSeconds,
         final int connectTimeoutSeconds, final boolean retryOnConnectionFailure, boolean includeLoggingInterceptor) {

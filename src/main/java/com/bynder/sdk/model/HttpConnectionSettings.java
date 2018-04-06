@@ -47,7 +47,7 @@ public class HttpConnectionSettings {
      * Custom OkHttp Interceptor: can be used to transform URLs to an ESB.
      */
     private Interceptor customInterceptor;
-    
+
     public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager,
         final Interceptor customInterceptor, final int readTimeoutSeconds,
         final int connectTimeoutSeconds, final boolean retryOnConnectionFailure) {

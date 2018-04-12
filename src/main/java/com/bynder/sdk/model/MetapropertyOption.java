@@ -15,10 +15,6 @@ import java.util.List;
 public class MetapropertyOption {
 
     /**
-     * Child metaproperty options.
-     */
-    private final List<MetapropertyOption> options = new ArrayList<>();
-    /**
      * Id of the metaproperty option.
      */
     private String id;
@@ -42,6 +38,10 @@ public class MetapropertyOption {
      * Order in which the metaproperty option should appear.
      */
     private int zindex;
+    /**
+     * Child metaproperty options.
+     */
+    private List<MetapropertyOption> options = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -55,10 +55,6 @@ public class MetapropertyOption {
         return label;
     }
 
-    public List<MetapropertyOption> getOptions() {
-        return options;
-    }
-
     public int getMediaCount() {
         return mediaCount;
     }
@@ -69,5 +65,9 @@ public class MetapropertyOption {
 
     public int getZindex() {
         return zindex;
+    }
+
+    public List<MetapropertyOption> getOptions() {
+        return options;
     }
 }

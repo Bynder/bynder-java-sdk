@@ -17,10 +17,6 @@ import java.util.Map;
 public class Metaproperty {
 
     /**
-     * Child metaproperty options.
-     */
-    private final List<MetapropertyOption> options = new ArrayList<>();
-    /**
      * Id of the metaproperty.
      */
     private String id;
@@ -44,6 +40,10 @@ public class Metaproperty {
      * Metaproperty type.
      */
     private String type;
+    /**
+     * Child metaproperty options.
+     */
+    private List<MetapropertyOption> options = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -57,10 +57,6 @@ public class Metaproperty {
         return label;
     }
 
-    public List<MetapropertyOption> getOptions() {
-        return options;
-    }
-
     public Boolean isFilterable() {
         return isFilterable;
     }
@@ -71,5 +67,9 @@ public class Metaproperty {
 
     public String getType() {
         return type;
+    }
+
+    public List<MetapropertyOption> getOptions() {
+        return options;
     }
 }

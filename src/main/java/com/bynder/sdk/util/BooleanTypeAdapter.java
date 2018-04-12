@@ -14,7 +14,7 @@ import java.util.Arrays;
 import retrofit2.Retrofit;
 
 /**
- * Class responsible for converting integers to booleans when deserializing the Json response
+ * Class responsible for converting integers to booleans when deserializing the JSON response
  * returned by the API. This class is used when the {@link Retrofit} object is instantiated.
  */
 public class BooleanTypeAdapter implements JsonDeserializer<Boolean> {

@@ -17,10 +17,6 @@ import java.util.Map;
 public class MediaItem {
 
     /**
-     * Focus point of the media item.
-     */
-    private final Map<String, Double> focusPoint = new HashMap<>();
-    /**
      * Id of the media item.
      */
     private String id;
@@ -61,6 +57,10 @@ public class MediaItem {
      * Generated thumbnails for the media item.
      */
     private Map<String, String> thumbnails;
+    /**
+     * Focus point of the media item.
+     */
+    private Map<String, Double> focusPoint = new HashMap<>();
 
     public String getId() {
         return id;

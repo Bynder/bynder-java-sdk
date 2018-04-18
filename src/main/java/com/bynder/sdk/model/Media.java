@@ -19,10 +19,6 @@ import java.util.Map;
 public class Media {
 
     /**
-     * Property options assigned to the media.
-     */
-    private final List<String> propertyOptions = new ArrayList<>();
-    /**
      * Media id.
      */
     private String id;
@@ -91,6 +87,10 @@ public class Media {
      */
     private List<String> tags;
     /**
+     * Property options assigned to the media.
+     */
+    private List<String> propertyOptions = new ArrayList<>();
+    /**
      * Extension of the media file.
      */
     @SerializedName(value = "extension")
@@ -108,7 +108,10 @@ public class Media {
      */
     @SerializedName(value = "activeOriginalFocusPoint")
     private Map<String, Double> focusPoint;
-
+    /**
+     * Metaproperties assigned to the media.
+     */
+    private Map<String, List<String>> metaproperties;
     /**
      * Media items for the media. Including derivatives, additional and original. To get this
      * information we have to call {@link BynderApi#getMediaInfo(Map)} with the media id and
@@ -184,6 +187,10 @@ public class Media {
         return tags;
     }
 
+    public List<String> getPropertyOptions() {
+        return propertyOptions;
+    }
+
     public List<String> getExtensions() {
         return extensions;
     }
@@ -192,19 +199,23 @@ public class Media {
         return videoPreviewURLs;
     }
 
-    public List<String> getPropertyOptions() {
-        return propertyOptions;
-    }
-
     public Map<String, String> getThumbnails() {
         return thumbnails;
+    }
+
+    public Map<String, Double> getFocusPoint() {
+        return focusPoint;
     }
 
     public List<MediaItem> getMediaItems() {
         return mediaItems;
     }
 
-    public Map<String, Double> getFocusPoint() {
-        return focusPoint;
+    public Map<String, List<String>> getMetaproperties() {
+        return metaproperties;
+    }
+
+    public void setMetaproperties(final Map<String, List<String>> metaproperties) {
+        this.metaproperties = metaproperties;
     }
 }

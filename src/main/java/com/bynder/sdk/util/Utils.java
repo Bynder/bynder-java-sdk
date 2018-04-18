@@ -8,6 +8,7 @@ package com.bynder.sdk.util;
 
 import com.bynder.sdk.model.Credentials;
 import com.bynder.sdk.model.HttpConnectionSettings;
+import com.bynder.sdk.model.Media;
 import com.bynder.sdk.query.ApiField;
 import com.bynder.sdk.query.ConversionType;
 import com.bynder.sdk.query.MetapropertyField;
@@ -145,9 +146,10 @@ public final class Utils {
         builder.baseUrl(baseUrl.toString());
         builder.addConverterFactory(new StringConverterFactory());
         builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());
-        builder.addConverterFactory(GsonConverterFactory.create(
-            new GsonBuilder().registerTypeAdapter(Boolean.class, new BooleanTypeAdapter())
-                .create()));
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Boolean.class, new BooleanTypeAdapter());
+        gsonBuilder.registerTypeAdapter(Media.class, new MediaTypeDeserializer());
+        builder.addConverterFactory(GsonConverterFactory.create(gsonBuilder.create()));
         builder.client(httpClient);
 
         Retrofit retrofit = builder.build();

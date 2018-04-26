@@ -47,6 +47,11 @@ public class MediaQuery {
      */
     @ApiField(name = "propertyOptionId", conversionType = ConversionType.LIST_FIELD)
     private List<String> propertyOptionIds;
+    /**
+     * Desired order for the returned list of results.
+     */
+    @ApiField(name = "orderBy")
+    private OrderBy orderBy;
 
     public MediaType getType() {
         return type;
@@ -99,6 +104,15 @@ public class MediaQuery {
 
     public MediaQuery setPropertyOptionIds(final List<String> propertyOptionIds) {
         this.propertyOptionIds = propertyOptionIds;
+        return this;
+    }
+
+    public OrderBy getOrderBy() {
+        return orderBy;
+    }
+
+    public MediaQuery setOrderBy(final OrderBy orderBy) {
+        this.orderBy = orderBy;
         return this;
     }
 }

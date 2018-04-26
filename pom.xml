@@ -12,8 +12,7 @@
 
   <name>Bynder Java SDK</name>
   <description>The main goal of this SDK is to speed up the integration of Bynder customers who use
-    JAVA.
-    Making it easier to connect to the Bynder API and executing requests on it.
+    JAVA. Making it easier to connect to the Bynder API and executing requests on it.
   </description>
   <url>https://developer.bynder.com</url>
 

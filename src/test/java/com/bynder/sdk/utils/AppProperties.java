@@ -4,7 +4,7 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
-package com.bynder.sdk.util;
+package com.bynder.sdk.utils;
 
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.service.BynderService;

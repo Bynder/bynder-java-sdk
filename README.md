@@ -78,21 +78,21 @@ Observable<Response<Void>> shareCollection(CollectionShareQuery collectionShareQ
 ## Installation
 
 ### Using latest release
-The most recent release is Bynder Java SDK 1.0.9, released April 18, 2018.
-- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.0.9
+The most recent release is Bynder Java SDK 1.1.0, released April 26, 2018.
+- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.1.0
 
 To add a dependency on the SDK using Maven, use the following:
 ```xml
 <dependency>
   <groupId>com.bynder</groupId>
   <artifactId>bynder-java-sdk</artifactId>
-  <version>1.0.9</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 To add a dependency using Gradle:
 ```
 dependencies {
-  compile 'com.bynder:bynder-java-sdk:1.0.9'
+  compile 'com.bynder:bynder-java-sdk:1.1.0'
 }
 ```
 

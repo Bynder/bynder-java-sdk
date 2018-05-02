@@ -109,10 +109,6 @@ public class Media {
     @SerializedName(value = "activeOriginalFocusPoint")
     private Map<String, Double> focusPoint;
     /**
-     * Metaproperties assigned to the media.
-     */
-    private Map<String, List<String>> metaproperties;
-    /**
      * Media items for the media. Including derivatives, additional and original. To get this
      * information we have to call {@link BynderApi#getMediaInfo(Map)} with the media id and
      * versions equal to true.
@@ -209,13 +205,5 @@ public class Media {
 
     public List<MediaItem> getMediaItems() {
         return mediaItems;
-    }
-
-    public Map<String, List<String>> getMetaproperties() {
-        return metaproperties;
-    }
-
-    public void setMetaproperties(final Map<String, List<String>> metaproperties) {
-        this.metaproperties = metaproperties;
     }
 }

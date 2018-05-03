@@ -8,7 +8,6 @@ package com.bynder.sdk.util;
 
 import com.bynder.sdk.model.Credentials;
 import com.bynder.sdk.model.HttpConnectionSettings;
-import com.bynder.sdk.model.Media;
 import com.bynder.sdk.query.ApiField;
 import com.bynder.sdk.query.ConversionType;
 import com.bynder.sdk.query.MetapropertyField;
@@ -148,7 +147,6 @@ public final class Utils {
         builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Boolean.class, new BooleanTypeAdapter());
-        gsonBuilder.registerTypeAdapter(Media.class, new MediaTypeDeserializer());
         builder.addConverterFactory(GsonConverterFactory.create(gsonBuilder.create()));
         builder.client(httpClient);
 

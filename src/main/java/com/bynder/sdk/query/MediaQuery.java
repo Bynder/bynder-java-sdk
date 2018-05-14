@@ -43,7 +43,7 @@ public class MediaQuery {
     @ApiField(name = "page")
     private Integer page;
     /**
-     * Metaproperty option ids that the media asset has to have.
+     * Metaproperty option ids that the media asset needs to have at least one of.
      */
     @ApiField(name = "propertyOptionId", conversionType = ConversionType.LIST_FIELD)
     private List<String> propertyOptionIds;

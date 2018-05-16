@@ -148,7 +148,7 @@ public class FileUploader {
                                                     });
                                             } else {
                                                 observableEmitter.onError(new BynderUploadException(
-                                                    "Converter did not finishe. Upload not "
+                                                    "Converter did not finished. Upload not "
                                                         + "completed."));
                                             }
                                         }, throwable -> observableEmitter.onError(throwable));

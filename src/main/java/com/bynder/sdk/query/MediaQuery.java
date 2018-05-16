@@ -8,6 +8,7 @@ package com.bynder.sdk.query;
 
 import com.bynder.sdk.model.MediaType;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Query to filter media results.
@@ -43,7 +44,7 @@ public class MediaQuery {
     @ApiField(name = "page")
     private Integer page;
     /**
-     * Metaproperty option ids that the media asset has to have.
+     * Metaproperty option ids that the media asset needs to have at least one of.
      */
     @ApiField(name = "propertyOptionId", conversionType = ConversionType.LIST_FIELD)
     private List<String> propertyOptionIds;
@@ -52,6 +53,11 @@ public class MediaQuery {
      */
     @ApiField(name = "orderBy")
     private OrderBy orderBy;
+    /**
+     * Metaproperty option ids that the media asset has to have.
+     */
+    @ApiField(name = "property", conversionType = ConversionType.METAPROPERTY_MAP_FIELD)
+    private Map<String, String> metapropertyOptions;
 
     public MediaType getType() {
         return type;
@@ -113,6 +119,15 @@ public class MediaQuery {
 
     public MediaQuery setOrderBy(final OrderBy orderBy) {
         this.orderBy = orderBy;
+        return this;
+    }
+
+    public Map<String, String> getMetapropertyOptions() {
+        return metapropertyOptions;
+    }
+
+    public MediaQuery setMetapropertyOptions(final Map<String, String> metapropertyOptions) {
+        this.metapropertyOptions = metapropertyOptions;
         return this;
     }
 }

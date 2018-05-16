@@ -86,7 +86,7 @@ To add a dependency on the SDK using Maven, use the following:
 <dependency>
   <groupId>com.bynder</groupId>
   <artifactId>bynder-java-sdk</artifactId>
-  <version>1.1.3-SNAPSHOT</version>
+  <version>1.1.2</version>
 </dependency>
 ```
 To add a dependency using Gradle:

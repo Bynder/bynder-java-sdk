@@ -210,6 +210,11 @@ public final class Utils {
                 } else if (apiField.conversionType() == ConversionType.BOOLEAN_FIELD) {
                     Boolean booleanField = (Boolean) field.get(query);
                     params.put(apiField.name(), booleanField ? "1" : "0");
+                } else if (apiField.conversionType() == ConversionType.METAPROPERTY_MAP_FIELD) {
+                    Map<?, ?> listField = (Map<?, ?>) field.get(query);
+                    listField.entrySet().forEach(entry -> params
+                        .put(String.format("%s_%s", apiField.name(), entry.getKey().toString()),
+                            entry.getValue().toString()));
                 }
             }
         }

@@ -1,4 +1,4 @@
 language: java
 sudo: false # faster builds
 
-script: mvn clean install -Dgpg.skip -Dmaven.javadoc.skip
+install: mvn clean install -Dgpg.skip -Dmaven.javadoc.skip

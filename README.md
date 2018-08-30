@@ -1,4 +1,5 @@
 # Bynder Java SDK
+[![Build Status](https://travis-ci.org/Bynder/bynder-java-sdk.svg?branch=master)](https://travis-ci.org/Bynder/bynder-java-sdk)
 
 The main goal of this SDK is to speed up the integration of Bynder customers who use Java, making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.
 

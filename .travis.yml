@@ -1,0 +1,14 @@
+language: java
+
+sudo: false
+
+install: mvn clean install -Dgpg.skip -Dmaven.javadoc.skip -Dmaven.test.skip
+
+script: mvn surefire:test
+
+notifications:
+  email:
+    recipients:
+      - ajax@bynder.com
+    on_success: never
+    on_failure: always

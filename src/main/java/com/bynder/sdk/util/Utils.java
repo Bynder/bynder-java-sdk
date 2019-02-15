@@ -8,21 +8,14 @@ package com.bynder.sdk.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Final class that provides methods to help handling API requests and responses.
  */
 public final class Utils {
-
-    /**
-     * String separators.
-     */
-    public static final String STR_AND = "&";
-    public static final String STR_COMMA = ",";
-    public static final String STR_EQUALS = "=";
 
     /**
      * Prevents the instantiation of the class.

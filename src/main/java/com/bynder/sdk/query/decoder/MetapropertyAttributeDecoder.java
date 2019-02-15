@@ -7,15 +7,14 @@
 package com.bynder.sdk.query.decoder;
 
 import com.bynder.sdk.query.MetapropertyAttribute;
-import com.bynder.sdk.util.Utils;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Converts attribute key from string to "metaproperty.<string>" key to send to API.
  */
-public class MetapropertyAttributeDecoder implements ParameterDecoder<String, MetapropertyAttribute> {
+public class MetapropertyAttributeDecoder implements
+    ParameterDecoder<String, MetapropertyAttribute> {
 
     @Override
     public Map<String, String> decode(final String key, final MetapropertyAttribute value) {

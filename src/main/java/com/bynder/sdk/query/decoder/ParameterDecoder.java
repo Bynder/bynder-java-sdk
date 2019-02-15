@@ -9,7 +9,8 @@ package com.bynder.sdk.query.decoder;
 import java.util.Map;
 
 /**
- * Decoder interface to use in queries to convert parameter key and value from one specific type to Map<String, String>.
+ * Decoder interface to use in queries to convert parameter key and value from one specific type
+ * to Map<String, String>.
  *
  * @param <K, V> Key and value types to convert from.
  */

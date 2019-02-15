@@ -7,7 +7,7 @@
 package com.bynder.sdk.configuration;
 
 import com.bynder.sdk.model.oauth.Token;
-import com.bynder.sdk.util.RefreshTokenCallback;
+import com.bynder.sdk.model.oauth.RefreshTokenCallback;
 import java.net.URI;
 import java.net.URL;
 

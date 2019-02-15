@@ -15,11 +15,10 @@ import java.util.Map;
 public class MetapropertyParameterDecoder implements ParameterDecoder<String, Map<String, String>> {
 
     @Override
-    public Map<String, String> decode(final String key, final Map<String, String> value) {
+    public Map<String, String> decode(final String key, final Map<String, String> values) {
         Map<String, String> params = new HashMap<>();
-        value.entrySet().forEach(entry -> params
-            .put(String.format("%s_%s", key, entry.getKey()),
-                entry.getValue()));
+        values.entrySet().forEach(
+            entry -> params.put(String.format("%s_%s", key, entry.getKey()), entry.getValue()));
         return params;
     }
 }

@@ -16,19 +16,19 @@ public class SaveMediaQuery {
     /**
      * Import id of a finalised and processed upload to save.
      */
-    @ApiField(name = "importId")
+    @ApiField
     private final String importId;
 
     /**
      * Brand id to save the media asset to.
      */
-    @ApiField(name = "brandId")
+    @ApiField
     private String brandId;
 
     /**
      * Name of the media asset.
      */
-    @ApiField(name = "name")
+    @ApiField
     private String name;
 
     /**
@@ -39,7 +39,7 @@ public class SaveMediaQuery {
     /**
      * Flags if the media asset should be sent to the waiting room.
      */
-    @ApiField(name = "audit")
+    @ApiField
     private Boolean audit;
 
     public SaveMediaQuery(final String importId) {

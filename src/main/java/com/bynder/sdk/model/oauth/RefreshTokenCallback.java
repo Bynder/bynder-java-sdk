@@ -1,6 +1,4 @@
-package com.bynder.sdk.util;
-
-import com.bynder.sdk.model.oauth.Token;
+package com.bynder.sdk.model.oauth;
 
 /**
  * Interface of the refresh token callback method.

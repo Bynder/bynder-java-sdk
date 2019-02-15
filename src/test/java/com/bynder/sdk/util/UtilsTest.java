@@ -11,93 +11,47 @@
 package com.bynder.sdk.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.bynder.sdk.configuration.HttpConnectionSettings;
-import com.bynder.sdk.query.MetapropertyAttribute;
-import com.bynder.sdk.query.decoder.ApiField;
-import com.bynder.sdk.query.decoder.BooleanParameterDecoder;
-import com.bynder.sdk.query.decoder.MetapropertyAttributeDecoder;
-import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
-import io.reactivex.Observable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.InvalidParameterException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
 import org.junit.Test;
-import retrofit2.Response;
-import retrofit2.http.GET;
 
 /**
  * Tests the {@link Utils} class methods.
  */
 public class UtilsTest {
 
-    /**
-     * API interface only used for test purposes.
-     */
-    private interface TestApi {
+    @Test
+    public void encodeParameterValueTest() throws UnsupportedEncodingException {
+        String value = "example value";
+        String encodedValue = Utils.encodeParameterValue(value);
+        assertNotNull(encodedValue);
+        assertNotEquals(encodedValue, value);
+        assertEquals(encodedValue.length(), value.length());
 
-        @GET("api/test/")
-        Observable<Response<Void>> getTestMethod();
+        String decodedValue = URLDecoder.decode(encodedValue, StandardCharsets.UTF_8.name());
+        assertNotNull(decodedValue);
+        assertTrue(decodedValue.equals(value));
     }
 
-    /**
-     * Query class only used for test purposes.
-     */
-    private class TestQuery {
+    @Test
+    public void isDateExpiringTest() {
+        Calendar expirationDate = Calendar.getInstance();
+        expirationDate.add(Calendar.SECOND, 10);
 
-        /**
-         * Query field.
-         */
-        @ApiField(name = "field1")
-        private final String field1;
-        /**
-         * Query field.
-         */
-        @ApiField(name = "field2")
-        private final String field2;
-        /**
-         * Query field.
-         */
-        private final String field3;
+        boolean isExpired = Utils.isDateExpiring(expirationDate.getTime(), 15);
+        assertTrue(isExpired);
 
-        TestQuery(final String field1, final String field2, final String field3) {
-            this.field1 = field1;
-            this.field2 = field2;
-            this.field3 = field3;
-        }
-    }
+        expirationDate = Calendar.getInstance();
+        expirationDate.add(Calendar.SECOND, 20);
 
-    /**
-     * Query class only used for test purposes.
-     */
-    private class TestConversionQuery {
-
-        /**
-         * Query field.
-         */
-        @ApiField(name = "listField", decoder = StringArrayParameterDecoder.class)
-        private final List<String> field1;
-        /**
-         * Query field.
-         */
-        @ApiField(name = "metapropertyField", decoder = MetapropertyAttributeDecoder.class)
-        private final MetapropertyAttribute field2;
-        /**
-         * Query field.
-         */
-        @ApiField(name = "booleanField", decoder = BooleanParameterDecoder.class)
-        private final Boolean field3;
-
-        TestConversionQuery(final List<String> field1, final MetapropertyAttribute field2,
-            final Boolean field3) {
-            this.field1 = field1;
-            this.field2 = field2;
-            this.field3 = field3;
-        }
+        isExpired = Utils.isDateExpiring(expirationDate.getTime(), 15);
+        assertFalse(isExpired);
     }
 }

@@ -20,8 +20,7 @@ public class FinaliseUploadQuery {
     private final String uploadId;
 
     /**
-     * Target id in the authorisation information returned by the
-     * {@link #getUploadInformation(String)}.
+     * Target id in the authorisation information.
      */
     @ApiField(name = "targetid")
     private final String targetId;

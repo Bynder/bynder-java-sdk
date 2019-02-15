@@ -7,6 +7,7 @@
 package com.bynder.sdk.query;
 
 import com.bynder.sdk.model.MediaType;
+import com.bynder.sdk.query.decoder.ApiField;
 
 /**
  * Query to specify if we want to get metaproperties with media count or not.
@@ -17,13 +18,13 @@ public class MetapropertyQuery {
      * This property has to be set to 1 (TRUE) for the API to calculate and include the media count
      * for each metaproperty option in the response.
      */
-    @ApiField(name = "count")
+    @ApiField
     private Boolean count;
     /**
      * Filters the count results by media asset type. It only makes sense to be defined if the count
      * parameter was set to 1. Possible values: image, document, audio, video.
      */
-    @ApiField(name = "type")
+    @ApiField
     private MediaType type;
 
     public Boolean getCount() {

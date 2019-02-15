@@ -6,7 +6,7 @@
  */
 package com.bynder.sdk.model;
 
-import com.bynder.sdk.service.BynderService;
+import com.bynder.sdk.configuration.HttpConnectionSettings;
 import java.net.URL;
 
 /**

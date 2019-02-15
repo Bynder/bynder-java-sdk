@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+import com.bynder.sdk.query.decoder.JsonParameterDecoder;
 import java.util.List;
 
 /**
@@ -21,10 +23,10 @@ public class CollectionAddMediaQuery {
     /**
      * List with the media assets ids to be added.
      */
-    @ApiField(name = "data", conversionType = ConversionType.JSON_FIELD)
-    private final List<String> mediaIds;
+    @ApiField(name = "data", decoder = JsonParameterDecoder.class)
+    private final String[] mediaIds;
 
-    public CollectionAddMediaQuery(final String collectionId, final List<String> mediaIds) {
+    public CollectionAddMediaQuery(final String collectionId, final String[] mediaIds) {
         this.collectionId = collectionId;
         this.mediaIds = mediaIds;
     }
@@ -33,7 +35,7 @@ public class CollectionAddMediaQuery {
         return collectionId;
     }
 
-    public List<String> getMediaIds() {
+    public String[] getMediaIds() {
         return mediaIds;
     }
 }

@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+
 /**
  * Query to filter collection results.
  */
@@ -15,22 +17,22 @@ public class CollectionQuery {
      * Keyword that the collection has to have to appear in the results. It searches collection
      * names and descriptions.
      */
-    @ApiField(name = "keyword")
+    @ApiField
     private String keyword;
     /**
      * Limit of results per request. Maximum: 1000. Default: 50.
      */
-    @ApiField(name = "limit")
+    @ApiField
     private Integer limit;
     /**
      * Page to be retrieved.
      */
-    @ApiField(name = "page")
+    @ApiField
     private Integer page;
     /**
      * Desired order for the returned collection results.
      */
-    @ApiField(name = "orderBy")
+    @ApiField
     private CollectionOrderType orderBy;
 
     public String getKeyword() {

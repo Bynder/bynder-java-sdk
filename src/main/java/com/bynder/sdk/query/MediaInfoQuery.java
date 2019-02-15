@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+
 /**
  * Query to get media information including its media items.
  */
@@ -20,7 +22,7 @@ public class MediaInfoQuery {
      * This property has to be set to 1 (TRUE) for the API response to include the media items of
      * the media asset.
      */
-    @ApiField(name = "versions")
+    @ApiField
     private Boolean versions;
 
     public MediaInfoQuery(final String mediaId) {

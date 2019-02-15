@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
 import java.util.List;
 
 /**
@@ -21,10 +23,10 @@ public class CollectionRemoveMediaQuery {
     /**
      * List with the media assets ids to be removed.
      */
-    @ApiField(name = "deleteIds", conversionType = ConversionType.LIST_FIELD)
-    private final List<String> mediaIds;
+    @ApiField(name = "deleteIds", decoder = StringArrayParameterDecoder.class)
+    private final String[] mediaIds;
 
-    public CollectionRemoveMediaQuery(final String collectionId, final List<String> mediaIds) {
+    public CollectionRemoveMediaQuery(final String collectionId, final String[] mediaIds) {
         this.collectionId = collectionId;
         this.mediaIds = mediaIds;
     }
@@ -33,7 +35,7 @@ public class CollectionRemoveMediaQuery {
         return collectionId;
     }
 
-    public List<String> getMediaIds() {
+    public String[] getMediaIds() {
         return mediaIds;
     }
 }

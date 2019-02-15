@@ -6,6 +6,9 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+import com.bynder.sdk.query.decoder.MetapropertyAttributeDecoder;
+
 /**
  * Query to specify the media properties to be updated.
  */
@@ -19,34 +22,34 @@ public class MediaPropertiesQuery {
     /**
      * Name new value.
      */
-    @ApiField(name = "name")
+    @ApiField
     private String name;
     /**
      * Description new value.
      */
-    @ApiField(name = "description")
+    @ApiField
     private String description;
     /**
      * Copyright new value.
      */
-    @ApiField(name = "copyright")
+    @ApiField
     private String copyright;
     /**
      * Archive new status.
      */
-    @ApiField(name = "archive")
+    @ApiField
     private Boolean archive;
     /**
      * Date published new value.
      */
-    @ApiField(name = "datePublished")
+    @ApiField
     private String datePublished;
     /**
-     * MetapropertyField with metaproperty id and list of all its metaproperty options ids to set on
+     * MetapropertyAttribute with metaproperty id and list of all its metaproperty options ids to set on
      * the media.
      */
-    @ApiField(name = "metaproperty", conversionType = ConversionType.METAPROPERTY_FIELD)
-    private MetapropertyField metaproperty;
+    @ApiField(decoder = MetapropertyAttributeDecoder.class)
+    private MetapropertyAttribute metaproperty;
 
     public MediaPropertiesQuery(final String mediaId) {
         this.mediaId = mediaId;
@@ -101,11 +104,11 @@ public class MediaPropertiesQuery {
         return this;
     }
 
-    public MetapropertyField getMetaproperty() {
+    public MetapropertyAttribute getMetaproperty() {
         return metaproperty;
     }
 
-    public MediaPropertiesQuery setMetaproperty(final MetapropertyField metaproperty) {
+    public MediaPropertiesQuery setMetaproperty(final MetapropertyAttribute metaproperty) {
         this.metaproperty = metaproperty;
         return this;
     }

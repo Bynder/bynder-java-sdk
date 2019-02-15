@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
 import java.util.List;
 
 /**
@@ -21,8 +23,8 @@ public class CollectionShareQuery {
     /**
      * Email addresses of the recipients.
      */
-    @ApiField(name = "recipients", conversionType = ConversionType.LIST_FIELD)
-    private final List<String> recipients;
+    @ApiField(name = "recipients", decoder = StringArrayParameterDecoder.class)
+    private final String[] recipients;
 
     /**
      * Permission right of the recipients.
@@ -33,34 +35,34 @@ public class CollectionShareQuery {
     /**
      * Indicates if the recipients need to login to view the collection.
      */
-    @ApiField(name = "loginRequired")
+    @ApiField
     private Boolean loginRequired;
 
     /**
      * Sharing start date.
      */
-    @ApiField(name = "dateStart")
+    @ApiField
     private String dateStart;
 
     /**
      * Sharing end date.
      */
-    @ApiField(name = "dateEnd")
+    @ApiField
     private String dateEnd;
 
     /**
      * Indicates if the recipients should be notified by email.
      */
-    @ApiField(name = "sendMail")
+    @ApiField
     private Boolean sendMail;
 
     /**
      * Message added to the email if sendMail is set to true.
      */
-    @ApiField(name = "message")
+    @ApiField
     private String message;
 
-    public CollectionShareQuery(final String collectionId, final List<String> recipients,
+    public CollectionShareQuery(final String collectionId, final String[] recipients,
         final CollectionRecipientRight right) {
         this.collectionId = collectionId;
         this.recipients = recipients;
@@ -71,7 +73,7 @@ public class CollectionShareQuery {
         return collectionId;
     }
 
-    public List<String> getRecipients() {
+    public String[] getRecipients() {
         return recipients;
     }
 

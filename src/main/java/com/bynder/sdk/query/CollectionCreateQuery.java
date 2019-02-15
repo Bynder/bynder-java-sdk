@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+
 /**
  * Query to create collections.
  */
@@ -14,13 +16,13 @@ public class CollectionCreateQuery {
     /**
      * Name of the collection.
      */
-    @ApiField(name = "name")
+    @ApiField
     private final String name;
 
     /**
      * Description of the collection.
      */
-    @ApiField(name = "description")
+    @ApiField
     private String description;
 
     public CollectionCreateQuery(final String name) {

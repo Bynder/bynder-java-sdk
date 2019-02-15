@@ -7,6 +7,10 @@
 package com.bynder.sdk.query;
 
 import com.bynder.sdk.model.MediaType;
+import com.bynder.sdk.query.decoder.ApiField;
+import com.bynder.sdk.query.decoder.BooleanParameterDecoder;
+import com.bynder.sdk.query.decoder.MetapropertyParameterDecoder;
+import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -18,45 +22,45 @@ public class MediaQuery {
     /**
      * The type of the media asset. Possible values: image, document, audio, video.
      */
-    @ApiField(name = "type")
+    @ApiField
     private MediaType type;
     /**
      * Keyword that the media asset has to have to appear in the results. Search filenames, tags,
      * extensions, collection names, guidelines, brandstore, campaigns in workflow, enriched PDFs,
      * word documents.
      */
-    @ApiField(name = "keyword")
+    @ApiField
     private String keyword;
     /**
      * This property has to be set to 1 (TRUE) for the API to retrieved only media assets marked as
      * public.
      */
-    @ApiField(name = "isPublic", conversionType = ConversionType.BOOLEAN_FIELD)
+    @ApiField(decoder = BooleanParameterDecoder.class)
     private Boolean isPublic;
     /**
      * Limit of results per request. Maximum: 1000. Default: 50.
      */
-    @ApiField(name = "limit")
+    @ApiField
     private Integer limit;
     /**
      * Page to be retrieved.
      */
-    @ApiField(name = "page")
+    @ApiField
     private Integer page;
     /**
      * Metaproperty option ids that the media asset needs to have at least one of.
      */
-    @ApiField(name = "propertyOptionId", conversionType = ConversionType.LIST_FIELD)
-    private List<String> propertyOptionIds;
+    @ApiField(name = "propertyOptionId", decoder = StringArrayParameterDecoder.class)
+    private String[] propertyOptionIds;
     /**
      * Desired order for the returned list of results.
      */
-    @ApiField(name = "orderBy")
+    @ApiField
     private OrderBy orderBy;
     /**
      * Metaproperty option ids that the media asset has to have.
      */
-    @ApiField(name = "property", conversionType = ConversionType.METAPROPERTY_MAP_FIELD)
+    @ApiField(name = "property", decoder = MetapropertyParameterDecoder.class)
     private Map<String, String> metapropertyOptions;
 
     public MediaType getType() {
@@ -104,11 +108,11 @@ public class MediaQuery {
         return this;
     }
 
-    public List<String> getPropertyOptionIds() {
+    public String[] getPropertyOptionIds() {
         return propertyOptionIds;
     }
 
-    public MediaQuery setPropertyOptionIds(final List<String> propertyOptionIds) {
+    public MediaQuery setPropertyOptionIds(final String... propertyOptionIds) {
         this.propertyOptionIds = propertyOptionIds;
         return this;
     }

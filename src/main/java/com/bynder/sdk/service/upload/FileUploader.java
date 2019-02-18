@@ -7,6 +7,7 @@
 package com.bynder.sdk.service.upload;
 
 import com.bynder.sdk.api.BynderApi;
+import com.bynder.sdk.exception.BynderUploadException;
 import com.bynder.sdk.model.upload.FileConverterStatus;
 import com.bynder.sdk.model.upload.FinaliseResponse;
 import com.bynder.sdk.model.upload.PollStatus;
@@ -22,13 +23,10 @@ import com.bynder.sdk.query.upload.RequestUploadQuery;
 import com.bynder.sdk.query.upload.SaveMediaQuery;
 import com.bynder.sdk.query.upload.UploadQuery;
 import com.bynder.sdk.service.amazons3.AmazonS3Service;
-import com.bynder.sdk.exception.BynderUploadException;
-import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
 import java.util.Map;
 import retrofit2.Response;
 
@@ -67,6 +65,7 @@ public class FileUploader {
      * Creates a new instance of the class.
      *
      * @param bynderApi Instance to handle the HTTP communication with the Bynder API.
+     * @param queryDecoder Query decoder.
      */
     public FileUploader(final BynderApi bynderApi, final QueryDecoder queryDecoder) {
         this.bynderApi = bynderApi;

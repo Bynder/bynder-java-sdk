@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Converts attribute name from string to "metaproperty.<string>" to send to API.
+ * Converts attribute name from string to "metaproperty.name" to send to API.
  */
 public class MetapropertyAttributeDecoder implements
     ParameterDecoder<String, MetapropertyAttribute> {

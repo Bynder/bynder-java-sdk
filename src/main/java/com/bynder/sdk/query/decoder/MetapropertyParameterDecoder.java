@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Converts parameter name from string to "property_<string>" to send to API.
+ * Converts parameter name from string to "property_name" to send to API.
  */
 public class MetapropertyParameterDecoder implements ParameterDecoder<String, Map<String, String>> {
 

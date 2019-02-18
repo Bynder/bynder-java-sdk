@@ -51,6 +51,9 @@ public class OAuthServiceImpl implements OAuthService {
         this.queryDecoder = queryDecoder;
     }
 
+    /**
+     * Check {@link OAuthService} for more information.
+     */
     @Override
     public URL getAuthorizationUrl(final String state)
         throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException {

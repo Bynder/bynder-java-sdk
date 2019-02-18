@@ -27,7 +27,6 @@ import com.bynder.sdk.query.UsageDeleteQuery;
 import com.bynder.sdk.query.UsageQuery;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.query.upload.UploadQuery;
-import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
 import java.util.List;
 import java.util.Map;
@@ -110,8 +109,6 @@ public interface AssetService {
      *
      * @param usageCreateQuery Information about the asset usage we want to create.
      * @return {@link Observable} with {@link Usage} information.
-     * @throws IllegalAccessException Check {@link Utils} convertField method for more
-     * information.
      */
     Observable<Response<Usage>> createUsage(UsageCreateQuery usageCreateQuery);
 
@@ -120,8 +117,6 @@ public interface AssetService {
      *
      * @param usageQuery Information about the asset usage we want to get the information from.
      * @return {@link Observable} with list of {@link Usage}.
-     * @throws IllegalAccessException Check {@link Utils} convertField method for more
-     * information.
      */
     Observable<Response<List<Usage>>> getUsage(UsageQuery usageQuery);
 
@@ -130,8 +125,6 @@ public interface AssetService {
      *
      * @param usageDeleteQuery Information about the asset usage we want to delete.
      * @return {@link Observable} with the request {@link Response} information.
-     * @throws IllegalAccessException Check {@link Utils} convertField method for more
-     * information.
      */
     Observable<Response<Void>> deleteUsage(UsageDeleteQuery usageDeleteQuery);
 

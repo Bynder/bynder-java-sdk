@@ -10,6 +10,7 @@ import com.bynder.sdk.api.OAuthApi;
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
+import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -26,6 +27,12 @@ public interface OAuthService {
      *
      * @param state A random string used to maintain state between the request and callback (used
      * to protect against cross-site request forgery attacks).
+     * @return The authorization URL.
+     * @throws MalformedURLException If no protocol is specified, or an unknown protocol is found,
+     * or spec is null while instantiating the URL.
+     * @throws UnsupportedEncodingException Check {@link Utils#encodeParameterValue(String)} for
+     * more information.
+     * @throws IllegalArgumentException If state is passed as null or empty.
      */
     URL getAuthorizationUrl(final String state)
         throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException;

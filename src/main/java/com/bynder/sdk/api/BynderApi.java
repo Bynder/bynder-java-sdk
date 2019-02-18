@@ -10,16 +10,15 @@ import com.bynder.sdk.model.Brand;
 import com.bynder.sdk.model.Collection;
 import com.bynder.sdk.model.Derivative;
 import com.bynder.sdk.model.DownloadUrl;
-import com.bynder.sdk.model.upload.FinaliseResponse;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
-import com.bynder.sdk.model.upload.PollStatus;
-import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
-import com.bynder.sdk.model.upload.UploadRequest;
 import com.bynder.sdk.model.Usage;
-import com.bynder.sdk.model.User;
+import com.bynder.sdk.model.upload.FinaliseResponse;
+import com.bynder.sdk.model.upload.PollStatus;
+import com.bynder.sdk.model.upload.SaveMediaResponse;
+import com.bynder.sdk.model.upload.UploadRequest;
 import io.reactivex.Observable;
 import java.util.List;
 import java.util.Map;
@@ -36,33 +35,6 @@ import retrofit2.http.QueryMap;
  * Interface of the Bynder API to handle the HTTP communication.
  */
 public interface BynderApi {
-
-    /**
-     * Logs in to Bynder with a username and password pair.
-     *
-     * @param params {@link FieldMap} with parameters.
-     * @return {@link Observable} with the {@link User} information.
-     */
-    @FormUrlEncoded
-    @POST("/api/v4/users/login/")
-    Observable<Response<User>> login(@FieldMap Map<String, String> params);
-
-    /**
-     * Gets temporary request token pair.
-     *
-     * @return {@link Observable} with the request token pair information.
-     */
-    @POST("/api/v4/oauth/request_token/")
-    Observable<Response<String>> getRequestToken();
-
-    /**
-     * Gets a temporary access token pair once the user already authorised the request token pair.
-     * If successful the request token pair is immediately expired.
-     *
-     * @return {@link Observable} with the access token pair information.
-     */
-    @POST("/api/v4/oauth/access_token/")
-    Observable<Response<String>> getAccessToken();
 
     /**
      * Gets list of the account derivatives.
@@ -117,14 +89,14 @@ public interface BynderApi {
     Observable<Response<Media>> getMediaInfo(@QueryMap Map<String, String> params);
 
     /**
-     * Updates the media properties (metadata) for a specific media id.
+     * Modifies the media metadata for a specific media id.
      *
      * @param params {@link FieldMap} with parameters.
      * @return {@link Observable} with the {@link Response}.
      */
     @FormUrlEncoded
     @POST("/api/v4/media/")
-    Observable<Response<Void>> setMediaProperties(@FieldMap Map<String, String> params);
+    Observable<Response<Void>> modifyMedia(@FieldMap Map<String, String> params);
 
     /**
      * Deletes a media asset.

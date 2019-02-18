@@ -19,7 +19,7 @@ import com.bynder.sdk.model.upload.UploadProgress;
 import com.bynder.sdk.query.MediaDeleteQuery;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
-import com.bynder.sdk.query.MediaPropertiesQuery;
+import com.bynder.sdk.query.MediaModifyQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UsageCreateQuery;
@@ -111,10 +111,9 @@ public class AssetServiceImpl implements AssetService {
      * Check {@link AssetService} for more information.
      */
     @Override
-    public Observable<Response<Void>> setMediaProperties(
-        final MediaPropertiesQuery mediaPropertiesQuery) {
-        Map<String, String> params = queryDecoder.decode(mediaPropertiesQuery);
-        return bynderApi.setMediaProperties(params);
+    public Observable<Response<Void>> modifyMedia(final MediaModifyQuery mediaModifyQuery) {
+        Map<String, String> params = queryDecoder.decode(mediaModifyQuery);
+        return bynderApi.modifyMedia(params);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Bynder B.V. All rights reserved.
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -16,15 +16,23 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 
+/**
+ * Tests the {@link MetapropertyParameterDecoder} class method.
+ */
 public class MetapropertyParameterDecoderTest {
+
+    public static final String PARAMETER_NAME = "property";
+    public static final String METAPROPERTY_NAME = "name";
+    public static final String EXPECTED_OPTION_NAME = "option";
+    public static final String EXPECTED_PARAMETER_NAME = PARAMETER_NAME + "_" + METAPROPERTY_NAME;
 
     @Test
     public void decodeReturnsMetapropertyParameterFormat() {
-        Map<String, String> params = new MetapropertyParameterDecoder()
-            .decode("property", new HashMap<String, String>() {{
-                put("name", "option");
+        Map<String, String> parameters = new MetapropertyParameterDecoder()
+            .decode(PARAMETER_NAME, new HashMap<String, String>() {{
+                put(METAPROPERTY_NAME, EXPECTED_OPTION_NAME);
             }});
 
-        assertEquals("option", params.get("property_name"));
+        assertEquals(EXPECTED_OPTION_NAME, parameters.get(EXPECTED_PARAMETER_NAME));
     }
 }

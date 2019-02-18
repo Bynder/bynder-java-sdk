@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for full license
+ * information.
+ */
 package com.bynder.sdk.service.oauth;
 
 import com.bynder.sdk.api.OAuthApi;
@@ -10,20 +16,14 @@ import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.query.oauth.TokenQuery;
 import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import retrofit2.Response;
 
 public class OAuthServiceImpl implements OAuthService {
 
-    /**
-     * Configuration settings needed to get the OAuth info of the SDK client.
-     */
-    private Configuration configuration;
     /**
      * Instance of {@link OAuthApi} which handles the HTTP communication with the OAuth2
      * provider.
@@ -33,6 +33,10 @@ public class OAuthServiceImpl implements OAuthService {
      * Instance of {@link QueryDecoder} to decode query objects into API parameters.
      */
     private final QueryDecoder queryDecoder;
+    /**
+     * Configuration settings needed to get the OAuth info of the SDK client.
+     */
+    private Configuration configuration;
 
     /**
      * Initialises a new instance of the class.
@@ -40,14 +44,20 @@ public class OAuthServiceImpl implements OAuthService {
      * @param configuration Configuration settings.
      * @param oauthClient OAuth2 client instance.
      */
-    OAuthServiceImpl(final Configuration configuration, final OAuthApi oauthClient, final QueryDecoder queryDecoder) {
+    OAuthServiceImpl(final Configuration configuration, final OAuthApi oauthClient,
+        final QueryDecoder queryDecoder) {
         this.configuration = configuration;
         this.oauthClient = oauthClient;
         this.queryDecoder = queryDecoder;
     }
 
     @Override
-    public URL getAuthorizationUrl(final String state) throws MalformedURLException, UnsupportedEncodingException {
+    public URL getAuthorizationUrl(final String state)
+        throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException {
+        if (state == null || state.isEmpty()) {
+            throw new IllegalArgumentException(state);
+        }
+
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(configuration.getBaseUrl());
         stringBuilder.append("/oauth2/auth");
@@ -57,7 +67,8 @@ public class OAuthServiceImpl implements OAuthService {
             .append(Utils.encodeParameterValue(configuration.getRedirectUri().toString()));
         stringBuilder.append("&response_type=")
             .append(Utils.encodeParameterValue(ResponseType.CODE.toString()));
-        stringBuilder.append("&scope=").append(Utils.encodeParameterValue(Scope.OPEN_ID.toString()));
+        stringBuilder.append("&scope=")
+            .append(Utils.encodeParameterValue(Scope.OPEN_ID.toString()));
         stringBuilder.append(Utils.encodeParameterValue(" "));
         stringBuilder.append(Utils.encodeParameterValue(Scope.OFFLINE.toString()));
         stringBuilder.append("&state=").append(Utils.encodeParameterValue(state));
@@ -71,7 +82,7 @@ public class OAuthServiceImpl implements OAuthService {
      * Check {@link OAuthService} for more information.
      */
     @Override
-    public Observable<Token> getAccessToken(final String code) throws URISyntaxException {
+    public Observable<Token> getAccessToken(final String code) {
         TokenQuery tokenQuery = new TokenQuery(configuration.getClientId(),
             configuration.getClientSecret(), configuration.getRedirectUri(),
             GrantType.AUTHORIZATION_CODE, code);

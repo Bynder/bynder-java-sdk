@@ -9,7 +9,7 @@ package com.bynder.sdk.model.upload;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Parameters needed to upload a part to Amazon. This model is only and should be only used when
+ * Parameters needed to upload a part to Amazon S3. This model is only and should be only used when
  * uploading a file.
  */
 public class MultipartParameters {

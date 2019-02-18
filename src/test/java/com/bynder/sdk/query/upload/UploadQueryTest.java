@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * Tests the {@link UploadQuery} class methods.
+ */
 public class UploadQueryTest {
 
     public static final String EXPECTED_FILE_PATH = "filePath";

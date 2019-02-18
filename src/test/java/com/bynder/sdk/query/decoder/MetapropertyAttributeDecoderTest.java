@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Bynder B.V. All rights reserved.
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -16,13 +16,21 @@ import com.bynder.sdk.query.MetapropertyAttribute;
 import java.util.Map;
 import org.junit.Test;
 
+/**
+ * Tests the {@link MetapropertyAttributeDecoder} class method.
+ */
 public class MetapropertyAttributeDecoderTest {
+
+    public static final String PARAMETER_NAME = "metaproperty";
+    public static final String METAPROPERTY_UUID = "00000000-0000-0000-0000000000000000";
+    public static final String EXPECTED_OPTION_NAME = "option";
+    public static final String EXPECTED_PARAMETER_NAME = PARAMETER_NAME + "." + METAPROPERTY_UUID;
 
     @Test
     public void decodeReturnsMetapropertyAttributeFormat() {
-        Map<String, String> params = new MetapropertyAttributeDecoder()
-            .decode("metaproperty", new MetapropertyAttribute("uuid", new String[]{"option"}));
+        Map<String, String> parameters = new MetapropertyAttributeDecoder().decode(PARAMETER_NAME,
+            new MetapropertyAttribute(METAPROPERTY_UUID, new String[]{EXPECTED_OPTION_NAME}));
 
-        assertEquals("option", params.get("metaproperty.uuid"));
+        assertEquals(EXPECTED_OPTION_NAME, parameters.get(EXPECTED_PARAMETER_NAME));
     }
 }

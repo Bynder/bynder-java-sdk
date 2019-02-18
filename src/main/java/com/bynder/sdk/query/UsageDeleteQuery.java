@@ -34,6 +34,18 @@ public class UsageDeleteQuery {
         this.assetId = assetId;
     }
 
+    public String getIntegrationId() {
+        return integrationId;
+    }
+
+    public String getAssetId() {
+        return assetId;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
     public UsageDeleteQuery setLocation(final String location) {
         this.location = location;
         return this;

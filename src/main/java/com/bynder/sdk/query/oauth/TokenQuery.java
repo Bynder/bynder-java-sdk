@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for full license
+ * information.
+ */
 package com.bynder.sdk.query.oauth;
 
 import com.bynder.sdk.api.OAuthApi;
@@ -36,7 +42,7 @@ public class TokenQuery {
      * The code included in the redirect URI after application has been authorized. Required if
      * {@link GrantType#AUTHORIZATION_CODE} was selected as grant type.
      */
-    @ApiField(name = "code")
+    @ApiField
     private String code;
     /**
      * The refresh token which can be used to obtain new access tokens. Required if
@@ -60,5 +66,29 @@ public class TokenQuery {
         this.clientSecret = clientSecret;
         this.grantType = grantType;
         this.refreshToken = refreshToken;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public URI getRedirectUri() {
+        return redirectUri;
+    }
+
+    public GrantType getGrantType() {
+        return grantType;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
     }
 }

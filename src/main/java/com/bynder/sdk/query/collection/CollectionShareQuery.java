@@ -4,11 +4,10 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
-package com.bynder.sdk.query;
+package com.bynder.sdk.query.collection;
 
 import com.bynder.sdk.query.decoder.ApiField;
 import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
-import java.util.List;
 
 /**
  * Query to share a collection.
@@ -23,7 +22,7 @@ public class CollectionShareQuery {
     /**
      * Email addresses of the recipients.
      */
-    @ApiField(name = "recipients", decoder = StringArrayParameterDecoder.class)
+    @ApiField(decoder = StringArrayParameterDecoder.class)
     private final String[] recipients;
 
     /**

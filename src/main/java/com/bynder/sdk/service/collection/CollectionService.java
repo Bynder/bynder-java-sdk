@@ -8,18 +8,15 @@ package com.bynder.sdk.service.collection;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.Collection;
-import com.bynder.sdk.query.CollectionAddMediaQuery;
-import com.bynder.sdk.query.CollectionCreateQuery;
-import com.bynder.sdk.query.CollectionInfoQuery;
-import com.bynder.sdk.query.CollectionQuery;
-import com.bynder.sdk.query.CollectionRemoveMediaQuery;
-import com.bynder.sdk.query.CollectionShareQuery;
+import com.bynder.sdk.query.collection.CollectionAddMediaQuery;
+import com.bynder.sdk.query.collection.CollectionCreateQuery;
+import com.bynder.sdk.query.collection.CollectionInfoQuery;
+import com.bynder.sdk.query.collection.CollectionQuery;
+import com.bynder.sdk.query.collection.CollectionRemoveMediaQuery;
+import com.bynder.sdk.query.collection.CollectionShareQuery;
 import com.bynder.sdk.query.decoder.QueryDecoder;
-import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
 import retrofit2.Response;
 
 /**
@@ -76,7 +73,8 @@ public interface CollectionService {
      * @param collectionAddMediaQuery Information needed to add media to a collection.
      * @return {@link Observable} with the request {@link Response} information..
      */
-    Observable<Response<Void>> addMediaToCollection(CollectionAddMediaQuery collectionAddMediaQuery);
+    Observable<Response<Void>> addMediaToCollection(
+        CollectionAddMediaQuery collectionAddMediaQuery);
 
     /**
      * Removes media assets from a collection.

@@ -10,12 +10,12 @@ import com.bynder.sdk.query.decoder.ApiField;
 import com.bynder.sdk.query.decoder.MetapropertyAttributeDecoder;
 
 /**
- * Query to specify the media properties to be updated.
+ * Query to specify the media metadata to be modified.
  */
-public class MediaPropertiesQuery {
+public class MediaModifyQuery {
 
     /**
-     * Id of the media for which we want to update its properties.
+     * Id of the media for which we want to modify its metadata.
      */
     @ApiField(name = "id")
     private final String mediaId;
@@ -45,13 +45,14 @@ public class MediaPropertiesQuery {
     @ApiField
     private String datePublished;
     /**
-     * MetapropertyAttribute with metaproperty id and list of all its metaproperty options ids to set on
+     * MetapropertyAttribute with metaproperty id and list of all its metaproperty options ids to
+     * set on
      * the media.
      */
     @ApiField(decoder = MetapropertyAttributeDecoder.class)
     private MetapropertyAttribute metaproperty;
 
-    public MediaPropertiesQuery(final String mediaId) {
+    public MediaModifyQuery(final String mediaId) {
         this.mediaId = mediaId;
     }
 
@@ -63,7 +64,7 @@ public class MediaPropertiesQuery {
         return name;
     }
 
-    public MediaPropertiesQuery setName(final String name) {
+    public MediaModifyQuery setName(final String name) {
         this.name = name;
         return this;
     }
@@ -72,7 +73,7 @@ public class MediaPropertiesQuery {
         return description;
     }
 
-    public MediaPropertiesQuery setDescription(final String description) {
+    public MediaModifyQuery setDescription(final String description) {
         this.description = description;
         return this;
     }
@@ -81,7 +82,7 @@ public class MediaPropertiesQuery {
         return copyright;
     }
 
-    public MediaPropertiesQuery setCopyright(final String copyright) {
+    public MediaModifyQuery setCopyright(final String copyright) {
         this.copyright = copyright;
         return this;
     }
@@ -90,7 +91,7 @@ public class MediaPropertiesQuery {
         return archive;
     }
 
-    public MediaPropertiesQuery setArchive(final Boolean archive) {
+    public MediaModifyQuery setArchive(final Boolean archive) {
         this.archive = archive;
         return this;
     }
@@ -99,7 +100,7 @@ public class MediaPropertiesQuery {
         return datePublished;
     }
 
-    public MediaPropertiesQuery setDatePublished(final String datePublished) {
+    public MediaModifyQuery setDatePublished(final String datePublished) {
         this.datePublished = datePublished;
         return this;
     }
@@ -108,7 +109,7 @@ public class MediaPropertiesQuery {
         return metaproperty;
     }
 
-    public MediaPropertiesQuery setMetaproperty(final MetapropertyAttribute metaproperty) {
+    public MediaModifyQuery setMetaproperty(final MetapropertyAttribute metaproperty) {
         this.metaproperty = metaproperty;
         return this;
     }

@@ -16,7 +16,7 @@ public class RequestUploadQuery {
     /**
      * Filename of the file for which we want to initialise the upload.
      */
-    @ApiField(name = "filename")
+    @ApiField
     private final String filename;
 
     public RequestUploadQuery(final String filename) {

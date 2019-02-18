@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * Tests the {@link PollStatusQuery} class methods.
+ */
 public class PollStatusQueryTest {
 
     public static final String[] EXPECTED_ITEMS = new String[]{"item1", "item2"};

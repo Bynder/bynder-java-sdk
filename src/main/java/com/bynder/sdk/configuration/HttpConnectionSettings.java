@@ -12,11 +12,12 @@ import okhttp3.Interceptor;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
- * Configuration holder for HTTP connection related settings for the connection to Bynder.
+ * Configuration holder for HTTP connection related settings for the communication with Bynder.
  */
 public class HttpConnectionSettings {
 
     public static final int DEFAULT_TIMEOUT_SECONDS = 30;
+
     /**
      * Read timeout in seconds.
      */
@@ -51,13 +52,14 @@ public class HttpConnectionSettings {
     public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager,
         final Interceptor customInterceptor, final int readTimeoutSeconds,
         final int connectTimeoutSeconds, final boolean retryOnConnectionFailure) {
-      this(sslContext, trustManager, customInterceptor, readTimeoutSeconds, connectTimeoutSeconds,
-          retryOnConnectionFailure, false);
+        this(sslContext, trustManager, customInterceptor, readTimeoutSeconds, connectTimeoutSeconds,
+            retryOnConnectionFailure, false);
     }
 
     public HttpConnectionSettings(final SSLContext sslContext, final X509TrustManager trustManager,
         final Interceptor customInterceptor, final int readTimeoutSeconds,
-        final int connectTimeoutSeconds, final boolean retryOnConnectionFailure, boolean includeLoggingInterceptor) {
+        final int connectTimeoutSeconds, final boolean retryOnConnectionFailure,
+        boolean includeLoggingInterceptor) {
         this.sslContext = sslContext;
         this.trustManager = trustManager;
         this.customInterceptor = customInterceptor;

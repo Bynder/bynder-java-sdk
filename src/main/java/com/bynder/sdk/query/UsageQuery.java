@@ -19,6 +19,10 @@ public class UsageQuery {
     @ApiField(name = "asset_id")
     private String assetId;
 
+    public String getAssetId() {
+        return assetId;
+    }
+
     public UsageQuery setAssetId(final String assetId) {
         this.assetId = assetId;
         return this;

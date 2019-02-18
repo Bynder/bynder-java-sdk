@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * Tests the {@link RequestUploadQuery} class methods.
+ */
 public class RequestUploadQueryTest {
 
     public static final String EXPECTED_FILENAME = "filename";

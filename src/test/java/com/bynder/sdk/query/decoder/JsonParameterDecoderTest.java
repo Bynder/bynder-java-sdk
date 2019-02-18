@@ -16,12 +16,20 @@ import com.google.gson.Gson;
 import java.util.Map;
 import org.junit.Test;
 
+/**
+ * Tests the {@link JsonParameterDecoderTest} class method.
+ */
 public class JsonParameterDecoderTest {
+
+    public static final String PARAMETER_NAME = "name";
+    public static final String EXPECTED_ITEM_1 = "item1";
+    public static final String EXPECTED_ITEM_2 = "item2";
 
     @Test
     public void decodeReturnsJsonList() {
-        Map<String, String> params = new JsonParameterDecoder()
-            .decode("key", new String[]{"item1", "item2"});
-        assertEquals(new Gson().toJson(new String[]{"item1", "item2"}), params.get("key"));
+        Map<String, String> parameters = new JsonParameterDecoder()
+            .decode(PARAMETER_NAME, new String[]{EXPECTED_ITEM_1, EXPECTED_ITEM_2});
+        assertEquals(new Gson().toJson(new String[]{EXPECTED_ITEM_1, EXPECTED_ITEM_2}),
+            parameters.get(PARAMETER_NAME));
     }
 }

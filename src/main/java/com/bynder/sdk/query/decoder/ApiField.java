@@ -12,8 +12,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation class to specify if property needs to be converted and sent as query/field parameter
- * to the API.
+ * Annotation class to specify if property needs to be converted and sent as query/attribute
+ * parameter to the API.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

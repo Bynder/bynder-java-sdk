@@ -24,7 +24,7 @@ public class RegisterChunkQuery {
     /**
      * Number of the chunk that was uploaded.
      */
-    @ApiField(name = "chunkNumber")
+    @ApiField
     private final int chunkNumber;
 
     /**
@@ -37,7 +37,7 @@ public class RegisterChunkQuery {
     /**
      * S3 filename.
      */
-    @ApiField(name = "filename")
+    @ApiField
     private final String filename;
 
     public RegisterChunkQuery(final String uploadId, final int chunkNumber, final String targetId,

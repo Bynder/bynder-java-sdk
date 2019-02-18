@@ -16,7 +16,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PartMap;
 
 /**
- * Interface of the Amazon S3 API to handle the HTTP communication.
+ * Interface of the Amazon S3 API.
  */
 public interface AmazonS3Api {
 

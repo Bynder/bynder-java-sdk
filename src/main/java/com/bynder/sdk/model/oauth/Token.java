@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Bynder B.V. All rights reserved.
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -51,14 +51,14 @@ public class Token {
      */
     private Date accessTokenExpiration;
 
-    public Token(final String accessToken, final int expiresIn, final String tokenId, final String tokenType,
-        final String scope, final String refreshToken) {
+    public Token(final String accessToken, final int expiresIn, final String tokenId,
+        final String tokenType, final String scope, final String refreshToken) {
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
+        this.tokenId = tokenId;
         this.tokenType = tokenType;
         this.scope = scope;
         this.refreshToken = refreshToken;
-        this.tokenId = tokenId;
     }
 
     public String getAccessToken() {

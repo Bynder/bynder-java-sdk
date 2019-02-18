@@ -13,7 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Final class that provides methods to help handling API requests and responses.
+ * Utils class that provides methods to help handling API requests and responses.
  */
 public final class Utils {
 

@@ -4,28 +4,28 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
-package com.bynder.sdk.query;
+package com.bynder.sdk.query.collection;
 
 import com.bynder.sdk.query.decoder.ApiField;
-import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
+import com.bynder.sdk.query.decoder.JsonParameterDecoder;
 
 /**
- * Query to remove media assets from a collection.
+ * Query to add media assets to a collection.
  */
-public class CollectionRemoveMediaQuery {
+public class CollectionAddMediaQuery {
 
     /**
-     * Id of the collection from which we want to remove media.
+     * Id of the collection to which we want to add media.
      */
     private final String collectionId;
 
     /**
-     * String array with the media assets ids to be removed.
+     * List with the media assets ids to be added.
      */
-    @ApiField(name = "deleteIds", decoder = StringArrayParameterDecoder.class)
+    @ApiField(name = "data", decoder = JsonParameterDecoder.class)
     private final String[] mediaIds;
 
-    public CollectionRemoveMediaQuery(final String collectionId, final String[] mediaIds) {
+    public CollectionAddMediaQuery(final String collectionId, final String[] mediaIds) {
         this.collectionId = collectionId;
         this.mediaIds = mediaIds;
     }

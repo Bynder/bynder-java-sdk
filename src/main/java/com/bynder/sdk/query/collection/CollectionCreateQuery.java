@@ -4,7 +4,7 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
  */
-package com.bynder.sdk.query;
+package com.bynder.sdk.query.collection;
 
 import com.bynder.sdk.query.decoder.ApiField;
 

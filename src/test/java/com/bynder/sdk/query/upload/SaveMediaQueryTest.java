@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * Tests the {@link SaveMediaQuery} class methods.
+ */
 public class SaveMediaQueryTest {
 
     public static final String EXPECTED_IMPORT_ID = "importId";

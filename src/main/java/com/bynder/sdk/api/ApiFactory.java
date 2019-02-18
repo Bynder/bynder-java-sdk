@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Bynder B.V. All rights reserved.
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.OkHttpClient.Builder;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -31,8 +32,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class ApiFactory {
 
-    public static final int DEFAULT_TIMEOUT_SECONDS = 30;
-
     /**
      * Prevents the instantiation of the class.
      */
@@ -42,7 +41,7 @@ public class ApiFactory {
      * Creates an implementation of the Bynder API endpoints defined in the {@link BynderApi}
      * interface.
      *
-     * @param configuration Configuration settings for the HTTP connection to Orbit.
+     * @param configuration {@link Configuration} settings for the HTTP communication with Bynder.
      * @return Implementation instance of the {@link BynderApi} interface.
      */
     public static BynderApi createBynderClient(final Configuration configuration) {
@@ -78,7 +77,7 @@ public class ApiFactory {
      * Creates an implementation of the Amazon S3 endpoints defined in the {@link AmazonS3Api}
      * interface.
      *
-     * @param baseUrl Base URL of the Bynder portal.
+     * @param baseUrl Bynder portal base URL.
      * @return Implementation instance of the {@link OAuthApi} interface.
      */
     public static OAuthApi createOAuthClient(final String baseUrl) {
@@ -93,12 +92,29 @@ public class ApiFactory {
     /**
      * Creates an instance of {@link OkHttpClient}.
      *
-     * @param configuration Configuration settings for the HTTP connection to Bynder.
+     * @param configuration Configuration settings for the HTTP communication with Bynder.
      * @return {@link OkHttpClient} instance used for API requests.
      */
     private static OkHttpClient createOkHttpClient(final Configuration configuration) {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
 
+        setOAuthInterceptor(httpClientBuilder, configuration);
+
+        HttpConnectionSettings httpConnectionSettings = configuration.getHttpConnectionSettings();
+        setHttpConnectionSettings(httpClientBuilder, httpConnectionSettings);
+
+        return httpClientBuilder.build();
+    }
+
+    /**
+     * Sets the OAuth interceptor for the HTTP client. This interceptor will handle adding the
+     * access token to the request header and refreshing it when it expires.
+     *
+     * @param httpClientBuilder Builder instance of the HTTP client.
+     * @param configuration {@link Configuration} settings for the HTTP communication with Bynder.
+     */
+    private static void setOAuthInterceptor(final Builder httpClientBuilder,
+        final Configuration configuration) {
         httpClientBuilder.addInterceptor(new Interceptor() {
 
             @Override
@@ -124,40 +140,41 @@ public class ApiFactory {
                 return chain.proceed(request);
             }
         });
+    }
 
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        httpClientBuilder.addInterceptor(interceptor);
-
-        httpClientBuilder.connectTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        httpClientBuilder.readTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        httpClientBuilder.writeTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-
-        // if httpConnectionSettings were set it overrides previously defined settings
-        if (configuration.getHttpConnectionSettings() != null) {
-            HttpConnectionSettings httpConnectionSettings = configuration.getHttpConnectionSettings();
-
-            if (httpConnectionSettings.isLoggingInterceptorEnabled()) {
-                HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-                httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-                httpClientBuilder.addInterceptor(httpLoggingInterceptor);
-            }
-
-            if (httpConnectionSettings.getCustomInterceptor() != null) {
-                httpClientBuilder.addInterceptor(httpConnectionSettings.getCustomInterceptor());
-            }
-
-            httpClientBuilder.retryOnConnectionFailure(httpConnectionSettings.isRetryOnConnectionFailure());
-            httpClientBuilder.readTimeout(httpConnectionSettings.getReadTimeoutSeconds(), TimeUnit.SECONDS);
-            httpClientBuilder.connectTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
-            httpClientBuilder.writeTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
-
-            if (httpConnectionSettings.getSslContext() != null
-                && httpConnectionSettings.getTrustManager() != null) {
-                httpClientBuilder.sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(),
-                    httpConnectionSettings.getTrustManager());
-            }
+    /**
+     * Sets the HTTP connection settings for the HTTP client.
+     *
+     * @param httpClientBuilder Builder instance of the HTTP client.
+     * @param httpConnectionSettings HTTP connection settings for the HTTP communication with
+     * Bynder.
+     */
+    private static void setHttpConnectionSettings(final Builder httpClientBuilder,
+        final HttpConnectionSettings httpConnectionSettings) {
+        if (httpConnectionSettings.isLoggingInterceptorEnabled()) {
+            HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpClientBuilder.addInterceptor(httpLoggingInterceptor);
         }
 
-        return httpClientBuilder.build();
+        if (httpConnectionSettings.getCustomInterceptor() != null) {
+            httpClientBuilder.addInterceptor(httpConnectionSettings.getCustomInterceptor());
+        }
+
+        httpClientBuilder
+            .retryOnConnectionFailure(httpConnectionSettings.isRetryOnConnectionFailure());
+        httpClientBuilder
+            .readTimeout(httpConnectionSettings.getReadTimeoutSeconds(), TimeUnit.SECONDS);
+        httpClientBuilder
+            .connectTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
+        httpClientBuilder
+            .writeTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
+
+        if (httpConnectionSettings.getSslContext() != null
+            && httpConnectionSettings.getTrustManager() != null) {
+            httpClientBuilder
+                .sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(),
+                    httpConnectionSettings.getTrustManager());
+        }
     }
 }

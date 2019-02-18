@@ -6,19 +6,19 @@
  */
 package com.bynder.sdk.configuration;
 
-import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.model.oauth.RefreshTokenCallback;
+import com.bynder.sdk.model.oauth.Token;
 import java.net.URI;
 import java.net.URL;
 
 public class Configuration {
 
     /**
-     * Bynder portal URL.
+     * Bynder portal base URL.
      */
     private URL baseUrl;
     /**
-     * Settings for the HTTP connection to Bynder.
+     * Connection settings for the HTTP communication with Bynder.
      */
     private HttpConnectionSettings httpConnectionSettings;
     /**
@@ -82,7 +82,7 @@ public class Configuration {
     }
 
     public HttpConnectionSettings getHttpConnectionSettings() {
-        return  this.httpConnectionSettings;
+        return this.httpConnectionSettings;
     }
 
     /**
@@ -98,11 +98,13 @@ public class Configuration {
         private RefreshTokenCallback callback;
         private HttpConnectionSettings httpConnectionSettings;
 
-        public Builder(final URL baseUrl, final String clientId, final String clientSecret, final URI redirectUri) {
+        public Builder(final URL baseUrl, final String clientId, final String clientSecret,
+            final URI redirectUri) {
             this.baseUrl = baseUrl;
             this.clientId = clientId;
             this.clientSecret = clientSecret;
             this.redirectUri = redirectUri;
+            this.httpConnectionSettings = new HttpConnectionSettings();
         }
 
         public Builder setToken(Token token) {

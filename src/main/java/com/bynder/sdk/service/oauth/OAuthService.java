@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Bynder B.V. All rights reserved.
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -11,12 +11,9 @@ import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import retrofit2.Response;
 
 /**
  * OAuth2 service interface.
@@ -30,7 +27,8 @@ public interface OAuthService {
      * @param state A random string used to maintain state between the request and callback (used
      * to protect against cross-site request forgery attacks).
      */
-    URL getAuthorizationUrl(final String state) throws MalformedURLException, UnsupportedEncodingException;
+    URL getAuthorizationUrl(final String state)
+        throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException;
 
     /**
      * Gets an access token using the code authorization grant.
@@ -38,7 +36,7 @@ public interface OAuthService {
      * @param code The code included in the redirect URI.
      * @return {@link Observable} with {@link Token} information.
      */
-    Observable<Token> getAccessToken(final String code) throws URISyntaxException;
+    Observable<Token> getAccessToken(final String code);
 
     /**
      * Gets a new access token using the refresh token.
@@ -55,7 +53,8 @@ public interface OAuthService {
         private Builder() {
         }
 
-        public static OAuthService create(final Configuration configuration, OAuthApi oauthClient, final QueryDecoder queryDecoder) {
+        public static OAuthService create(final Configuration configuration, OAuthApi oauthClient,
+            final QueryDecoder queryDecoder) {
             return new OAuthServiceImpl(configuration, oauthClient, queryDecoder);
         }
     }

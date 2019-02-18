@@ -34,7 +34,7 @@ public class FinaliseUploadQuery {
     /**
      * Total number of chunks uploaded.
      */
-    @ApiField(name = "chunks")
+    @ApiField
     private final int chunks;
 
     public FinaliseUploadQuery(final String uploadId, final String targetId,

@@ -19,7 +19,7 @@ import com.bynder.sdk.model.upload.UploadProgress;
 import com.bynder.sdk.query.MediaDeleteQuery;
 import com.bynder.sdk.query.MediaDownloadQuery;
 import com.bynder.sdk.query.MediaInfoQuery;
-import com.bynder.sdk.query.MediaPropertiesQuery;
+import com.bynder.sdk.query.MediaModifyQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.query.UsageCreateQuery;
@@ -80,13 +80,13 @@ public interface AssetService {
     Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery);
 
     /**
-     * Updates the properties of a media asset.
+     * Modifies the metadata of a media asset.
      *
-     * @param mediaPropertiesQuery Information with the media asset properties new values to be
-     * updated.
+     * @param mediaModifyQuery Information with the media asset metadata new values to be
+     * modified.
      * @return {@link Observable} with the request {@link Response} information.
      */
-    Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery);
+    Observable<Response<Void>> modifyMedia(MediaModifyQuery mediaModifyQuery);
 
     /**
      * Deletes a media asset.

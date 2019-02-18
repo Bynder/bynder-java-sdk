@@ -44,14 +44,34 @@ public class UsageCreateQuery {
         this.assetId = assetId;
     }
 
+    public String getIntegrationId() {
+        return integrationId;
+    }
+
+    public String getAssetId() {
+        return assetId;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
     public UsageCreateQuery setTimestamp(final String timestamp) {
         this.timestamp = timestamp;
         return this;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
     public UsageCreateQuery setLocation(final String location) {
         this.location = location;
         return this;
+    }
+
+    public String getAdditional() {
+        return additional;
     }
 
     public UsageCreateQuery setAdditional(final String additional) {

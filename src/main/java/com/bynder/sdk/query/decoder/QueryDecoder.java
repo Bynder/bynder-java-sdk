@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for full license
+ * information.
+ */
 package com.bynder.sdk.query.decoder;
 
 import java.lang.reflect.Field;
@@ -19,11 +25,11 @@ public class QueryDecoder {
      *
      * @param field Field information.
      * @param query Query object.
-     * @param params Parameters name/value pairs to send to the API.
+     * @param parameters Parameters name/value pairs to send to the API.
      * @throws IllegalAccessException If the Field object is inaccessible.
      */
     private static void convertField(final Field field, final Object query,
-        final Map<String, String> params) throws IllegalAccessException {
+        final Map<String, String> parameters) throws IllegalAccessException {
         field.setAccessible(true);
         ApiField apiField = field.getAnnotation(ApiField.class);
         Object fieldValue = field.get(query);
@@ -32,7 +38,7 @@ public class QueryDecoder {
                 ApiField.DEFAULT_NAME.equals(apiField.name()) ? field.getName() : apiField.name();
 
             if (apiField.decoder().equals(void.class)) {
-                params.put(name, fieldValue.toString());
+                parameters.put(name, fieldValue.toString());
             } else {
                 ParameterDecoder parameterDecoder = null;
                 try {
@@ -41,7 +47,7 @@ public class QueryDecoder {
                     // Failed to instantiate class. Nothing to do.
                 }
 
-                params.putAll(parameterDecoder.decode(name, fieldValue));
+                parameters.putAll(parameterDecoder.decode(name, fieldValue));
             }
         }
 
@@ -56,7 +62,7 @@ public class QueryDecoder {
      * @return Map with parameters name/value pairs to send to the API.
      */
     public Map<String, String> decode(final Object query) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         if (query != null) {
             List<Field> fields = new ArrayList<>();
 
@@ -68,7 +74,7 @@ public class QueryDecoder {
 
             for (Field field : fields) {
                 try {
-                    convertField(field, query, params);
+                    convertField(field, query, parameters);
                 } catch (IllegalAccessException e) {
                     // Nothing to do. This will never happen as
                     // we are iterating over the fields.
@@ -76,6 +82,6 @@ public class QueryDecoder {
             }
         }
 
-        return params;
+        return parameters;
     }
 }

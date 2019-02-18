@@ -7,7 +7,7 @@
 package com.bynder.sdk.exception;
 
 /**
- * Exception thrown when Upload does not finish within the expected time.
+ * Exception thrown when an error occurs during file upload.
  */
 public class BynderUploadException extends Exception {
 

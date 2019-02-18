@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Bynder B.V. All rights reserved.
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -22,11 +22,6 @@ import retrofit2.Response;
 public class BynderClientImpl implements BynderClient {
 
     /**
-     * Configuration settings needed to instantiate the different interfaces and services of the
-     * SDK client.
-     */
-    private Configuration configuration;
-    /**
      * Instance of {@link QueryDecoder} to decode query objects into API parameters.
      */
     private final QueryDecoder queryDecoder;
@@ -39,6 +34,11 @@ public class BynderClientImpl implements BynderClient {
      * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
      */
     private final BynderApi bynderApi;
+    /**
+     * Configuration settings needed to instantiate the different interfaces and services of the
+     * SDK client.
+     */
+    private Configuration configuration;
     /**
      * Instance of {@link OAuthService}.
      */

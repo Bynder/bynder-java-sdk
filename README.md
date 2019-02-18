@@ -9,21 +9,22 @@ At the moment this SDK provides a default library with the following methods:
 
 #### Bynder Service
 ```java
-Observable<User> login(String username, String password);
+OAuthService getOAuthService();
 
-Observable<String> getRequestToken();
-
-URL getAuthoriseUrl(final String callbackUrl);
-
-Observable<String> getAccessToken();
-
-void logout();
-
-Observable<Response<List<Derivative>>> getDerivatives();
-
-AssetBankService getAssetBankService();
+AssetService getAssetService();
 
 CollectionService getCollectionService();
+
+Observable<Response<List<Derivative>>> getDerivatives();
+```
+
+#### OAuth Service
+```java
+URL getAuthorizationUrl(final String state);
+
+Observable<Token> getAccessToken(final String code);
+
+Observable<Token> refreshAccessToken();
 ```
 
 #### Asset Bank Service
@@ -38,7 +39,7 @@ Observable<Response<List<Media>>> getMediaList(MediaQuery mediaQuery);
 
 Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery);
 
-Observable<Response<Void>> setMediaProperties(MediaPropertiesQuery mediaPropertiesQuery);
+Observable<Response<Void>> modifyMedia(MediaPropertiesQuery mediaPropertiesQuery);
 
 Observable<Response<Void>> deleteMedia(MediaDeleteQuery mediaDeleteQuery);
 
@@ -99,7 +100,7 @@ dependencies {
 
 ### Using source code
 Components used to install and run the project:
-* Java JDK (version 1.8.0_151)
+* Java JDK (version 1.8.0_201)
 * Apache Maven 3.3.3
 
 **Important:** Don't forget to define the environment variables for Java and Maven!
@@ -125,56 +126,39 @@ If you are using ProGuard, remember to add the following lines to your ProGuard 
 ```
 
 ## How does it work
-Before executing any request to the Bynder API, it is necessary to instantiate the class **BynderService**.
+Before executing any request to the Bynder API, it is necessary to instantiate the class **BynderClient**.
 
-The following example shows how to use the **BynderServiceImpl.create(Settings settings)** static method to create an instance of **BynderService** using the **Settings** object as parameter:
+The following example shows how to use the **BynderClient.Builder.create(final Configuration configuration)** static method to create an instance of the **BynderClient** using the **Configuration** object as parameter:
 ```java
-BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.bynder.com",
-                                                                    "consumer key",
-                                                                    "consumer secret",
-                                                                    "token",
-                                                                    "token secret"));
+BynderClient bynderClient = BynderClient.Builder.create(new Configuration.Builder("Bynder portal base URL", "Client id", "Client secret", "Redirect URI").build());
 ```
 
-If you need to configure extra HTTP connection settings like SSL context (to allow the implementation of mutual SSL), timeouts and custom interceptor, create an instance of **HttpConnectionSettings** and add it to the **Settings** constructor:
-```java
-HttpConnectionSettings httpConnectionSettings = new HttpConnectionSettings(sslContext,
-                                                                           trustManager,
-                                                                           customInterceptor,
-                                                                           readTimeoutSeconds,
-                                                                           connectTimeoutSeconds,
-                                                                           retryOnConnectionFailure);
+After instantiating the **BynderClient** class successfully the OAuth flow needs to be executed, using the methods from the **OAuthService**, in order to authorize the SDK client with Bynder and get an access token to perform the API requests.
 
-BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.bynder.com",
-                                                                    "consumer key",
-                                                                    "consumer secret",
-                                                                    "token",
-                                                                    "token secret",
-                                                                    httpConnectionSettings));
-```
+To check how to execute the OAuth flow, please see [AppSample.java](src/main/java/com/bynder/sdk/sample/AppSample.java).
 
-After instantiating the **BynderService** class successfully it is possible to call any of the methods listed in the section **Current Status**. Example:
+After the SDK client had been authorized successfully it is possible to call any of the methods listed in the section **Current Status**. Example:
 
 #### Reactive way to get the Observable
 ```java
 // Get an instance of the asset bank service to perform Bynder Asset Bank operations.
-AssetBankService assetBankService = bynderService.getAssetBankService();
+AssetService assetService = bynderClient.getAssetService();
 
 // Get all tags (request without query)
-Observable<Response<List<Tag>>> tagsObservable = assetBankService.getTags();
+Observable<Response<List<Tag>>> tagsObservable = assetService.getTags();
 
 // Get media (request with query)
-Observable<Response<List<Media>>> mediaObservable = assetBankService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(100).setPage(1));
+Observable<Response<List<Media>>> mediaObservable = assetService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(100).setPage(1));
 ```
 
 #### Synchronous way to wait for the Observable to complete and emit the single item
 ```java
 // Get an instance of the asset bank service to perform Bynder Asset Bank operations.
-AssetBankService assetBankService = bynderService.getAssetBankService();
+AssetService assetService = bynderClient.getAssetBankService();
 
 // Get all tags (request without query)
-Response<List<Tag>> tagsResponse = assetBankService.getTags().blockingSingle();
+Response<List<Tag>> tagsResponse = assetService.getTags().blockingSingle();
 
 // Get media (request with query)
-Response<List<Media>> mediaResponse = assetBankService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(100).setPage(1)).blockingSingle();
+Response<List<Media>> mediaResponse = assetService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(100).setPage(1)).blockingSingle();
 ```

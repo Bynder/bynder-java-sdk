@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Bynder B.V. All rights reserved.
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
  *
  * Licensed under the MIT License. See LICENSE file in the project root for full license
  * information.
@@ -15,13 +15,20 @@ import static org.junit.Assert.assertEquals;
 import java.util.Map;
 import org.junit.Test;
 
+/**
+ * Tests the {@link StringArrayParameterDecoder} class method.
+ */
 public class StringArrayParameterDecoderTest {
+
+    public static final String PARAMETER_NAME = "name";
+    public static final String EXPECTED_ITEM_1 = "item1";
+    public static final String EXPECTED_ITEM_2 = "item2";
 
     @Test
     public void decodeReturnsJoinedArray() {
-        Map<String, String> params = new StringArrayParameterDecoder()
-            .decode("key", new String[]{"item1", "item2"});
+        Map<String, String> parameters = new StringArrayParameterDecoder()
+            .decode(PARAMETER_NAME, new String[]{EXPECTED_ITEM_1, EXPECTED_ITEM_2});
 
-        assertEquals("item1,item2", params.get("key"));
+        assertEquals(EXPECTED_ITEM_1 + "," + EXPECTED_ITEM_2, parameters.get(PARAMETER_NAME));
     }
 }

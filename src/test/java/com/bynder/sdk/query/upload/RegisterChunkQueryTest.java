@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * Tests the {@link RegisterChunkQuery} class methods.
+ */
 public class RegisterChunkQueryTest {
 
     public static final String EXPECTED_UPLOAD_ID = "uploadId";

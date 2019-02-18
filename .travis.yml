@@ -6,6 +6,9 @@ install: mvn clean install -Dgpg.skip -Dmaven.javadoc.skip -Dmaven.test.skip
 
 script: mvn surefire:test
 
+after_success:
+  - mvn clean test jacoco:report coveralls:report
+
 notifications:
   email:
     recipients:

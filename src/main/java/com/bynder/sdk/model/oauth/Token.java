@@ -23,7 +23,7 @@ public class Token {
     @SerializedName("access_token")
     private String accessToken;
     /**
-     * The lifetime in seconds of the access token.
+     * The remaining lifetime in seconds of the access token.
      */
     @SerializedName("expires_in")
     private int expiresIn;

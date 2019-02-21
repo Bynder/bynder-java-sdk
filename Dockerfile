@@ -13,4 +13,3 @@ RUN ["mvn", "install", "-Dgpg.skip", "-Dmaven.javadoc.skip"]
 
 # Adding source, compile and package into a jar
 ADD src /app/src
-ADD target /app/target

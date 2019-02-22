@@ -17,7 +17,7 @@ import java.net.URL;
 public class DownloadUrl {
 
     /**
-     * Temporary download URL of the media asset.
+     * Temporary S3 URL to download the media asset.
      */
     @SerializedName(value = "s3_file")
     private URL s3File;

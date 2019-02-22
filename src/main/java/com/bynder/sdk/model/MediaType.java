@@ -11,18 +11,17 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Enum to represent type of media.
  */
-public enum MediaType {
-    @SerializedName("document") DOCUMENT("document"), @SerializedName("image") IMAGE(
-        "image"), @SerializedName("video") VIDEO("video"), @SerializedName("audio") AUDIO("audio");
+public enum MediaType {@SerializedName("document") DOCUMENT(
+    "document"), @SerializedName("image") IMAGE("image"), @SerializedName("video") VIDEO(
+    "video"), @SerializedName("audio") AUDIO("audio");
 
     private final String type;
 
-    private MediaType(final String type) {
+    MediaType(final String type) {
         this.type = type;
     }
 
     @Override
     public String toString() {
         return type;
-    }
-}
+    }}

@@ -29,7 +29,7 @@ public class BooleanTypeAdapterTest {
      * API.
      */
     @Test
-    public void deserializeTest() {
+    public void deserializeWithBooleanTypeAdapter() {
         BooleanTypeAdapter booleanTypeAdapter = new BooleanTypeAdapter();
 
         // Integers

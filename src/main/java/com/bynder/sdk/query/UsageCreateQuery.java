@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+
 /**
  * Query to create asset usage.
  */
@@ -24,7 +26,7 @@ public class UsageCreateQuery {
     /**
      * Timestamp of the asset usage creation.
      */
-    @ApiField(name = "timestamp")
+    @ApiField
     private String timestamp;
     /**
      * URI with the location of the asset in the integration.
@@ -34,7 +36,7 @@ public class UsageCreateQuery {
     /**
      * Additional information about the asset usage.
      */
-    @ApiField(name = "additional")
+    @ApiField
     private String additional;
 
     public UsageCreateQuery(final String integrationId, final String assetId) {
@@ -42,14 +44,34 @@ public class UsageCreateQuery {
         this.assetId = assetId;
     }
 
+    public String getIntegrationId() {
+        return integrationId;
+    }
+
+    public String getAssetId() {
+        return assetId;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
     public UsageCreateQuery setTimestamp(final String timestamp) {
         this.timestamp = timestamp;
         return this;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
     public UsageCreateQuery setLocation(final String location) {
         this.location = location;
         return this;
+    }
+
+    public String getAdditional() {
+        return additional;
     }
 
     public UsageCreateQuery setAdditional(final String additional) {

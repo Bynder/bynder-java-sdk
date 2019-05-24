@@ -102,11 +102,11 @@ public class FileUploader {
                 s3EndpointObs.subscribe(awsBucketResponse -> {
                     this.amazonService = new AmazonServiceImpl(awsBucketResponse.body());
                     // Get Upload Information
+                    final File file = new File(uploadQuery.getFilepath());
                     Observable<Response<UploadRequest>> uploadInformationObs = getUploadInformation(
-                        new RequestUploadQuery(uploadQuery.getFilepath()));
+                        new RequestUploadQuery(file.getName()));
                     uploadInformationObs.subscribe(uploadRequestResponse -> {
                         UploadRequest uploadRequest = uploadRequestResponse.body();
-                        File file = new File(uploadQuery.getFilepath());
                         if (!file.exists()) {
                             observableEmitter.onError(new BynderUploadException(String
                                 .format("File: %s not found. Upload not completed.",

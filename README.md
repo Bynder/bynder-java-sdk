@@ -1,4 +1,5 @@
 # Bynder Java SDK
+
 [![Build Status](https://travis-ci.org/Bynder/bynder-java-sdk.svg?branch=master)](https://travis-ci.org/Bynder/bynder-java-sdk)
 [![Coverage Status](https://coveralls.io/repos/github/Bynder/bynder-java-sdk/badge.svg?branch=master)](https://coveralls.io/github/Bynder/bynder-java-sdk?branch=master)
 
@@ -9,6 +10,7 @@ The main goal of this SDK is to speed up the integration of Bynder customers who
 At the moment this SDK provides a default library with the following methods:
 
 #### Bynder Service
+
 ```java
 Observable<User> login(String username, String password);
 
@@ -28,6 +30,7 @@ CollectionService getCollectionService();
 ```
 
 #### Asset Bank Service
+
 ```java
 Observable<Response<List<Brand>>> getBrands();
 
@@ -59,6 +62,7 @@ Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
 ```
 
 #### Collection Service
+
 ```java
 Observable<Response<List<Collection>>> getCollections(CollectionQuery collectionQuery);
 
@@ -80,37 +84,46 @@ Observable<Response<Void>> shareCollection(CollectionShareQuery collectionShareQ
 ## Installation
 
 ### Using latest release
-The most recent release is Bynder Java SDK 1.1.3, released Jan 9, 2019.
-- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.1.3
+
+The most recent release is Bynder Java SDK 1.1.4, released May 27, 2019.
+
+- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.1.4
 
 To add a dependency on the SDK using Maven, use the following:
+
 ```xml
 <dependency>
   <groupId>com.bynder</groupId>
   <artifactId>bynder-java-sdk</artifactId>
-  <version>1.1.3</version>
+  <version>1.1.4</version>
 </dependency>
 ```
+
 To add a dependency using Gradle:
+
 ```
 dependencies {
-  compile 'com.bynder:bynder-java-sdk:1.1.3'
+  compile 'com.bynder:bynder-java-sdk:1.1.4'
 }
 ```
 
 ### Using source code
+
 Components used to install and run the project:
-* Java JDK (version 1.8.0_151)
-* Apache Maven 3.3.3
+
+- Java JDK (version 1.8.0_151)
+- Apache Maven 3.3.3
 
 **Important:** Don't forget to define the environment variables for Java and Maven!
 
 Clone the repository:
+
 ```bash
 $ git clone git@github.com:Bynder/bynder-java-sdk.git
 ```
 
 Build the project from its root with the following Maven command (skipping the GPG signing and Javadocs generation):
+
 ```bash
 $ mvn clean install -Dgpg.skip -Dmaven.javadoc.skip
 ```
@@ -118,7 +131,9 @@ $ mvn clean install -Dgpg.skip -Dmaven.javadoc.skip
 This command tells Maven to build all the modules and to install it in the local repository. At this point all the integrations tests will be skipped.
 
 ### Using ProGuard
+
 If you are using ProGuard, remember to add the following lines to your ProGuard rules file.
+
 ```java
 # Bynder Java SDK
 -keep class com.bynder.sdk.model.** { *; }
@@ -126,9 +141,11 @@ If you are using ProGuard, remember to add the following lines to your ProGuard 
 ```
 
 ## How does it work
+
 Before executing any request to the Bynder API, it is necessary to instantiate the class **BynderService**.
 
 The following example shows how to use the **BynderServiceImpl.create(Settings settings)** static method to create an instance of **BynderService** using the **Settings** object as parameter:
+
 ```java
 BynderService bynderService = BynderServiceImpl.create(new Settings("https://example.bynder.com",
                                                                     "consumer key",
@@ -138,6 +155,7 @@ BynderService bynderService = BynderServiceImpl.create(new Settings("https://exa
 ```
 
 If you need to configure extra HTTP connection settings like SSL context (to allow the implementation of mutual SSL), timeouts and custom interceptor, create an instance of **HttpConnectionSettings** and add it to the **Settings** constructor:
+
 ```java
 HttpConnectionSettings httpConnectionSettings = new HttpConnectionSettings(sslContext,
                                                                            trustManager,
@@ -157,6 +175,7 @@ BynderService bynderService = BynderServiceImpl.create(new Settings("https://exa
 After instantiating the **BynderService** class successfully it is possible to call any of the methods listed in the section **Current Status**. Example:
 
 #### Reactive way to get the Observable
+
 ```java
 // Get an instance of the asset bank service to perform Bynder Asset Bank operations.
 AssetBankService assetBankService = bynderService.getAssetBankService();
@@ -169,6 +188,7 @@ Observable<Response<List<Media>>> mediaObservable = assetBankService.getMediaLis
 ```
 
 #### Synchronous way to wait for the Observable to complete and emit the single item
+
 ```java
 // Get an instance of the asset bank service to perform Bynder Asset Bank operations.
 AssetBankService assetBankService = bynderService.getAssetBankService();

@@ -8,7 +8,6 @@ package com.bynder.sdk.query.upload;
 
 import com.bynder.sdk.query.decoder.ApiField;
 import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
-import java.util.List;
 
 /**
  * Query with the information to poll if asset has finished converting.

@@ -6,8 +6,6 @@
  */
 package com.bynder.sdk.query;
 
-import java.util.List;
-
 /**
  * Class to specify the metaproperty options to be added to a media asset.
  */

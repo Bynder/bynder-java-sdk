@@ -11,7 +11,6 @@ import com.bynder.sdk.query.decoder.ApiField;
 import com.bynder.sdk.query.decoder.BooleanParameterDecoder;
 import com.bynder.sdk.query.decoder.MetapropertyParameterDecoder;
 import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -8,7 +8,6 @@ package com.bynder.sdk.service.oauth;
 
 import com.bynder.sdk.api.OAuthApi;
 import com.bynder.sdk.configuration.Configuration;
-import com.bynder.sdk.model.oauth.Scope;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.util.Utils;

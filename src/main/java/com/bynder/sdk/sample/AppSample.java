@@ -96,7 +96,6 @@ public class AppSample {
         List<Media> mediaList = assetService.getMediaList(
             new MediaQuery().setType(MediaType.IMAGE).setOrderBy(OrderBy.NAME_DESC).setLimit(10)
                 .setPage(1)).blockingSingle().body();
-
         for (Media media : mediaList) {
             LOG.info(media.getName());
         }

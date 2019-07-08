@@ -39,6 +39,11 @@ public class TokenQuery {
     @ApiField(name = "grant_type")
     private GrantType grantType;
     /**
+     * The authorization scope(s).
+     */
+    @ApiField(name = "scope")
+    private String scope;
+    /**
      * The code included in the redirect URI after application has been authorized. Required if
      * {@link GrantType#AUTHORIZATION_CODE} was selected as grant type.
      */
@@ -52,11 +57,12 @@ public class TokenQuery {
     private String refreshToken;
 
     public TokenQuery(final String clientId, final String clientSecret, final URI redirectUri,
-        final GrantType grantType, final String code) {
+        final GrantType grantType, final String scope, final String code) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.redirectUri = redirectUri;
         this.grantType = grantType;
+        this.scope = scope;
         this.code = code;
     }
 
@@ -83,6 +89,10 @@ public class TokenQuery {
     public GrantType getGrantType() {
         return grantType;
     }
+
+    public String getScope() {
+      return scope;
+  }
 
     public String getCode() {
         return code;

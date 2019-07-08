@@ -19,6 +19,7 @@ import io.reactivex.Observable;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import retrofit2.Response;
 
@@ -55,7 +56,7 @@ public class OAuthServiceImpl implements OAuthService {
      * Check {@link OAuthService} for more information.
      */
     @Override
-    public URL getAuthorizationUrl(final String state)
+    public URL getAuthorizationUrl(final String state, final List<String> scopes)
         throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException {
         if (state == null || state.isEmpty()) {
             throw new IllegalArgumentException(state);
@@ -63,7 +64,7 @@ public class OAuthServiceImpl implements OAuthService {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(configuration.getBaseUrl());
-        stringBuilder.append("/oauth2/auth");
+        stringBuilder.append("/v6/authentication/oauth2/auth");
         stringBuilder.append("?client_id=")
             .append(Utils.encodeParameterValue(configuration.getClientId()));
         stringBuilder.append("&redirect_uri=")
@@ -71,12 +72,10 @@ public class OAuthServiceImpl implements OAuthService {
         stringBuilder.append("&response_type=")
             .append(Utils.encodeParameterValue(ResponseType.CODE.toString()));
         stringBuilder.append("&scope=")
-            .append(Utils.encodeParameterValue(Scope.OPEN_ID.toString()));
+            .append(Utils.encodeParameterValue(String.join(" ", scopes)));
         stringBuilder.append(Utils.encodeParameterValue(" "));
         stringBuilder.append(Utils.encodeParameterValue(Scope.OFFLINE.toString()));
         stringBuilder.append("&state=").append(Utils.encodeParameterValue(state));
-        stringBuilder.append(Utils.encodeParameterValue("&domain="));
-        stringBuilder.append(Utils.encodeParameterValue(configuration.getBaseUrl().getHost()));
 
         return new URL(stringBuilder.toString());
     }
@@ -85,10 +84,10 @@ public class OAuthServiceImpl implements OAuthService {
      * Check {@link OAuthService} for more information.
      */
     @Override
-    public Observable<Token> getAccessToken(final String code) {
+    public Observable<Token> getAccessToken(final String code, final List<String> scopes) {
         TokenQuery tokenQuery = new TokenQuery(configuration.getClientId(),
             configuration.getClientSecret(), configuration.getRedirectUri(),
-            GrantType.AUTHORIZATION_CODE, code);
+            GrantType.AUTHORIZATION_CODE, String.join(" ", scopes), code);
 
         Map<String, String> params = queryDecoder.decode(tokenQuery);
         Observable<Response<Token>> accessTokenObservable = oauthClient.getAccessToken(params);

@@ -26,6 +26,6 @@ public interface OAuthApi {
      * @return {@link Observable} with the {@link Token} information.
      */
     @FormUrlEncoded
-    @POST("/oauth2/token")
+    @POST("/v6/authentication/oauth2/token")
     Observable<Response<Token>> getAccessToken(@FieldMap Map<String, String> params);
 }

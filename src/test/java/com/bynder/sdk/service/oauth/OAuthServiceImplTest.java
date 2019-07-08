@@ -27,6 +27,9 @@ import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -43,6 +46,7 @@ public class OAuthServiceImplTest {
     private final String EXPECTED_BASE_URL = "https://example.bynder.com";
     private final String EXPECTED_REDIRECT_URI = "https://localhost/callback";
     private final String EXPECTED_STATE = "this is the state";
+    private final List<String> EXPECTED_SCOPES = Arrays.asList("scope");
     private final String EMPTY_STRING = "";
 
     @Mock
@@ -70,7 +74,7 @@ public class OAuthServiceImplTest {
 
     @Test
     public void getAuthorizationUrl() throws Exception {
-        URL authorizationUrl = oAuthService.getAuthorizationUrl(EXPECTED_STATE);
+        URL authorizationUrl = oAuthService.getAuthorizationUrl(EXPECTED_STATE, EXPECTED_SCOPES);
         assertNotNull(authorizationUrl);
         assertEquals(new URL(EXPECTED_BASE_URL).getHost(), authorizationUrl.getHost());
         assertTrue(authorizationUrl.toString().contains(EXPECTED_CLIENT_ID));
@@ -82,12 +86,12 @@ public class OAuthServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void getAuthorizationUrlWithNullState() throws Exception {
-        oAuthService.getAuthorizationUrl(null);
+        oAuthService.getAuthorizationUrl(null, EXPECTED_SCOPES);
     }
 
     @Test
     public void getAccessToken() {
-        oAuthService.getAccessToken(EMPTY_STRING);
+        oAuthService.getAccessToken(EMPTY_STRING, EXPECTED_SCOPES);
 
         verify(oauthClient, times(1)).getAccessToken(anyMap());
         verify(queryDecoder, times(1)).decode(any());

@@ -1,15 +1,12 @@
-FROM java:8
+FROM maven:3.6.1-jdk-8
 
-# Install maven
-RUN apt-get update
-RUN apt-get install -y maven
-
+USER root
 WORKDIR /app
 
 # Prepare by downloading dependencies
-ADD pom.xml /app/pom.xml
+COPY . .
 RUN ["mvn", "dependency:resolve"]
 RUN ["mvn", "install", "-Dgpg.skip", "-Dmaven.javadoc.skip"]
 
-# Adding source, compile and package into a jar
-ADD src /app/src
+# Compile and package into a jar
+RUN ["mvn", "package"]

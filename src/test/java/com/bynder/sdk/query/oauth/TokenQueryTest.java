@@ -14,6 +14,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.bynder.sdk.model.oauth.GrantType;
+import com.bynder.sdk.model.oauth.Scope;
+
 import java.net.URI;
 import org.junit.Test;
 
@@ -26,13 +28,14 @@ public class TokenQueryTest {
     public static final String EXPECTED_CLIENT_SECRET = "clientSecret";
     public static final String EXPECTED_REDIRECT_URI = "https://redirecturi.bynder.com";
     public static final GrantType EXPECTED_GRANT_TYPE = GrantType.AUTHORIZATION_CODE;
+    public static final String EXPECTED_SCOPE = Scope.OPEN_ID.toString();
     public static final String EXPECTED_CODE = "code";
     public static final String EXPECTED_REFRESH_TOKEN = "refreshToken";
 
     @Test
     public void initializeTokenQueryWithoutRefreshToken() throws Exception {
         TokenQuery tokenQuery = new TokenQuery(EXPECTED_CLIENT_ID, EXPECTED_CLIENT_SECRET,
-            new URI(EXPECTED_REDIRECT_URI), EXPECTED_GRANT_TYPE, EXPECTED_CODE);
+            new URI(EXPECTED_REDIRECT_URI), EXPECTED_GRANT_TYPE, EXPECTED_SCOPE, EXPECTED_CODE);
 
         assertEquals(EXPECTED_CLIENT_ID, tokenQuery.getClientId());
         assertEquals(EXPECTED_CLIENT_SECRET, tokenQuery.getClientSecret());

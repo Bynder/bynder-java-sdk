@@ -12,6 +12,7 @@ import com.bynder.sdk.model.Derivative;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.MediaType;
 import com.bynder.sdk.model.oauth.RefreshTokenCallback;
+import com.bynder.sdk.model.oauth.Scope;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.OrderBy;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import org.slf4j.Logger;
@@ -59,7 +61,8 @@ public class AppSample {
         // initialize OAuthService
         OAuthService oauthService = client.getOAuthService();
 
-        URL authorizationUrl = oauthService.getAuthorizationUrl("state example");
+        List<String> scopes = Arrays.asList(Scope.OPEN_ID.toString(), Scope.OFFLINE.toString());
+        URL authorizationUrl = oauthService.getAuthorizationUrl("state example", scopes);
 
         // open browser with authorization URL
         Desktop desktop = Desktop.getDesktop();
@@ -72,7 +75,7 @@ public class AppSample {
         scanner.close();
 
         //get the access token
-        oauthService.getAccessToken(code).blockingSingle();
+        oauthService.getAccessToken(code, scopes).blockingSingle();
 
         // call the API to request for the account information
         List<Derivative> derivatives = client.getDerivatives().blockingSingle().body();
@@ -95,7 +98,7 @@ public class AppSample {
                 .setPage(1)).blockingSingle().body();
 
         for (Media media : mediaList) {
-            LOG.info(media.toString());
+            LOG.info(media.getName());
         }
     }
 }

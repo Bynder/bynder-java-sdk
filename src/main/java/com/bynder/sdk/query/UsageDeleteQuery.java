@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+
 /**
  * Query to delete asset usage.
  */
@@ -30,6 +32,18 @@ public class UsageDeleteQuery {
     public UsageDeleteQuery(final String integrationId, final String assetId) {
         this.integrationId = integrationId;
         this.assetId = assetId;
+    }
+
+    public String getIntegrationId() {
+        return integrationId;
+    }
+
+    public String getAssetId() {
+        return assetId;
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     public UsageDeleteQuery setLocation(final String location) {

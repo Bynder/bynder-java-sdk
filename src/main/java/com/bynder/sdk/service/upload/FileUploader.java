@@ -7,25 +7,26 @@
 package com.bynder.sdk.service.upload;
 
 import com.bynder.sdk.api.BynderApi;
-import com.bynder.sdk.model.FinaliseResponse;
-import com.bynder.sdk.model.PollStatus;
-import com.bynder.sdk.model.SaveMediaResponse;
-import com.bynder.sdk.model.UploadRequest;
-import com.bynder.sdk.query.FinaliseUploadQuery;
-import com.bynder.sdk.query.PollStatusQuery;
-import com.bynder.sdk.query.RegisterChunkQuery;
-import com.bynder.sdk.query.RequestUploadQuery;
-import com.bynder.sdk.query.SaveMediaQuery;
-import com.bynder.sdk.query.UploadQuery;
-import com.bynder.sdk.service.AmazonService;
-import com.bynder.sdk.service.exception.BynderUploadException;
-import com.bynder.sdk.service.impl.AmazonServiceImpl;
-import com.bynder.sdk.util.Utils;
+import com.bynder.sdk.exception.BynderUploadException;
+import com.bynder.sdk.model.upload.FileConverterStatus;
+import com.bynder.sdk.model.upload.FinaliseResponse;
+import com.bynder.sdk.model.upload.PollStatus;
+import com.bynder.sdk.model.upload.SaveMediaResponse;
+import com.bynder.sdk.model.upload.UploadProcessData;
+import com.bynder.sdk.model.upload.UploadProgress;
+import com.bynder.sdk.model.upload.UploadRequest;
+import com.bynder.sdk.query.decoder.QueryDecoder;
+import com.bynder.sdk.query.upload.FinaliseUploadQuery;
+import com.bynder.sdk.query.upload.PollStatusQuery;
+import com.bynder.sdk.query.upload.RegisterChunkQuery;
+import com.bynder.sdk.query.upload.RequestUploadQuery;
+import com.bynder.sdk.query.upload.SaveMediaQuery;
+import com.bynder.sdk.query.upload.UploadQuery;
+import com.bynder.sdk.service.amazons3.AmazonS3Service;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
 import java.util.Map;
 import retrofit2.Response;
 
@@ -52,17 +53,23 @@ public class FileUploader {
      */
     private final BynderApi bynderApi;
     /**
-     * Amazon service used to upload parts (chunks).
+     * Instance of {@link QueryDecoder} to decode query objects into API parameters.
      */
-    private AmazonService amazonService;
+    private final QueryDecoder queryDecoder;
+    /**
+     * Amazon S3 service used to upload parts (chunks).
+     */
+    private AmazonS3Service amazonS3Service;
 
     /**
      * Creates a new instance of the class.
      *
      * @param bynderApi Instance to handle the HTTP communication with the Bynder API.
+     * @param queryDecoder Query decoder.
      */
-    public FileUploader(final BynderApi bynderApi) {
+    public FileUploader(final BynderApi bynderApi, final QueryDecoder queryDecoder) {
         this.bynderApi = bynderApi;
+        this.queryDecoder = queryDecoder;
     }
 
     /**
@@ -100,7 +107,7 @@ public class FileUploader {
                 // S3 endpoint
                 Observable<Response<String>> s3EndpointObs = getClosestS3Endpoint();
                 s3EndpointObs.subscribe(awsBucketResponse -> {
-                    this.amazonService = new AmazonServiceImpl(awsBucketResponse.body());
+                    this.amazonS3Service = AmazonS3Service.Builder.create(awsBucketResponse.body());
                     // Get Upload Information
                     final File file = new File(uploadQuery.getFilepath());
                     Observable<Response<UploadRequest>> uploadInformationObs = getUploadInformation(
@@ -198,7 +205,7 @@ public class FileUploader {
     }
 
     /**
-     * Calls the {@link AmazonService} to upload the chunk to Amazon and after registers the
+     * Calls the {@link AmazonS3Service} to upload the chunk to Amazon and after registers the
      * uploaded chunk in Bynder.
      *
      * @param uploadProcessData Upload process data of the file being uploaded.
@@ -209,7 +216,7 @@ public class FileUploader {
         return Observable.create(observableEmitter -> {
             try {
                 byte[] chunk = uploadProcessData.getBuffer();
-                Observable<Response<Void>> uploadPartToAmazonObs = amazonService
+                Observable<Response<Void>> uploadPartToAmazonObs = amazonS3Service
                     .uploadPartToAmazon(uploadProcessData.getFile().getName(),
                         uploadProcessData.getUploadRequest(), uploadProcessData.getChunkNumber(),
                         chunk, uploadProcessData.getNumberOfChunks());
@@ -259,7 +266,7 @@ public class FileUploader {
             try {
                 FileConverterStatus fileConverterStatus = new FileConverterStatus(
                     MAX_POLLING_ITERATIONS);
-                getPollStatus(new PollStatusQuery(Arrays.asList(importId))).repeatUntil(() -> {
+                getPollStatus(new PollStatusQuery(importId.split(","))).repeatUntil(() -> {
                     if (fileConverterStatus.isDone()) {
                         observableEmitter.onNext(fileConverterStatus.isSuccessful());
                         observableEmitter.onComplete();
@@ -328,17 +335,16 @@ public class FileUploader {
      * Check {@link BynderApi#getUploadInformation(Map)} for more information.
      */
     private Observable<Response<UploadRequest>> getUploadInformation(
-        final RequestUploadQuery requestUploadQuery) throws IllegalAccessException {
-        Map<String, String> params = Utils.getApiParameters(requestUploadQuery);
+        final RequestUploadQuery requestUploadQuery) {
+        Map<String, String> params = queryDecoder.decode(requestUploadQuery);
         return bynderApi.getUploadInformation(params);
     }
 
     /**
      * Check {@link BynderApi#registerChunk(Map)} for more information.
      */
-    private Observable<Response<Void>> registerChunk(final RegisterChunkQuery registerChunkQuery)
-        throws IllegalAccessException {
-        Map<String, String> params = Utils.getApiParameters(registerChunkQuery);
+    private Observable<Response<Void>> registerChunk(final RegisterChunkQuery registerChunkQuery) {
+        Map<String, String> params = queryDecoder.decode(registerChunkQuery);
         return bynderApi.registerChunk(params);
     }
 
@@ -346,26 +352,24 @@ public class FileUploader {
      * Check {@link BynderApi#finaliseUpload(Map)} for more information.
      */
     private Observable<Response<FinaliseResponse>> finaliseUpload(
-        final FinaliseUploadQuery finaliseUploadQuery) throws IllegalAccessException {
-        Map<String, String> params = Utils.getApiParameters(finaliseUploadQuery);
+        final FinaliseUploadQuery finaliseUploadQuery) {
+        Map<String, String> params = queryDecoder.decode(finaliseUploadQuery);
         return bynderApi.finaliseUpload(params);
     }
 
     /**
      * Check {@link BynderApi#getPollStatus(Map)} for more information.
      */
-    private Observable<Response<PollStatus>> getPollStatus(final PollStatusQuery pollStatusQuery)
-        throws IllegalAccessException {
-        Map<String, String> params = Utils.getApiParameters(pollStatusQuery);
+    private Observable<Response<PollStatus>> getPollStatus(final PollStatusQuery pollStatusQuery) {
+        Map<String, String> params = queryDecoder.decode(pollStatusQuery);
         return bynderApi.getPollStatus(params);
     }
 
     /**
      * Check {@link BynderApi#saveMedia(Map)} for more information.
      */
-    private Observable<Response<SaveMediaResponse>> saveMedia(final SaveMediaQuery saveMediaQuery)
-        throws IllegalAccessException {
-        Map<String, String> params = Utils.getApiParameters(saveMediaQuery);
+    private Observable<Response<SaveMediaResponse>> saveMedia(final SaveMediaQuery saveMediaQuery) {
+        Map<String, String> params = queryDecoder.decode(saveMediaQuery);
         return bynderApi.saveMedia(params);
     }
 }

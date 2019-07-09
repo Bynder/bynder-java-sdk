@@ -6,6 +6,8 @@
  */
 package com.bynder.sdk.query;
 
+import com.bynder.sdk.query.decoder.ApiField;
+
 /**
  * Query to specify the media from which we want the download URL.
  */

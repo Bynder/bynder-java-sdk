@@ -9,6 +9,7 @@ package com.bynder.sdk.api;
 import java.util.List;
 import java.util.Map;
 
+import com.bynder.sdk.model.AccountInformation;
 import com.bynder.sdk.model.Brand;
 import com.bynder.sdk.model.BynderUser;
 import com.bynder.sdk.model.Collection;
@@ -19,6 +20,7 @@ import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.PollStatus;
 import com.bynder.sdk.model.SaveMediaResponse;
+import com.bynder.sdk.model.SecurityProfile;
 import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.UploadRequest;
@@ -68,12 +70,28 @@ public interface BynderApi {
   Observable<Response<String>> getAccessToken();
 
   /**
+   * Gets account information.
+   *
+   * @return {@link Observable} with {@link AccountInformation}.
+   */
+  @GET("/api/v4/account/")
+  Observable<Response<AccountInformation>> retrieveAccountInformation();
+
+  /**
    * Gets list of the account derivatives.
    *
    * @return {@link Observable} with list of {@link Derivative}.
    */
   @GET("/api/v4/account/derivatives/")
   Observable<Response<List<Derivative>>> getDerivatives();
+
+  /**
+   * Gets list of security profiles.
+   *
+   * @return {@link Observable} with list of {@link SecurityProfile}.
+   */
+  @GET("/api/v4/profiles/")
+  Observable<Response<List<SecurityProfile>>> getSecurityProfiles();
 
   /**
    * Gets all bynder users.
@@ -83,6 +101,35 @@ public interface BynderApi {
    */
   @GET("/api/v4/users/")
   Observable<Response<List<BynderUser>>> getUsers(@QueryMap Map<String, String> params);
+
+  /**
+   * Retrieves a bynder user.
+   *
+   * @param userId {@link @Path} with id.
+   * @return {@link Observable} with a {@link BynderUser}.
+   */
+  @GET("/api/v4/users/{id}")
+  Observable<Response<BynderUser>> retrieveUser(@Path("id") String userId);
+
+  /**
+   * Creates a user.
+   *
+   * @param params {@link FieldMap} with parameters.
+   * @return {@link Observable} with {@link BynderUser} information.
+   */
+  @FormUrlEncoded
+  @POST("/api/v4/users/")
+  Observable<Response<BynderUser>> createUser(@FieldMap Map<String, String> params);
+
+  /**
+   * Modifies a bynder user.
+   *
+   * @param userId {@link @Path} with id.
+   * @param params {@link FieldMap} with parameters.
+   * @return {@link Observable} with a {@link BynderUser}.
+   */
+  @GET("/api/v4/users/{id}")
+  Observable<Response<BynderUser>> modifyUser(@Path("id") String userId, @FieldMap Map<String, String> params);
 
   /**
    * Gets list of the brands.

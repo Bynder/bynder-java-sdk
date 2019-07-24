@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import com.bynder.sdk.model.AccountInformation;
 import com.bynder.sdk.model.Derivative;
 import com.bynder.sdk.model.Settings;
 import com.bynder.sdk.model.User;
@@ -71,6 +72,13 @@ public interface BynderService {
   void logout();
 
   /**
+   * Gets the information for the current account.
+   *
+   * @return Observable with {@link AccountInformation}.
+   */
+  Observable<Response<AccountInformation>> getAccountInformation();
+
+  /**
    * Gets the list of the derivatives configured for the current account.
    *
    * @return Observable with the list of {@link Derivative}.
@@ -97,4 +105,12 @@ public interface BynderService {
    * @return Instance of {@link UserManagementService}.
    */
   UserManagementService getUserManagementService();
+
+  /**
+   * Gets an instance of the collection service to perform Bynder Security Profiles related
+   * operations.
+   *
+   * @return Instance of {@link SecurityProfileService}.
+   */
+  SecurityProfileService getSecurityProfileService();
 }

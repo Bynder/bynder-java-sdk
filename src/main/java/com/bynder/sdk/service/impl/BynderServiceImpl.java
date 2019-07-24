@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import com.bynder.sdk.api.BynderApi;
+import com.bynder.sdk.model.AccountInformation;
 import com.bynder.sdk.model.Credentials;
 import com.bynder.sdk.model.Derivative;
 import com.bynder.sdk.model.HttpConnectionSettings;
@@ -23,6 +24,7 @@ import com.bynder.sdk.query.LoginQuery;
 import com.bynder.sdk.service.AssetBankService;
 import com.bynder.sdk.service.BynderService;
 import com.bynder.sdk.service.CollectionService;
+import com.bynder.sdk.service.SecurityProfileService;
 import com.bynder.sdk.service.UserManagementService;
 import com.bynder.sdk.util.Utils;
 
@@ -63,6 +65,10 @@ public class BynderServiceImpl implements BynderService {
    * Instance of the user management service.
    */
   private UserManagementService userManagementService;
+  /**
+   * Instance of the security profile service.
+   */
+  private SecurityProfileService securityProfileService;
 
   /**
    * Initialises a new instance of the class.
@@ -155,6 +161,11 @@ public class BynderServiceImpl implements BynderService {
   }
 
   @Override
+  public Observable<Response<AccountInformation>> getAccountInformation() {
+    return bynderApi.retrieveAccountInformation();
+  }
+
+  @Override
   public Observable<Response<List<Derivative>>> getDerivatives() {
     return bynderApi.getDerivatives();
   }
@@ -195,6 +206,15 @@ public class BynderServiceImpl implements BynderService {
     return userManagementService;
   }
 
+  @Override
+  public SecurityProfileService getSecurityProfileService() {
+    if (securityProfileService == null) {
+      securityProfileService = new SecurityProfileServiceImpl(bynderApi);
+    }
+
+    return securityProfileService;
+  }
+
   /**
    * Helper method update the credentials and the {@link BynderApi} instance.
    *
@@ -225,4 +245,5 @@ public class BynderServiceImpl implements BynderService {
       return user;
     });
   }
+
 }

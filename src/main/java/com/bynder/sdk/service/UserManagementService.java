@@ -6,9 +6,7 @@
  */
 package com.bynder.sdk.service;
 
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
 
 import com.bynder.sdk.model.BynderUser;
 import com.bynder.sdk.query.UserCreateQuery;
@@ -29,6 +27,7 @@ public interface UserManagementService {
    * 
    * @param userQuery Information to correctly filter users.
    * @return {@link Observable} with list of {@link BynderUser}.
+   * @throws IllegalAccessException Check {@link Utils} for more information.
    */
   Observable<Response<List<BynderUser>>> getUsers(UserQuery userQuery) throws IllegalAccessException;
 
@@ -37,8 +36,7 @@ public interface UserManagementService {
    *
    * @param userCreateQuery Information about the user we want to create.
    * @return {@link Observable} with {@link BynderUser} information.
-   * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
-   *         information.
+   * @throws IllegalAccessException Check {@link Utils} for more information.
    */
   Observable<Response<BynderUser>> createUser(UserCreateQuery userCreateQuery)
       throws IllegalAccessException;
@@ -49,16 +47,15 @@ public interface UserManagementService {
    * @param userId Id of the user.
    * @return {@link Observable} with list of {@link BynderUser}.
    */
-  Observable<Response<BynderUser>> retrieveUser(String userId) throws IllegalAccessException;
+  Observable<Response<BynderUser>> retrieveUser(String userId);
 
   /**
    * Creates a user.
    *
-   * @Param userId Id of the user.
+   * @param userId Id of the user.
    * @param userModifyQuery Information about the user we want to modify.
    * @return {@link Observable} with {@link BynderUser} information.
-   * @throws IllegalAccessException Check {@link Utils#convertField(Field, Object, Map)} for more
-   *         information.
+   * @throws IllegalAccessException Check {@link Utils} for more information.
    */
   Observable<Response<BynderUser>> modifyUser(String userId, UserModifyQuery userModifyQuery)
       throws IllegalAccessException;

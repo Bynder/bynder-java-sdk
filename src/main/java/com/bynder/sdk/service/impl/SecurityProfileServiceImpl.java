@@ -38,7 +38,7 @@ public class SecurityProfileServiceImpl implements SecurityProfileService {
    * Check {@link SecurityProfileService} for more information.
    */
   @Override
-  public Observable<Response<List<SecurityProfile>>> getSecurityProfiles() throws IllegalAccessException {
+  public Observable<Response<List<SecurityProfile>>> getSecurityProfiles() {
     return bynderApi.getSecurityProfiles();
   }
 

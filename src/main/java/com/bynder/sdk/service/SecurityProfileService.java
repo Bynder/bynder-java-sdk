@@ -23,6 +23,6 @@ public interface SecurityProfileService {
    * 
    * @return {@link Observable} with list of {@link SecurityProfile}.
    */
-  Observable<Response<List<SecurityProfile>>> getSecurityProfiles() throws IllegalAccessException;
+  Observable<Response<List<SecurityProfile>>> getSecurityProfiles();
 
 }

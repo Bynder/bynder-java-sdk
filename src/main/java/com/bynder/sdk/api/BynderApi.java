@@ -105,7 +105,7 @@ public interface BynderApi {
   /**
    * Retrieves a bynder user.
    *
-   * @param userId {@link @Path} with id.
+   * @param userId {@link Path} with id.
    * @return {@link Observable} with a {@link BynderUser}.
    */
   @GET("/api/v4/users/{id}")
@@ -124,7 +124,7 @@ public interface BynderApi {
   /**
    * Modifies a bynder user.
    *
-   * @param userId {@link @Path} with id.
+   * @param userId {@link Path} with id.
    * @param params {@link FieldMap} with parameters.
    * @return {@link Observable} with a {@link BynderUser}.
    */

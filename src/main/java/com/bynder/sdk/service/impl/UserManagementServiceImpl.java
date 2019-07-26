@@ -59,7 +59,7 @@ public class UserManagementServiceImpl implements UserManagementService {
    * Check {@link UserManagementService} for more information.
    */
   @Override
-  public Observable<Response<BynderUser>> retrieveUser(final String userId) throws IllegalAccessException {
+  public Observable<Response<BynderUser>> retrieveUser(final String userId) {
     return bynderApi.retrieveUser(userId);
   }
 

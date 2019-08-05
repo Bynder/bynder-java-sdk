@@ -50,7 +50,7 @@ public interface UserManagementService {
   Observable<Response<BynderUser>> retrieveUser(String userId);
 
   /**
-   * Creates a user.
+   * Modifies a user.
    *
    * @param userId Id of the user.
    * @param userModifyQuery Information about the user we want to modify.
@@ -59,5 +59,13 @@ public interface UserManagementService {
    */
   Observable<Response<BynderUser>> modifyUser(String userId, UserModifyQuery userModifyQuery)
       throws IllegalAccessException;
+
+  /**
+   * Deletes a user.
+   *
+   * @param userId Id of the user.
+   * @return {@link Observable} with {@link BynderUser} information.
+   */
+  Observable<Response<Void>> deleteUser(String userId);
 
 }

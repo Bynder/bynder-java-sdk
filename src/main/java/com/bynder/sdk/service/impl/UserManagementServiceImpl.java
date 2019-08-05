@@ -69,4 +69,9 @@ public class UserManagementServiceImpl implements UserManagementService {
     return bynderApi.modifyUser(userId, params);
   }
 
+  @Override
+  public Observable<Response<Void>> deleteUser(String userId) {
+    return bynderApi.deleteUser(userId);
+  }
+
 }

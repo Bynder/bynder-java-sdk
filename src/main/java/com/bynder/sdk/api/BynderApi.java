@@ -133,6 +133,15 @@ public interface BynderApi {
   Observable<Response<BynderUser>> modifyUser(@Path("id") String userId, @FieldMap Map<String, String> params);
 
   /**
+   * Deletes a bynder user.
+   *
+   * @param userId {@link Path} with id.
+   * @return {@link Observable} with the {@link Response}.
+   */
+  @DELETE("/api/v4/users/{id}")
+  Observable<Response<Void>> deleteUser(@Path("id") String userId);
+
+  /**
    * Gets list of the brands.
    *
    * @return {@link Observable} with list of {@link Brand}.

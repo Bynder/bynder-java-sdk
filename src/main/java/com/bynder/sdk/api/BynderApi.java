@@ -128,7 +128,8 @@ public interface BynderApi {
    * @param params {@link FieldMap} with parameters.
    * @return {@link Observable} with a {@link BynderUser}.
    */
-  @GET("/api/v4/users/{id}")
+  @FormUrlEncoded
+  @POST("/api/v4/users/{id}")
   Observable<Response<BynderUser>> modifyUser(@Path("id") String userId, @FieldMap Map<String, String> params);
 
   /**

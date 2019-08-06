@@ -108,7 +108,7 @@ public interface BynderApi {
    * @param userId {@link Path} with id.
    * @return {@link Observable} with a {@link BynderUser}.
    */
-  @GET("/api/v4/users/{id}")
+  @GET("/api/v4/users/{id}/")
   Observable<Response<BynderUser>> retrieveUser(@Path("id") String userId);
 
   /**
@@ -129,7 +129,7 @@ public interface BynderApi {
    * @return {@link Observable} with a {@link BynderUser}.
    */
   @FormUrlEncoded
-  @POST("/api/v4/users/{id}")
+  @POST("/api/v4/users/{id}/")
   Observable<Response<BynderUser>> modifyUser(@Path("id") String userId, @FieldMap Map<String, String> params);
 
   /**
@@ -138,7 +138,7 @@ public interface BynderApi {
    * @param userId {@link Path} with id.
    * @return {@link Observable} with the {@link Response}.
    */
-  @DELETE("/api/v4/users/{id}")
+  @DELETE("/api/v4/users/{id}/")
   Observable<Response<Void>> deleteUser(@Path("id") String userId);
 
   /**

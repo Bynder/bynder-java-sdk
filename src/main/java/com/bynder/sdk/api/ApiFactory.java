@@ -8,6 +8,7 @@ package com.bynder.sdk.api;
 
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.HttpConnectionSettings;
+import com.bynder.sdk.exception.BynderRuntimeException;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.service.oauth.OAuthService;
@@ -119,6 +120,10 @@ public class ApiFactory {
 
             @Override
             public Response intercept(final Chain chain) throws IOException {
+                if (configuration.getToken() == null) {
+                    throw new BynderRuntimeException("Token is not defined in Configuration");
+                }
+
                 // check if access token is expiring in the next 15 seconds
                 if (Utils.isDateExpiring(configuration.getToken().getAccessTokenExpiration(), 15)) {
                     // refresh the access token

@@ -22,6 +22,7 @@ Observable<Response<List<Derivative>>> getDerivatives();
 ```
 
 #### OAuth Service
+
 ```java
 URL getAuthorizationUrl(final String state);
 
@@ -86,9 +87,9 @@ Observable<Response<Void>> shareCollection(CollectionShareQuery collectionShareQ
 
 ### Using latest release
 
-The most recent release is Bynder Java SDK 1.1.4, released May 27, 2019.
+The most recent release is Bynder Java SDK 2.0.0, released September 30, 2019.
 
-- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/1.1.4
+- API Docs: http://www.javadoc.io/doc/com.bynder/bynder-java-sdk/2.0.0
 
 To add a dependency on the SDK using Maven, use the following:
 
@@ -96,7 +97,7 @@ To add a dependency on the SDK using Maven, use the following:
 <dependency>
   <groupId>com.bynder</groupId>
   <artifactId>bynder-java-sdk</artifactId>
-  <version>1.1.4</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
@@ -104,15 +105,16 @@ To add a dependency using Gradle:
 
 ```
 dependencies {
-  compile 'com.bynder:bynder-java-sdk:1.1.4'
+  compile 'com.bynder:bynder-java-sdk:2.0.0'
 }
 ```
 
 ### Using source code
 
 Components used to install and run the project:
-* Java JDK (version 1.8.0_201)
-* Apache Maven 3.3.3
+
+- Java JDK (version 1.8.0_201)
+- Apache Maven 3.3.3
 
 **Important:** Don't forget to define the environment variables for Java and Maven!
 
@@ -141,9 +143,11 @@ If you are using ProGuard, remember to add the following lines to your ProGuard 
 ```
 
 ## How does it work
+
 Before executing any request to the Bynder API, it is necessary to instantiate the class **BynderClient**.
 
 The following example shows how to use the **BynderClient.Builder.create(final Configuration configuration)** static method to create an instance of the **BynderClient** using the **Configuration** object as parameter:
+
 ```java
 BynderClient bynderClient = BynderClient.Builder.create(new Configuration.Builder("Bynder portal base URL", "Client id", "Client secret", "Redirect URI").build());
 ```

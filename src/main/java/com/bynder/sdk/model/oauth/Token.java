@@ -46,8 +46,8 @@ public class Token {
      */
     private Date accessTokenExpiration;
 
-    public Token(final String accessToken, final int expiresIn, final String tokenType, final String scope,
-            final String refreshToken) {
+    public Token(final String accessToken, final int expiresIn, final String tokenType,
+        final String scope, final String refreshToken) {
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
         this.tokenType = tokenType;

@@ -29,8 +29,7 @@ public class RefreshTokenCallbackTest {
 
     @Before
     public void setUp() {
-        this.token = new Token(MOCK_STRING, MOCK_INT, MOCK_STRING, MOCK_STRING, MOCK_STRING,
-            MOCK_STRING);
+        this.token = new Token(MOCK_STRING, MOCK_INT, MOCK_STRING, MOCK_STRING, MOCK_STRING);
 
         this.callback = new RefreshTokenCallback() {
             @Override

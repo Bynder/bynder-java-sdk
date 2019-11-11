@@ -113,8 +113,8 @@ dependencies {
 
 Components used to install and run the project:
 
-- Java JDK (version 1.8.0_201)
-- Apache Maven 3.3.3
+- Java version 11.0.3
+- Apache Maven 3.6.0
 
 **Important:** Don't forget to define the environment variables for Java and Maven!
 
@@ -146,13 +146,21 @@ If you are using ProGuard, remember to add the following lines to your ProGuard 
 
 Before executing any request to the Bynder API, it is necessary to instantiate the class **BynderClient**.
 
-The following example shows how to use the **BynderClient.Builder.create(final Configuration configuration)** static method to create an instance of the **BynderClient** using the **Configuration** object as parameter:
+The following examples show how to use the **BynderClient.Builder.create(final Configuration configuration)** static method to create an instance of the **BynderClient** using the **Configuration** object as parameter.
+
+### Instantiate BynderClient with a Permanent Token
 
 ```java
-BynderClient bynderClient = BynderClient.Builder.create(new Configuration.Builder("Bynder portal base URL", "Client id", "Client secret", "Redirect URI").build());
+BynderClient bynderClient = BynderClient.Builder.create(new Configuration.Builder("Bynder portal base URL").setPermanentToken("Permanent token")).build());
 ```
 
-After instantiating the **BynderClient** class successfully the OAuth flow needs to be executed, using the methods from the **OAuthService**, in order to authorize the SDK client with Bynder and get an access token to perform the API requests.
+### Instantiate BynderClient with a OAuth application settings
+
+```java
+BynderClient bynderClient = BynderClient.Builder.create(new Configuration.Builder("Bynder portal base URL").setOAuthSettings("Client id", "Client secret", "Redirect URI")).build());
+```
+
+After instantiating the **BynderClient** class successfully with your OAuth application settings the OAuth flow needs to be executed, using the methods from the **OAuthService**, in order to authorize the SDK client with Bynder and get an access token to perform the API requests.
 
 To check how to execute the OAuth flow, please see [AppSample.java](src/main/java/com/bynder/sdk/sample/AppSample.java).
 

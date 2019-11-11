@@ -6,9 +6,6 @@
  */
 package com.bynder.sdk.configuration;
 
-import com.bynder.sdk.model.oauth.RefreshTokenCallback;
-import com.bynder.sdk.model.oauth.Token;
-import java.net.URI;
 import java.net.URL;
 
 public class Configuration {
@@ -18,34 +15,17 @@ public class Configuration {
      */
     private URL baseUrl;
     /**
+     * OAuth settings for the OAuth 2.0 authorization flow.
+     */
+    private OAuthSettings oauthSettings;
+    /**
      * Connection settings for the HTTP communication with Bynder.
      */
     private HttpConnectionSettings httpConnectionSettings;
     /**
-     * OAuth application client id.
+     * Permanent token.
      */
-    private String clientId;
-    /**
-     * OAuth application client secret.
-     */
-    private String clientSecret;
-    /**
-     * URI to redirect to after application has been authorized.
-     */
-    private URI redirectUri;
-    /**
-     * Token information.
-     */
-    private Token token;
-    /**
-     * Optional callback method to be triggered when token is refreshed.
-     */
-    private RefreshTokenCallback callback = new RefreshTokenCallback() {
-        @Override
-        public void execute(Token token) {
-            return;
-        }
-    };
+    private String permanentToken;
 
     /**
      * Prevents the instantiation of the class.
@@ -57,32 +37,16 @@ public class Configuration {
         return baseUrl;
     }
 
-    public String getClientId() {
-        return clientId;
-    }
-
-    public String getClientSecret() {
-        return clientSecret;
-    }
-
-    public URI getRedirectUri() {
-        return redirectUri;
-    }
-
-    public Token getToken() {
-        return token;
-    }
-
-    public void setToken(final Token token) {
-        this.token = token;
-    }
-
-    public void callback(final Token token) {
-        callback.execute(token);
+    public OAuthSettings getOAuthSettings() {
+        return this.oauthSettings;
     }
 
     public HttpConnectionSettings getHttpConnectionSettings() {
         return this.httpConnectionSettings;
+    }
+
+    public String getPermanentToken() {
+        return this.permanentToken;
     }
 
     /**
@@ -91,29 +55,18 @@ public class Configuration {
     public static class Builder {
 
         private URL baseUrl;
-        private String clientId;
-        private String clientSecret;
-        private URI redirectUri;
-        private Token token;
-        private RefreshTokenCallback callback;
+        private OAuthSettings oauthSettings;
         private HttpConnectionSettings httpConnectionSettings;
+        private String permanentToken;
 
-        public Builder(final URL baseUrl, final String clientId, final String clientSecret,
-            final URI redirectUri) {
+        public Builder(final URL baseUrl) {
             this.baseUrl = baseUrl;
-            this.clientId = clientId;
-            this.clientSecret = clientSecret;
-            this.redirectUri = redirectUri;
+            this.oauthSettings = new OAuthSettings();
             this.httpConnectionSettings = new HttpConnectionSettings();
         }
 
-        public Builder setToken(Token token) {
-            this.token = token;
-            return this;
-        }
-
-        public Builder setCallback(RefreshTokenCallback callback) {
-            this.callback = callback;
+        public Builder setOAuthSettings(OAuthSettings oauthSettings) {
+            this.oauthSettings = oauthSettings;
             return this;
         }
 
@@ -122,15 +75,17 @@ public class Configuration {
             return this;
         }
 
+        public Builder setPermanentToken(String permanentToken) {
+            this.permanentToken = permanentToken;
+            return this;
+        }
+
         public Configuration build() {
             Configuration configuration = new Configuration();
             configuration.baseUrl = this.baseUrl;
-            configuration.clientId = this.clientId;
-            configuration.clientSecret = this.clientSecret;
-            configuration.redirectUri = this.redirectUri;
-            configuration.token = this.token;
+            configuration.oauthSettings = this.oauthSettings;
             configuration.httpConnectionSettings = this.httpConnectionSettings;
-            configuration.callback = this.callback;
+            configuration.permanentToken = this.permanentToken;
 
             return configuration;
         }

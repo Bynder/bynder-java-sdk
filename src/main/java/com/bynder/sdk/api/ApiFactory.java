@@ -99,7 +99,11 @@ public class ApiFactory {
     private static OkHttpClient createOkHttpClient(final Configuration configuration) {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
 
-        setOAuthInterceptor(httpClientBuilder, configuration);
+        if (configuration.getPermanentToken() == null) {
+            setOAuthInterceptor(httpClientBuilder, configuration);
+        } else {
+            setPermanentTokenInterceptor(httpClientBuilder, configuration);
+        }
 
         HttpConnectionSettings httpConnectionSettings = configuration.getHttpConnectionSettings();
         setHttpConnectionSettings(httpClientBuilder, httpConnectionSettings);
@@ -120,26 +124,50 @@ public class ApiFactory {
 
             @Override
             public Response intercept(final Chain chain) throws IOException {
-                if (configuration.getToken() == null) {
+                if (configuration.getOAuthSettings().getToken() == null) {
                     throw new BynderRuntimeException("Token is not defined in Configuration");
                 }
 
                 // check if access token is expiring in the next 15 seconds
-                if (Utils.isDateExpiring(configuration.getToken().getAccessTokenExpiration(), 15)) {
+                if (Utils.isDateExpiring(configuration.getOAuthSettings().getToken().getAccessTokenExpiration(), 15)) {
                     // refresh the access token
                     OAuthService oAuthService = BynderClient.Builder.create(configuration)
                         .getOAuthService();
                     Token token = oAuthService.refreshAccessToken().blockingSingle();
 
                     // trigger callback method
-                    configuration.callback(token);
+                    configuration.getOAuthSettings().callback(token);
                 }
 
                 String headerValue = String
-                    .format("%s %s", "Bearer", configuration.getToken().getAccessToken());
+                    .format("%s %s", "Bearer", configuration.getOAuthSettings().getToken().getAccessToken());
 
                 Request.Builder requestBuilder = chain.request().newBuilder()
                     .header("Authorization", headerValue);
+
+                Request request = requestBuilder.build();
+                return chain.proceed(request);
+            }
+        });
+    }
+
+    /**
+     * Sets the permanent token interceptor for the HTTP client. This interceptor will handle adding
+     * the permanent toekn to the request header.
+     *
+     * @param httpClientBuilder Builder instance of the HTTP client.
+     * @param configuration     {@link Configuration} settings for the HTTP communication with Bynder.
+    */
+    private static void setPermanentTokenInterceptor(final Builder httpClientBuilder,
+        final Configuration configuration) {
+        httpClientBuilder.addInterceptor(new Interceptor() {
+
+            @Override
+            public Response intercept(final Chain chain) throws IOException {
+                String headerValue = String.format("%s %s", "Bearer", configuration.getPermanentToken());
+
+                Request.Builder requestBuilder =
+                    chain.request().newBuilder().header("Authorization", headerValue);
 
                 Request request = requestBuilder.build();
                 return chain.proceed(request);

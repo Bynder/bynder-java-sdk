@@ -28,11 +28,6 @@ public class Token {
     @SerializedName("expires_in")
     private int expiresIn;
     /**
-     * The id of the issued token.
-     */
-    @SerializedName("id_token")
-    private String tokenId;
-    /**
      * The type of the issued token.
      */
     @SerializedName("token_type")
@@ -51,11 +46,10 @@ public class Token {
      */
     private Date accessTokenExpiration;
 
-    public Token(final String accessToken, final int expiresIn, final String tokenId,
-        final String tokenType, final String scope, final String refreshToken) {
+    public Token(final String accessToken, final int expiresIn, final String tokenType, final String scope,
+            final String refreshToken) {
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
-        this.tokenId = tokenId;
         this.tokenType = tokenType;
         this.scope = scope;
         this.refreshToken = refreshToken;
@@ -63,10 +57,6 @@ public class Token {
 
     public String getAccessToken() {
         return accessToken;
-    }
-
-    public String getTokenId() {
-        return tokenId;
     }
 
     public int getExpiresIn() {
@@ -83,6 +73,10 @@ public class Token {
 
     public String getRefreshToken() {
         return refreshToken;
+    }
+
+    public void setRefreshToken(final String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public Date getAccessTokenExpiration() {

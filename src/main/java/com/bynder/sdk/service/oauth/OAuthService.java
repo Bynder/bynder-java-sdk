@@ -23,26 +23,30 @@ import java.util.List;
 public interface OAuthService {
 
     /**
-     * Gets the authorization URL needed to open a web view so the user can login and be
-     * authorised with Bynder.
+     * Gets the authorization URL needed to open a web view so the user can login
+     * and be authorised with Bynder.
      *
-     * @param state A random string used to maintain state between the request and callback (used
-     * to protect against cross-site request forgery attacks).
-     * @param scopes Specifies the scopes for which authorization should be requested.
+     * @param state  A random string used to maintain state between the request and
+     *               callback (used to protect against cross-site request forgery
+     *               attacks).
+     * @param scopes Specifies the scopes for which authorization should be
+     *               requested.
      * @return The authorization URL.
-     * @throws MalformedURLException If no protocol is specified, or an unknown protocol is found,
-     * or spec is null while instantiating the URL.
-     * @throws UnsupportedEncodingException Check {@link Utils#encodeParameterValue(String)} for
-     * more information.
-     * @throws IllegalArgumentException If state is passed as null or empty.
+     * @throws MalformedURLException        If no protocol is specified, or an
+     *                                      unknown protocol is found, or spec is
+     *                                      null while instantiating the URL.
+     * @throws UnsupportedEncodingException Check
+     *                                      {@link Utils#encodeParameterValue(String)}
+     *                                      for more information.
+     * @throws IllegalArgumentException     If state is passed as null or empty.
      */
     URL getAuthorizationUrl(final String state, final List<String> scopes)
-        throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException;
+            throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException;
 
     /**
      * Gets an access token using the code authorization grant.
      *
-     * @param code The code included in the redirect URI.
+     * @param code   The code included in the redirect URI.
      * @param scopes The scopes defined in the authorization URL.
      * @return {@link Observable} with {@link Token} information.
      */
@@ -64,7 +68,7 @@ public interface OAuthService {
         }
 
         public static OAuthService create(final Configuration configuration, OAuthApi oauthClient,
-            final QueryDecoder queryDecoder) {
+                final QueryDecoder queryDecoder) {
             return new OAuthServiceImpl(configuration, oauthClient, queryDecoder);
         }
     }

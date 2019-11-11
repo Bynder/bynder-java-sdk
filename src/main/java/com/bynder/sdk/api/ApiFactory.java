@@ -156,7 +156,7 @@ public class ApiFactory {
      * the permanent toekn to the request header.
      *
      * @param httpClientBuilder Builder instance of the HTTP client.
-     * @param configuration     {@link Configuration} settings for the HTTP communication with Bynder.
+     * @param configuration {@link Configuration} settings for the HTTP communication with Bynder.
     */
     private static void setPermanentTokenInterceptor(final Builder httpClientBuilder,
         final Configuration configuration) {

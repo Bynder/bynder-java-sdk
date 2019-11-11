@@ -33,7 +33,7 @@ public class TokenTest {
     @Before
     public void setUp() {
         token = new Token(EXPECTED_ACCESS_TOKEN, EXPECTED_EXPIRES_IN, EXPECTED_TOKEN_TYPE, EXPECTED_SCOPE,
-                EXPECTED_REFRESH_TOKEN);
+            EXPECTED_REFRESH_TOKEN);
     }
 
     @Test

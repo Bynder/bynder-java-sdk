@@ -44,18 +44,16 @@ public class AppSample {
         AppProperties appProperties = new AppProperties();
 
         // Initialize BynderClient with a permanent token
-        BynderClient client = BynderClient.Builder
-                .create(new Configuration.Builder(new URL(appProperties.getProperty("BASE_URL")))
-                        .setPermanentToken(appProperties.getProperty("PERMANENT_TOKEN")).build());
+        BynderClient client = BynderClient.Builder.create(
+            new Configuration.Builder(new URL(appProperties.getProperty("BASE_URL")))
+                .setPermanentToken(appProperties.getProperty("PERMANENT_TOKEN")).build());
 
         AssetService assetService = client.getAssetService();
 
         // Call the API to request for media assets
-        List<Media> mediaList = assetService
-                .getMediaList(
-                        new MediaQuery().setType(MediaType.IMAGE).setOrderBy(OrderBy.NAME_DESC).setLimit(10).setPage(1))
-                .blockingSingle().body();
-
+        List<Media> mediaList = assetService.getMediaList(
+            new MediaQuery().setType(MediaType.IMAGE).setOrderBy(OrderBy.NAME_DESC).setLimit(10)
+                .setPage(1)).blockingSingle().body();
         for (Media media : mediaList) {
             LOG.info(media.getName());
         }
@@ -74,11 +72,11 @@ public class AppSample {
 
         // Initialize BynderClient with oauth settings to perform OAuth 2.0
         // authorization flow
-        client = BynderClient.Builder.create(new Configuration.Builder(new URL(appProperties.getProperty("BASE_URL")))
+        client = BynderClient.Builder.create(
+            new Configuration.Builder(new URL(appProperties.getProperty("BASE_URL")))
                 .setOAuthSettings(new OAuthSettings(appProperties.getProperty("CLIENT_ID"),
-                        appProperties.getProperty("CLIENT_SECRET"), new URI(appProperties.getProperty("REDIRECT_URI")),
-                        callback))
-                .build());
+                appProperties.getProperty("CLIENT_SECRET"), new URI(appProperties.getProperty("REDIRECT_URI")),
+                callback)).build());
 
         // Initialize OAuthService
         OAuthService oauthService = client.getOAuthService();
@@ -115,10 +113,9 @@ public class AppSample {
         }
 
         // Call the API to request for media assets
-        mediaList = assetService
-                .getMediaList(
-                        new MediaQuery().setType(MediaType.IMAGE).setOrderBy(OrderBy.NAME_DESC).setLimit(10).setPage(1))
-                .blockingSingle().body();
+        mediaList = assetService.getMediaList(
+            new MediaQuery().setType(MediaType.IMAGE).setOrderBy(OrderBy.NAME_DESC).setLimit(10)
+                .setPage(1)).blockingSingle().body();
         for (Media media : mediaList) {
             LOG.info(media.getName());
         }

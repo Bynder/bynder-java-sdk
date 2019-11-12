@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 import com.bynder.sdk.api.OAuthApi;
 import com.bynder.sdk.configuration.Configuration;
+import com.bynder.sdk.configuration.OAuthSettings;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.util.Utils;
@@ -57,18 +58,21 @@ public class OAuthServiceImplTest {
     private QueryDecoder queryDecoder;
     @Mock
     private Configuration configuration;
+    @Mock
+    private OAuthSettings oAuthSettings;
+
     private OAuthService oAuthService;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        when(oauthClient.getAccessToken(anyMap()))
-            .thenReturn(Observable.just(Response.success(token)));
+        when(oauthClient.getAccessToken(anyMap())).thenReturn(Observable.just(Response.success(token)));
         when(configuration.getBaseUrl()).thenReturn(new URL(EXPECTED_BASE_URL));
-        when(configuration.getClientId()).thenReturn(EXPECTED_CLIENT_ID);
-        when(configuration.getRedirectUri()).thenReturn(new URI(EXPECTED_REDIRECT_URI));
-        when(configuration.getClientSecret()).thenReturn(EXPECTED_CLIENT_SECRET);
-        when(configuration.getToken()).thenReturn(token);
+        when(configuration.getOAuthSettings()).thenReturn(oAuthSettings);
+        when(configuration.getOAuthSettings().getClientId()).thenReturn(EXPECTED_CLIENT_ID);
+        when(configuration.getOAuthSettings().getRedirectUri()).thenReturn(new URI(EXPECTED_REDIRECT_URI));
+        when(configuration.getOAuthSettings().getClientSecret()).thenReturn(EXPECTED_CLIENT_SECRET);
+        when(configuration.getOAuthSettings().getToken()).thenReturn(token);
         oAuthService = OAuthService.Builder.create(configuration, oauthClient, queryDecoder);
     }
 
@@ -78,10 +82,8 @@ public class OAuthServiceImplTest {
         assertNotNull(authorizationUrl);
         assertEquals(new URL(EXPECTED_BASE_URL).getHost(), authorizationUrl.getHost());
         assertTrue(authorizationUrl.toString().contains(EXPECTED_CLIENT_ID));
-        assertTrue(authorizationUrl.toString()
-            .contains(Utils.encodeParameterValue(EXPECTED_REDIRECT_URI)));
-        assertTrue(
-            authorizationUrl.toString().contains(Utils.encodeParameterValue(EXPECTED_STATE)));
+        assertTrue(authorizationUrl.toString().contains(Utils.encodeParameterValue(EXPECTED_REDIRECT_URI)));
+        assertTrue(authorizationUrl.toString().contains(Utils.encodeParameterValue(EXPECTED_STATE)));
     }
 
     @Test(expected = IllegalArgumentException.class)

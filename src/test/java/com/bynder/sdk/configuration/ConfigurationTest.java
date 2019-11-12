@@ -12,7 +12,6 @@ package com.bynder.sdk.configuration;
 
 import static org.junit.Assert.assertEquals;
 
-import com.bynder.sdk.model.oauth.Token;
 import java.net.URI;
 import java.net.URL;
 import org.junit.Before;
@@ -31,8 +30,6 @@ public class ConfigurationTest {
     public static final String EXPECTED_REDIRECT_URI = "https://redirecturi.bynder.com";
 
     @Mock
-    private Token token;
-    @Mock
     private HttpConnectionSettings httpConnectionSettings;
 
     @Before
@@ -42,15 +39,15 @@ public class ConfigurationTest {
 
     @Test
     public void buildConfigurationWithoutCallback() throws Exception {
-        Configuration configuration = new Configuration.Builder(new URL(EXPECTED_BASE_URL),
-            EXPECTED_CLIENT_ID, EXPECTED_CLIENT_SECRET, new URI(EXPECTED_REDIRECT_URI))
-            .setToken(token).setHttpConnectionSettings(httpConnectionSettings).build();
+        Configuration configuration = new Configuration.Builder(new URL(EXPECTED_BASE_URL))
+            .setOAuthSettings(new OAuthSettings(EXPECTED_CLIENT_ID, EXPECTED_CLIENT_SECRET,
+            new URI(EXPECTED_REDIRECT_URI)))
+            .setHttpConnectionSettings(httpConnectionSettings).build();
 
         assertEquals(EXPECTED_BASE_URL, configuration.getBaseUrl().toString());
-        assertEquals(EXPECTED_CLIENT_ID, configuration.getClientId());
-        assertEquals(EXPECTED_CLIENT_SECRET, configuration.getClientSecret());
-        assertEquals(EXPECTED_REDIRECT_URI, configuration.getRedirectUri().toString());
-        assertEquals(token, configuration.getToken());
+        assertEquals(EXPECTED_CLIENT_ID, configuration.getOAuthSettings().getClientId());
+        assertEquals(EXPECTED_CLIENT_SECRET, configuration.getOAuthSettings().getClientSecret());
+        assertEquals(EXPECTED_REDIRECT_URI, configuration.getOAuthSettings().getRedirectUri().toString());
         assertEquals(httpConnectionSettings, configuration.getHttpConnectionSettings());
     }
 }

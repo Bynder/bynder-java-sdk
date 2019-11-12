@@ -24,7 +24,6 @@ public class TokenTest {
 
     public static final String EXPECTED_ACCESS_TOKEN = "accessToken";
     public static final int EXPECTED_EXPIRES_IN = 3600;
-    public static final String EXPECTED_TOKEN_ID = "tokenId";
     public static final String EXPECTED_TOKEN_TYPE = "tokenType";
     public static final String EXPECTED_SCOPE = "scope";
     public static final String EXPECTED_REFRESH_TOKEN = "refreshToken";
@@ -33,15 +32,14 @@ public class TokenTest {
 
     @Before
     public void setUp() {
-        token = new Token(EXPECTED_ACCESS_TOKEN, EXPECTED_EXPIRES_IN, EXPECTED_TOKEN_ID,
-            EXPECTED_TOKEN_TYPE, EXPECTED_SCOPE, EXPECTED_REFRESH_TOKEN);
+        token = new Token(EXPECTED_ACCESS_TOKEN, EXPECTED_EXPIRES_IN, EXPECTED_TOKEN_TYPE, EXPECTED_SCOPE,
+            EXPECTED_REFRESH_TOKEN);
     }
 
     @Test
     public void definedInitializationValuesOfToken() {
         assertEquals(EXPECTED_ACCESS_TOKEN, token.getAccessToken());
         assertEquals(EXPECTED_EXPIRES_IN, token.getExpiresIn());
-        assertEquals(EXPECTED_TOKEN_ID, token.getTokenId());
         assertEquals(EXPECTED_TOKEN_TYPE, token.getTokenType());
         assertEquals(EXPECTED_SCOPE, token.getScope());
         assertEquals(EXPECTED_REFRESH_TOKEN, token.getRefreshToken());

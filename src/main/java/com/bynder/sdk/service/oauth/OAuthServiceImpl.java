@@ -10,7 +10,6 @@ import com.bynder.sdk.api.OAuthApi;
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.model.oauth.GrantType;
 import com.bynder.sdk.model.oauth.ResponseType;
-import com.bynder.sdk.model.oauth.Scope;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.query.oauth.TokenQuery;
@@ -66,15 +65,13 @@ public class OAuthServiceImpl implements OAuthService {
         stringBuilder.append(configuration.getBaseUrl());
         stringBuilder.append("/v6/authentication/oauth2/auth");
         stringBuilder.append("?client_id=")
-            .append(Utils.encodeParameterValue(configuration.getClientId()));
+            .append(Utils.encodeParameterValue(configuration.getOAuthSettings().getClientId()));
         stringBuilder.append("&redirect_uri=")
-            .append(Utils.encodeParameterValue(configuration.getRedirectUri().toString()));
+            .append(Utils.encodeParameterValue(configuration.getOAuthSettings().getRedirectUri().toString()));
         stringBuilder.append("&response_type=")
             .append(Utils.encodeParameterValue(ResponseType.CODE.toString()));
         stringBuilder.append("&scope=")
             .append(Utils.encodeParameterValue(String.join(" ", scopes)));
-        stringBuilder.append(Utils.encodeParameterValue(" "));
-        stringBuilder.append(Utils.encodeParameterValue(Scope.OFFLINE.toString()));
         stringBuilder.append("&state=").append(Utils.encodeParameterValue(state));
 
         return new URL(stringBuilder.toString());
@@ -85,18 +82,18 @@ public class OAuthServiceImpl implements OAuthService {
      */
     @Override
     public Observable<Token> getAccessToken(final String code, final List<String> scopes) {
-        TokenQuery tokenQuery = new TokenQuery(configuration.getClientId(),
-            configuration.getClientSecret(), configuration.getRedirectUri(),
+        TokenQuery tokenQuery = new TokenQuery(configuration.getOAuthSettings().getClientId(),
+            configuration.getOAuthSettings().getClientSecret(), configuration.getOAuthSettings().getRedirectUri(),
             GrantType.AUTHORIZATION_CODE, String.join(" ", scopes), code);
 
         Map<String, String> params = queryDecoder.decode(tokenQuery);
         Observable<Response<Token>> accessTokenObservable = oauthClient.getAccessToken(params);
 
         return accessTokenObservable.map(response -> {
-            Token accessToken = response.body();
-            accessToken.setAccessTokenExpiration();
-            updateTokensFromResponse(accessToken);
-            return accessToken;
+            Token token = response.body();
+            token.setAccessTokenExpiration();
+            configuration.getOAuthSettings().setToken(token);
+            return token;
         });
     }
 
@@ -105,25 +102,18 @@ public class OAuthServiceImpl implements OAuthService {
      */
     @Override
     public Observable<Token> refreshAccessToken() {
-        TokenQuery tokenQuery = new TokenQuery(configuration.getClientId(),
-            configuration.getClientSecret(), GrantType.REFRESH_TOKEN,
-            configuration.getToken().getRefreshToken());
+        TokenQuery tokenQuery = new TokenQuery(configuration.getOAuthSettings().getClientId(),
+            configuration.getOAuthSettings().getClientSecret(), GrantType.REFRESH_TOKEN,
+            configuration.getOAuthSettings().getToken().getRefreshToken());
 
         Map<String, String> params = queryDecoder.decode(tokenQuery);
         Observable<Response<Token>> refreshTokenObservable = oauthClient.getAccessToken(params);
 
         return refreshTokenObservable.map(response -> {
-            Token accessToken = response.body();
-            accessToken.setAccessTokenExpiration();
-            updateTokensFromResponse(accessToken);
-            return accessToken;
+            Token token = response.body();
+            token.setAccessTokenExpiration();
+            configuration.getOAuthSettings().refreshToken(token);
+            return token;
         });
-    }
-
-    /**
-     * Helper method to update the configuration settings.
-     */
-    private void updateTokensFromResponse(final Token token) {
-        configuration.setToken(token);
     }
 }

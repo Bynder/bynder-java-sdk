@@ -113,7 +113,7 @@ dependencies {
 
 Components used to install and run the project:
 
-- Java version 11.0.3
+- Java version 1.8.0_221
 - Apache Maven 3.6.0
 
 **Important:** Don't forget to define the environment variables for Java and Maven!

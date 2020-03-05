@@ -37,6 +37,11 @@ public class MediaQuery {
     @ApiField(decoder = BooleanParameterDecoder.class)
     private Boolean isPublic;
     /**
+     * Whether to fetch the media item information or not.
+     */
+    @ApiField(decoder = BooleanParameterDecoder.class)
+    private Boolean includeMediaItems;
+    /**
      * Limit of results per request. Maximum: 1000. Default: 50.
      */
     @ApiField
@@ -86,6 +91,15 @@ public class MediaQuery {
 
     public MediaQuery setIsPublic(final Boolean isPublic) {
         this.isPublic = isPublic;
+        return this;
+    }
+
+    public Boolean getIncludeMediaItems() {
+        return includeMediaItems;
+    }
+
+    public MediaQuery setIncludeMediaItems(final Boolean includeMediaItems) {
+        this.includeMediaItems = includeMediaItems;
         return this;
     }
 

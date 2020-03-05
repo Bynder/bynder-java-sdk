@@ -21,9 +21,9 @@ public class MediaItem {
      */
     private String id;
     /**
-     * Filename of the media item.
+     * Name of the media item. Returns filename for getMediaInfo, name for getMediaList.
      */
-    @SerializedName(value = "fileName")
+    @SerializedName(value = "fileName", alternate = "name")
     private String name;
     /**
      * Media item type. Possible values are: original, additional, web.
@@ -33,6 +33,10 @@ public class MediaItem {
      * Date created.
      */
     private String dateCreated;
+    /**
+     * Public URL of the media item when available.
+     */
+    private String publicUrl;
     /**
      * Height of the media item.
      */
@@ -76,6 +80,10 @@ public class MediaItem {
 
     public String getDateCreated() {
         return dateCreated;
+    }
+
+    public String getPublicUrl() {
+        return publicUrl;
     }
 
     public int getHeight() {

@@ -9,6 +9,7 @@ package com.bynder.sdk.service.upload;
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.exception.BynderUploadException;
 import com.bynder.sdk.model.upload.FileConverterStatus;
+import com.bynder.sdk.model.upload.FinaliseAdditionalFileResponse;
 import com.bynder.sdk.model.upload.FinaliseResponse;
 import com.bynder.sdk.model.upload.PollStatus;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
@@ -28,6 +29,10 @@ import io.reactivex.ObservableEmitter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import retrofit2.Response;
 
 /**
@@ -160,6 +165,79 @@ public class FileUploader {
                                             }
                                         }, throwable -> observableEmitter.onError(throwable));
                                 }, throwable -> observableEmitter.onError(throwable));
+                            }
+                        }, throwable -> observableEmitter.onError(throwable));
+                    }, throwable -> observableEmitter.onError(throwable));
+                }, throwable -> observableEmitter.onError(throwable));
+            } catch (Exception e) {
+                observableEmitter.onError(e);
+            }
+        });
+    }
+
+    /**
+     * Uploads a file with the information specified in the query parameter.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     * @return {@link Observable} with the {@link SaveMediaResponse} information.
+     */
+    public Observable<FinaliseAdditionalFileResponse> uploadAdditionalFile(final UploadQuery uploadQuery) {
+        return Observable.create(emitter -> {
+            try {
+                Observable<UploadProgress> uploadProgressObservable = uploadAdditionalFileWithProgress(
+                    uploadQuery);
+                uploadProgressObservable.subscribe(uploadProgress -> {
+                    if (uploadProgress.isFinished()) {
+                        emitter.onNext(uploadProgress.getFinaliseAdditionalFileResponse());
+                    }
+                }, throwable -> emitter.onError(throwable), () -> emitter.onComplete());
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        });
+    }
+
+    public Observable<UploadProgress> uploadAdditionalFileWithProgress(UploadQuery uploadQuery) {
+        return Observable.create(observableEmitter -> {
+            try {
+                // S3 endpoint
+                Observable<Response<String>> s3EndpointObs = getClosestS3Endpoint();
+                s3EndpointObs.subscribe(awsBucketResponse -> {
+                    this.amazonS3Service = AmazonS3Service.Builder.create(awsBucketResponse.body());
+                    // Get Upload Information
+                    final File file = new File(uploadQuery.getFilepath());
+                    Observable<Response<UploadRequest>> uploadInformationObs = getUploadInformation(
+                        new RequestUploadQuery(file.getName()));
+                    uploadInformationObs.subscribe(uploadRequestResponse -> {
+                        UploadRequest uploadRequest = uploadRequestResponse.body();
+                        if (!file.exists()) {
+                            observableEmitter.onError(new BynderUploadException(String
+                                .format("File: %s not found. Upload not completed.",
+                                    file.getName())));
+                            return;
+                        }
+
+                        // Upload Chunks
+                        uploadParts(file, uploadRequest).subscribe(uploadProgress -> {
+                            // Emit progress
+                            observableEmitter.onNext(uploadProgress);
+
+                            if (uploadProgress.areChunksFinished()) {
+                                // Finalising
+                                Observable<Response<FinaliseAdditionalFileResponse>> finaliseUploadObs =
+                                    finaliseAdditionalFileUpload(new FinaliseUploadQuery(uploadRequest.getS3File().getUploadId(),
+                                        uploadRequest.getS3File().getTargetId(),
+                                        uploadRequest.getS3Filename(),
+                                        uploadProgress.getUploadedChunks()),
+                                        uploadQuery.getMediaId());
+
+                                finaliseUploadObs.subscribe(finaliseResponseResponse -> {
+                                    uploadProgress.setFinaliseAdditionalFileResponse(finaliseResponseResponse.body());
+                                    uploadProgress.setFinished(true);
+                                    observableEmitter.onNext(uploadProgress);
+                                    observableEmitter.onComplete();
+                                }, throwable -> observableEmitter.onError(throwable));
+
                             }
                         }, throwable -> observableEmitter.onError(throwable));
                     }, throwable -> observableEmitter.onError(throwable));
@@ -355,6 +433,15 @@ public class FileUploader {
         final FinaliseUploadQuery finaliseUploadQuery) {
         Map<String, String> params = queryDecoder.decode(finaliseUploadQuery);
         return bynderApi.finaliseUpload(params);
+    }
+
+    /**
+     * Check {@link BynderApi#finaliseAdditionalFileUpload(String, String, Map)}} for more information.
+     */
+    private Observable<Response<FinaliseAdditionalFileResponse>> finaliseAdditionalFileUpload(
+        final FinaliseUploadQuery finaliseUploadQuery, String mediaId) {
+        Map<String, String> params = queryDecoder.decode(finaliseUploadQuery);
+        return bynderApi.finaliseAdditionalFileUpload(mediaId, finaliseUploadQuery.getUploadId(), params);
     }
 
     /**

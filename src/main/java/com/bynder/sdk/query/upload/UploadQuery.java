@@ -21,7 +21,8 @@ public class UploadQuery {
     private final String brandId;
     /**
      * Media id. If specified it will add the media asset file as new version of the specified
-     * media. Otherwise a new media asset will be added to the asset bank.
+     * media or as new additional file of specified media depending on called method.
+     * If is not specified, a new media asset will be added to the asset bank.
      */
     private String mediaId;
     /**

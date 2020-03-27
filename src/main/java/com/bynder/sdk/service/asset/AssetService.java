@@ -14,6 +14,7 @@ import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.Usage;
+import com.bynder.sdk.model.upload.FinaliseAdditionalFileResponse;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.model.upload.UploadProgress;
 import com.bynder.sdk.query.MediaDeleteQuery;
@@ -150,6 +151,14 @@ public interface AssetService {
      * @return {@link Observable} with the {@link UploadProgress} information.
      */
     Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
+
+    /**
+     * Uploads an additional file to existing asset.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     * @return {@link Observable} with the {@link FinaliseAdditionalFileResponse} information.
+     */
+    Observable<FinaliseAdditionalFileResponse> uploadAdditionalFile(UploadQuery uploadQuery);
 
     /**
      * Builder class used to create a new instance of {@link AssetService}.

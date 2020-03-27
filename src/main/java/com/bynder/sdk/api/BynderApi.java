@@ -15,6 +15,7 @@ import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.Usage;
+import com.bynder.sdk.model.upload.FinaliseAdditionalFileResponse;
 import com.bynder.sdk.model.upload.FinaliseResponse;
 import com.bynder.sdk.model.upload.PollStatus;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
@@ -283,6 +284,11 @@ public interface BynderApi {
     @FormUrlEncoded
     @POST("/api/v4/upload/")
     Observable<Response<FinaliseResponse>> finaliseUpload(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("/api/v4/media/{id}/save/additional/{uploadId}/")
+    Observable<Response<FinaliseAdditionalFileResponse>> finaliseAdditionalFileUpload(@Path("id") String id,
+        @Path("uploadId") String uploadId, @FieldMap Map<String, String> params);
 
     /**
      * Gets poll processing status of finalised files.

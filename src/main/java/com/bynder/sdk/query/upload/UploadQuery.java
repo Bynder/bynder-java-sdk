@@ -28,6 +28,10 @@ public class UploadQuery {
      * Flags if the media asset should be sent to the waiting room.
      */
     private Boolean audit;
+    /**
+     * Dictionary with (metaproperty) options to set on the asset upon upload.
+     */
+    private String metaproperty;
 
     public UploadQuery(final String filepath, final String brandId) {
         this.filepath = filepath;
@@ -57,6 +61,15 @@ public class UploadQuery {
 
     public UploadQuery setAudit(final Boolean audit) {
         this.audit = audit;
+        return this;
+    }
+
+    public String getMetaproperty() {
+        return metaproperty;
+    }
+
+    public UploadQuery setMetaproperty(String metaproperty) {
+        this.metaproperty = metaproperty;
         return this;
     }
 }

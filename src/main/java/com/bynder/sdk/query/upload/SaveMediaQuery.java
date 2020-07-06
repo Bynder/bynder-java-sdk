@@ -41,6 +41,11 @@ public class SaveMediaQuery {
      */
     @ApiField
     private Boolean audit;
+    /**
+     * Dictionary with (metaproperty) options to set on the asset upon upload.
+     */
+    @ApiField
+    private String metaproperty;
 
     public SaveMediaQuery(final String importId) {
         this.importId = importId;
@@ -79,6 +84,15 @@ public class SaveMediaQuery {
 
     public SaveMediaQuery setAudit(final Boolean audit) {
         this.audit = audit;
+        return this;
+    }
+
+    public String getMetaproperty() {
+        return metaproperty;
+    }
+
+    public SaveMediaQuery setMetaproperty(String metaproperty) {
+        this.metaproperty = metaproperty;
         return this;
     }
 }

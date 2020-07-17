@@ -312,12 +312,17 @@ public class FileUploader {
             Observable<Response<SaveMediaResponse>> saveMediaObs;
             if (uploadQuery.getMediaId() == null) {
                 saveMediaObs = saveMedia(
-                    new SaveMediaQuery(importId).setBrandId(uploadQuery.getBrandId())
-                        .setName(file.getName()).setAudit(uploadQuery.isAudit()));
+                    new SaveMediaQuery(importId)
+                        .setBrandId(uploadQuery.getBrandId())
+                        .setName(file.getName())
+                        .setAudit(uploadQuery.isAudit())
+                        .setMetaproperty(uploadQuery.getMetaproperty()));
             } else {
                 saveMediaObs = saveMedia(
-                    new SaveMediaQuery(importId).setMediaId(uploadQuery.getMediaId())
-                        .setAudit(uploadQuery.isAudit()));
+                    new SaveMediaQuery(importId)
+                        .setMediaId(uploadQuery.getMediaId())
+                        .setAudit(uploadQuery.isAudit())
+                        .setMetaproperty(uploadQuery.getMetaproperty()));
             }
             saveMediaObs.subscribe(saveMediaResponse -> emitter.onNext(saveMediaResponse.body()),
                 throwable -> emitter.onError(throwable), () -> emitter.onComplete());

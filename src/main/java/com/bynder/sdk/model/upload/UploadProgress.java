@@ -26,6 +26,10 @@ public class UploadProgress {
      */
     private SaveMediaResponse saveMediaResponse;
     /**
+     * The Id of uploaded additional file, filled, when upload is finished.
+     */
+    private FinaliseAdditionalFileResponse finaliseAdditionalFileResponse;
+    /**
      * The number of chunks already successfully uploaded.
      */
     private int uploadedChunks;
@@ -55,6 +59,14 @@ public class UploadProgress {
 
     public void setSaveMediaResponse(SaveMediaResponse saveMediaResponse) {
         this.saveMediaResponse = saveMediaResponse;
+    }
+
+    public FinaliseAdditionalFileResponse getFinaliseAdditionalFileResponse() {
+        return finaliseAdditionalFileResponse;
+    }
+
+    public void setFinaliseAdditionalFileResponse(FinaliseAdditionalFileResponse finaliseAdditionalFileResponse) {
+        this.finaliseAdditionalFileResponse = finaliseAdditionalFileResponse;
     }
 
     /**

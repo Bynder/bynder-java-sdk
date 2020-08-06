@@ -14,6 +14,7 @@ import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.Usage;
+import com.bynder.sdk.model.upload.FinaliseAdditionalFileResponse;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.model.upload.UploadProgress;
 import com.bynder.sdk.query.MediaDeleteQuery;
@@ -188,5 +189,13 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public Observable<UploadProgress> uploadFileWithProgress(final UploadQuery uploadQuery) {
         return fileUploader.uploadFileWithProgress(uploadQuery);
+    }
+
+    /**
+     * Check {@link AssetService} for more information.
+     */
+    @Override
+    public Observable<FinaliseAdditionalFileResponse> uploadAdditionalFile(final UploadQuery uploadQuery) {
+        return fileUploader.uploadAdditionalFile(uploadQuery);
     }
 }

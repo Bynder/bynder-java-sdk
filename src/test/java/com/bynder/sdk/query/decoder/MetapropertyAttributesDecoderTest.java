@@ -9,8 +9,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class MetapropertyAttribu
-        tesDecoderTest {
+public class MetapropertyAttributesDecoderTest {
 
     public static final String PARAMETER_NAME = "metaproperty";
     public static final String METAPROPERTY_UUID = "00000000-0000-0000-0000000000000000";

@@ -6,7 +6,12 @@
  */
 package com.bynder.sdk.query.upload;
 
+import com.bynder.sdk.query.MetapropertyAttribute;
 import com.bynder.sdk.query.decoder.ApiField;
+import com.bynder.sdk.query.decoder.MetapropertyAttributesDecoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Query with the information to save a media asset.
@@ -44,8 +49,8 @@ public class SaveMediaQuery {
     /**
      * Dictionary with (metaproperty) options to set on the asset upon upload.
      */
-    @ApiField
-    private String metaproperty;
+    @ApiField(name = "metaproperty", decoder = MetapropertyAttributesDecoder.class)
+    private List<MetapropertyAttribute> metaproperties;
 
     public SaveMediaQuery(final String importId) {
         this.importId = importId;
@@ -87,12 +92,22 @@ public class SaveMediaQuery {
         return this;
     }
 
-    public String getMetaproperty() {
-        return metaproperty;
+    public SaveMediaQuery setMetaproperties(List<MetapropertyAttribute> metaproperties) {
+        this.metaproperties = metaproperties;
+        return this;
     }
 
-    public SaveMediaQuery setMetaproperty(String metaproperty) {
-        this.metaproperty = metaproperty;
+    public List<MetapropertyAttribute> getMetaproperties() {
+        return metaproperties;
+    }
+
+    public SaveMediaQuery setMetaproperty(String metapropertyUuid, String optionName) {
+        if(this.metaproperties == null) {
+            this.metaproperties = new ArrayList<>();
+        }
+
+        this.metaproperties.add(new MetapropertyAttribute(metapropertyUuid, new String[]{optionName}));
+
         return this;
     }
 }

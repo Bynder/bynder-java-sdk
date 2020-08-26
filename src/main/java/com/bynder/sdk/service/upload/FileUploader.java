@@ -316,13 +316,13 @@ public class FileUploader {
                         .setBrandId(uploadQuery.getBrandId())
                         .setName(file.getName())
                         .setAudit(uploadQuery.isAudit())
-                        .setMetaproperty(uploadQuery.getMetaproperty()));
+                        .setMetaproperties(uploadQuery.getMetaproperties()));
             } else {
                 saveMediaObs = saveMedia(
                     new SaveMediaQuery(importId)
                         .setMediaId(uploadQuery.getMediaId())
                         .setAudit(uploadQuery.isAudit())
-                        .setMetaproperty(uploadQuery.getMetaproperty()));
+                        .setMetaproperties(uploadQuery.getMetaproperties()));
             }
             saveMediaObs.subscribe(saveMediaResponse -> emitter.onNext(saveMediaResponse.body()),
                 throwable -> emitter.onError(throwable), () -> emitter.onComplete());

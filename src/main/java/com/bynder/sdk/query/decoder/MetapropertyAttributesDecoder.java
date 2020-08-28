@@ -11,15 +11,9 @@ public class MetapropertyAttributesDecoder implements
 
     @Override
     public Map<String, String> decode(final String name, final List<MetapropertyAttribute> metapropertyAttributes) {
-        Map<String, String> parameters = new HashMap<>();
-
-        metapropertyAttributes.stream().forEach(metapropertyAttribute -> {
-            parameters.put(
-                    String.format("%s.%s", name, metapropertyAttribute.getMetapropertyId()),
-                    String.join(",", metapropertyAttribute.getOptionsIds())
-                          );
-        });
-
-        return parameters;
+       return metapropertyAttributes.stream().collect(Collectors.toMap(
+                metapropertyAttribute -> String.format("%s.%s", name, metapropertyAttribute.getMetapropertyId()),
+                metapropertyAttribute -> String.join(",", metapropertyAttribute.getOptionsIds())
+       ));
     }
 }

@@ -2,7 +2,11 @@ package com.bynder.sdk.query.upload;
 
 import static org.junit.Assert.assertEquals;
 
+import com.bynder.sdk.query.MetapropertyAttribute;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests the {@link SaveMediaQuery} class methods.
@@ -29,5 +33,15 @@ public class SaveMediaQueryTest {
         assertEquals(EXPECTED_NAME, saveMediaQuery.getName());
         assertEquals(EXPECTED_MEDIA_ID, saveMediaQuery.getMediaId());
         assertEquals(1, saveMediaQuery.getMetaproperties().size());
+    }
+
+    @Test
+    public void testMetaProperties() {
+        SaveMediaQuery saveMediaQuery = new SaveMediaQuery(EXPECTED_IMPORT_ID);
+        List<MetapropertyAttribute> metapropertyAttributes = new ArrayList<>();
+        metapropertyAttributes.add(new MetapropertyAttribute(EXPECTED_METAPROPERTY_ID, new String[]{EXPECTED_OPTION_NAME}));
+
+        assertEquals(metapropertyAttributes.size(), saveMediaQuery.getMetaproperties().size());
+
     }
 }

@@ -100,14 +100,4 @@ public class SaveMediaQuery {
     public List<MetapropertyAttribute> getMetaproperties() {
         return metaproperties;
     }
-
-    public SaveMediaQuery setMetaproperty(String metapropertyUuid, String optionName) {
-        if(this.metaproperties == null) {
-            this.metaproperties = new ArrayList<>();
-        }
-
-        this.metaproperties.add(new MetapropertyAttribute(metapropertyUuid, new String[]{optionName}));
-
-        return this;
-    }
 }

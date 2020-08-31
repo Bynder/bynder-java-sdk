@@ -19,6 +19,10 @@ public class SaveMediaQueryTest {
     public static final String EXPECTED_MEDIA_ID = "mediaId";
     public static final String EXPECTED_METAPROPERTY_ID = "metapropertyId";
     public static final String EXPECTED_OPTION_NAME = "optionName";
+    public static final List<MetapropertyAttribute> EXPECTED_METAPROPERTIES = new ArrayList<>();
+    static {
+        EXPECTED_METAPROPERTIES.add(new MetapropertyAttribute(EXPECTED_METAPROPERTY_ID, new String[]{EXPECTED_OPTION_NAME}));
+    }
 
     @Test
     public void initializeSaveMediaQuery() {
@@ -26,22 +30,13 @@ public class SaveMediaQueryTest {
         saveMediaQuery.setBrandId(EXPECTED_BRAND_ID);
         saveMediaQuery.setName(EXPECTED_NAME);
         saveMediaQuery.setMediaId(EXPECTED_MEDIA_ID);
-        saveMediaQuery.setMetaproperty(EXPECTED_METAPROPERTY_ID, EXPECTED_OPTION_NAME);
+        saveMediaQuery.setMetaproperties(EXPECTED_METAPROPERTIES);
 
+        assertEquals(EXPECTED_METAPROPERTIES, saveMediaQuery.getMetaproperties());
         assertEquals(EXPECTED_IMPORT_ID, saveMediaQuery.getImportId());
         assertEquals(EXPECTED_BRAND_ID, saveMediaQuery.getBrandId());
         assertEquals(EXPECTED_NAME, saveMediaQuery.getName());
         assertEquals(EXPECTED_MEDIA_ID, saveMediaQuery.getMediaId());
-        assertEquals(1, saveMediaQuery.getMetaproperties().size());
     }
 
-    @Test
-    public void testMetaProperties() {
-        SaveMediaQuery saveMediaQuery = new SaveMediaQuery(EXPECTED_IMPORT_ID);
-        List<MetapropertyAttribute> metapropertyAttributes = new ArrayList<>();
-        metapropertyAttributes.add(new MetapropertyAttribute(EXPECTED_METAPROPERTY_ID, new String[]{EXPECTED_OPTION_NAME}));
-
-        assertEquals(metapropertyAttributes.size(), saveMediaQuery.getMetaproperties().size());
-
-    }
 }

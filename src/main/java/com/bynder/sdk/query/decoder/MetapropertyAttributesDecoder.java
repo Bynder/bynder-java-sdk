@@ -5,6 +5,7 @@ import com.bynder.sdk.query.MetapropertyAttribute;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MetapropertyAttributesDecoder implements
         ParameterDecoder<String, List<MetapropertyAttribute>> {
@@ -14,6 +15,6 @@ public class MetapropertyAttributesDecoder implements
        return metapropertyAttributes.stream().collect(Collectors.toMap(
                 metapropertyAttribute -> String.format("%s.%s", name, metapropertyAttribute.getMetapropertyId()),
                 metapropertyAttribute -> String.join(",", metapropertyAttribute.getOptionsIds())
-       ));
+                                                                      ));
     }
 }

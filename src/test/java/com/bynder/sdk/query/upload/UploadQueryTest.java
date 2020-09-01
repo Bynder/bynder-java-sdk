@@ -1,13 +1,13 @@
 package com.bynder.sdk.query.upload;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.bynder.sdk.query.MetapropertyAttribute;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests the {@link UploadQuery} class methods.

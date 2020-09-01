@@ -19,7 +19,10 @@ import com.bynder.sdk.query.OrderBy;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.service.oauth.OAuthService;
-import java.awt.Desktop;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,8 +30,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Sample class to display some of the SDK functionality.

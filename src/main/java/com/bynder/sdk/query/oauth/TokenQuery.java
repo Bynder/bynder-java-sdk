@@ -9,6 +9,7 @@ package com.bynder.sdk.query.oauth;
 import com.bynder.sdk.api.OAuthApi;
 import com.bynder.sdk.model.oauth.GrantType;
 import com.bynder.sdk.query.decoder.ApiField;
+
 import java.net.URI;
 import java.util.Map;
 

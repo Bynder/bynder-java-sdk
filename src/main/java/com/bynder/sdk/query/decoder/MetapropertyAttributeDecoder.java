@@ -7,6 +7,7 @@
 package com.bynder.sdk.query.decoder;
 
 import com.bynder.sdk.query.MetapropertyAttribute;
+
 import java.util.HashMap;
 import java.util.Map;
 

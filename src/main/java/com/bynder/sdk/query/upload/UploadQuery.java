@@ -9,9 +9,7 @@ package com.bynder.sdk.query.upload;
 import com.bynder.sdk.query.MetapropertyAttribute;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Query with the information to upload a file.

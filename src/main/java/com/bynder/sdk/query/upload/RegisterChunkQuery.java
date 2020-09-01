@@ -8,6 +8,7 @@ package com.bynder.sdk.query.upload;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.query.decoder.ApiField;
+
 import java.util.Map;
 
 /**

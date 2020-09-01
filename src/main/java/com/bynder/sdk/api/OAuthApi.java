@@ -8,11 +8,12 @@ package com.bynder.sdk.api;
 
 import com.bynder.sdk.model.oauth.Token;
 import io.reactivex.Observable;
-import java.util.Map;
 import retrofit2.Response;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
+
+import java.util.Map;
 
 /**
  * Interface of the Bynder OAuth2 provider to handle the HTTP communication.

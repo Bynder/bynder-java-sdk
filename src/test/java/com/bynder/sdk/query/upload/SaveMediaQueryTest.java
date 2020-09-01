@@ -1,12 +1,12 @@
 package com.bynder.sdk.query.upload;
 
-import static org.junit.Assert.assertEquals;
-
 import com.bynder.sdk.query.MetapropertyAttribute;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the {@link SaveMediaQuery} class methods.

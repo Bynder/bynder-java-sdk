@@ -10,10 +10,10 @@
  */
 package com.bynder.sdk.query;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
-import org.junit.Test;
 
 /**
  * Tests the {@link MediaInfoQuery} class methods.

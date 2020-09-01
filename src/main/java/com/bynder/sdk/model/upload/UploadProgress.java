@@ -6,8 +6,6 @@
  */
 package com.bynder.sdk.model.upload;
 
-import com.bynder.sdk.model.upload.SaveMediaResponse;
-
 /**
  * Model to represent the progress of an Asset upload.
  */

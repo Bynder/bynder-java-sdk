@@ -10,11 +10,12 @@
  */
 package com.bynder.sdk.query.decoder;
 
-import static org.junit.Assert.assertEquals;
-
 import com.bynder.sdk.query.MetapropertyAttribute;
-import java.util.Map;
 import org.junit.Test;
+
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the {@link MetapropertyAttributeDecoder} class method.

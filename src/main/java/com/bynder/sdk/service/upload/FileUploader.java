@@ -8,27 +8,17 @@ package com.bynder.sdk.service.upload;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.exception.BynderUploadException;
-import com.bynder.sdk.model.upload.FileConverterStatus;
-import com.bynder.sdk.model.upload.FinaliseResponse;
-import com.bynder.sdk.model.upload.PollStatus;
-import com.bynder.sdk.model.upload.SaveMediaResponse;
-import com.bynder.sdk.model.upload.UploadProcessData;
-import com.bynder.sdk.model.upload.UploadProgress;
-import com.bynder.sdk.model.upload.UploadRequest;
+import com.bynder.sdk.model.upload.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
-import com.bynder.sdk.query.upload.FinaliseUploadQuery;
-import com.bynder.sdk.query.upload.PollStatusQuery;
-import com.bynder.sdk.query.upload.RegisterChunkQuery;
-import com.bynder.sdk.query.upload.RequestUploadQuery;
-import com.bynder.sdk.query.upload.SaveMediaQuery;
-import com.bynder.sdk.query.upload.UploadQuery;
+import com.bynder.sdk.query.upload.*;
 import com.bynder.sdk.service.amazons3.AmazonS3Service;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import retrofit2.Response;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Map;
-import retrofit2.Response;
 
 /**
  * Class used to upload files to Bynder.

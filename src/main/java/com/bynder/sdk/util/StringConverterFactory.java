@@ -6,13 +6,14 @@
  */
 package com.bynder.sdk.util;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 /**
  * Class responsible for converting a String response from the API. This class is used when the

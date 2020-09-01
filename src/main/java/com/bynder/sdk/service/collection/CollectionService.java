@@ -8,16 +8,12 @@ package com.bynder.sdk.service.collection;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.Collection;
-import com.bynder.sdk.query.collection.CollectionAddMediaQuery;
-import com.bynder.sdk.query.collection.CollectionCreateQuery;
-import com.bynder.sdk.query.collection.CollectionInfoQuery;
-import com.bynder.sdk.query.collection.CollectionQuery;
-import com.bynder.sdk.query.collection.CollectionRemoveMediaQuery;
-import com.bynder.sdk.query.collection.CollectionShareQuery;
+import com.bynder.sdk.query.collection.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import io.reactivex.Observable;
-import java.util.List;
 import retrofit2.Response;
+
+import java.util.List;
 
 /**
  * Interface to represent operations that can be done to the Bynder Collections.

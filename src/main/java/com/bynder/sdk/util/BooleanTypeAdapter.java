@@ -9,9 +9,10 @@ package com.bynder.sdk.util;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import retrofit2.Retrofit;
+
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import retrofit2.Retrofit;
 
 /**
  * Class responsible for converting integers to booleans when deserializing the JSON response

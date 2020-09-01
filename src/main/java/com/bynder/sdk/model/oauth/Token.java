@@ -8,6 +8,7 @@ package com.bynder.sdk.model.oauth;
 
 import com.bynder.sdk.api.OAuthApi;
 import com.google.gson.annotations.SerializedName;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;

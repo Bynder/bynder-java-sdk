@@ -8,6 +8,7 @@ package com.bynder.sdk.model;
 
 import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
+
 import java.util.Map;
 
 /**

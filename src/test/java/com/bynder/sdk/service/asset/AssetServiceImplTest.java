@@ -10,26 +10,16 @@
  */
 package com.bynder.sdk.service.asset;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.anyMap;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import com.bynder.sdk.api.BynderApi;
-import com.bynder.sdk.query.MediaDeleteQuery;
-import com.bynder.sdk.query.MediaDownloadQuery;
-import com.bynder.sdk.query.MediaInfoQuery;
-import com.bynder.sdk.query.MediaModifyQuery;
-import com.bynder.sdk.query.MediaQuery;
-import com.bynder.sdk.query.MetapropertyQuery;
-import com.bynder.sdk.query.UsageCreateQuery;
-import com.bynder.sdk.query.UsageDeleteQuery;
-import com.bynder.sdk.query.UsageQuery;
+import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 
 /**

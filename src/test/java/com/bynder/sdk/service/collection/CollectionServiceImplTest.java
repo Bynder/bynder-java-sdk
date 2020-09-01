@@ -10,24 +10,18 @@
  */
 package com.bynder.sdk.service.collection;
 
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import com.bynder.sdk.api.BynderApi;
-import com.bynder.sdk.query.collection.CollectionAddMediaQuery;
-import com.bynder.sdk.query.collection.CollectionCreateQuery;
-import com.bynder.sdk.query.collection.CollectionInfoQuery;
-import com.bynder.sdk.query.collection.CollectionQuery;
-import com.bynder.sdk.query.collection.CollectionRecipientRight;
-import com.bynder.sdk.query.collection.CollectionRemoveMediaQuery;
-import com.bynder.sdk.query.collection.CollectionShareQuery;
+import com.bynder.sdk.query.collection.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests the {@link CollectionServiceImpl} class methods.

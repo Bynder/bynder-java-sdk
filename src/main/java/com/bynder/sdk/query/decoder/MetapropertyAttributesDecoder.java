@@ -2,9 +2,8 @@ package com.bynder.sdk.query.decoder;
 
 import com.bynder.sdk.query.MetapropertyAttribute;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MetapropertyAttributesDecoder implements

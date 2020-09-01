@@ -13,8 +13,9 @@ import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.service.collection.CollectionService;
 import com.bynder.sdk.service.oauth.OAuthService;
 import io.reactivex.Observable;
-import java.util.List;
 import retrofit2.Response;
+
+import java.util.List;
 
 /**
  * Bynder client interface.

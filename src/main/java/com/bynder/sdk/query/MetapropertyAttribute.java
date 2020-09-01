@@ -6,6 +6,9 @@
  */
 package com.bynder.sdk.query;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Class to specify the metaproperty options to be added to a media asset.
  */
@@ -31,5 +34,18 @@ public class MetapropertyAttribute {
 
     public String[] getOptionsIds() {
         return optionsIds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MetapropertyAttribute that = (MetapropertyAttribute) o;
+        return getMetapropertyId().equals(that.getMetapropertyId()) &&
+                Arrays.equals(getOptionsIds(), that.getOptionsIds());
     }
 }

@@ -6,6 +6,13 @@
  */
 package com.bynder.sdk.query.upload;
 
+import com.bynder.sdk.query.MetapropertyAttribute;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Query with the information to upload a file.
  */
@@ -29,9 +36,9 @@ public class UploadQuery {
      */
     private Boolean audit;
     /**
-     * Dictionary with (metaproperty) options to set on the asset upon upload.
+     * list of metaproperties and options to set on the asset upon upload.
      */
-    private String metaproperty;
+    private List<MetapropertyAttribute> metaproperties;
 
     public UploadQuery(final String filepath, final String brandId) {
         this.filepath = filepath;
@@ -64,12 +71,17 @@ public class UploadQuery {
         return this;
     }
 
-    public String getMetaproperty() {
-        return metaproperty;
+    public List<MetapropertyAttribute> getMetaproperties() {
+        return metaproperties;
     }
 
-    public UploadQuery setMetaproperty(String metaproperty) {
-        this.metaproperty = metaproperty;
+    public UploadQuery addMetaproperty(String metapropertyUuid, String optionName) {
+        if(this.metaproperties == null) {
+            this.metaproperties = new ArrayList<>();
+        }
+
+        this.metaproperties.add(new MetapropertyAttribute(metapropertyUuid, new String[]{optionName}));
+
         return this;
     }
 }

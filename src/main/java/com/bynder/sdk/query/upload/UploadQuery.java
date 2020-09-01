@@ -75,7 +75,7 @@ public class UploadQuery {
         return metaproperties;
     }
 
-    public UploadQuery setMetaproperty(String metapropertyUuid, String optionName) {
+    public UploadQuery addMetaproperty(String metapropertyUuid, String optionName) {
         if(this.metaproperties == null) {
             this.metaproperties = new ArrayList<>();
         }

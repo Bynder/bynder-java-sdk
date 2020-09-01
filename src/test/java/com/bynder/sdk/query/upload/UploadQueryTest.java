@@ -32,7 +32,7 @@ public class UploadQueryTest {
         UploadQuery uploadQuery = new UploadQuery(EXPECTED_FILE_PATH, EXPECTED_BRAND_ID);
         uploadQuery.setMediaId(EXPECTED_MEDIA_ID);
         uploadQuery.setAudit(EXPECTED_AUDIT);
-        uploadQuery.setMetaproperty(EXPECTED_METAPROPERTY_ID, EXPECTED_OPTION_NAME);
+        uploadQuery.addMetaproperty(EXPECTED_METAPROPERTY_ID, EXPECTED_OPTION_NAME);
 
         assertTrue(EXPECTED_METAPROPERTY.equals(uploadQuery.getMetaproperties().get(0)));
         assertEquals(EXPECTED_FILE_PATH, uploadQuery.getFilepath());

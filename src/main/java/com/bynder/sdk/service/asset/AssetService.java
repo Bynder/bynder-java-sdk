@@ -7,30 +7,17 @@
 package com.bynder.sdk.service.asset;
 
 import com.bynder.sdk.api.BynderApi;
-import com.bynder.sdk.model.Brand;
-import com.bynder.sdk.model.DownloadUrl;
-import com.bynder.sdk.model.Media;
-import com.bynder.sdk.model.Metaproperty;
-import com.bynder.sdk.model.Smartfilter;
-import com.bynder.sdk.model.Tag;
-import com.bynder.sdk.model.Usage;
+import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.model.upload.UploadProgress;
-import com.bynder.sdk.query.MediaDeleteQuery;
-import com.bynder.sdk.query.MediaDownloadQuery;
-import com.bynder.sdk.query.MediaInfoQuery;
-import com.bynder.sdk.query.MediaModifyQuery;
-import com.bynder.sdk.query.MediaQuery;
-import com.bynder.sdk.query.MetapropertyQuery;
-import com.bynder.sdk.query.UsageCreateQuery;
-import com.bynder.sdk.query.UsageDeleteQuery;
-import com.bynder.sdk.query.UsageQuery;
+import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.query.upload.UploadQuery;
 import io.reactivex.Observable;
+import retrofit2.Response;
+
 import java.util.List;
 import java.util.Map;
-import retrofit2.Response;
 
 /**
  * Interface to represent operations that can be done to the Bynder Asset Bank.

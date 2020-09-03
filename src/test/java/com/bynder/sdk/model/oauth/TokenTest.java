@@ -10,12 +10,13 @@
  */
 package com.bynder.sdk.model.oauth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.util.Calendar;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Calendar;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests the {@link Token} class methods.

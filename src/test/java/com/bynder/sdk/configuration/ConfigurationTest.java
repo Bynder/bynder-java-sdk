@@ -10,14 +10,15 @@
  */
 package com.bynder.sdk.configuration;
 
-import static org.junit.Assert.assertEquals;
-
-import java.net.URI;
-import java.net.URL;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.net.URI;
+import java.net.URL;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the {@link Configuration} class methods.

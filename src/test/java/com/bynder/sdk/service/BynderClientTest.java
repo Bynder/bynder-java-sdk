@@ -10,16 +10,17 @@
  */
 package com.bynder.sdk.service;
 
-import static org.junit.Assert.assertNotNull;
-
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.HttpConnectionSettings;
-import java.net.URL;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import java.net.URL;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests the {@link BynderClient} class methods.

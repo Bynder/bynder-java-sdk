@@ -7,7 +7,6 @@
 package com.bynder.sdk.query;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Class to specify the metaproperty options to be added to a media asset.

@@ -10,10 +10,11 @@ import com.bynder.sdk.api.AmazonS3Api;
 import com.bynder.sdk.api.ApiFactory;
 import com.bynder.sdk.model.upload.UploadRequest;
 import io.reactivex.Observable;
-import java.util.LinkedHashMap;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
+
+import java.util.LinkedHashMap;
 
 /**
  * Implementation of {@link AmazonS3Service}.

@@ -6,7 +6,6 @@
  */
 package com.bynder.sdk.model.upload;
 
-import com.bynder.sdk.model.upload.UploadRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -10,15 +10,6 @@
  */
 package com.bynder.sdk.service.oauth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.bynder.sdk.api.OAuthApi;
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.OAuthSettings;
@@ -26,16 +17,21 @@ import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
-import java.net.URI;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import retrofit2.Response;
+
+import java.net.URI;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the {@link OAuthServiceImpl} class methods.

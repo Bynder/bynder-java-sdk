@@ -7,11 +7,12 @@
 package com.bynder.sdk.sample;
 
 import com.bynder.sdk.service.BynderClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Application properties to instantiate {@link BynderClient} and run the {@link AppSample}.

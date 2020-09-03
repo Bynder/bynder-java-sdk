@@ -15,12 +15,13 @@ import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.query.oauth.TokenQuery;
 import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
+import retrofit2.Response;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import retrofit2.Response;
 
 public class OAuthServiceImpl implements OAuthService {
 

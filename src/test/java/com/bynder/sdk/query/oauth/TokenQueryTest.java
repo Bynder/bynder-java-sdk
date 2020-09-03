@@ -10,13 +10,13 @@
  */
 package com.bynder.sdk.query.oauth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import com.bynder.sdk.model.oauth.GrantType;
+import org.junit.Test;
 
 import java.net.URI;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests the {@link TokenQuery} class methods.

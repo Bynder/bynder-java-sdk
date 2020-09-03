@@ -12,6 +12,7 @@ import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.util.Utils;
 import io.reactivex.Observable;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;

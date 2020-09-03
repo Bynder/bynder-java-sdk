@@ -6,30 +6,18 @@
  */
 package com.bynder.sdk.api;
 
-import com.bynder.sdk.model.Brand;
-import com.bynder.sdk.model.Collection;
-import com.bynder.sdk.model.Derivative;
-import com.bynder.sdk.model.DownloadUrl;
-import com.bynder.sdk.model.Media;
-import com.bynder.sdk.model.Metaproperty;
-import com.bynder.sdk.model.Smartfilter;
 import com.bynder.sdk.model.Tag;
-import com.bynder.sdk.model.Usage;
+import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.upload.FinaliseResponse;
 import com.bynder.sdk.model.upload.PollStatus;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.model.upload.UploadRequest;
 import io.reactivex.Observable;
+import retrofit2.Response;
+import retrofit2.http.*;
+
 import java.util.List;
 import java.util.Map;
-import retrofit2.Response;
-import retrofit2.http.DELETE;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
-import retrofit2.http.QueryMap;
 
 /**
  * Interface of the Bynder API to handle the HTTP communication.

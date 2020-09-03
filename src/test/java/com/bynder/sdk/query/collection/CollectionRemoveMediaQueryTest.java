@@ -10,9 +10,9 @@
  */
 package com.bynder.sdk.query.collection;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the {@link CollectionRemoveMediaQuery} class methods.

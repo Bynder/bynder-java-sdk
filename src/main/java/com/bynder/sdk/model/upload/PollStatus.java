@@ -7,6 +7,7 @@
 package com.bynder.sdk.model.upload;
 
 import com.bynder.sdk.api.BynderApi;
+
 import java.util.HashSet;
 import java.util.Map;
 

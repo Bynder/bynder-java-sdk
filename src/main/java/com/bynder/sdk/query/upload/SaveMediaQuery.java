@@ -10,7 +10,6 @@ import com.bynder.sdk.query.MetapropertyAttribute;
 import com.bynder.sdk.query.decoder.ApiField;
 import com.bynder.sdk.query.decoder.MetapropertyAttributesDecoder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

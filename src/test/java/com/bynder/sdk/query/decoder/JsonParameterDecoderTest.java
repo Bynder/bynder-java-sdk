@@ -10,11 +10,12 @@
  */
 package com.bynder.sdk.query.decoder;
 
-import static org.junit.Assert.assertEquals;
-
 import com.google.gson.Gson;
-import java.util.Map;
 import org.junit.Test;
+
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the {@link JsonParameterDecoderTest} class method.

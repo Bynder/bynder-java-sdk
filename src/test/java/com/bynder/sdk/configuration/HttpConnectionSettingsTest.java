@@ -10,16 +10,17 @@
  */
 package com.bynder.sdk.configuration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.X509TrustManager;
 import okhttp3.Interceptor;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.X509TrustManager;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests the {@link HttpConnectionSettings} class methods.

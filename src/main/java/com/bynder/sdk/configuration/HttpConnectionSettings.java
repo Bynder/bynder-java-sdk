@@ -6,10 +6,11 @@
  */
 package com.bynder.sdk.configuration;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.X509TrustManager;
 import okhttp3.Interceptor;
 import okhttp3.logging.HttpLoggingInterceptor;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Configuration holder for HTTP connection related settings for the communication with Bynder.

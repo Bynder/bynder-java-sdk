@@ -10,12 +10,10 @@
  */
 package com.bynder.sdk.util;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import com.google.gson.JsonParser;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests the {@link BooleanTypeAdapter} class methods.

@@ -8,6 +8,7 @@ package com.bynder.sdk.service.amazons3;
 
 import com.bynder.sdk.api.AmazonS3Api;
 import com.bynder.sdk.api.ApiFactory;
+import com.bynder.sdk.model.upload.MultipartParameters;
 import com.bynder.sdk.model.upload.UploadRequest;
 import io.reactivex.Observable;
 import okhttp3.MediaType;
@@ -15,11 +16,14 @@ import okhttp3.RequestBody;
 import retrofit2.Response;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Implementation of {@link AmazonS3Service}.
  */
 public class AmazonS3ServiceImpl implements AmazonS3Service {
+
+    private static final MediaType FORM_DATA = MediaType.parse("multipart/form-data");
 
     /**
      * Instance of {@link AmazonS3Api} which handles the HTTP communication with the Amazon S3 API.
@@ -39,40 +43,45 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
      * Check {@link AmazonS3Service} for more information.
      */
     @Override
-    public Observable<Response<Void>> uploadPartToAmazon(final String filename,
-        final UploadRequest uploadRequest, final int chunkNumber, final byte[] fileContent,
-        final int numberOfChunks) {
-        String finalKey = String
-            .format("%s/p%s", uploadRequest.getMultipartParams().getKey(), chunkNumber);
+    public Observable<Response<Void>> uploadPartToAmazon(
+            final String filename,
+            final UploadRequest uploadRequest,
+            final int chunkNumber,
+            final byte[] fileContent,
+            final int numberOfChunks
+    ) {
+        Map<String, RequestBody> params = new LinkedHashMap<>();
 
-        LinkedHashMap<String, RequestBody> params = new LinkedHashMap<>();
-        MediaType contentType = MediaType.parse("multipart/form-data");
+        MultipartParameters multipartParams = uploadRequest.getMultipartParams();
+        RequestBody key = encodeField(
+                String.format("%s/p%s", multipartParams.getKey(), chunkNumber)
+        );
 
-        params.put("x-amz-credential", RequestBody
-            .create(contentType, uploadRequest.getMultipartParams().getAwsAccessKeyId()));
-        params.put("key", RequestBody.create(contentType, finalKey));
-        params.put("Policy",
-            RequestBody.create(contentType, uploadRequest.getMultipartParams().getPolicy()));
-        params.put("X-Amz-Signature",
-            RequestBody.create(contentType, uploadRequest.getMultipartParams().getSignature()));
-        params.put("acl",
-            RequestBody.create(contentType, uploadRequest.getMultipartParams().getAcl()));
-        params.put("x-amz-algorithm",
-            RequestBody.create(contentType, uploadRequest.getMultipartParams().getAlgorithm()));
-        params.put("x-amz-date",
-            RequestBody.create(contentType, uploadRequest.getMultipartParams().getDate()));
-        params.put("success_action_status", RequestBody
-            .create(contentType, uploadRequest.getMultipartParams().getSuccessActionStatus()));
-        params.put("Content-Type",
-            RequestBody.create(contentType, uploadRequest.getMultipartParams().getContentType()));
-        params.put("name", RequestBody.create(contentType, filename));
-        params.put("chunk", RequestBody.create(contentType, String.valueOf(chunkNumber)));
-        params.put("chunks", RequestBody.create(contentType, String.valueOf(numberOfChunks)));
-        params.put("Filename", RequestBody.create(contentType, finalKey));
+        params.put("chunk", encodeField(String.valueOf(chunkNumber)));
+        params.put("chunks", encodeField(String.valueOf(numberOfChunks)));
+        params.put("file", encodeField(fileContent));
+        params.put("Filename", key);
+        params.put("key", key);
+        params.put("name", encodeField(filename));
 
-        RequestBody requestFile = RequestBody.create(contentType, fileContent);
-        params.put("file", requestFile);
+        params.put("acl", encodeField(multipartParams.getAcl()));
+        params.put("Content-Type", encodeField(multipartParams.getContentType()));
+        params.put("Policy", encodeField(multipartParams.getPolicy()));
+        params.put("success_action_status", encodeField(multipartParams.getSuccessActionStatus()));
+        params.put("x-amz-algorithm", encodeField(multipartParams.getAlgorithm()));
+        params.put("x-amz-credential", encodeField(multipartParams.getAwsAccessKeyId()));
+        params.put("x-amz-date", encodeField(multipartParams.getDate()));
+        params.put("X-Amz-Signature", encodeField(multipartParams.getSignature()));
 
         return amazonS3Api.uploadPartToAmazon(params);
     }
+
+    private RequestBody encodeField(byte[] field) {
+        return RequestBody.create(field, FORM_DATA);
+    }
+
+    private RequestBody encodeField(String field) {
+        return RequestBody.create(field, FORM_DATA);
+    }
+
 }

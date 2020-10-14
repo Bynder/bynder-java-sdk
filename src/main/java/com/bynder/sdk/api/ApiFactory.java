@@ -219,7 +219,7 @@ public class ApiFactory {
             public Response intercept(final Chain chain) throws IOException {
                 // Load properties
                 final Properties properties = new Properties();
-                properties.load(this.getClass().getClassLoader().getResourceAsStream("pom.properties"));
+                properties.load(this.getClass().getClassLoader().getResourceAsStream("bynder-sdk.properties"));
 
                 // Fetch the SDK properties, along with the POM artifact ID (name) and version
                 String artifactId = properties.getProperty("sdk.name");

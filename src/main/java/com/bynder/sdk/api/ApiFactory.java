@@ -99,6 +99,7 @@ public class ApiFactory {
         }
 
         setHttpConnectionSettings(httpClientBuilder, configuration);
+        addUserAgent(httpClientBuilder);
 
         return httpClientBuilder.build();
     }
@@ -189,8 +190,6 @@ public class ApiFactory {
                     httpConnectionSettings.getTrustManager()
             );
         }
-
-        addUserAgent(httpClientBuilder);
     }
 
     /**

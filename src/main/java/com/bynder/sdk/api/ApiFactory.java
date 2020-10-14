@@ -28,6 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.Properties;
 
 /**
  * Factory to create API clients.
@@ -106,8 +107,7 @@ public class ApiFactory {
             setPermanentTokenInterceptor(httpClientBuilder, configuration);
         }
 
-        HttpConnectionSettings httpConnectionSettings = configuration.getHttpConnectionSettings();
-        setHttpConnectionSettings(httpClientBuilder, httpConnectionSettings);
+        setHttpConnectionSettings(httpClientBuilder, configuration);
 
         return httpClientBuilder.build();
     }
@@ -180,11 +180,13 @@ public class ApiFactory {
      * Sets the HTTP connection settings for the HTTP client.
      *
      * @param httpClientBuilder Builder instance of the HTTP client.
-     * @param httpConnectionSettings HTTP connection settings for the HTTP communication with
+     * @param configuration HTTP connection settings for the HTTP communication with
      * Bynder.
      */
     private static void setHttpConnectionSettings(final Builder httpClientBuilder,
-        final HttpConnectionSettings httpConnectionSettings) {
+        final Configuration configuration) {
+        HttpConnectionSettings httpConnectionSettings = configuration.getHttpConnectionSettings();
+
         if (httpConnectionSettings.isLoggingInterceptorEnabled()) {
             HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -210,5 +212,27 @@ public class ApiFactory {
                 .sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(),
                     httpConnectionSettings.getTrustManager());
         }
+
+        httpClientBuilder.addInterceptor(new Interceptor() {
+
+            @Override
+            public Response intercept(final Chain chain) throws IOException {
+                // Load properties
+                final Properties properties = new Properties();
+                properties.load(this.getClass().getClassLoader().getResourceAsStream("pom.properties"));
+
+                // Fetch the SDK properties, along with the POM artifact ID (name) and version
+                String artifactId = properties.getProperty("sdk.name");
+                String version = properties.getProperty("sdk.version");
+                // Put everything together
+                String headerValue = String.format("%s/%s", artifactId, version);
+
+                Request.Builder requestBuilder =
+                    chain.request().newBuilder().header("User-Agent", headerValue);
+
+                Request request = requestBuilder.build();
+                return chain.proceed(request);
+            }
+        });
     }
 }

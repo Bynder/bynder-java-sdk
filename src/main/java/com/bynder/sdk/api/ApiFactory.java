@@ -9,9 +9,7 @@ package com.bynder.sdk.api;
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.exception.BynderRuntimeException;
-import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.service.BynderClient;
-import com.bynder.sdk.service.oauth.OAuthService;
 import com.bynder.sdk.util.BooleanTypeAdapter;
 import com.bynder.sdk.util.StringConverterFactory;
 import com.bynder.sdk.util.Utils;
@@ -19,7 +17,6 @@ import com.google.gson.GsonBuilder;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
-import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -27,8 +24,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Factory to create API clients.
@@ -48,17 +45,17 @@ public class ApiFactory {
      * @return Implementation instance of the {@link BynderApi} interface.
      */
     public static BynderApi createBynderClient(final Configuration configuration) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Boolean.class, new BooleanTypeAdapter());
-
-        Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
-            .baseUrl(configuration.getBaseUrl().toString())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(new StringConverterFactory())
-            .addConverterFactory(GsonConverterFactory.create(gsonBuilder.create()));
-
-        Retrofit retrofit = retrofitBuilder.client(createOkHttpClient(configuration)).build();
-        return retrofit.create(BynderApi.class);
+        return new Retrofit.Builder()
+                .baseUrl(configuration.getBaseUrl().toString())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(new StringConverterFactory())
+                .addConverterFactory(GsonConverterFactory.create(
+                        new GsonBuilder()
+                                .registerTypeAdapter(Boolean.class, new BooleanTypeAdapter())
+                                .create())
+                )
+                .client(createOkHttpClient(configuration))
+                .build().create(BynderApi.class);
     }
 
     /**
@@ -69,11 +66,9 @@ public class ApiFactory {
      * @return Implementation instance of the {@link OAuthApi} interface.
      */
     public static AmazonS3Api createAmazonS3Client(final String bucket) {
-        Retrofit.Builder retrofitBuilder = new Retrofit.Builder().baseUrl(bucket)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
-
-        Retrofit retrofit = retrofitBuilder.build();
-        return retrofit.create(AmazonS3Api.class);
+        return new Retrofit.Builder().baseUrl(bucket)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build().create(AmazonS3Api.class);
     }
 
     /**
@@ -84,12 +79,10 @@ public class ApiFactory {
      * @return Implementation instance of the {@link OAuthApi} interface.
      */
     public static OAuthApi createOAuthClient(final String baseUrl) {
-        Retrofit.Builder retrofitBuilder = new Retrofit.Builder().baseUrl(baseUrl)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = retrofitBuilder.build();
-        return retrofit.create(OAuthApi.class);
+        return new Retrofit.Builder().baseUrl(baseUrl)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build().create(OAuthApi.class);
     }
 
     /**
@@ -119,61 +112,72 @@ public class ApiFactory {
      * @param httpClientBuilder Builder instance of the HTTP client.
      * @param configuration {@link Configuration} settings for the HTTP communication with Bynder.
      */
-    private static void setOAuthInterceptor(final Builder httpClientBuilder,
-        final Configuration configuration) {
-        httpClientBuilder.addInterceptor(new Interceptor() {
-
-            @Override
-            public Response intercept(final Chain chain) throws IOException {
-                if (configuration.getOAuthSettings().getToken() == null) {
-                    throw new BynderRuntimeException("Token is not defined in Configuration");
-                }
-
-                // check if access token is expiring in the next 15 seconds
-                if (Utils.isDateExpiring(configuration.getOAuthSettings().getToken().getAccessTokenExpiration(), 15)) {
-                    // refresh the access token
-                    OAuthService oAuthService = BynderClient.Builder.create(configuration)
-                        .getOAuthService();
-                    Token token = oAuthService.refreshAccessToken().blockingSingle();
-
-                    // trigger callback method
-                    configuration.getOAuthSettings().callback(token);
-                }
-
-                String headerValue = String
-                    .format("%s %s", "Bearer", configuration.getOAuthSettings().getToken().getAccessToken());
-
-                Request.Builder requestBuilder = chain.request().newBuilder()
-                    .header("Authorization", headerValue);
-
-                Request request = requestBuilder.build();
-                return chain.proceed(request);
+    private static void setOAuthInterceptor(
+            final Builder httpClientBuilder,
+            final Configuration configuration
+    ) {
+        httpClientBuilder.addInterceptor(chain -> {
+            if (configuration.getOAuthSettings().getToken() == null) {
+                throw new BynderRuntimeException("Token is not defined in Configuration");
             }
+
+            // check if access token is expiring in the next 15 seconds
+            if (Utils.isDateExpiring(configuration.getOAuthSettings().getToken().getAccessTokenExpiration(), 15)) {
+                // refresh the access token
+                configuration.getOAuthSettings().callback(
+                        BynderClient.Builder.create(configuration)
+                                .getOAuthService()
+                                .refreshAccessToken()
+                                .blockingSingle()
+                );
+            }
+
+            return addAuthHeader(
+                    chain,
+                    configuration.getOAuthSettings().getToken().getAccessToken()
+            );
         });
     }
 
     /**
      * Sets the permanent token interceptor for the HTTP client. This interceptor will handle adding
-     * the permanent toekn to the request header.
+     * the permanent token to the request header.
      *
      * @param httpClientBuilder Builder instance of the HTTP client.
      * @param configuration {@link Configuration} settings for the HTTP communication with Bynder.
     */
-    private static void setPermanentTokenInterceptor(final Builder httpClientBuilder,
-        final Configuration configuration) {
-        httpClientBuilder.addInterceptor(new Interceptor() {
+    private static void setPermanentTokenInterceptor(
+            final Builder httpClientBuilder,
+            final Configuration configuration
+    ) {
+        httpClientBuilder.addInterceptor(chain -> addAuthHeader(chain, configuration.getPermanentToken()));
+    }
 
-            @Override
-            public Response intercept(final Chain chain) throws IOException {
-                String headerValue = String.format("%s %s", "Bearer", configuration.getPermanentToken());
+    /**
+     *
+     * @param chain
+     * @param key
+     * @param value
+     * @return
+     * @throws IOException
+     */
+    private static Response addHeader(Interceptor.Chain chain, String key, String value)
+            throws IOException {
+        return chain.proceed(
+                chain.request()
+                        .newBuilder()
+                        .header(key, value)
+                        .build()
+        );
+    }
 
-                Request.Builder requestBuilder =
-                    chain.request().newBuilder().header("Authorization", headerValue);
-
-                Request request = requestBuilder.build();
-                return chain.proceed(request);
-            }
-        });
+    private static Response addAuthHeader(Interceptor.Chain chain, String token)
+            throws IOException {
+        return addHeader(
+                chain,
+                "Authorization",
+                String.format("%s %s", "Bearer", token)
+        );
     }
 
     /**
@@ -183,14 +187,16 @@ public class ApiFactory {
      * @param configuration HTTP connection settings for the HTTP communication with
      * Bynder.
      */
-    private static void setHttpConnectionSettings(final Builder httpClientBuilder,
-        final Configuration configuration) {
+    private static void setHttpConnectionSettings(
+            final Builder httpClientBuilder,
+            final Configuration configuration
+    ) {
         HttpConnectionSettings httpConnectionSettings = configuration.getHttpConnectionSettings();
 
         if (httpConnectionSettings.isLoggingInterceptorEnabled()) {
-            HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            httpClientBuilder.addInterceptor(httpLoggingInterceptor);
+            httpClientBuilder.addInterceptor(
+                    new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+            );
         }
 
         if (httpConnectionSettings.getCustomInterceptor() != null) {
@@ -198,41 +204,41 @@ public class ApiFactory {
         }
 
         httpClientBuilder
-            .retryOnConnectionFailure(httpConnectionSettings.isRetryOnConnectionFailure());
-        httpClientBuilder
-            .readTimeout(httpConnectionSettings.getReadTimeoutSeconds(), TimeUnit.SECONDS);
-        httpClientBuilder
-            .connectTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
-        httpClientBuilder
-            .writeTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
+                .retryOnConnectionFailure(httpConnectionSettings.isRetryOnConnectionFailure())
+                .readTimeout(httpConnectionSettings.getReadTimeoutSeconds(), TimeUnit.SECONDS)
+                .connectTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS)
+                .writeTimeout(httpConnectionSettings.getConnectTimeoutSeconds(), TimeUnit.SECONDS);
 
         if (httpConnectionSettings.getSslContext() != null
-            && httpConnectionSettings.getTrustManager() != null) {
-            httpClientBuilder
-                .sslSocketFactory(httpConnectionSettings.getSslContext().getSocketFactory(),
-                    httpConnectionSettings.getTrustManager());
+                && httpConnectionSettings.getTrustManager() != null) {
+            httpClientBuilder.sslSocketFactory(
+                    httpConnectionSettings.getSslContext().getSocketFactory(),
+                    httpConnectionSettings.getTrustManager()
+            );
         }
 
-        httpClientBuilder.addInterceptor(new Interceptor() {
+        addUserAgent(httpClientBuilder);
+    }
 
-            @Override
-            public Response intercept(final Chain chain) throws IOException {
-                // Load properties
-                final Properties properties = new Properties();
-                properties.load(this.getClass().getClassLoader().getResourceAsStream("bynder-sdk.properties"));
-
-                // Fetch the SDK properties, along with the POM artifact ID (name) and version
-                String artifactId = properties.getProperty("sdk.name");
-                String version = properties.getProperty("sdk.version");
-                // Put everything together
-                String headerValue = String.format("%s/%s", artifactId, version);
-
-                Request.Builder requestBuilder =
-                    chain.request().newBuilder().header("User-Agent", headerValue);
-
-                Request request = requestBuilder.build();
-                return chain.proceed(request);
-            }
+    /**
+     * Add the POM artifact ID (name) and version to the User-Agent header of the request.
+     *
+     * @param httpClientBuilder Builder instance of the HTTP client.
+     */
+    private static void addUserAgent(final Builder httpClientBuilder) {
+        httpClientBuilder.addInterceptor(chain -> {
+            final Properties properties = new Properties();
+            properties.load(ClassLoader.getSystemResourceAsStream("bynder-sdk.properties"));
+            return addHeader(
+                    chain,
+                    "User-Agent",
+                    String.format(
+                            "%s/%s",
+                            properties.getProperty("sdk.name"),
+                            properties.getProperty("sdk.version")
+                    )
+            );
         });
     }
+
 }

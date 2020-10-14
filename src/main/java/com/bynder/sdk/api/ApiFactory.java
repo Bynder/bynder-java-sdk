@@ -14,16 +14,14 @@ import com.bynder.sdk.util.BooleanTypeAdapter;
 import com.bynder.sdk.util.StringConverterFactory;
 import com.bynder.sdk.util.Utils;
 import com.google.gson.GsonBuilder;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
-import okhttp3.Response;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -132,10 +130,10 @@ public class ApiFactory {
                 );
             }
 
-            return addAuthHeader(
-                    chain,
+            return chain.proceed(addAuthHeader(
+                    chain.request(),
                     configuration.getOAuthSettings().getToken().getAccessToken()
-            );
+            ));
         });
     }
 
@@ -150,34 +148,9 @@ public class ApiFactory {
             final Builder httpClientBuilder,
             final Configuration configuration
     ) {
-        httpClientBuilder.addInterceptor(chain -> addAuthHeader(chain, configuration.getPermanentToken()));
-    }
-
-    /**
-     *
-     * @param chain
-     * @param key
-     * @param value
-     * @return
-     * @throws IOException
-     */
-    private static Response addHeader(Interceptor.Chain chain, String key, String value)
-            throws IOException {
-        return chain.proceed(
-                chain.request()
-                        .newBuilder()
-                        .header(key, value)
-                        .build()
-        );
-    }
-
-    private static Response addAuthHeader(Interceptor.Chain chain, String token)
-            throws IOException {
-        return addHeader(
-                chain,
-                "Authorization",
-                String.format("%s %s", "Bearer", token)
-        );
+        httpClientBuilder.addInterceptor(chain -> chain.proceed(
+                addAuthHeader(chain.request(), configuration.getPermanentToken())
+        ));
     }
 
     /**
@@ -229,16 +202,53 @@ public class ApiFactory {
         httpClientBuilder.addInterceptor(chain -> {
             final Properties properties = new Properties();
             properties.load(ClassLoader.getSystemResourceAsStream("bynder-sdk.properties"));
-            return addHeader(
-                    chain,
+            return chain.proceed(addHeader(
+                    chain.request(),
                     "User-Agent",
                     String.format(
                             "%s/%s",
                             properties.getProperty("sdk.name"),
                             properties.getProperty("sdk.version")
                     )
-            );
+            ));
         });
+    }
+
+    /**
+     * Adds a header to a request.
+     *
+     * @param request the request
+     * @param key header key
+     * @param value header value
+     * @return the request with the added header
+     */
+    private static Request addHeader(
+            final Request request,
+            final String key,
+            final String value
+    ) {
+        return request
+                .newBuilder()
+                .header(key, value)
+                .build();
+    }
+
+    /**
+     * Adds an Authentication header with a Bearer token to a request.
+     *
+     * @param request the request
+     * @param token bearer token
+     * @return the request with the added header
+     */
+    private static Request addAuthHeader(
+            final Request request,
+            final String token
+    ) {
+        return addHeader(
+                request,
+                "Authorization",
+                String.format("%s %s", "Bearer", token)
+        );
     }
 
 }

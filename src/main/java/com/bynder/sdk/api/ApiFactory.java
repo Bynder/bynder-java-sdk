@@ -64,7 +64,8 @@ public class ApiFactory {
      * @return Implementation instance of the {@link OAuthApi} interface.
      */
     public static AmazonS3Api createAmazonS3Client(final String bucket) {
-        return new Retrofit.Builder().baseUrl(bucket)
+        return new Retrofit.Builder()
+                .baseUrl(bucket)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build().create(AmazonS3Api.class);
     }
@@ -77,7 +78,8 @@ public class ApiFactory {
      * @return Implementation instance of the {@link OAuthApi} interface.
      */
     public static OAuthApi createOAuthClient(final String baseUrl) {
-        return new Retrofit.Builder().baseUrl(baseUrl)
+        return new Retrofit.Builder()
+                .baseUrl(baseUrl)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build().create(OAuthApi.class);
@@ -91,16 +93,13 @@ public class ApiFactory {
      */
     private static OkHttpClient createOkHttpClient(final Configuration configuration) {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-
         if (configuration.getPermanentToken() == null) {
             setOAuthInterceptor(httpClientBuilder, configuration);
         } else {
             setPermanentTokenInterceptor(httpClientBuilder, configuration);
         }
-
         setHttpConnectionSettings(httpClientBuilder, configuration);
-        addUserAgent(httpClientBuilder);
-
+        addUserAgentHeader(httpClientBuilder);
         return httpClientBuilder.build();
     }
 
@@ -197,7 +196,7 @@ public class ApiFactory {
      *
      * @param httpClientBuilder Builder instance of the HTTP client.
      */
-    private static void addUserAgent(final Builder httpClientBuilder) {
+    private static void addUserAgentHeader(final Builder httpClientBuilder) {
         httpClientBuilder.addInterceptor(chain -> {
             final Properties properties = new Properties();
             properties.load(ClassLoader.getSystemResourceAsStream("bynder-sdk.properties"));

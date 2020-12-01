@@ -7,6 +7,7 @@
 package com.bynder.sdk.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -58,13 +59,17 @@ public final class Utils {
      *
      * @param file the filename of the config file (without the extension)
      * @return {@link Properties} with the values from the config file
-     * @throws IOException if the config file could not be found
+     * @throws IOException if the config file could not be loaded
      */
     public static Properties loadConfig(final String file)
             throws IOException {
+        String filename = file + ".properties";
         Properties config = new Properties();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        config.load(classLoader.getResourceAsStream(file + ".properties"));
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+        if (is == null) {
+            throw new IOException(filename + " could not be loaded.");
+        }
+        config.load(is);
         return config;
     }
 

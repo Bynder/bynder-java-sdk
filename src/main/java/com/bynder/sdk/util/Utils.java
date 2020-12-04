@@ -65,10 +65,20 @@ public final class Utils {
             throws IOException {
         String filename = file + ".properties";
         Properties config = new Properties();
-        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+
+        // Try to load the resource, using some fallbacks if it fails.
+        InputStream is = ClassLoader.getSystemResourceAsStream(filename);
         if (is == null) {
-            throw new IOException(filename + " could not be loaded.");
+            is = Utils.class.getResourceAsStream(filename);
         }
+        if (is == null) {
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+        }
+
+        if (is == null) {
+            throw new IOException("Resource could not be loaded: " + filename);
+        }
+
         config.load(is);
         return config;
     }

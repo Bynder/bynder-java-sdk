@@ -12,10 +12,12 @@ package com.bynder.sdk.util;
 
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
+import java.util.Properties;
 
 import static org.junit.Assert.*;
 
@@ -51,4 +53,16 @@ public class UtilsTest {
         isExpired = Utils.isDateExpiring(expirationDate.getTime(), 15);
         assertFalse(isExpired);
     }
+
+    @Test(expected = IOException.class)
+    public void testLoadConfigFileNotFOund() throws IOException {
+        Properties config = Utils.loadConfig("non-existing");
+    }
+
+    @Test
+    public void testLoadConfig() throws IOException {
+        Properties config = Utils.loadConfig("config");
+        assertEquals("value", config.getProperty("key"));
+    }
+
 }

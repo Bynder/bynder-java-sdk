@@ -198,15 +198,14 @@ public class ApiFactory {
      */
     private static void addUserAgentHeader(final Builder httpClientBuilder) {
         httpClientBuilder.addInterceptor(chain -> {
-            final Properties properties = new Properties();
-            properties.load(ClassLoader.getSystemResourceAsStream("bynder-sdk.properties"));
+            Properties sdkInfo = Utils.loadConfig("bynder-sdk");
             return chain.proceed(addHeader(
                     chain.request(),
                     "User-Agent",
                     String.format(
                             "%s/%s",
-                            properties.getProperty("sdk.name"),
-                            properties.getProperty("sdk.version")
+                            sdkInfo.getProperty("name"),
+                            sdkInfo.getProperty("version")
                     )
             ));
         });

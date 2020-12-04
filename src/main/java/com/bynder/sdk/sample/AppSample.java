@@ -19,6 +19,7 @@ import com.bynder.sdk.query.OrderBy;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.service.oauth.OAuthService;
+import com.bynder.sdk.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 
 /**
@@ -42,7 +44,7 @@ public class AppSample {
         /**
          * Loads app.properties file under src/main/resources
          */
-        AppProperties appProperties = new AppProperties();
+        Properties appProperties = Utils.loadConfig("app");
 
         // Initialize BynderClient with a permanent token
         BynderClient client = BynderClient.Builder.create(

@@ -8,7 +8,6 @@ package com.bynder.sdk.api;
 
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.HttpConnectionSettings;
-import com.bynder.sdk.exception.BynderRuntimeException;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.util.BooleanTypeAdapter;
 import com.bynder.sdk.util.StringConverterFactory;
@@ -61,20 +60,6 @@ public class ApiFactory {
      * Creates an implementation of the Bynder OAuth2 endpoints defined in the {@link OAuthApi}
      * interface.
      *
-     * @param bucket AWS bucket URL.
-     * @return Implementation instance of the {@link OAuthApi} interface.
-     */
-    public static AmazonS3Api createAmazonS3Client(final String bucket) {
-        return new Retrofit.Builder()
-                .baseUrl(bucket)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build().create(AmazonS3Api.class);
-    }
-
-    /**
-     * Creates an implementation of the Amazon S3 endpoints defined in the {@link AmazonS3Api}
-     * interface.
-     *
      * @param baseUrl Bynder portal base URL.
      * @return Implementation instance of the {@link OAuthApi} interface.
      */
@@ -117,7 +102,7 @@ public class ApiFactory {
     ) {
         httpClientBuilder.addInterceptor(chain -> {
             if (configuration.getOAuthSettings().getToken() == null) {
-                throw new BynderRuntimeException("Token is not defined in Configuration");
+                throw new RuntimeException("Token is not defined in Configuration");
             }
 
             // check if access token is expiring in the next 15 seconds

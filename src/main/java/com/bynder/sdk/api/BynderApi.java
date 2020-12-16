@@ -8,10 +8,7 @@ package com.bynder.sdk.api;
 
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.*;
-import com.bynder.sdk.model.upload.FinaliseResponse;
-import com.bynder.sdk.model.upload.PollStatus;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
-import com.bynder.sdk.model.upload.UploadRequest;
 import io.reactivex.Observable;
 import retrofit2.Response;
 import retrofit2.http.*;
@@ -231,55 +228,6 @@ public interface BynderApi {
     @POST("/api/v4/collections/{id}/share/")
     Observable<Response<Void>> shareCollection(@Path("id") String collectionId,
         @FieldMap Map<String, String> params);
-
-    /**
-     * Initialises a file upload with Bynder and returns authorisation information to allow
-     * uploading to the Amazon S3 bucket-endpoint.
-     *
-     * @param params {@link FieldMap} with parameters.
-     * @return {@link Observable} with {@link UploadRequest} authorisation information.
-     */
-    @FormUrlEncoded
-    @POST("/api/upload/init/")
-    Observable<Response<UploadRequest>> getUploadInformation(@FieldMap Map<String, String> params);
-
-    /**
-     * Gets the URL of the Amazon S3 bucket-endpoint in the region closest to the server. This URL
-     * is used to upload parts to Amazon.
-     *
-     * @return {@link Observable} with the URL.
-     */
-    @GET("/api/upload/endpoint/")
-    Observable<Response<String>> getClosestS3Endpoint();
-
-    /**
-     * Registers an uploaded chunk in Bynder.
-     *
-     * @param params {@link FieldMap} with parameters.
-     * @return {@link Observable} with the {@link Response}.
-     */
-    @FormUrlEncoded
-    @POST("/api/v4/upload/")
-    Observable<Response<Void>> registerChunk(@FieldMap Map<String, String> params);
-
-    /**
-     * Finalises a completely uploaded file.
-     *
-     * @param params {@link FieldMap} with parameters.
-     * @return {@link Observable} with {@link FinaliseResponse} information.
-     */
-    @FormUrlEncoded
-    @POST("/api/v4/upload/")
-    Observable<Response<FinaliseResponse>> finaliseUpload(@FieldMap Map<String, String> params);
-
-    /**
-     * Gets poll processing status of finalised files.
-     *
-     * @param params {@link QueryMap} with parameters.
-     * @return {@link Observable} with {@link PollStatus} information.
-     */
-    @GET("/api/v4/upload/poll/")
-    Observable<Response<PollStatus>> getPollStatus(@QueryMap Map<String, String> params);
 
     /**
      * Saves a new media asset in Bynder. If media id is specified in the query a new version of the

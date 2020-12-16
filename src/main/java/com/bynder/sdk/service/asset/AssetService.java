@@ -8,11 +8,8 @@ package com.bynder.sdk.service.asset;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.*;
-import com.bynder.sdk.model.upload.SaveMediaResponse;
-import com.bynder.sdk.model.upload.UploadProgress;
 import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
-import com.bynder.sdk.query.upload.UploadQuery;
 import io.reactivex.Observable;
 import retrofit2.Response;
 
@@ -121,22 +118,6 @@ public interface AssetService {
      * @return {@link Observable} with List of {@link Smartfilter};
      */
     Observable<Response<List<Smartfilter>>> getSmartfilters();
-
-    /**
-     * Uploads a file with the information specified in the query parameter.
-     *
-     * @param uploadQuery Upload query with the information to upload the file.
-     * @return {@link Observable} with the {@link SaveMediaResponse} information.
-     */
-    Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
-
-    /**
-     * Uploads a file with Progress Report.
-     *
-     * @param uploadQuery Upload query with the information to upload the file.
-     * @return {@link Observable} with the {@link UploadProgress} information.
-     */
-    Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
 
     /**
      * Builder class used to create a new instance of {@link AssetService}.

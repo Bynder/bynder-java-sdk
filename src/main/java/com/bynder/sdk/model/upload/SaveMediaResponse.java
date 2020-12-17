@@ -10,10 +10,9 @@ import com.bynder.sdk.api.BynderApi;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * Model returned by {@link BynderApi#saveMedia(Map)}.
+ * Model returned by {@link BynderApi#saveMedia} and {@link BynderApi#saveMediaVersion}.
  */
 public class SaveMediaResponse {
 

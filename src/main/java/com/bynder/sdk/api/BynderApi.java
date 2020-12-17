@@ -8,13 +8,17 @@ package com.bynder.sdk.api;
 
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.*;
+import com.bynder.sdk.model.upload.PrepareUploadResponse;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import okhttp3.RequestBody;
 import retrofit2.Response;
 import retrofit2.http.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Interface of the Bynder API to handle the HTTP communication.
@@ -233,10 +237,71 @@ public interface BynderApi {
      * Saves a new media asset in Bynder. If media id is specified in the query a new version of the
      * asset will be saved. Otherwise a new asset will be saved.
      *
+     * @param fileId file ID of the uploaded file
      * @param params {@link FieldMap} with parameters.
      * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
     @FormUrlEncoded
-    @POST("/api/v4/media/save/")
-    Observable<Response<SaveMediaResponse>> saveMedia(@FieldMap Map<String, String> params);
+    @POST("/api/v4/media/save/{fileId}")
+    Single<Response<SaveMediaResponse>> saveMedia(
+            @Path("fileId") UUID fileId,
+            @FieldMap Map<String, String> params
+    );
+
+    /**
+     * Saves a new media asset in Bynder. If media id is specified in the query a new version of the
+     * asset will be saved. Otherwise a new asset will be saved.
+     *
+     * @param fileId file ID of the uploaded file
+     * @param params {@link FieldMap} with parameters.
+     * @return {@link Observable} with the {@link SaveMediaResponse} information.
+     */
+    @FormUrlEncoded
+    @POST("/api/v4/media/{mediaId}/save/{fileId}")
+    Single<Response<SaveMediaResponse>> saveMediaVersion(
+            @Path("mediaId") String mediaId,
+            @Path("fileId") UUID fileId,
+            @FieldMap Map<String, String> params
+    );
+
+    /**
+     * Prepares a file upload.
+     *
+     * @return {@link Single} with the {@link Response} containing
+     * the file ID of the file to be uploaded
+     */
+    @POST("/v7/file_cmds/upload/prepare")
+    Single<Response<PrepareUploadResponse>> prepareUpload();
+
+    /**
+     * Uploads a chunk (through the Files Service).
+     *
+     * @param sha256 SHA-256 hash of the chunk
+     * @param fileId file ID that is generated once for each upload
+     * @param chunkNumber number that increments for every chunk, starting at 0
+     * @param content binary content of the chunk
+     * @return {@link Single} with the {@link Response}.
+     */
+    @POST("/v7/file_cmds/upload/{fileId}/chunk/{chunkNumber}")
+    Single<Response<Void>> uploadChunk(
+            @Header("Content-SHA256") String sha256,
+            @Path("fileId") UUID fileId,
+            @Path("chunkNumber") int chunkNumber,
+            @Body RequestBody content
+    );
+
+    /**
+     * Finalises an upload (through the Files Service).
+     *
+     * @param fileId file ID that is generated once for each upload
+     * @param params {@link FieldMap} with parameters.
+     * @return {@link Single} with the {@link Response}.
+     */
+    @FormUrlEncoded
+    @POST("/v7/file_cmds/upload/{fileId}/finalise_api")
+    Single<Response<Void>> finaliseUpload(
+            @Path("fileId") UUID fileId,
+            @FieldMap Map<String, String> params
+    );
+
 }

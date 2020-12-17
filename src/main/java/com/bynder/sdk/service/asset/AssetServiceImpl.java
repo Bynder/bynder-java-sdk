@@ -8,9 +8,13 @@ package com.bynder.sdk.service.asset;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.*;
+import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
+import com.bynder.sdk.query.upload.UploadQuery;
+import com.bynder.sdk.service.upload.FileUploader;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.Response;
 
 import java.util.List;
@@ -150,6 +154,14 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public Observable<Response<List<Smartfilter>>> getSmartfilters() {
         return bynderApi.getSmartfilters();
+    }
+
+    /**
+     * Check {@link AssetService} for more information.
+     */
+    @Override
+    public Single<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
+        return new FileUploader(bynderApi, queryDecoder, uploadQuery).uploadFile();
     }
 
 }

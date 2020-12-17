@@ -8,9 +8,12 @@ package com.bynder.sdk.service.asset;
 
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.*;
+import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
+import com.bynder.sdk.query.upload.UploadQuery;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.Response;
 
 import java.util.List;
@@ -118,6 +121,15 @@ public interface AssetService {
      * @return {@link Observable} with List of {@link Smartfilter};
      */
     Observable<Response<List<Smartfilter>>> getSmartfilters();
+
+    /**
+     * Uploads a file with the information specified in the query parameter.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     * @return {@link Single} with the {@link SaveMediaResponse} information.
+     */
+    Single<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
+
 
     /**
      * Builder class used to create a new instance of {@link AssetService}.

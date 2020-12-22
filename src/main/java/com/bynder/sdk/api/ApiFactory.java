@@ -22,6 +22,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -198,15 +199,20 @@ public class ApiFactory {
      */
     private static void addUserAgentHeader(final Builder httpClientBuilder) {
         httpClientBuilder.addInterceptor(chain -> {
-            Properties sdkInfo = Utils.loadConfig("bynder-sdk");
+            String name;
+            String version;
+            try {
+                final Properties sdkInfo = Utils.loadConfig("bynder-sdk");
+                name = sdkInfo.getProperty("name");
+                version = sdkInfo.getProperty("version");
+            } catch (IOException e) {
+                name = "bynder-java-sdk";
+                version = "unknown";
+            }
             return chain.proceed(addHeader(
                     chain.request(),
                     "User-Agent",
-                    String.format(
-                            "%s/%s",
-                            sdkInfo.getProperty("name"),
-                            sdkInfo.getProperty("version")
-                    )
+                    String.format("%s/%s", name, version)
             ));
         });
     }

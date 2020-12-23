@@ -124,22 +124,21 @@ public class FileUploader {
      * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
     private Single<SaveMediaResponse> saveMedia(final UUID fileId) {
-        SaveMediaQuery saveMediaQuery = new SaveMediaQuery()
-                .setName(uploadQuery.getFilename())
-                .setAudit(uploadQuery.isAudit())
-                .setMetaproperties(uploadQuery.getMetaproperties());
-
         Single<Response<SaveMediaResponse>> response;
+
         if (uploadQuery.getMediaId() != null) {
             // The uploaded file will be attached to an existing asset.
-            response = bynderApi.saveMediaVersion(
+            response = bynderApi.saveMedia(
                     uploadQuery.getMediaId(),
-                    fileId,
-                    queryDecoder.decode(saveMediaQuery)
+                    fileId
             );
         } else {
             // A new asset will be created for the uploaded file.
-            saveMediaQuery.setBrandId(uploadQuery.getBrandId());
+            SaveMediaQuery saveMediaQuery = new SaveMediaQuery()
+                    .setBrandId(uploadQuery.getBrandId())
+                    .setName(uploadQuery.getFilename())
+                    .setAudit(uploadQuery.isAudit())
+                    .setMetaproperties(uploadQuery.getMetaproperties());
             response = bynderApi.saveMedia(
                     fileId,
                     queryDecoder.decode(saveMediaQuery)

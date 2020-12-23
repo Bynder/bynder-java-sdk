@@ -234,8 +234,7 @@ public interface BynderApi {
         @FieldMap Map<String, String> params);
 
     /**
-     * Saves a new media asset in Bynder. If media id is specified in the query a new version of the
-     * asset will be saved. Otherwise a new asset will be saved.
+     * Saves a new media asset in Bynder.
      *
      * @param fileId file ID of the uploaded file
      * @param params {@link FieldMap} with parameters.
@@ -249,19 +248,17 @@ public interface BynderApi {
     );
 
     /**
-     * Saves a new media asset in Bynder. If media id is specified in the query a new version of the
-     * asset will be saved. Otherwise a new asset will be saved.
+     * Saves a new version of an existing media asset in Bynder.
      *
+     * @param mediaId existing asset ID
      * @param fileId file ID of the uploaded file
-     * @param params {@link FieldMap} with parameters.
      * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
     @FormUrlEncoded
     @POST("/api/v4/media/{mediaId}/save/{fileId}")
-    Single<Response<SaveMediaResponse>> saveMediaVersion(
+    Single<Response<SaveMediaResponse>> saveMedia(
             @Path("mediaId") String mediaId,
-            @Path("fileId") UUID fileId,
-            @FieldMap Map<String, String> params
+            @Path("fileId") UUID fileId
     );
 
     /**

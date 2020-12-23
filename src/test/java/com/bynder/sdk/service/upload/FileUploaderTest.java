@@ -83,7 +83,7 @@ public class FileUploaderTest {
 
         when(bynderApiMock.saveMedia(any(UUID.class), any()))
                 .thenReturn(Single.just(Response.success(SAVE_MEDIA_RESPONSE)));
-        when(bynderApiMock.saveMediaVersion(anyString(), any(UUID.class), any()))
+        when(bynderApiMock.saveMedia(anyString(), any(UUID.class)))
                 .thenReturn(Single.just(Response.success(SAVE_MEDIA_RESPONSE)));
 
         rxUtilsMock = mockStatic(RXUtils.class);
@@ -135,15 +135,7 @@ public class FileUploaderTest {
     public void uploadFileForExistingAsset() {
         UploadQuery uploadQuery = new UploadQuery(FILE_PATH).setMediaId(EXISTING_MEDIA_ID);
         assertEquals(SAVE_MEDIA_RESPONSE, uploadFile(uploadQuery));
-        verify(bynderApiMock).saveMediaVersion(
-                EXISTING_MEDIA_ID,
-                FILE_ID,
-                queryDecoder.decode(new SaveMediaQuery()
-                        .setName(uploadQuery.getFilename())
-                        .setAudit(uploadQuery.isAudit())
-                        .setMetaproperties(uploadQuery.getMetaproperties())
-                )
-        );
+        verify(bynderApiMock).saveMedia(EXISTING_MEDIA_ID, FILE_ID);
     }
 
     private SaveMediaResponse uploadFile(UploadQuery uploadQuery) {

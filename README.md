@@ -1,7 +1,7 @@
 # Bynder Java SDK
 
 [![Build Status](https://travis-ci.org/Bynder/bynder-java-sdk.svg?branch=master)](https://travis-ci.org/Bynder/bynder-java-sdk)
-[![Coverage Status](https://coveralls.io/repos/github/Bynder/bynder-java-sdk/badge.svg?branch=master)](https://coveralls.io/github/Bynder/bynder-java-sdk?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Arpit-Sharma-USC/bynder-java-sdk/badge.svg?branch=85ebf54e2263c999c492a6feb27411bda6ddb984)](https://coveralls.io/github/Arpit-Sharma-USC/bynder-java-sdk?branch=85ebf54e2263c999c492a6feb27411bda6ddb984)
 
 The main goal of this SDK is to speed up the integration of Bynder customers who use Java, making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.
 

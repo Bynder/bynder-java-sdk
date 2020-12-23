@@ -16,8 +16,6 @@ jobs:
           java-version: 11.0.4
       - name: Maven Package
         run: mvn clean install -Dgpg.skip -Dmaven.javadoc.skip -Dmaven.test.skip
-      - name: Clean test
-        run: mvn clean test
       - name: Surefire tests
         run: mvn surefire:test
       - name: Coverage

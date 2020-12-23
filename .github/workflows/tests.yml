@@ -21,4 +21,4 @@ jobs:
       - name: Surefire tests
         run: mvn surefire:test
       - name: Coverage
-        run: mvn clean test jacoco:report coveralls:report
+        run: mvn clean test jacoco:report coveralls:report -DrepoToken=${{secrets.COVERALLS_TOKEN}}

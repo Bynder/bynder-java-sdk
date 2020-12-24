@@ -2,7 +2,7 @@ name: Release
 
 on:
   release:
-    types: [ published ]
+    types: [ push, pull_request ]
 
 jobs:
   test:
@@ -41,6 +41,7 @@ jobs:
 
       - name: Release Maven package
         uses: samuelmeuli/action-maven-publish@v1
+        run: mvn clean
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}

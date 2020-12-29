@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Model returned by {@link BynderApi#saveMedia} and {@link BynderApi#saveMediaVersion}.
+ * Model returned by {@link BynderApi#saveMedia}.
  */
 public class SaveMediaResponse {
 

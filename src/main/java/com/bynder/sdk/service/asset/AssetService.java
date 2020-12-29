@@ -11,7 +11,8 @@ import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
-import com.bynder.sdk.query.upload.UploadQuery;
+import com.bynder.sdk.query.upload.ExistingAssetUploadQuery;
+import com.bynder.sdk.query.upload.NewAssetUploadQuery;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.Response;
@@ -128,7 +129,15 @@ public interface AssetService {
      * @param uploadQuery Upload query with the information to upload the file.
      * @return {@link Single} with the {@link SaveMediaResponse} information.
      */
-    Single<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
+    Single<SaveMediaResponse> uploadFile(NewAssetUploadQuery uploadQuery);
+
+    /**
+     * Uploads a file with the information specified in the query parameter.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     * @return {@link Single} with the {@link SaveMediaResponse} information.
+     */
+    Single<SaveMediaResponse> uploadFile(ExistingAssetUploadQuery uploadQuery);
 
 
     /**

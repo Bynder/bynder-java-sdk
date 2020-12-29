@@ -11,7 +11,8 @@ import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
-import com.bynder.sdk.query.upload.UploadQuery;
+import com.bynder.sdk.query.upload.ExistingAssetUploadQuery;
+import com.bynder.sdk.query.upload.NewAssetUploadQuery;
 import com.bynder.sdk.service.upload.FileUploader;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -160,8 +161,15 @@ public class AssetServiceImpl implements AssetService {
      * Check {@link AssetService} for more information.
      */
     @Override
-    public Single<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
-        return new FileUploader(bynderApi, queryDecoder, uploadQuery).uploadFile();
+    public Single<SaveMediaResponse> uploadFile(final NewAssetUploadQuery uploadQuery) {
+        return new FileUploader(bynderApi, queryDecoder).uploadFile(uploadQuery);
+    }
+
+    /**
+     * Check {@link AssetService} for more information.
+     */
+    public Single<SaveMediaResponse> uploadFile(final ExistingAssetUploadQuery uploadQuery) {
+        return new FileUploader(bynderApi, queryDecoder).uploadFile(uploadQuery);
     }
 
 }

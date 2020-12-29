@@ -254,7 +254,6 @@ public interface BynderApi {
      * @param fileId file ID of the uploaded file
      * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
-    @FormUrlEncoded
     @POST("/api/v4/media/{mediaId}/save/{fileId}")
     Single<Response<SaveMediaResponse>> saveMedia(
             @Path("mediaId") String mediaId,

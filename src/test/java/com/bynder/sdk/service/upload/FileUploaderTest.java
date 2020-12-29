@@ -4,11 +4,13 @@ import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.upload.PrepareUploadResponse;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.query.decoder.QueryDecoder;
+import com.bynder.sdk.query.upload.ExistingAssetUploadQuery;
 import com.bynder.sdk.query.upload.FinaliseUploadQuery;
+import com.bynder.sdk.query.upload.NewAssetUploadQuery;
 import com.bynder.sdk.query.upload.SaveMediaQuery;
-import com.bynder.sdk.query.upload.UploadQuery;
 import com.bynder.sdk.util.Indexed;
 import com.bynder.sdk.util.RXUtils;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import okhttp3.RequestBody;
@@ -31,7 +33,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,7 +49,8 @@ public class FileUploaderTest {
     private static final String FILE_CONTENT_STRING = String.join("", CHUNK_STRINGS);
     private static final byte[] FILE_CONTENT = FILE_CONTENT_STRING.getBytes(StandardCharsets.UTF_8);
     private static final String EXISTING_MEDIA_ID = "EXISTING_MEDIA_ID";
-    private static final String FILE_PATH = "/path/to/file.ext";
+    private static final String FILENAME = "file.ext";
+    private static final String FILE_PATH = "/path/to/" + FILENAME;
     private static final SaveMediaResponse SAVE_MEDIA_RESPONSE = new SaveMediaResponse();
 
     private QueryDecoder queryDecoder;
@@ -88,7 +90,7 @@ public class FileUploaderTest {
 
         rxUtilsMock = mockStatic(RXUtils.class);
         rxUtilsMock.when(() -> RXUtils.handleResponse(ArgumentMatchers.<Single<Response<Object>>>any()))
-                .then(returnsFirstArg());
+                .thenReturn(Completable.fromAction(() -> {}));
         rxUtilsMock.when(() -> RXUtils.handleResponseBody(ArgumentMatchers.<Single<Response<Object>>>any()))
                 .thenAnswer(i -> i.<Single<Response<Object>>>getArgument(0).map(Response::body));
         rxUtilsMock.when(() -> RXUtils.mapWithIndex(any()))
@@ -117,9 +119,9 @@ public class FileUploaderTest {
 
     @Test
     public void uploadFileForNewAsset() {
-        UploadQuery uploadQuery = new UploadQuery(FILE_PATH)
-                .setBrandId("SOME_BRAND_ID");
-        assertEquals(SAVE_MEDIA_RESPONSE, uploadFile(uploadQuery));
+        NewAssetUploadQuery uploadQuery = new NewAssetUploadQuery(FILE_PATH, "SOME_BRAND_ID");
+        checkUpload(new FileUploader(bynderApiMock, queryDecoder)
+                .uploadFile(uploadQuery));
         verify(bynderApiMock).saveMedia(
                 FILE_ID,
                 queryDecoder.decode(new SaveMediaQuery()
@@ -133,14 +135,14 @@ public class FileUploaderTest {
 
     @Test
     public void uploadFileForExistingAsset() {
-        UploadQuery uploadQuery = new UploadQuery(FILE_PATH).setMediaId(EXISTING_MEDIA_ID);
-        assertEquals(SAVE_MEDIA_RESPONSE, uploadFile(uploadQuery));
+        ExistingAssetUploadQuery uploadQuery = new ExistingAssetUploadQuery(FILE_PATH, EXISTING_MEDIA_ID);
+        checkUpload(new FileUploader(bynderApiMock, queryDecoder)
+                .uploadFile(uploadQuery));
         verify(bynderApiMock).saveMedia(EXISTING_MEDIA_ID, FILE_ID);
     }
 
-    private SaveMediaResponse uploadFile(UploadQuery uploadQuery) {
-        SaveMediaResponse response = new FileUploader(bynderApiMock, queryDecoder, uploadQuery)
-                .uploadFile().blockingGet();
+    private void checkUpload(Single<SaveMediaResponse> actualResponse) {
+        assertEquals(SAVE_MEDIA_RESPONSE, actualResponse.blockingGet());
 
         verify(bynderApiMock).prepareUpload();
 
@@ -157,13 +159,11 @@ public class FileUploaderTest {
                 FILE_ID,
                 queryDecoder.decode(new FinaliseUploadQuery(
                         CHUNKS.size(),
-                        uploadQuery.getFilename(),
+                        FILENAME,
                         FILE_CONTENT.length,
                         FILE_CONTENT_STRING
                 ))
         );
-
-        return response;
     }
 
 }

@@ -1,0 +1,20 @@
+name: Tests
+
+on: [ push, pull_request ]
+
+jobs:
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK 8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Maven Package
+        run: mvn clean install -Dgpg.skip -Dmaven.javadoc.skip -Dmaven.test.skip
+      - name: Tests with Coverage
+        run: mvn clean test jacoco:report coveralls:report -DrepoToken=${{secrets.COVERALLS_TOKEN}}

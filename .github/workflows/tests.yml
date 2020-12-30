@@ -17,4 +17,4 @@ jobs:
       - name: Maven Package
         run: mvn clean install -Dgpg.skip -Dmaven.javadoc.skip -Dmaven.test.skip
       - name: Tests with Coverage
-        run: mvn clean test jacoco:report coveralls:report -DrepoToken=${{secrets.COVERALLS_TOKEN}}
+        run: mvn clean test jacoco:report

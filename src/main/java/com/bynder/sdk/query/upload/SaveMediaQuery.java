@@ -19,12 +19,6 @@ import java.util.List;
 public class SaveMediaQuery {
 
     /**
-     * Import id of a finalised and processed upload to save.
-     */
-    @ApiField
-    private final String importId;
-
-    /**
      * Brand id to save the media asset to.
      */
     @ApiField
@@ -37,25 +31,18 @@ public class SaveMediaQuery {
     private String name;
 
     /**
-     * Media id for which to save the new version.
-     */
-    @ApiField(name = "id")
-    private String mediaId;
-
-    /**
      * Flags if the media asset should be sent to the waiting room.
      */
     @ApiField
     private Boolean audit;
 
     /**
-     * Dictionary with (metaproperty) options to set on the asset upon upload.
+     * Dictionary with metaproperty options to set on the asset upon upload.
      */
     @ApiField(name = "metaproperty", decoder = MetapropertyAttributesDecoder.class)
     private List<MetapropertyAttribute> metaproperties;
 
-    public SaveMediaQuery(final String importId) {
-        this.importId = importId;
+    public SaveMediaQuery() {
         this.metaproperties = new ArrayList<>();
     }
 
@@ -66,11 +53,6 @@ public class SaveMediaQuery {
 
     public SaveMediaQuery setName(final String name) {
         this.name = name;
-        return this;
-    }
-
-    public SaveMediaQuery setMediaId(final String mediaId) {
-        this.mediaId = mediaId;
         return this;
     }
 

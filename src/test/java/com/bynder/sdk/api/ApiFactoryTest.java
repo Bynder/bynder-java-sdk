@@ -47,12 +47,6 @@ public class ApiFactoryTest {
     }
 
     @Test
-    public void createAmazonS3Client() {
-        AmazonS3Api amazonS3Api = ApiFactory.createAmazonS3Client(BASE_URL);
-        assertNotNull(amazonS3Api);
-    }
-
-    @Test
     public void createOAuthClient() {
         OAuthApi oAuthApi = ApiFactory.createOAuthClient(BASE_URL);
         assertNotNull(oAuthApi);

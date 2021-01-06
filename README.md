@@ -60,9 +60,9 @@ Observable<Response<Void>> deleteUsage(UsageDeleteQuery usageDeleteQuery);
 
 Observable<Response<List<Smartfilter>>> getSmartfilters();
 
-Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
+Single<SaveMediaResponse> uploadFile(NewAssetUploadQuery uploadQuery);
 
-Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
+Single<SaveMediaResponse> uploadFile(ExistingAssetUploadQuery uploadQuery);
 ```
 
 #### Collection Service

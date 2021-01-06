@@ -9,12 +9,13 @@ package com.bynder.sdk.service.asset;
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
-import com.bynder.sdk.model.upload.UploadProgress;
 import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
-import com.bynder.sdk.query.upload.UploadQuery;
+import com.bynder.sdk.query.upload.ExistingAssetUploadQuery;
+import com.bynder.sdk.query.upload.NewAssetUploadQuery;
 import com.bynder.sdk.service.upload.FileUploader;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.Response;
 
 import java.util.List;
@@ -33,10 +34,6 @@ public class AssetServiceImpl implements AssetService {
      * Instance of {@link QueryDecoder} to decode query objects into API parameters.
      */
     private final QueryDecoder queryDecoder;
-    /**
-     * Instance to upload files to Bynder.
-     */
-    private final FileUploader fileUploader;
 
     /**
      * Initialises a new instance of the class.
@@ -47,7 +44,6 @@ public class AssetServiceImpl implements AssetService {
     public AssetServiceImpl(final BynderApi bynderApi, final QueryDecoder queryDecoder) {
         this.bynderApi = bynderApi;
         this.queryDecoder = queryDecoder;
-        this.fileUploader = new FileUploader(bynderApi, queryDecoder);
     }
 
     /**
@@ -165,15 +161,15 @@ public class AssetServiceImpl implements AssetService {
      * Check {@link AssetService} for more information.
      */
     @Override
-    public Observable<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
-        return fileUploader.uploadFile(uploadQuery);
+    public Single<SaveMediaResponse> uploadFile(final NewAssetUploadQuery uploadQuery) {
+        return new FileUploader(bynderApi, queryDecoder).uploadFile(uploadQuery);
     }
 
     /**
      * Check {@link AssetService} for more information.
      */
-    @Override
-    public Observable<UploadProgress> uploadFileWithProgress(final UploadQuery uploadQuery) {
-        return fileUploader.uploadFileWithProgress(uploadQuery);
+    public Single<SaveMediaResponse> uploadFile(final ExistingAssetUploadQuery uploadQuery) {
+        return new FileUploader(bynderApi, queryDecoder).uploadFile(uploadQuery);
     }
+
 }

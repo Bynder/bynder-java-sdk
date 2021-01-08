@@ -59,7 +59,7 @@ public class AppSample {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(AppSample.class);
-    private static final List<String> OAUTH_SCOPES = Arrays.asList("offline", "asset:read", "asset:write");
+    private static final List<String> OAUTH_SCOPES = Arrays.asList("offline", "asset:read", "asset:write", "collection:read");
 
     private final BynderClient bynderClient;
     private final AssetService assetService;
@@ -123,14 +123,14 @@ public class AppSample {
         ).subscribe(
                 derivatives -> LOG.info("Derivatives: " + derivatives.stream().map(Derivative::getPrefix).collect(Collectors.toList())),
                 this::logError
-        );
+        ).dispose();
 
         RXUtils.handleResponseBody(
                 assetService.getBrands()
         ).subscribe(
                 brands -> LOG.info("Brands: " + brands.stream().map(Brand::getName).collect(Collectors.toList())),
                 this::logError
-        );
+        ).dispose();
 
         RXUtils.handleResponseBody(
                 assetService.getMediaList(new MediaQuery()
@@ -142,7 +142,7 @@ public class AppSample {
         ).subscribe(
                 assets -> LOG.info("Assets: " + assets.stream().map(Media::getName).collect(Collectors.toList())),
                 this::logError
-        );
+        ).dispose();
 
         RXUtils.handleResponseBody(
                 collectionService.getCollections(new CollectionQuery()
@@ -154,7 +154,7 @@ public class AppSample {
         ).subscribe(
                 collections -> LOG.info("Collections: " + collections.stream().map(Collection::getName).collect(Collectors.toList())),
                 this::logError
-        );
+        ).dispose();
     }
 
     public void uploadFile(final String uploadPath) {

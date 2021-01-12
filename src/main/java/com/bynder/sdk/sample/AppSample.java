@@ -8,18 +8,21 @@ package com.bynder.sdk.sample;
 
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.OAuthSettings;
-import com.bynder.sdk.model.Brand;
-import com.bynder.sdk.model.Derivative;
-import com.bynder.sdk.model.Media;
-import com.bynder.sdk.model.MediaType;
-import com.bynder.sdk.model.oauth.RefreshTokenCallback;
+import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.oauth.Token;
+import com.bynder.sdk.query.MediaDeleteQuery;
+import com.bynder.sdk.query.MediaInfoQuery;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.OrderBy;
+import com.bynder.sdk.query.collection.CollectionOrderType;
+import com.bynder.sdk.query.collection.CollectionQuery;
+import com.bynder.sdk.query.upload.ExistingAssetUploadQuery;
+import com.bynder.sdk.query.upload.NewAssetUploadQuery;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.service.asset.AssetService;
+import com.bynder.sdk.service.collection.CollectionService;
 import com.bynder.sdk.service.oauth.OAuthService;
-import com.bynder.sdk.util.Utils;
+import com.bynder.sdk.util.RXUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,66 +33,174 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-/**
- * Sample class to display some of the SDK functionality.
- */
 public class AppSample {
 
+    public static void main(final String[] args)
+            throws IOException, URISyntaxException {
+        AppSample app = new AppSample(
+                "https://example.com",
+                "OAuth2 client ID",
+                "Oauth2 client secret",
+                "https://redirect_url/",
+                token -> { // OAuth2 refresh token callback
+                    LOG.info("Auto refresh triggered!");
+                    LOG.info(String.format("Refresh token used: %s", token.getRefreshToken()));
+                    LOG.info(String.format("New access token: %s", token.getAccessToken()));
+                    LOG.info(String.format("New access token expiration date: %s", token.getAccessTokenExpiration()));
+                }
+        );
+        app.listItems();
+        app.uploadFile("/path/to/file.ext");
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(AppSample.class);
+    private static final List<String> OAUTH_SCOPES = Arrays.asList("offline", "asset:read", "asset:write", "collection:read");
 
-    public static void main(final String[] args) throws URISyntaxException, IOException {
-        /**
-         * Loads app.properties file under src/main/resources
-         */
-        Properties appProperties = Utils.loadConfig("app");
+    private final BynderClient bynderClient;
+    private final AssetService assetService;
+    private final CollectionService collectionService;
 
-        // Initialize BynderClient with a permanent token
-        BynderClient client = BynderClient.Builder.create(
-            new Configuration.Builder(new URL(appProperties.getProperty("BASE_URL")))
-                .setPermanentToken(appProperties.getProperty("PERMANENT_TOKEN")).build());
+    private AppSample(final Configuration configuration)
+            throws IOException, URISyntaxException {
+        bynderClient = BynderClient.Builder.create(configuration);
+        assetService = bynderClient.getAssetService();
+        collectionService = bynderClient.getCollectionService();
+        authenticateWithOAuth2();
+    }
 
-        AssetService assetService = client.getAssetService();
+    public AppSample(final String baseUrl, final OAuthSettings oAuthSettings)
+            throws IOException, URISyntaxException {
+        this(new Configuration.Builder(new URL(baseUrl))
+                .setOAuthSettings(oAuthSettings)
+                .build());
+    }
 
-        // Call the API to request for media assets
-        List<Media> mediaList = assetService.getMediaList(
-            new MediaQuery().setType(MediaType.IMAGE).setOrderBy(OrderBy.NAME_DESC).setLimit(10)
-                .setPage(1)).blockingSingle().body();
-        for (Media media : mediaList) {
-            LOG.info(media.getName());
-        }
+    public AppSample(
+            final String baseUrl,
+            final String oAuthClientId,
+            final String oAuthClientSecret,
+            final String oAuthRedirectUri
+    )
+            throws IOException, URISyntaxException {
+        this(
+                baseUrl,
+                new OAuthSettings(oAuthClientId, oAuthClientSecret, new URI(oAuthRedirectUri))
+        );
+    }
 
-        // Optional: define callback function to be triggered after access token is auto
-        // refreshed
-        RefreshTokenCallback callback = new RefreshTokenCallback() {
-            @Override
-            public void execute(Token token) {
-                LOG.info("Auto refresh triggered!");
-                LOG.info(String.format("Refresh token used: %s", token.getRefreshToken()));
-                LOG.info(String.format("New access token: %s", token.getAccessToken()));
-                LOG.info(String.format("New access token expiration date: %s", token.getAccessTokenExpiration()));
-            }
-        };
+    public AppSample(
+            final String baseUrl,
+            final String oAuthClientId,
+            final String oAuthClientSecret,
+            final String oAuthRedirectUri,
+            final Consumer<Token> oAuthRefreshTokenCallback
+    )
+            throws IOException, URISyntaxException {
+        this(
+                baseUrl,
+                new OAuthSettings(
+                        oAuthClientId,
+                        oAuthClientSecret,
+                        new URI(oAuthRedirectUri),
+                        oAuthRefreshTokenCallback::accept
+                )
+        );
+    }
 
-        // Initialize BynderClient with oauth settings to perform OAuth 2.0
-        // authorization flow
-        client = BynderClient.Builder.create(
-            new Configuration.Builder(new URL(appProperties.getProperty("BASE_URL")))
-                .setOAuthSettings(new OAuthSettings(appProperties.getProperty("CLIENT_ID"),
-                appProperties.getProperty("CLIENT_SECRET"), new URI(appProperties.getProperty("REDIRECT_URI")),
-                callback)).build());
 
-        // Initialize OAuthService
-        OAuthService oauthService = client.getOAuthService();
+    private void logError(final Throwable e) {
+        LOG.error(e.getMessage());
+    }
 
-        List<String> scopes = Arrays.asList("offline", "asset:read");
-        URL authorizationUrl = oauthService.getAuthorizationUrl("state example", scopes);
+    public void listItems() {
+        RXUtils.handleResponseBody(
+                bynderClient.getDerivatives()
+        ).subscribe(
+                derivatives -> LOG.info("Derivatives: " + derivatives.stream().map(Derivative::getPrefix).collect(Collectors.toList())),
+                this::logError
+        ).dispose();
+
+        RXUtils.handleResponseBody(
+                assetService.getBrands()
+        ).subscribe(
+                brands -> LOG.info("Brands: " + brands.stream().map(Brand::getName).collect(Collectors.toList())),
+                this::logError
+        ).dispose();
+
+        RXUtils.handleResponseBody(
+                assetService.getMediaList(new MediaQuery()
+                        .setType(MediaType.IMAGE)
+                        .setOrderBy(OrderBy.DATE_CREATED_DESC)
+                        .setLimit(10)
+                        .setPage(1)
+                )
+        ).subscribe(
+                assets -> LOG.info("Assets: " + assets.stream().map(Media::getName).collect(Collectors.toList())),
+                this::logError
+        ).dispose();
+
+        RXUtils.handleResponseBody(
+                collectionService.getCollections(new CollectionQuery()
+                        .setKeyword("")
+                        .setOrderBy(CollectionOrderType.DATE_CREATED_DESC)
+                        .setLimit(10)
+                        .setPage(1)
+                )
+        ).subscribe(
+                collections -> LOG.info("Collections: " + collections.stream().map(Collection::getName).collect(Collectors.toList())),
+                this::logError
+        ).dispose();
+    }
+
+    public void uploadFile(final String uploadPath) {
+        RXUtils.handleResponseBody(assetService.getBrands()).flatMap(brands ->
+                assetService.uploadFile(
+                        new NewAssetUploadQuery(uploadPath, brands.get(0).getId())
+                )
+        ).flatMap(saveMediaResponse -> {
+            LOG.info("New asset successfully created: " + saveMediaResponse.getMediaId());
+            return RXUtils.handleResponseBody(
+                    assetService.getMediaInfo(new MediaInfoQuery(saveMediaResponse.getMediaId()).setVersions(true))
+            ).retryWhen(f ->
+                    f.take(5).delay(1000, TimeUnit.MILLISECONDS)
+            ).doOnError(e ->
+                    LOG.error("New asset could not be fetched after trying 5 times.")
+            );
+        }).flatMap(media -> {
+            LOG.info("New asset could be fetched: " + media.getId() + " " + media.getName());
+            return assetService.uploadFile(
+                    new ExistingAssetUploadQuery(uploadPath, media.getId())
+            );
+        }).flatMap(saveMediaResponse -> {
+            LOG.info("New asset version successfully created: " + saveMediaResponse.getMediaId());
+            return RXUtils.handleResponseBody(
+                    assetService.getMediaInfo(new MediaInfoQuery(saveMediaResponse.getMediaId()).setVersions(true))
+            ).retryWhen(f ->
+                    f.take(5).delay(1000, TimeUnit.MILLISECONDS)
+            ).doOnError(e ->
+                    LOG.error("New asset version could not be fetched after trying 5 times.")
+            );
+        }).flatMapCompletable(media -> {
+            LOG.info("New asset version could be fetched: " + media.getId() + " " + media.getName());
+            return RXUtils.handleResponse(
+                    assetService.deleteMedia(new MediaDeleteQuery(media.getId()))
+            );
+        }).blockingAwait();
+    }
+
+    private void authenticateWithOAuth2()
+            throws IOException, URISyntaxException {
+        OAuthService oauthService = bynderClient.getOAuthService();
 
         // Open browser with authorization URL
-        Desktop desktop = Desktop.getDesktop();
-        desktop.browse(authorizationUrl.toURI());
+        Desktop.getDesktop().browse(
+                oauthService.getAuthorizationUrl("state example", OAUTH_SCOPES).toURI()
+        );
 
         // Ask for the code returned in the redirect URI
         System.out.println("Insert the code: ");
@@ -98,29 +209,8 @@ public class AppSample {
         scanner.close();
 
         // Get the access token
-        oauthService.getAccessToken(code, scopes).blockingSingle();
-
-        // Call the API to request for the account information
-        List<Derivative> derivatives = client.getDerivatives().blockingSingle().body();
-        for (Derivative derivative : derivatives) {
-            LOG.info(derivative.getPrefix());
-        }
-
-        // Get the asset service
-        assetService = client.getAssetService();
-
-        // Call the API to request for brands
-        List<Brand> brands = assetService.getBrands().blockingSingle().body();
-        for (Brand brand : brands) {
-            LOG.info(brand.getName());
-        }
-
-        // Call the API to request for media assets
-        mediaList = assetService.getMediaList(
-            new MediaQuery().setType(MediaType.IMAGE).setOrderBy(OrderBy.NAME_DESC).setLimit(10)
-                .setPage(1)).blockingSingle().body();
-        for (Media media : mediaList) {
-            LOG.info(media.getName());
-        }
+        Token token = oauthService.getAccessToken(code, OAUTH_SCOPES).blockingSingle();
+        LOG.info("OAuth token: " + token.getAccessToken());
     }
+
 }

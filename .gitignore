@@ -1,6 +1,3 @@
-# Properties for testing
-**/app.properties
-
 # Integration tests
 **/*IT.java
 

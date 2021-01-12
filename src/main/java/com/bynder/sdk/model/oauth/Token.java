@@ -22,26 +22,31 @@ public class Token {
      * The access token issued by the authorization server.
      */
     @SerializedName("access_token")
-    private String accessToken;
+    private final String accessToken;
+
     /**
      * The remaining lifetime in seconds of the access token.
      */
     @SerializedName("expires_in")
-    private int expiresIn;
+    private final int expiresIn;
+
     /**
      * The type of the issued token.
      */
     @SerializedName("token_type")
-    private String tokenType;
+    private final String tokenType;
+
     /**
      * Scope of the issued token.
      */
-    private String scope;
+    private final String scope;
+
     /**
      * The refresh token which can be used to obtain new access tokens.
      */
     @SerializedName("refresh_token")
     private String refreshToken;
+
     /**
      * The access token expiration date.
      */
@@ -76,8 +81,9 @@ public class Token {
         return refreshToken;
     }
 
-    public void setRefreshToken(final String refreshToken) {
+    public Token setRefreshToken(final String refreshToken) {
         this.refreshToken = refreshToken;
+        return this;
     }
 
     public Date getAccessTokenExpiration() {
@@ -87,7 +93,6 @@ public class Token {
     public void setAccessTokenExpiration() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.SECOND, expiresIn);
-
         this.accessTokenExpiration = calendar.getTime();
     }
 }

@@ -6,53 +6,72 @@
  */
 package com.bynder.sdk.configuration;
 
-import com.bynder.sdk.model.oauth.RefreshTokenCallback;
 import com.bynder.sdk.model.oauth.Token;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.function.Consumer;
 
 public class OAuthSettings {
 
     /**
      * OAuth application client id.
      */
-    private String clientId;
+    private final String clientId;
+
     /**
      * OAuth application client secret.
      */
-    private String clientSecret;
+    private final String clientSecret;
+
     /**
      * URI to redirect to after application has been authorized.
      */
-    private URI redirectUri;
-    /**
-     * Token information.
-     */
-    private Token token;
+    private final URI redirectUri;
+
     /**
      * Optional callback method to be triggered when token is refreshed.
      */
-    private RefreshTokenCallback callback = new RefreshTokenCallback() {
-        @Override
-        public void execute(Token token) {
-            return;
-        }
-    };
+    private final Consumer<Token> refreshTokenCallback;
 
-    public OAuthSettings() {
+    public OAuthSettings(
+            final String clientId,
+            final String clientSecret
+    ) {
+        this(clientId, clientSecret, token -> {});
     }
 
-    public OAuthSettings(String clientId, String clientSecret, URI redirectUri) {
+    public OAuthSettings(
+            final String clientId,
+            final String clientSecret,
+            final Consumer<Token> refreshTokenCallback
+    ) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
-        this.redirectUri = redirectUri;
+        this.redirectUri = null;
+        this.refreshTokenCallback = refreshTokenCallback;
     }
 
-    public OAuthSettings(String clientId, String clientSecret, URI redirectUri, RefreshTokenCallback callback) {
+    public OAuthSettings(
+            final String clientId,
+            final String clientSecret,
+            final String redirectUri
+    )
+            throws URISyntaxException {
+        this(clientId, clientSecret, redirectUri, token -> {});
+    }
+
+    public OAuthSettings(
+            final String clientId,
+            final String clientSecret,
+            final String redirectUri,
+            final Consumer<Token> refreshTokenCallback
+    )
+            throws URISyntaxException {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
-        this.redirectUri = redirectUri;
-        this.callback = callback;
+        this.redirectUri = new URI(redirectUri);
+        this.refreshTokenCallback = refreshTokenCallback;
     }
 
     public String getClientId() {
@@ -67,20 +86,8 @@ public class OAuthSettings {
         return redirectUri;
     }
 
-    public Token getToken() {
-        return token;
+    public void refreshTokenCallback(final Token token) {
+        refreshTokenCallback.accept(token);
     }
 
-    public void setToken(final Token token) {
-        this.token = token;
-    }
-
-    public void refreshToken(final Token newToken) {
-        newToken.setRefreshToken(this.token.getRefreshToken());
-        this.token = newToken;
-    }
-
-    public void callback(final Token token) {
-        callback.execute(token);
-    }
 }

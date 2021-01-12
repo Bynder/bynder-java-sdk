@@ -12,6 +12,7 @@ package com.bynder.sdk.api;
 
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.HttpConnectionSettings;
+import com.bynder.sdk.service.BynderClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -31,6 +32,8 @@ public class ApiFactoryTest {
 
     @Mock
     private Configuration configuration;
+    @Mock
+    private BynderClient bynderClient;
 
     @Before
     public void setUp() throws Exception {
@@ -42,13 +45,13 @@ public class ApiFactoryTest {
 
     @Test
     public void createBynderClient() {
-        BynderApi bynderApi = ApiFactory.createBynderClient(configuration);
+        BynderApi bynderApi = ApiFactory.createBynderApi(configuration, bynderClient);
         assertNotNull(bynderApi);
     }
 
     @Test
     public void createOAuthClient() {
-        OAuthApi oAuthApi = ApiFactory.createOAuthClient(BASE_URL);
+        OAuthApi oAuthApi = ApiFactory.createOAuthApi(configuration);
         assertNotNull(oAuthApi);
     }
 }

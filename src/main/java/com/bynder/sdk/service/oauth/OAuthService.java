@@ -11,7 +11,7 @@ import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.util.Utils;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -40,21 +40,31 @@ public interface OAuthService {
     URL getAuthorizationUrl(final String state, final List<String> scopes)
         throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException;
 
+    Token getToken();
+
     /**
      * Gets an access token using the code authorization grant.
      *
      * @param code The code included in the redirect URI.
      * @param scopes The scopes defined in the authorization URL.
-     * @return {@link Observable} with {@link Token} information.
+     * @return {@link Single} with {@link Token} information.
      */
-    Observable<Token> getAccessToken(final String code, final List<String> scopes);
+    Single<Token> getAccessToken(final String code, final List<String> scopes);
+
+    /**
+     * Gets an access token using the client credentials grant.
+     *
+     * @param scopes The scopes defined in the authorization URL.
+     * @return {@link Single} with {@link Token} information.
+     */
+    Single<Token> getClientCredentials(final List<String> scopes);
 
     /**
      * Gets a new access token using the refresh token.
      *
-     * @return {@link Observable} with {@link Token} information.
+     * @return {@link Single} with {@link Token} information.
      */
-    Observable<Token> refreshAccessToken();
+    Single<Token> refreshAccessToken();
 
     /**
      * Builder class used to create a new instance of {@link OAuthService}.

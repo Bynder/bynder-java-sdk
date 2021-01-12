@@ -3,8 +3,10 @@ package com.bynder.sdk.query.oauth;
 import com.bynder.sdk.configuration.OAuthSettings;
 import com.bynder.sdk.model.oauth.GrantType;
 import com.bynder.sdk.query.decoder.ApiField;
+import com.bynder.sdk.query.decoder.OAuthScopesEncoder;
 
 import java.net.URI;
+import java.util.List;
 
 public class AccessTokenQuery extends TokenQuery {
 
@@ -17,8 +19,8 @@ public class AccessTokenQuery extends TokenQuery {
     /**
      * The authorization scope(s).
      */
-    @ApiField(name = "scope")
-    private final String scope;
+    @ApiField(name = "scope", decoder = OAuthScopesEncoder.class)
+    private final List<String> scope;
 
     /**
      * The code included in the redirect URI after application has been authorized.
@@ -32,9 +34,7 @@ public class AccessTokenQuery extends TokenQuery {
     ) {
         super(oAuthSettings, GrantType.AUTHORIZATION_CODE);
         this.redirectUri = oAuthSettings.getRedirectUri();
-        this.scope = oAuthSettings.getScopes() != null
-                ? String.join(" ", oAuthSettings.getScopes())
-                : null;
+        this.scope = oAuthSettings.getScopes();
         this.code = code;
     }
 

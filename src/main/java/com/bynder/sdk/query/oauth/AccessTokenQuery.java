@@ -5,7 +5,6 @@ import com.bynder.sdk.model.oauth.GrantType;
 import com.bynder.sdk.query.decoder.ApiField;
 
 import java.net.URI;
-import java.util.List;
 
 public class AccessTokenQuery extends TokenQuery {
 
@@ -29,12 +28,13 @@ public class AccessTokenQuery extends TokenQuery {
 
     public AccessTokenQuery(
             final OAuthSettings oAuthSettings,
-            final List<String> scopes,
             final String code
     ) {
         super(oAuthSettings, GrantType.AUTHORIZATION_CODE);
         this.redirectUri = oAuthSettings.getRedirectUri();
-        this.scope = String.join(" ", scopes);
+        this.scope = oAuthSettings.getScopes() != null
+                ? String.join(" ", oAuthSettings.getScopes())
+                : null;
         this.code = code;
     }
 

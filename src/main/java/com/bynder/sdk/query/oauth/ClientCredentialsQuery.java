@@ -4,8 +4,6 @@ import com.bynder.sdk.configuration.OAuthSettings;
 import com.bynder.sdk.model.oauth.GrantType;
 import com.bynder.sdk.query.decoder.ApiField;
 
-import java.util.List;
-
 public class ClientCredentialsQuery extends TokenQuery {
 
     /**
@@ -15,11 +13,12 @@ public class ClientCredentialsQuery extends TokenQuery {
     private final String scope;
 
     public ClientCredentialsQuery(
-            final OAuthSettings oAuthSettings,
-            final List<String> scopes
+            final OAuthSettings oAuthSettings
     ) {
         super(oAuthSettings, GrantType.CLIENT_CREDENTIALS);
-        this.scope = String.join(" ", scopes);
+        this.scope = oAuthSettings.getScopes() != null
+                ? String.join(" ", oAuthSettings.getScopes())
+                : null;
     }
 
 }

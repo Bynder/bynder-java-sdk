@@ -41,17 +41,16 @@ public class AppSample {
             throws IOException, URISyntaxException {
         AppSample app = new AppSample(
                 "https://example.com",
-                new OAuthSettings(
-                    "OAuth2 client ID",
-                    "Oauth2 client secret",
-                    "https://redirect_url/", // leave out for authentication with client credentials
-                    token -> { // OAuth2 refresh token callback
-                        LOG.info("Auto refresh triggered!");
-                        LOG.info(String.format("Refresh token used: %s", token.getRefreshToken()));
-                        LOG.info(String.format("New access token: %s", token.getAccessToken()));
-                        LOG.info(String.format("New access token expiration date: %s", token.getAccessTokenExpiration()));
-                    }
-                )
+                new OAuthSettings.Builder("OAuth2 client ID", "Oauth2 client secret")
+                        .setRedirectUri("https://redirect_url/") // Leave out for authentication with client credentials
+                        .setScopes(OAUTH_SCOPES) // List of scopes to request to be granted to the access token.
+                        .setRefreshTokenCallback(token -> { // Optional callback method to be triggered when token is refreshed.
+                            LOG.info("Auto refresh triggered!");
+                            LOG.info(String.format("Refresh token used: %s", token.getRefreshToken()));
+                            LOG.info(String.format("New access token: %s", token.getAccessToken()));
+                            LOG.info(String.format("New access token expiration date: %s", token.getAccessTokenExpiration()));
+                        })
+                        .build()
         );
         app.listItems();
         app.uploadFile("/path/to/file.ext");
@@ -163,11 +162,11 @@ public class AppSample {
 
         Token token;
         if (withClientCredentials) {
-            token = oauthService.getClientCredentials(OAUTH_SCOPES).blockingGet();
+            token = oauthService.getClientCredentials().blockingGet();
         } else {
             // Open browser with authorization URL
             Desktop.getDesktop().browse(
-                    oauthService.getAuthorizationUrl("state example", OAUTH_SCOPES).toURI()
+                    oauthService.getAuthorizationUrl("state example").toURI()
             );
 
             // Ask for the code returned in the redirect URI
@@ -177,7 +176,7 @@ public class AppSample {
             scanner.close();
 
             // Get the access token
-            token = oauthService.getAccessToken(code, OAUTH_SCOPES).blockingGet();
+            token = oauthService.getAccessToken(code).blockingGet();
         }
         LOG.info("OAuth token: " + token.getAccessToken());
     }

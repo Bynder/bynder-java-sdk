@@ -37,7 +37,7 @@ public interface OAuthService {
      * more information.
      * @throws IllegalArgumentException If state is passed as null or empty.
      */
-    URL getAuthorizationUrl(final String state, final List<String> scopes)
+    URL getAuthorizationUrl(final String state)
         throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException;
 
     Token getToken();
@@ -49,7 +49,7 @@ public interface OAuthService {
      * @param scopes The scopes defined in the authorization URL.
      * @return {@link Single} with {@link Token} information.
      */
-    Single<Token> getAccessToken(final String code, final List<String> scopes);
+    Single<Token> getAccessToken(final String code);
 
     /**
      * Gets an access token using the client credentials grant.
@@ -57,7 +57,7 @@ public interface OAuthService {
      * @param scopes The scopes defined in the authorization URL.
      * @return {@link Single} with {@link Token} information.
      */
-    Single<Token> getClientCredentials(final List<String> scopes);
+    Single<Token> getClientCredentials();
 
     /**
      * Gets a new access token using the refresh token.
@@ -66,17 +66,4 @@ public interface OAuthService {
      */
     Single<Token> refreshAccessToken();
 
-    /**
-     * Builder class used to create a new instance of {@link OAuthService}.
-     */
-    class Builder {
-
-        private Builder() {
-        }
-
-        public static OAuthService create(final Configuration configuration, OAuthApi oauthClient,
-            final QueryDecoder queryDecoder) {
-            return new OAuthServiceImpl(configuration, oauthClient, queryDecoder);
-        }
-    }
 }

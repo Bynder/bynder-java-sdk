@@ -47,7 +47,7 @@ public class OAuthServiceImpl implements OAuthService {
      * @param configuration Configuration settings.
      * @param oauthClient OAuth2 client instance.
      */
-    OAuthServiceImpl(
+    public OAuthServiceImpl(
             final Configuration configuration,
             final OAuthApi oauthClient,
             final QueryDecoder queryDecoder
@@ -62,7 +62,7 @@ public class OAuthServiceImpl implements OAuthService {
      * Check {@link OAuthService} for more information.
      */
     @Override
-    public URL getAuthorizationUrl(final String state, final List<String> scopes)
+    public URL getAuthorizationUrl(final String state)
             throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException {
         if (state == null || state.isEmpty()) {
             throw new IllegalArgumentException(state);
@@ -74,7 +74,7 @@ public class OAuthServiceImpl implements OAuthService {
                 "?client_id=" + Utils.encodeParameterValue(oAuthSettings.getClientId()) +
                 "&redirect_uri=" + Utils.encodeParameterValue(oAuthSettings.getRedirectUri().toString()) +
                 "&response_type=" + Utils.encodeParameterValue(ResponseType.CODE.toString()) +
-                "&scope=" + Utils.encodeParameterValue(String.join(" ", scopes)) +
+                "&scope=" + Utils.encodeParameterValue(String.join(" ", oAuthSettings.getScopes())) +
                 "&state=" + Utils.encodeParameterValue(state)
         );
     }
@@ -93,9 +93,9 @@ public class OAuthServiceImpl implements OAuthService {
      * Check {@link OAuthService} for more information.
      */
     @Override
-    public Single<Token> getAccessToken(final String code, final List<String> scopes) {
+    public Single<Token> getAccessToken(final String code) {
         return RXUtils.handleResponseBody(oauthClient.getAccessToken(queryDecoder.decode(
-                new AccessTokenQuery(oAuthSettings, scopes, code)
+                new AccessTokenQuery(oAuthSettings, code)
         ))).map(this::setToken);
     }
 
@@ -103,9 +103,9 @@ public class OAuthServiceImpl implements OAuthService {
      * Check {@link OAuthService} for more information.
      */
     @Override
-    public Single<Token> getClientCredentials(final List<String> scopes) {
+    public Single<Token> getClientCredentials() {
         return RXUtils.handleResponseBody(oauthClient.getAccessToken(queryDecoder.decode(
-                new ClientCredentialsQuery(oAuthSettings, scopes)
+                new ClientCredentialsQuery(oAuthSettings)
         ))).map(this::setToken);
     }
 
@@ -115,9 +115,13 @@ public class OAuthServiceImpl implements OAuthService {
     @Override
     public Single<Token> refreshAccessToken() {
         String refreshToken = token.getRefreshToken();
-        return RXUtils.handleResponseBody(oauthClient.getAccessToken(queryDecoder.decode(
-                new RefreshTokenQuery(oAuthSettings, refreshToken)
-        ))).map(newToken -> setToken(newToken).setRefreshToken(refreshToken));
+        if (refreshToken != null) {
+            return RXUtils.handleResponseBody(oauthClient.getAccessToken(queryDecoder.decode(
+                    new RefreshTokenQuery(oAuthSettings, refreshToken)
+            ))).map(newToken -> setToken(newToken).setRefreshToken(refreshToken));
+        } else {
+            return getClientCredentials();
+        }
     }
 
 }

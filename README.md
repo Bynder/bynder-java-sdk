@@ -27,9 +27,9 @@ Observable<Response<List<Derivative>>> getDerivatives();
 ```java
 URL getAuthorizationUrl(final String state);
 
-Single<Token> getAccessToken(final String code, final List<String> scopes);
+Single<Token> getAccessToken(final String code);
 
-Single<Token> getClientCredentials(final List<String> scopes);
+Single<Token> getClientCredentials();
 
 Single<Token> refreshAccessToken();
 ```

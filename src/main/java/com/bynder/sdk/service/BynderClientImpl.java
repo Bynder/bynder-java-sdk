@@ -15,6 +15,7 @@ import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.service.collection.CollectionService;
 import com.bynder.sdk.service.oauth.OAuthService;
+import com.bynder.sdk.service.oauth.OAuthServiceImpl;
 import io.reactivex.Observable;
 import retrofit2.Response;
 
@@ -50,7 +51,7 @@ public class BynderClientImpl implements BynderClient {
      */
     BynderClientImpl(final Configuration configuration, final QueryDecoder queryDecoder) {
         OAuthApi oAuthApi = ApiFactory.createOAuthApi(configuration);
-        oauthService = OAuthService.Builder.create(configuration, oAuthApi, queryDecoder);
+        oauthService = new OAuthServiceImpl(configuration, oAuthApi, queryDecoder);
 
         bynderApi = ApiFactory.createBynderApi(configuration, this);
         assetService = AssetService.Builder.create(bynderApi, queryDecoder);

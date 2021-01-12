@@ -72,10 +72,13 @@ public class OAuthServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        oAuthService = OAuthService.Builder.create(
+        oAuthService = new OAuthServiceImpl(
                 new Configuration.Builder(
                         BASE_URL,
-                        new OAuthSettings(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
+                        new OAuthSettings.Builder(CLIENT_ID, CLIENT_SECRET)
+                                .setRedirectUri(REDIRECT_URI)
+                                .setScopes(SCOPES)
+                                .build()
                 ).build(),
                 oauthClient,
                 queryDecoder
@@ -105,23 +108,23 @@ public class OAuthServiceImplTest {
 
     @Test
     public void getAuthorizationUrl() throws Exception {
-        URL authorizationUrl = oAuthService.getAuthorizationUrl(STATE, SCOPES);
+        URL authorizationUrl = oAuthService.getAuthorizationUrl(STATE);
         assertNotNull(authorizationUrl);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getAuthorizationUrlWithNullState() throws Exception {
-        oAuthService.getAuthorizationUrl(null, SCOPES);
+        oAuthService.getAuthorizationUrl(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getAuthorizationUrlWithEmptyState() throws Exception {
-        oAuthService.getAuthorizationUrl("", SCOPES);
+        oAuthService.getAuthorizationUrl("");
     }
 
     @Test
     public void getAccessToken() {
-        Token actualAccessToken = oAuthService.getAccessToken(CODE, SCOPES).blockingGet();
+        Token actualAccessToken = oAuthService.getAccessToken(CODE).blockingGet();
 
         assertEquals(accessToken, actualAccessToken);
         verify(oauthClient).getAccessToken(accessTokenParams);
@@ -134,7 +137,7 @@ public class OAuthServiceImplTest {
 
     @Test
     public void getClientCredentials() {
-        Token actualClientCredentialsToken = oAuthService.getClientCredentials(SCOPES).blockingGet();
+        Token actualClientCredentialsToken = oAuthService.getClientCredentials().blockingGet();
 
         assertEquals(clientCredentialsToken, actualClientCredentialsToken);
         verify(oauthClient).getAccessToken(clientCredentialsParams);

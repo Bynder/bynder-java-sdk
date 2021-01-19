@@ -15,6 +15,7 @@ import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.service.collection.CollectionService;
 import com.bynder.sdk.service.oauth.OAuthService;
+import com.bynder.sdk.service.oauth.OAuthServiceImpl;
 import io.reactivex.Observable;
 import retrofit2.Response;
 
@@ -23,47 +24,38 @@ import java.util.List;
 public class BynderClientImpl implements BynderClient {
 
     /**
-     * Instance of {@link QueryDecoder} to decode query objects into API parameters.
-     */
-    private final QueryDecoder queryDecoder;
-    /**
-     * Instance of {@link OAuthApi} which handles the HTTP communication with the OAuth2
-     * provider.
-     */
-    private final OAuthApi oauthClient;
-    /**
      * Instance of {@link BynderApi} which handles the HTTP communication with the Bynder API.
      */
     private final BynderApi bynderApi;
-    /**
-     * Configuration settings needed to instantiate the different interfaces and services of the
-     * SDK client.
-     */
-    private Configuration configuration;
+
     /**
      * Instance of {@link OAuthService}.
      */
-    private OAuthService oauthService;
+    private final OAuthService oauthService;
+
     /**
      * Instance of {@link AssetService}.
      */
-    private AssetService assetService;
+    private final AssetService assetService;
+
     /**
      * Instance of {@link CollectionService}.
      */
-    private CollectionService collectionService;
+    private final CollectionService collectionService;
 
     /**
      * Initialises a new instance of the class.
      *
      * @param configuration Configuration settings.
-     * @param decoder Query decoder.
+     * @param queryDecoder Query decoder.
      */
-    BynderClientImpl(final Configuration configuration, final QueryDecoder decoder) {
-        this.configuration = configuration;
-        this.queryDecoder = decoder;
-        oauthClient = ApiFactory.createOAuthClient(configuration.getBaseUrl().toString());
-        bynderApi = ApiFactory.createBynderClient(configuration);
+    BynderClientImpl(final Configuration configuration, final QueryDecoder queryDecoder) {
+        OAuthApi oAuthApi = ApiFactory.createOAuthApi(configuration);
+        oauthService = new OAuthServiceImpl(configuration, oAuthApi, queryDecoder);
+
+        bynderApi = ApiFactory.createBynderApi(configuration, this);
+        assetService = AssetService.Builder.create(bynderApi, queryDecoder);
+        collectionService = CollectionService.Builder.create(bynderApi, queryDecoder);
     }
 
     /**
@@ -71,10 +63,6 @@ public class BynderClientImpl implements BynderClient {
      */
     @Override
     public OAuthService getOAuthService() {
-        if (oauthService == null) {
-            oauthService = OAuthService.Builder.create(configuration, oauthClient, queryDecoder);
-        }
-
         return oauthService;
     }
 
@@ -83,10 +71,6 @@ public class BynderClientImpl implements BynderClient {
      */
     @Override
     public AssetService getAssetService() {
-        if (assetService == null) {
-            assetService = AssetService.Builder.create(bynderApi, queryDecoder);
-        }
-
         return assetService;
     }
 
@@ -95,10 +79,6 @@ public class BynderClientImpl implements BynderClient {
      */
     @Override
     public CollectionService getCollectionService() {
-        if (collectionService == null) {
-            collectionService = CollectionService.Builder.create(bynderApi, queryDecoder);
-        }
-
         return collectionService;
     }
 
@@ -106,4 +86,5 @@ public class BynderClientImpl implements BynderClient {
     public Observable<Response<List<Derivative>>> getDerivatives() {
         return bynderApi.getDerivatives();
     }
+
 }

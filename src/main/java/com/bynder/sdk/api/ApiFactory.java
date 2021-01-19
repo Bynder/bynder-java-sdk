@@ -8,7 +8,9 @@ package com.bynder.sdk.api;
 
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.HttpConnectionSettings;
+import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.service.BynderClient;
+import com.bynder.sdk.service.oauth.OAuthService;
 import com.bynder.sdk.util.BooleanTypeAdapter;
 import com.bynder.sdk.util.StringConverterFactory;
 import com.bynder.sdk.util.Utils;
@@ -36,13 +38,29 @@ public class ApiFactory {
     private ApiFactory() {}
 
     /**
+     * Creates an implementation of the Bynder OAuth2 endpoints defined in the {@link OAuthApi}
+     * interface.
+     *
+     * @param configuration {@link Configuration} settings for the HTTP communication with Bynder.
+     * @return Implementation instance of the {@link OAuthApi} interface.
+     */
+    public static OAuthApi createOAuthApi(final Configuration configuration) {
+        return new Retrofit.Builder()
+                .baseUrl(configuration.getBaseUrl().toString())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build().create(OAuthApi.class);
+    }
+
+    /**
      * Creates an implementation of the Bynder API endpoints defined in the {@link BynderApi}
      * interface.
      *
      * @param configuration {@link Configuration} settings for the HTTP communication with Bynder.
+     * @param bynderClient {@link BynderClient} instance
      * @return Implementation instance of the {@link BynderApi} interface.
      */
-    public static BynderApi createBynderClient(final Configuration configuration) {
+    public static BynderApi createBynderApi(final Configuration configuration, final BynderClient bynderClient) {
         return new Retrofit.Builder()
                 .baseUrl(configuration.getBaseUrl().toString())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -52,38 +70,20 @@ public class ApiFactory {
                                 .registerTypeAdapter(Boolean.class, new BooleanTypeAdapter())
                                 .create())
                 )
-                .client(createOkHttpClient(configuration))
+                .client(createOkHttpClient(configuration, bynderClient))
                 .build().create(BynderApi.class);
-    }
-
-    /**
-     * Creates an implementation of the Bynder OAuth2 endpoints defined in the {@link OAuthApi}
-     * interface.
-     *
-     * @param baseUrl Bynder portal base URL.
-     * @return Implementation instance of the {@link OAuthApi} interface.
-     */
-    public static OAuthApi createOAuthClient(final String baseUrl) {
-        return new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build().create(OAuthApi.class);
     }
 
     /**
      * Creates an instance of {@link OkHttpClient}.
      *
      * @param configuration Configuration settings for the HTTP communication with Bynder.
+     * @param bynderClient {@link BynderClient} instance
      * @return {@link OkHttpClient} instance used for API requests.
      */
-    private static OkHttpClient createOkHttpClient(final Configuration configuration) {
+    private static OkHttpClient createOkHttpClient(final Configuration configuration, final BynderClient bynderClient) {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-        if (configuration.getPermanentToken() == null) {
-            setOAuthInterceptor(httpClientBuilder, configuration);
-        } else {
-            setPermanentTokenInterceptor(httpClientBuilder, configuration);
-        }
+        setOAuthInterceptor(httpClientBuilder, configuration, bynderClient);
         setHttpConnectionSettings(httpClientBuilder, configuration);
         addUserAgentHeader(httpClientBuilder);
         return httpClientBuilder.build();
@@ -95,48 +95,32 @@ public class ApiFactory {
      *
      * @param httpClientBuilder Builder instance of the HTTP client.
      * @param configuration {@link Configuration} settings for the HTTP communication with Bynder.
+     * @param bynderClient {@link BynderClient} instance
      */
     private static void setOAuthInterceptor(
             final Builder httpClientBuilder,
-            final Configuration configuration
+            final Configuration configuration,
+            final BynderClient bynderClient
     ) {
         httpClientBuilder.addInterceptor(chain -> {
-            if (configuration.getOAuthSettings().getToken() == null) {
-                throw new RuntimeException("Token is not defined in Configuration");
+            OAuthService oAuthService = bynderClient.getOAuthService();
+            Token token = oAuthService.getToken();
+            if (token == null) {
+                throw new RuntimeException("OAuth access token not set.");
             }
 
             // check if access token is expiring in the next 15 seconds
-            if (Utils.isDateExpiring(configuration.getOAuthSettings().getToken().getAccessTokenExpiration(), 15)) {
+            if (Utils.isDateExpiring(token.getAccessTokenExpiration(), 15)) {
                 // refresh the access token
-                configuration.getOAuthSettings().callback(
-                        BynderClient.Builder.create(configuration)
-                                .getOAuthService()
-                                .refreshAccessToken()
-                                .blockingSingle()
-                );
+                token = oAuthService.refreshAccessToken().blockingGet();
+                configuration.getOAuthSettings().refreshTokenCallback(token);
             }
 
             return chain.proceed(addAuthHeader(
                     chain.request(),
-                    configuration.getOAuthSettings().getToken().getAccessToken()
+                    token.getAccessToken()
             ));
         });
-    }
-
-    /**
-     * Sets the permanent token interceptor for the HTTP client. This interceptor will handle adding
-     * the permanent token to the request header.
-     *
-     * @param httpClientBuilder Builder instance of the HTTP client.
-     * @param configuration {@link Configuration} settings for the HTTP communication with Bynder.
-    */
-    private static void setPermanentTokenInterceptor(
-            final Builder httpClientBuilder,
-            final Configuration configuration
-    ) {
-        httpClientBuilder.addInterceptor(chain -> chain.proceed(
-                addAuthHeader(chain.request(), configuration.getPermanentToken())
-        ));
     }
 
     /**

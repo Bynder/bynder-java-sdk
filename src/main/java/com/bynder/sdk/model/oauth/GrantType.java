@@ -11,7 +11,9 @@ package com.bynder.sdk.model.oauth;
  */
 public enum GrantType {
 
-    AUTHORIZATION_CODE("authorization_code"), REFRESH_TOKEN("refresh_token");
+    AUTHORIZATION_CODE("authorization_code"),
+    CLIENT_CREDENTIALS("client_credentials"),
+    REFRESH_TOKEN("refresh_token");
 
     private final String name;
 
@@ -22,4 +24,6 @@ public enum GrantType {
     @Override
     public String toString() {
         return name;
-    }}
+    }
+
+}

@@ -28,9 +28,11 @@ Observable<Response<List<Derivative>>> getDerivatives();
 ```java
 URL getAuthorizationUrl(final String state);
 
-Observable<Token> getAccessToken(final String code);
+Single<Token> getAccessToken(final String code);
 
-Observable<Token> refreshAccessToken();
+Single<Token> getClientCredentials();
+
+Single<Token> refreshAccessToken();
 ```
 
 #### Asset Bank Service

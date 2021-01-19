@@ -15,9 +15,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.net.URI;
-import java.net.URL;
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -40,10 +37,10 @@ public class ConfigurationTest {
 
     @Test
     public void buildConfigurationWithoutCallback() throws Exception {
-        Configuration configuration = new Configuration.Builder(new URL(EXPECTED_BASE_URL))
-            .setOAuthSettings(new OAuthSettings(EXPECTED_CLIENT_ID, EXPECTED_CLIENT_SECRET,
-            new URI(EXPECTED_REDIRECT_URI)))
-            .setHttpConnectionSettings(httpConnectionSettings).build();
+        Configuration configuration = new Configuration.Builder(
+                EXPECTED_BASE_URL,
+                new OAuthSettings.Builder(EXPECTED_CLIENT_ID, EXPECTED_CLIENT_SECRET).setRedirectUri(EXPECTED_REDIRECT_URI).build()
+        ).setHttpConnectionSettings(httpConnectionSettings).build();
 
         assertEquals(EXPECTED_BASE_URL, configuration.getBaseUrl().toString());
         assertEquals(EXPECTED_CLIENT_ID, configuration.getOAuthSettings().getClientId());

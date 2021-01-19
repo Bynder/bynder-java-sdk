@@ -15,91 +15,137 @@ import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.OAuthSettings;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
-import com.bynder.sdk.util.Utils;
-import io.reactivex.Observable;
+import com.bynder.sdk.query.oauth.AccessTokenQuery;
+import com.bynder.sdk.query.oauth.ClientCredentialsQuery;
+import com.bynder.sdk.query.oauth.RefreshTokenQuery;
+import io.reactivex.Single;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import retrofit2.Response;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 
 /**
  * Tests the {@link OAuthServiceImpl} class methods.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class OAuthServiceImplTest {
 
-    private final String EXPECTED_CLIENT_ID = "clientId";
-    private final String EXPECTED_CLIENT_SECRET = "clientSecret";
-    private final String EXPECTED_BASE_URL = "https://example.bynder.com";
-    private final String EXPECTED_REDIRECT_URI = "https://localhost/callback";
-    private final String EXPECTED_STATE = "this is the state";
-    private final List<String> EXPECTED_SCOPES = Arrays.asList("scope");
-    private final String EMPTY_STRING = "";
+    private static final String CLIENT_ID = "clientId";
+    private static final String CLIENT_SECRET = "clientSecret";
+    private static final String BASE_URL = "https://example.bynder.com";
+    private static final String REDIRECT_URI = "https://localhost/callback";
+    private static final String STATE = "this is the state";
+    private static final List<String> SCOPES = Arrays.asList("scope1", "scope2", "scope3");
+    private static final String CODE = "code";
+    private static final String REFRESH_TOKEN_STRING = "refresh_token";
 
     @Mock
     private OAuthApi oauthClient;
     @Mock
-    private Token token;
+    private Token accessToken;
+    @Mock
+    private Token clientCredentialsToken;
+    @Mock
+    private Token refreshToken;
+    @Mock
+    private Map<String, String> accessTokenParams;
+    @Mock
+    private Map<String, String> clientCredentialsParams;
+    @Mock
+    private Map<String, String> refreshTokenParams;
     @Mock
     private QueryDecoder queryDecoder;
-    @Mock
-    private Configuration configuration;
-    @Mock
-    private OAuthSettings oAuthSettings;
 
     private OAuthService oAuthService;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        when(oauthClient.getAccessToken(anyMap())).thenReturn(Observable.just(Response.success(token)));
-        when(configuration.getBaseUrl()).thenReturn(new URL(EXPECTED_BASE_URL));
-        when(configuration.getOAuthSettings()).thenReturn(oAuthSettings);
-        when(configuration.getOAuthSettings().getClientId()).thenReturn(EXPECTED_CLIENT_ID);
-        when(configuration.getOAuthSettings().getRedirectUri()).thenReturn(new URI(EXPECTED_REDIRECT_URI));
-        when(configuration.getOAuthSettings().getClientSecret()).thenReturn(EXPECTED_CLIENT_SECRET);
-        when(configuration.getOAuthSettings().getToken()).thenReturn(token);
-        oAuthService = OAuthService.Builder.create(configuration, oauthClient, queryDecoder);
+        oAuthService = new OAuthServiceImpl(
+                new Configuration.Builder(
+                        BASE_URL,
+                        new OAuthSettings.Builder(CLIENT_ID, CLIENT_SECRET)
+                                .setRedirectUri(REDIRECT_URI)
+                                .setScopes(SCOPES)
+                                .build()
+                ).build(),
+                oauthClient,
+                queryDecoder
+        );
+
+        when(queryDecoder.decode(any(AccessTokenQuery.class)))
+                .thenReturn(accessTokenParams);
+        when(queryDecoder.decode(any(ClientCredentialsQuery.class)))
+                .thenReturn(clientCredentialsParams);
+        when(queryDecoder.decode(any(RefreshTokenQuery.class)))
+                .thenReturn(refreshTokenParams);
+
+        when(oauthClient.getAccessToken(accessTokenParams))
+                .thenReturn(Single.just(Response.success(accessToken)));
+        when(oauthClient.getAccessToken(clientCredentialsParams))
+                .thenReturn(Single.just(Response.success(clientCredentialsToken)));
+        when(oauthClient.getAccessToken(refreshTokenParams))
+                .thenReturn(Single.just(Response.success(refreshToken)));
+
+        when(accessToken.getRefreshToken())
+                .thenReturn(REFRESH_TOKEN_STRING);
+        when(clientCredentialsToken.getRefreshToken())
+                .thenReturn(REFRESH_TOKEN_STRING);
+        when(refreshToken.setRefreshToken(anyString()))
+                .thenReturn(refreshToken);
     }
 
     @Test
     public void getAuthorizationUrl() throws Exception {
-        URL authorizationUrl = oAuthService.getAuthorizationUrl(EXPECTED_STATE, EXPECTED_SCOPES);
+        URL authorizationUrl = oAuthService.getAuthorizationUrl(STATE);
         assertNotNull(authorizationUrl);
-        assertEquals(new URL(EXPECTED_BASE_URL).getHost(), authorizationUrl.getHost());
-        assertTrue(authorizationUrl.toString().contains(EXPECTED_CLIENT_ID));
-        assertTrue(authorizationUrl.toString().contains(Utils.encodeParameterValue(EXPECTED_REDIRECT_URI)));
-        assertTrue(authorizationUrl.toString().contains(Utils.encodeParameterValue(EXPECTED_STATE)));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getAuthorizationUrlWithNullState() throws Exception {
-        oAuthService.getAuthorizationUrl(null, EXPECTED_SCOPES);
+        oAuthService.getAuthorizationUrl(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getAuthorizationUrlWithEmptyState() throws Exception {
+        oAuthService.getAuthorizationUrl("");
     }
 
     @Test
     public void getAccessToken() {
-        oAuthService.getAccessToken(EMPTY_STRING, EXPECTED_SCOPES);
+        Token actualAccessToken = oAuthService.getAccessToken(CODE).blockingGet();
 
-        verify(oauthClient, times(1)).getAccessToken(anyMap());
-        verify(queryDecoder, times(1)).decode(any());
+        assertEquals(accessToken, actualAccessToken);
+        verify(oauthClient).getAccessToken(accessTokenParams);
+
+        Token actualRefreshToken = oAuthService.refreshAccessToken().blockingGet();
+
+        assertEquals(refreshToken, actualRefreshToken);
+        verify(oauthClient).getAccessToken(refreshTokenParams);
     }
 
     @Test
-    public void getRefreshToken() {
-        oAuthService.refreshAccessToken();
+    public void getClientCredentials() {
+        Token actualClientCredentialsToken = oAuthService.getClientCredentials().blockingGet();
 
-        verify(oauthClient, times(1)).getAccessToken(anyMap());
-        verify(queryDecoder, times(1)).decode(any());
+        assertEquals(clientCredentialsToken, actualClientCredentialsToken);
+        verify(oauthClient).getAccessToken(clientCredentialsParams);
+
+        Token actualRefreshToken = oAuthService.refreshAccessToken().blockingGet();
+
+        assertEquals(refreshToken, actualRefreshToken);
+        verify(oauthClient).getAccessToken(refreshTokenParams);
     }
+
 }

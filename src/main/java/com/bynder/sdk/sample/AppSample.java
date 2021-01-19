@@ -28,14 +28,11 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class AppSample {
@@ -44,15 +41,16 @@ public class AppSample {
             throws IOException, URISyntaxException {
         AppSample app = new AppSample(
                 "https://example.com",
-                "OAuth2 client ID",
-                "Oauth2 client secret",
-                "https://redirect_url/",
-                token -> { // OAuth2 refresh token callback
-                    LOG.info("Auto refresh triggered!");
-                    LOG.info(String.format("Refresh token used: %s", token.getRefreshToken()));
-                    LOG.info(String.format("New access token: %s", token.getAccessToken()));
-                    LOG.info(String.format("New access token expiration date: %s", token.getAccessTokenExpiration()));
-                }
+                new OAuthSettings.Builder("OAuth2 client ID", "Oauth2 client secret")
+                        .setRedirectUri("https://redirect_url/") // Leave out for authentication with client credentials
+                        .setScopes(OAUTH_SCOPES) // List of scopes to request to be granted to the access token.
+                        .setRefreshTokenCallback(token -> { // Optional callback method to be triggered when token is refreshed.
+                            LOG.info("Auto refresh triggered!");
+                            LOG.info(String.format("Refresh token used: %s", token.getRefreshToken()));
+                            LOG.info(String.format("New access token: %s", token.getAccessToken()));
+                            LOG.info(String.format("New access token expiration date: %s", token.getAccessTokenExpiration()));
+                        })
+                        .build()
         );
         app.listItems();
         app.uploadFile("/path/to/file.ext");
@@ -70,48 +68,13 @@ public class AppSample {
         bynderClient = BynderClient.Builder.create(configuration);
         assetService = bynderClient.getAssetService();
         collectionService = bynderClient.getCollectionService();
-        authenticateWithOAuth2();
+        authenticateWithOAuth2(configuration.getOAuthSettings().getRedirectUri() == null);
     }
 
     public AppSample(final String baseUrl, final OAuthSettings oAuthSettings)
             throws IOException, URISyntaxException {
-        this(new Configuration.Builder(new URL(baseUrl))
-                .setOAuthSettings(oAuthSettings)
-                .build());
+        this(new Configuration.Builder(baseUrl, oAuthSettings).build());
     }
-
-    public AppSample(
-            final String baseUrl,
-            final String oAuthClientId,
-            final String oAuthClientSecret,
-            final String oAuthRedirectUri
-    )
-            throws IOException, URISyntaxException {
-        this(
-                baseUrl,
-                new OAuthSettings(oAuthClientId, oAuthClientSecret, new URI(oAuthRedirectUri))
-        );
-    }
-
-    public AppSample(
-            final String baseUrl,
-            final String oAuthClientId,
-            final String oAuthClientSecret,
-            final String oAuthRedirectUri,
-            final Consumer<Token> oAuthRefreshTokenCallback
-    )
-            throws IOException, URISyntaxException {
-        this(
-                baseUrl,
-                new OAuthSettings(
-                        oAuthClientId,
-                        oAuthClientSecret,
-                        new URI(oAuthRedirectUri),
-                        oAuthRefreshTokenCallback::accept
-                )
-        );
-    }
-
 
     private void logError(final Throwable e) {
         LOG.error(e.getMessage());
@@ -193,23 +156,28 @@ public class AppSample {
         }).blockingAwait();
     }
 
-    private void authenticateWithOAuth2()
+    private void authenticateWithOAuth2(boolean withClientCredentials)
             throws IOException, URISyntaxException {
         OAuthService oauthService = bynderClient.getOAuthService();
 
-        // Open browser with authorization URL
-        Desktop.getDesktop().browse(
-                oauthService.getAuthorizationUrl("state example", OAUTH_SCOPES).toURI()
-        );
+        Token token;
+        if (withClientCredentials) {
+            token = oauthService.getClientCredentials().blockingGet();
+        } else {
+            // Open browser with authorization URL
+            Desktop.getDesktop().browse(
+                    oauthService.getAuthorizationUrl("state example").toURI()
+            );
 
-        // Ask for the code returned in the redirect URI
-        System.out.println("Insert the code: ");
-        Scanner scanner = new Scanner(System.in);
-        String code = scanner.nextLine();
-        scanner.close();
+            // Ask for the code returned in the redirect URI
+            System.out.println("Insert the code: ");
+            Scanner scanner = new Scanner(System.in);
+            String code = scanner.nextLine();
+            scanner.close();
 
-        // Get the access token
-        Token token = oauthService.getAccessToken(code, OAUTH_SCOPES).blockingSingle();
+            // Get the access token
+            token = oauthService.getAccessToken(code).blockingGet();
+        }
         LOG.info("OAuth token: " + token.getAccessToken());
     }
 

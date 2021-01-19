@@ -7,7 +7,7 @@
 package com.bynder.sdk.api;
 
 import com.bynder.sdk.model.oauth.Token;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.Response;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
@@ -24,9 +24,10 @@ public interface OAuthApi {
      * Gets a new access token by sending an authorization grant or refresh token.
      *
      * @param params {@link FieldMap} with parameters.
-     * @return {@link Observable} with the {@link Token} information.
+     * @return {@link Single} with the {@link Token} information.
      */
     @FormUrlEncoded
     @POST("/v6/authentication/oauth2/token")
-    Observable<Response<Token>> getAccessToken(@FieldMap Map<String, String> params);
+    Single<Response<Token>> getAccessToken(@FieldMap Map<String, String> params);
+
 }

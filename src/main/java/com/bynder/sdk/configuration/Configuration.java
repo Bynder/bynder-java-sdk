@@ -6,6 +6,7 @@
  */
 package com.bynder.sdk.configuration;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Configuration {
@@ -14,18 +15,16 @@ public class Configuration {
      * Bynder portal base URL.
      */
     private URL baseUrl;
+
     /**
      * OAuth settings for the OAuth 2.0 authorization flow.
      */
     private OAuthSettings oauthSettings;
+
     /**
      * Connection settings for the HTTP communication with Bynder.
      */
     private HttpConnectionSettings httpConnectionSettings;
-    /**
-     * Permanent token.
-     */
-    private String permanentToken;
 
     /**
      * Prevents the instantiation of the class.
@@ -45,38 +44,24 @@ public class Configuration {
         return this.httpConnectionSettings;
     }
 
-    public String getPermanentToken() {
-        return this.permanentToken;
-    }
-
     /**
      * Builder class used to create a new instance of {@link Configuration}.
      */
     public static class Builder {
 
-        private URL baseUrl;
-        private OAuthSettings oauthSettings;
+        private final URL baseUrl;
+        private final OAuthSettings oauthSettings;
         private HttpConnectionSettings httpConnectionSettings;
-        private String permanentToken;
 
-        public Builder(final URL baseUrl) {
-            this.baseUrl = baseUrl;
-            this.oauthSettings = new OAuthSettings();
-            this.httpConnectionSettings = new HttpConnectionSettings();
-        }
-
-        public Builder setOAuthSettings(OAuthSettings oauthSettings) {
+        public Builder(final String baseUrl, final OAuthSettings oauthSettings)
+                throws MalformedURLException {
+            this.baseUrl = new URL(baseUrl);
             this.oauthSettings = oauthSettings;
-            return this;
+            this.httpConnectionSettings = new HttpConnectionSettings();
         }
 
         public Builder setHttpConnectionSettings(HttpConnectionSettings httpConnectionSettings) {
             this.httpConnectionSettings = httpConnectionSettings;
-            return this;
-        }
-
-        public Builder setPermanentToken(String permanentToken) {
-            this.permanentToken = permanentToken;
             return this;
         }
 
@@ -85,8 +70,6 @@ public class Configuration {
             configuration.baseUrl = this.baseUrl;
             configuration.oauthSettings = this.oauthSettings;
             configuration.httpConnectionSettings = this.httpConnectionSettings;
-            configuration.permanentToken = this.permanentToken;
-
             return configuration;
         }
     }

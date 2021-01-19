@@ -8,20 +8,21 @@ package com.bynder.sdk.service.oauth;
 
 import com.bynder.sdk.api.OAuthApi;
 import com.bynder.sdk.configuration.Configuration;
-import com.bynder.sdk.model.oauth.GrantType;
+import com.bynder.sdk.configuration.OAuthSettings;
 import com.bynder.sdk.model.oauth.ResponseType;
 import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.query.decoder.QueryDecoder;
-import com.bynder.sdk.query.oauth.TokenQuery;
+import com.bynder.sdk.query.oauth.AccessTokenQuery;
+import com.bynder.sdk.query.oauth.ClientCredentialsQuery;
+import com.bynder.sdk.query.oauth.RefreshTokenQuery;
+import com.bynder.sdk.util.RXUtils;
 import com.bynder.sdk.util.Utils;
-import io.reactivex.Observable;
-import retrofit2.Response;
+import io.reactivex.Single;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 public class OAuthServiceImpl implements OAuthService {
 
@@ -34,10 +35,11 @@ public class OAuthServiceImpl implements OAuthService {
      * Instance of {@link QueryDecoder} to decode query objects into API parameters.
      */
     private final QueryDecoder queryDecoder;
-    /**
-     * Configuration settings needed to get the OAuth info of the SDK client.
-     */
-    private Configuration configuration;
+
+    private final URL baseUrl;
+    private final OAuthSettings oAuthSettings;
+
+    private Token token;
 
     /**
      * Initialises a new instance of the class.
@@ -45,9 +47,13 @@ public class OAuthServiceImpl implements OAuthService {
      * @param configuration Configuration settings.
      * @param oauthClient OAuth2 client instance.
      */
-    OAuthServiceImpl(final Configuration configuration, final OAuthApi oauthClient,
-        final QueryDecoder queryDecoder) {
-        this.configuration = configuration;
+    public OAuthServiceImpl(
+            final Configuration configuration,
+            final OAuthApi oauthClient,
+            final QueryDecoder queryDecoder
+    ) {
+        this.baseUrl = configuration.getBaseUrl();
+        this.oAuthSettings = configuration.getOAuthSettings();
         this.oauthClient = oauthClient;
         this.queryDecoder = queryDecoder;
     }
@@ -56,65 +62,66 @@ public class OAuthServiceImpl implements OAuthService {
      * Check {@link OAuthService} for more information.
      */
     @Override
-    public URL getAuthorizationUrl(final String state, final List<String> scopes)
-        throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException {
+    public URL getAuthorizationUrl(final String state)
+            throws MalformedURLException, UnsupportedEncodingException, IllegalArgumentException {
         if (state == null || state.isEmpty()) {
             throw new IllegalArgumentException(state);
         }
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(configuration.getBaseUrl());
-        stringBuilder.append("/v6/authentication/oauth2/auth");
-        stringBuilder.append("?client_id=")
-            .append(Utils.encodeParameterValue(configuration.getOAuthSettings().getClientId()));
-        stringBuilder.append("&redirect_uri=")
-            .append(Utils.encodeParameterValue(configuration.getOAuthSettings().getRedirectUri().toString()));
-        stringBuilder.append("&response_type=")
-            .append(Utils.encodeParameterValue(ResponseType.CODE.toString()));
-        stringBuilder.append("&scope=")
-            .append(Utils.encodeParameterValue(String.join(" ", scopes)));
-        stringBuilder.append("&state=").append(Utils.encodeParameterValue(state));
+        return new URL(
+                baseUrl +
+                "/v6/authentication/oauth2/auth" +
+                "?client_id=" + Utils.encodeParameterValue(oAuthSettings.getClientId()) +
+                "&redirect_uri=" + Utils.encodeParameterValue(oAuthSettings.getRedirectUri().toString()) +
+                "&response_type=" + Utils.encodeParameterValue(ResponseType.CODE.toString()) +
+                "&scope=" + Utils.encodeParameterValue(String.join(" ", oAuthSettings.getScopes())) +
+                "&state=" + Utils.encodeParameterValue(state)
+        );
+    }
 
-        return new URL(stringBuilder.toString());
+    public Token getToken() {
+        return token;
+    }
+
+    private Token setToken(Token token) {
+        token.setAccessTokenExpiration();
+        this.token = token;
+        return token;
     }
 
     /**
      * Check {@link OAuthService} for more information.
      */
     @Override
-    public Observable<Token> getAccessToken(final String code, final List<String> scopes) {
-        TokenQuery tokenQuery = new TokenQuery(configuration.getOAuthSettings().getClientId(),
-            configuration.getOAuthSettings().getClientSecret(), configuration.getOAuthSettings().getRedirectUri(),
-            GrantType.AUTHORIZATION_CODE, String.join(" ", scopes), code);
-
-        Map<String, String> params = queryDecoder.decode(tokenQuery);
-        Observable<Response<Token>> accessTokenObservable = oauthClient.getAccessToken(params);
-
-        return accessTokenObservable.map(response -> {
-            Token token = response.body();
-            token.setAccessTokenExpiration();
-            configuration.getOAuthSettings().setToken(token);
-            return token;
-        });
+    public Single<Token> getAccessToken(final String code) {
+        return RXUtils.handleResponseBody(oauthClient.getAccessToken(queryDecoder.decode(
+                new AccessTokenQuery(oAuthSettings, code)
+        ))).map(this::setToken);
     }
 
     /**
      * Check {@link OAuthService} for more information.
      */
     @Override
-    public Observable<Token> refreshAccessToken() {
-        TokenQuery tokenQuery = new TokenQuery(configuration.getOAuthSettings().getClientId(),
-            configuration.getOAuthSettings().getClientSecret(), GrantType.REFRESH_TOKEN,
-            configuration.getOAuthSettings().getToken().getRefreshToken());
-
-        Map<String, String> params = queryDecoder.decode(tokenQuery);
-        Observable<Response<Token>> refreshTokenObservable = oauthClient.getAccessToken(params);
-
-        return refreshTokenObservable.map(response -> {
-            Token token = response.body();
-            token.setAccessTokenExpiration();
-            configuration.getOAuthSettings().refreshToken(token);
-            return token;
-        });
+    public Single<Token> getClientCredentials() {
+        return RXUtils.handleResponseBody(oauthClient.getAccessToken(queryDecoder.decode(
+                new ClientCredentialsQuery(oAuthSettings)
+        ))).map(this::setToken);
     }
+
+    /**
+     * Check {@link OAuthService} for more information.
+     */
+    @Override
+    public Single<Token> refreshAccessToken() {
+        String refreshToken = token.getRefreshToken();
+        if (refreshToken != null) {
+            return RXUtils.handleResponseBody(oauthClient.getAccessToken(queryDecoder.decode(
+                    new RefreshTokenQuery(oAuthSettings, refreshToken)
+            ))).map(newToken -> setToken(newToken).setRefreshToken(refreshToken));
+        } else {
+            return getClientCredentials();
+        }
+    }
+
 }

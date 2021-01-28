@@ -18,8 +18,8 @@ jobs:
       - name: Maven Package
         run: mvn clean install -Dgpg.skip -Dmaven.javadoc.skip -Dmaven.test.skip
 
-      - name: Run tests
-        run: mvn clean test
+      - name: Tests with Coverage
+        run: mvn clean test jacoco:report
 
       - name: Set branch name and PR number
         id: refs
@@ -37,6 +37,6 @@ jobs:
           CI_BRANCH: ${{ steps.refs.outputs.branch_name }}
           CI_PULL_REQUEST: ${{ steps.refs.outputs.pr_number }}
         run: |
-          mvn clean test coveralls:report \
+          mvn coveralls:report \
           --no-transfer-progress \
           -D repoToken=${{ secrets.COVERALLS_TOKEN }}

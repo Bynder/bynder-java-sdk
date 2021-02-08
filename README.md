@@ -3,6 +3,7 @@
 ![Tests](https://github.com/Bynder/bynder-java-sdk/workflows/Tests/badge.svg)
 ![Release](https://github.com/Bynder/bynder-java-sdk/workflows/Release/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/Bynder/bynder-java-sdk/badge.svg?branch=master)](https://coveralls.io/github/Bynder/bynder-java-sdk?branch=master)
+![Maven Central](https://img.shields.io/maven-central/v/com.bynder/bynder-java-sdk)
 
 The main goal of this SDK is to speed up the integration of Bynder customers who use Java, making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.
 

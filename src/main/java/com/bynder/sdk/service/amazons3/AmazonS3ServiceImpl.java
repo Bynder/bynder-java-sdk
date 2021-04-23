@@ -50,28 +50,29 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
             final byte[] fileContent,
             final int numberOfChunks
     ) {
-        Map<String, RequestBody> params = new LinkedHashMap<>();
-
         MultipartParameters multipartParams = uploadRequest.getMultipartParams();
         RequestBody key = encodeField(
                 String.format("%s/p%s", multipartParams.getKey(), chunkNumber)
         );
+        // The order of params is critical, so we're using a LinkedHashMap
+        Map<String, RequestBody> params = new LinkedHashMap<>();
+
+        params.put("x-amz-credential", encodeField(multipartParams.getAwsAccessKeyId()));
+        params.put("key", key);
+        params.put("Policy", encodeField(multipartParams.getPolicy()));
+        params.put("X-Amz-Signature", encodeField(multipartParams.getSignature()));
+        params.put("acl", encodeField(multipartParams.getAcl()));
+        params.put("x-amz-algorithm", encodeField(multipartParams.getAlgorithm()));
+        params.put("x-amz-date", encodeField(multipartParams.getDate()));
+        params.put("success_action_status", encodeField(multipartParams.getSuccessActionStatus()));
+        params.put("Content-Type", encodeField(multipartParams.getContentType()));
+        params.put("name", encodeField(filename));
 
         params.put("chunk", encodeField(String.valueOf(chunkNumber)));
         params.put("chunks", encodeField(String.valueOf(numberOfChunks)));
-        params.put("file", encodeField(fileContent));
         params.put("Filename", key);
-        params.put("key", key);
-        params.put("name", encodeField(filename));
 
-        params.put("acl", encodeField(multipartParams.getAcl()));
-        params.put("Content-Type", encodeField(multipartParams.getContentType()));
-        params.put("Policy", encodeField(multipartParams.getPolicy()));
-        params.put("success_action_status", encodeField(multipartParams.getSuccessActionStatus()));
-        params.put("x-amz-algorithm", encodeField(multipartParams.getAlgorithm()));
-        params.put("x-amz-credential", encodeField(multipartParams.getAwsAccessKeyId()));
-        params.put("x-amz-date", encodeField(multipartParams.getDate()));
-        params.put("X-Amz-Signature", encodeField(multipartParams.getSignature()));
+        params.put("file", encodeField(fileContent));
 
         return amazonS3Api.uploadPartToAmazon(params);
     }

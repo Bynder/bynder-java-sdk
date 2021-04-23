@@ -17,6 +17,14 @@ import java.util.Map;
  * uploading a file.
  */
 public class UploadRequest {
+    public UploadRequest() {
+    }
+
+    public UploadRequest(String s3Filename, S3File s3File, MultipartParameters multipartParams) {
+        this.s3Filename = s3Filename;
+        this.s3File = s3File;
+        this.multipartParams = multipartParams;
+    }
 
     /**
      * S3 file name.

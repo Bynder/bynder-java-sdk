@@ -13,6 +13,20 @@ import com.google.gson.annotations.SerializedName;
  * uploading a file.
  */
 public class MultipartParameters {
+    public MultipartParameters() {
+    }
+
+    public MultipartParameters(String awsAccessKeyId, String policy, String successActionStatus, String key, String signature, String contentType, String acl, String algorithm, String date) {
+        this.awsAccessKeyId = awsAccessKeyId;
+        this.policy = policy;
+        this.successActionStatus = successActionStatus;
+        this.key = key;
+        this.signature = signature;
+        this.contentType = contentType;
+        this.acl = acl;
+        this.algorithm = algorithm;
+        this.date = date;
+    }
 
     /**
      * Amz credentials.

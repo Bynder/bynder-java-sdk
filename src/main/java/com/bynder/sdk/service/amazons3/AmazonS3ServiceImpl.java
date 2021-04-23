@@ -28,7 +28,7 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
     /**
      * Instance of {@link AmazonS3Api} which handles the HTTP communication with the Amazon S3 API.
      */
-    private final AmazonS3Api amazonS3Api;
+    AmazonS3Api amazonS3Api;
 
     /**
      * Initialises a new instance of the class.

@@ -82,4 +82,14 @@ public class UploadQuery {
 
         return this;
     }
+    
+    public UploadQuery addMetaproperty(String metapropertyUuid, String[] options) {
+        if(this.metaproperties == null) {
+            this.metaproperties = new ArrayList<>();
+        }
+
+        this.metaproperties.add(new MetapropertyAttribute(metapropertyUuid, options));
+
+        return this;
+    }
 }

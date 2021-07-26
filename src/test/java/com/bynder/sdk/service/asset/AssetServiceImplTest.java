@@ -49,8 +49,11 @@ public class AssetServiceImplTest {
 
     @Test
     public void getTags() {
-        assetService.getTags();
-        verify(bynderApi, times(1)).getTags();
+        TagQuery tagQuery = new TagQuery();
+        assetService.getTags(tagQuery);
+
+        verify(bynderApi, times(1)).getTags(anyMap());
+        verify(queryDecoder, times(1)).decode(tagQuery);
     }
 
     @Test

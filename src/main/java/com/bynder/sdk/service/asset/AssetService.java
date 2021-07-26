@@ -35,9 +35,10 @@ public interface AssetService {
     /**
      * Get Tags.
      *
+     * @param tagQuery Filter resulting tags
      * @return {@link Observable} with list of {@link Tag}.
      */
-    Observable<Response<List<Tag>>> getTags();
+    Observable<Response<List<Tag>>> getTags(TagQuery tagQuery);
 
     /**
      * Get Metaproperties.

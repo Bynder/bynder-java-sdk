@@ -47,7 +47,8 @@ public interface BynderApi {
      * @return {@link Observable} with list of {@link Tag}.
      */
     @GET("/api/v4/tags/")
-    Observable<Response<List<Tag>>> getTags();
+    Observable<Response<List<Tag>>> getTags(
+            @QueryMap Map<String, String> params);
 
     /**
      * Gets map of the metaproperties. The key of the map returned is the name of the metaproperty.

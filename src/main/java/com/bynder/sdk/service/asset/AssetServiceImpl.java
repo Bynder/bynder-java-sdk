@@ -58,8 +58,9 @@ public class AssetServiceImpl implements AssetService {
      * Check {@link AssetService} for more information.
      */
     @Override
-    public Observable<Response<List<Tag>>> getTags() {
-        return bynderApi.getTags();
+    public Observable<Response<List<Tag>>> getTags(final TagQuery tagQuery) {
+        Map<String, String> params = queryDecoder.decode(tagQuery);
+        return bynderApi.getTags(params);
     }
 
     /**

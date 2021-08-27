@@ -40,4 +40,17 @@ public class UploadQueryTest {
         assertEquals(EXPECTED_MEDIA_ID, uploadQuery.getMediaId());
         assertEquals(EXPECTED_AUDIT, uploadQuery.isAudit());
     }
+    
+        @Test
+    public void testAddMetaproperty_multioption() {
+        String[] EXPECTED_METAPROPERTY_OPTIONS =  new String[]{"EXPECTED_OPTION_1", "EXPECTED_OPTION_2"};
+        UploadQuery uploadQuery = new UploadQuery(EXPECTED_FILE_PATH, EXPECTED_BRAND_ID);
+
+        uploadQuery.addMetaproperty(EXPECTED_METAPROPERTY_ID, EXPECTED_METAPROPERTY_OPTIONS);
+
+        String[] actualOptions = uploadQuery.getMetaproperties().get(0).getOptionsIds();
+
+        assertEquals(EXPECTED_METAPROPERTY_OPTIONS.length, actualOptions.length);
+        assertEquals(EXPECTED_METAPROPERTY_OPTIONS[0], actualOptions[0]);
+    }
 }

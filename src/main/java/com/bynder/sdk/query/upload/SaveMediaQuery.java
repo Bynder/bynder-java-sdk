@@ -10,6 +10,7 @@ import com.bynder.sdk.query.MetapropertyAttribute;
 import com.bynder.sdk.query.decoder.ApiField;
 import com.bynder.sdk.query.decoder.MetapropertyAttributesDecoder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,8 +56,8 @@ public class SaveMediaQuery {
 
     public SaveMediaQuery(final String importId) {
         this.importId = importId;
+        this.metaproperties = new ArrayList<>();
     }
-
 
     public SaveMediaQuery setBrandId(final String brandId) {
         this.brandId = brandId;
@@ -80,6 +81,11 @@ public class SaveMediaQuery {
 
     public SaveMediaQuery setMetaproperties(List<MetapropertyAttribute> metaproperties) {
         this.metaproperties = metaproperties;
+        return this;
+    }
+
+    public SaveMediaQuery addMetaproperty(final MetapropertyAttribute metaproperty) {
+        this.metaproperties.add(metaproperty);
         return this;
     }
 

@@ -7,7 +7,10 @@
 package com.bynder.sdk.query;
 
 import com.bynder.sdk.query.decoder.ApiField;
-import com.bynder.sdk.query.decoder.MetapropertyAttributeDecoder;
+import com.bynder.sdk.query.decoder.MetapropertyAttributesDecoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Query to specify the media metadata to be modified.
@@ -19,49 +22,46 @@ public class MediaModifyQuery {
      */
     @ApiField(name = "id")
     private final String mediaId;
+
     /**
      * Name new value.
      */
     @ApiField
     private String name;
+
     /**
      * Description new value.
      */
     @ApiField
     private String description;
+
     /**
      * Copyright new value.
      */
     @ApiField
     private String copyright;
+
     /**
      * Archive new status.
      */
     @ApiField
     private Boolean archive;
+
     /**
      * Date published new value.
      */
     @ApiField
     private String datePublished;
+
     /**
-     * MetapropertyAttribute with metaproperty id and list of all its metaproperty options ids to
-     * set on
-     * the media.
+     * Dictionary with (metaproperty) options to set on the asset.
      */
-    @ApiField(decoder = MetapropertyAttributeDecoder.class)
-    private MetapropertyAttribute metaproperty;
+    @ApiField(name = "metaproperty", decoder = MetapropertyAttributesDecoder.class)
+    private List<MetapropertyAttribute> metaproperties;
 
     public MediaModifyQuery(final String mediaId) {
         this.mediaId = mediaId;
-    }
-
-    public String getMediaId() {
-        return mediaId;
-    }
-
-    public String getName() {
-        return name;
+        this.metaproperties = new ArrayList<>();
     }
 
     public MediaModifyQuery setName(final String name) {
@@ -69,17 +69,9 @@ public class MediaModifyQuery {
         return this;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public MediaModifyQuery setDescription(final String description) {
         this.description = description;
         return this;
-    }
-
-    public String getCopyright() {
-        return copyright;
     }
 
     public MediaModifyQuery setCopyright(final String copyright) {
@@ -87,17 +79,9 @@ public class MediaModifyQuery {
         return this;
     }
 
-    public Boolean getArchive() {
-        return archive;
-    }
-
     public MediaModifyQuery setArchive(final Boolean archive) {
         this.archive = archive;
         return this;
-    }
-
-    public String getDatePublished() {
-        return datePublished;
     }
 
     public MediaModifyQuery setDatePublished(final String datePublished) {
@@ -105,12 +89,22 @@ public class MediaModifyQuery {
         return this;
     }
 
-    public MetapropertyAttribute getMetaproperty() {
-        return metaproperty;
-    }
-
-    public MediaModifyQuery setMetaproperty(final MetapropertyAttribute metaproperty) {
-        this.metaproperty = metaproperty;
+    public MediaModifyQuery setMetaproperties(List<MetapropertyAttribute> metaproperties) {
+        this.metaproperties = metaproperties;
         return this;
     }
+
+    /**
+     * @deprecated use {@link #addMetaproperty(MetapropertyAttribute)} instead.
+     */
+    @Deprecated
+    public MediaModifyQuery setMetaproperty(final MetapropertyAttribute metaproperty) {
+        return addMetaproperty(metaproperty);
+    }
+
+    public MediaModifyQuery addMetaproperty(final MetapropertyAttribute metaproperty) {
+        this.metaproperties.add(metaproperty);
+        return this;
+    }
+
 }

@@ -16,8 +16,12 @@ public class RegisterChunkQueryTest {
 
     @Test
     public void initializeRegisterChunkQuery() {
-        RegisterChunkQuery registerChunkQuery = new RegisterChunkQuery(EXPECTED_UPLOAD_ID,
-            EXPECTED_CHUNK_NUMBER, EXPECTED_TARGET_ID, EXPECTED_FILENAME);
+        RegisterChunkQuery registerChunkQuery = new RegisterChunkQuery(
+                EXPECTED_CHUNK_NUMBER,
+                EXPECTED_UPLOAD_ID,
+                EXPECTED_TARGET_ID,
+                EXPECTED_FILENAME
+        );
 
         assertEquals(EXPECTED_UPLOAD_ID, registerChunkQuery.getUploadId());
         assertEquals(EXPECTED_CHUNK_NUMBER, registerChunkQuery.getChunkNumber());

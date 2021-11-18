@@ -9,11 +9,11 @@ package com.bynder.sdk.service.amazons3;
 import com.bynder.sdk.api.AmazonS3Api;
 import com.bynder.sdk.api.ApiFactory;
 import com.bynder.sdk.model.upload.MultipartParameters;
-import com.bynder.sdk.model.upload.UploadRequest;
-import io.reactivex.Observable;
+import com.bynder.sdk.util.Indexed;
+import com.bynder.sdk.util.RXUtils;
+import io.reactivex.Completable;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import retrofit2.Response;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,16 +43,14 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
      * Check {@link AmazonS3Service} for more information.
      */
     @Override
-    public Observable<Response<Void>> uploadPartToAmazon(
-            final String filename,
-            final UploadRequest uploadRequest,
-            final int chunkNumber,
-            final byte[] fileContent,
-            final int numberOfChunks
+    public Completable uploadPartToAmazon(
+            Indexed<byte[]> chunk,
+            String filename,
+            int numberOfChunks,
+            MultipartParameters multipartParams
     ) {
-        MultipartParameters multipartParams = uploadRequest.getMultipartParams();
         RequestBody key = encodeField(
-                String.format("%s/p%s", multipartParams.getKey(), chunkNumber)
+                String.format("%s/p%s", multipartParams.getKey(), chunk.getIndex())
         );
         // The order of params is critical, so we're using a LinkedHashMap
         Map<String, RequestBody> params = new LinkedHashMap<>();
@@ -67,14 +65,14 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
         params.put("success_action_status", encodeField(multipartParams.getSuccessActionStatus()));
         params.put("Content-Type", encodeField(multipartParams.getContentType()));
         params.put("name", encodeField(filename));
-
-        params.put("chunk", encodeField(String.valueOf(chunkNumber)));
+        params.put("chunk", encodeField(String.valueOf(chunk.getIndex())));
         params.put("chunks", encodeField(String.valueOf(numberOfChunks)));
         params.put("Filename", key);
+        params.put("file", encodeField(chunk.getValue()));
 
-        params.put("file", encodeField(fileContent));
-
-        return amazonS3Api.uploadPartToAmazon(params);
+        return amazonS3Api.uploadPartToAmazon(params)
+                .map(RXUtils::ensureSuccessResponse)
+                .ignoreElement();
     }
 
     private RequestBody encodeField(byte[] field) {

@@ -35,10 +35,14 @@ public class FinaliseUploadQuery {
      * Total number of chunks uploaded.
      */
     @ApiField
-    private final int chunks;
+    private final Long chunks;
 
-    public FinaliseUploadQuery(final String uploadId, final String targetId,
-        final String s3Filename, final int chunks) {
+    public FinaliseUploadQuery(
+            final String uploadId,
+            final String targetId,
+            final String s3Filename,
+            final Long chunks
+    ) {
         this.uploadId = uploadId;
         this.targetId = targetId;
         this.s3Filename = s3Filename;
@@ -57,7 +61,7 @@ public class FinaliseUploadQuery {
         return s3Filename;
     }
 
-    public int getChunks() {
+    public Long getChunks() {
         return chunks;
     }
 }

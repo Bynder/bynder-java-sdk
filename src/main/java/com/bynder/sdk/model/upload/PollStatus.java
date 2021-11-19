@@ -30,15 +30,12 @@ public class PollStatus {
      */
     private HashSet<String> itemsRejected;
 
-    public HashSet<String> getItemsDone() {
-        return itemsDone;
+    public boolean processingDone(String importId) {
+        return itemsDone.contains(importId);
     }
 
-    public HashSet<String> getItemsFailed() {
-        return itemsFailed;
+    public boolean processingFailed(String importId) {
+        return itemsFailed.contains(importId);
     }
 
-    public HashSet<String> getItemsRejected() {
-        return itemsRejected;
-    }
 }

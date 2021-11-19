@@ -7,7 +7,7 @@
 package com.bynder.sdk.api;
 
 import com.bynder.sdk.model.upload.MultipartParameters;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import okhttp3.RequestBody;
 import retrofit2.Response;
 import retrofit2.http.Multipart;
@@ -26,9 +26,9 @@ public interface AmazonS3Api {
      *
      * @param params Parameters from the {@link MultipartParameters} provided in the response of
      * {@link BynderApi#getUploadInformation(Map)}.
-     * @return {@link Observable} with the {@link Response}.
+     * @return {@link Single} with the {@link Response}.
      */
     @Multipart
     @POST("/")
-    Observable<Response<Void>> uploadPartToAmazon(@PartMap Map<String, RequestBody> params);
+    Single<Response<Void>> uploadPartToAmazon(@PartMap Map<String, RequestBody> params);
 }

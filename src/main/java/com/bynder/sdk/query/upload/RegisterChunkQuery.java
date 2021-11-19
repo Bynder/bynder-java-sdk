@@ -17,16 +17,16 @@ import java.util.Map;
 public class RegisterChunkQuery {
 
     /**
-     * Upload id for the file being uploaded.
-     */
-    @ApiField(name = "id")
-    private final String uploadId;
-
-    /**
      * Number of the chunk that was uploaded.
      */
     @ApiField
     private final int chunkNumber;
+
+    /**
+     * Upload id for the file being uploaded.
+     */
+    @ApiField(name = "id")
+    private final String uploadId;
 
     /**
      * Target id in the authorisation information returned by the
@@ -41,20 +41,24 @@ public class RegisterChunkQuery {
     @ApiField
     private final String filename;
 
-    public RegisterChunkQuery(final String uploadId, final int chunkNumber, final String targetId,
-        final String filename) {
-        this.uploadId = uploadId;
+    public RegisterChunkQuery(
+            final int chunkNumber,
+            final String uploadId,
+            final String targetId,
+            final String filename
+    ) {
         this.chunkNumber = chunkNumber;
+        this.uploadId = uploadId;
         this.targetId = targetId;
         this.filename = filename;
     }
 
-    public String getUploadId() {
-        return uploadId;
-    }
-
     public int getChunkNumber() {
         return chunkNumber;
+    }
+
+    public String getUploadId() {
+        return uploadId;
     }
 
     public String getTargetId() {

@@ -6,8 +6,10 @@
  */
 package com.bynder.sdk.service.amazons3;
 
-import com.bynder.sdk.model.upload.UploadRequest;
+import com.bynder.sdk.model.upload.MultipartParameters;
 import com.bynder.sdk.service.asset.AssetService;
+import com.bynder.sdk.util.Indexed;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import retrofit2.Response;
 
@@ -19,15 +21,18 @@ public interface AmazonS3Service {
     /**
      * Uploads a file part to Amazon S3.
      *
+     * @param chunk Content of the file to be uploaded.
      * @param filename Name of the file to be uploaded.
-     * @param uploadRequest Upload request information.
-     * @param chunkNumber Number of the chunk to be uploaded.
-     * @param fileContent Content of the file to be uploaded.
      * @param numberOfChunks Total number of chunks.
+     * @param multipartParams Upload request multipartParams.
      * @return {@link Observable} with the request {@link Response} information.
      */
-    Observable<Response<Void>> uploadPartToAmazon(String filename, UploadRequest uploadRequest,
-        int chunkNumber, byte[] fileContent, int numberOfChunks);
+    Completable uploadPartToAmazon(
+            Indexed<byte[]> chunk,
+            String filename,
+            int numberOfChunks,
+            MultipartParameters multipartParams
+    );
 
     /**
      * Builder class used to create a new instance of {@link AssetService}.

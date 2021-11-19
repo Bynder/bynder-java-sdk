@@ -12,7 +12,7 @@ public class FinaliseUploadQueryTest {
     public static final String EXPECTED_UPLOAD_ID = "uploadId";
     public static final String EXPECTED_TARGET_ID = "targetId";
     public static final String EXPECTED_S3_FILENAME = "s3Filename";
-    public static final int EXPECTED_CHUNKS = 1;
+    public static final Long EXPECTED_CHUNKS = 1L;
 
     @Test
     public void initializeFinaliseUploadQuery() {

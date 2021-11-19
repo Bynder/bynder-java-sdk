@@ -166,7 +166,7 @@ public class AssetServiceImpl implements AssetService {
      */
     @Override
     public Observable<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
-        return fileUploader.uploadFile(uploadQuery);
+        return fileUploader.uploadFile(uploadQuery).toObservable();
     }
 
     /**

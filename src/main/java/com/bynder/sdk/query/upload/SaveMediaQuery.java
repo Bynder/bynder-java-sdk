@@ -40,11 +40,13 @@ public class SaveMediaQuery {
      */
     @ApiField(name = "id")
     private String mediaId;
+
     /**
      * Flags if the media asset should be sent to the waiting room.
      */
     @ApiField
     private Boolean audit;
+
     /**
      * Dictionary with (metaproperty) options to set on the asset upon upload.
      */
@@ -55,30 +57,15 @@ public class SaveMediaQuery {
         this.importId = importId;
     }
 
-    public String getImportId() {
-        return importId;
-    }
-
-    public String getBrandId() {
-        return brandId;
-    }
 
     public SaveMediaQuery setBrandId(final String brandId) {
         this.brandId = brandId;
         return this;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public SaveMediaQuery setName(final String name) {
         this.name = name;
         return this;
-    }
-
-    public String getMediaId() {
-        return mediaId;
     }
 
     public SaveMediaQuery setMediaId(final String mediaId) {
@@ -96,7 +83,4 @@ public class SaveMediaQuery {
         return this;
     }
 
-    public List<MetapropertyAttribute> getMetaproperties() {
-        return metaproperties;
-    }
 }

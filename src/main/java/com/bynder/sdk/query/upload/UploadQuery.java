@@ -8,6 +8,7 @@ package com.bynder.sdk.query.upload;
 
 import com.bynder.sdk.query.MetapropertyAttribute;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,19 +21,23 @@ public class UploadQuery {
      * File path of the file we want to upload.
      */
     private final String filepath;
+
     /**
      * Brand id where we want to store the file.
      */
     private final String brandId;
+
     /**
      * Media id. If specified it will add the media asset file as new version of the specified
      * media. Otherwise a new media asset will be added to the asset bank.
      */
     private String mediaId;
+
     /**
      * Flags if the media asset should be sent to the waiting room.
      */
     private Boolean audit;
+
     /**
      * list of metaproperties and options to set on the asset upon upload.
      */
@@ -45,6 +50,10 @@ public class UploadQuery {
 
     public String getFilepath() {
         return filepath;
+    }
+
+    public String getFilename() {
+        return Paths.get(filepath).getFileName().toString();
     }
 
     public String getBrandId() {

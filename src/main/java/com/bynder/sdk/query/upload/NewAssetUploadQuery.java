@@ -22,6 +22,11 @@ public class NewAssetUploadQuery extends UploadQuery {
      */
     private List<MetapropertyAttribute> metaproperties;
 
+    /**
+     * comma-separated list of tags to set on the asset upon upload.
+     */
+    private String tags;
+
     public NewAssetUploadQuery(String filepath, String brandId) {
         super(filepath);
         this.brandId = brandId;
@@ -37,6 +42,15 @@ public class NewAssetUploadQuery extends UploadQuery {
 
     public UploadQuery setAudit(final Boolean audit) {
         this.audit = audit;
+        return this;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public UploadQuery setTags(final List<String> tags) {
+        this.tags = String.join(",", tags);
         return this;
     }
 

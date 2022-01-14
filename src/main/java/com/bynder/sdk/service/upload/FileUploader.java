@@ -106,6 +106,7 @@ public class FileUploader {
                         .setBrandId(uploadQuery.getBrandId())
                         .setName(uploadQuery.getFilename())
                         .setAudit(uploadQuery.isAudit())
+                        .setTags(uploadQuery.getTags())
                         .setMetaproperties(uploadQuery.getMetaproperties()))
         ).map(RXUtils::getResponseBody);
     }

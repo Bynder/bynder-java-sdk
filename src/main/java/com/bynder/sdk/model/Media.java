@@ -80,6 +80,11 @@ public class Media {
      */
     private Boolean isPublic;
     /**
+     * Media limited status.
+     */
+    @SerializedName(value = "limited")
+    private Boolean isLimited;
+    /**
      * Media original URL.
      */
     private String original;
@@ -174,6 +179,10 @@ public class Media {
 
     public Boolean isPublic() {
         return isPublic;
+    }
+
+    public Boolean isLimited() {
+        return isLimited;
     }
 
     public String getOriginal() {

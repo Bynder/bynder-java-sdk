@@ -38,6 +38,12 @@ public class MediaQuery {
     @ApiField(decoder = BooleanParameterDecoder.class)
     private Boolean isPublic;
     /**
+     * This property has to be set to 1 (TRUE) for the API to also retrieve media assets marked as
+     * limited.
+     */
+    @ApiField(decoder = BooleanParameterDecoder.class)
+    private Boolean limited;
+    /**
      * Whether to fetch the media item information or not.
      */
     @ApiField(decoder = BooleanParameterDecoder.class)
@@ -92,6 +98,15 @@ public class MediaQuery {
 
     public MediaQuery setIsPublic(final Boolean isPublic) {
         this.isPublic = isPublic;
+        return this;
+    }
+
+    public Boolean getLimited() {
+        return limited;
+    }
+
+    public MediaQuery setLimited(final Boolean limited) {
+        this.limited = limited;
         return this;
     }
 

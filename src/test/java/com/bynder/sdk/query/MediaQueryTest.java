@@ -64,6 +64,9 @@ public class MediaQueryTest {
         mediaQuery.setIsPublic(EXPECTED_BOOLEAN);
         assertEquals(EXPECTED_BOOLEAN, mediaQuery.getIsPublic());
 
+        mediaQuery.setLimited(EXPECTED_BOOLEAN);
+        assertEquals(EXPECTED_BOOLEAN, mediaQuery.getLimited());
+
         mediaQuery.setLimit(EXPECTED_INTEGER);
         assertEquals(EXPECTED_INTEGER, mediaQuery.getLimit().intValue());
 

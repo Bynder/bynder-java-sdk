@@ -14,6 +14,7 @@ import com.bynder.sdk.model.MediaType;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -33,6 +34,7 @@ public class MediaQueryTest {
     public static final OrderBy EXPECTED_ORDER = OrderBy.DATE_CREATED_ASC;
     public static final String EXPECTED_METAPROPERTY_NAME = "metapropertyName";
     public static final String EXPECTED_METAPROPERTY_OPTION = "metapropertyOption";
+    public static final String EXPECTED_TAGS = "tag1,tag2";
 
     private MediaQuery mediaQuery;
 
@@ -69,6 +71,9 @@ public class MediaQueryTest {
 
         mediaQuery.setLimit(EXPECTED_INTEGER);
         assertEquals(EXPECTED_INTEGER, mediaQuery.getLimit().intValue());
+
+        mediaQuery.setTags(Arrays.asList("tag1", "tag2"));
+        assertEquals(EXPECTED_TAGS, mediaQuery.getTags());
 
         mediaQuery.setPage(EXPECTED_INTEGER);
         assertEquals(EXPECTED_INTEGER, mediaQuery.getPage().intValue());

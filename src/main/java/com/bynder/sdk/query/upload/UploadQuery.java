@@ -39,6 +39,11 @@ public class UploadQuery {
     private Boolean audit;
 
     /**
+     * Tags to be set upon the asset on an upload.
+     */
+    private String tags;
+
+    /**
      * list of metaproperties and options to set on the asset upon upload.
      */
     private List<MetapropertyAttribute> metaproperties;
@@ -75,6 +80,15 @@ public class UploadQuery {
 
     public UploadQuery setAudit(final Boolean audit) {
         this.audit = audit;
+        return this;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public UploadQuery setTags(final List<String> tags) {
+        this.tags = String.join(",", tags);
         return this;
     }
 

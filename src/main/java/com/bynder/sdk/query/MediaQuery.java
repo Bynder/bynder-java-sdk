@@ -12,6 +12,7 @@ import com.bynder.sdk.query.decoder.BooleanParameterDecoder;
 import com.bynder.sdk.query.decoder.MetapropertyParameterDecoder;
 import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,6 +59,11 @@ public class MediaQuery {
      */
     @ApiField
     private Integer page;
+    /**
+     * Comma-separated tags to be retrieved.
+     */
+    @ApiField
+    private String tags;
     /**
      * Metaproperty option ids that the media asset needs to have at least one of.
      */
@@ -134,6 +140,15 @@ public class MediaQuery {
 
     public MediaQuery setPage(final Integer page) {
         this.page = page;
+        return this;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public MediaQuery setTags(final List<String> tags) {
+        this.tags = String.join(",", tags);
         return this;
     }
 

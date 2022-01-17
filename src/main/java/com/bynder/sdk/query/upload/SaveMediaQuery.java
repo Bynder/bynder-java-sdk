@@ -37,6 +37,12 @@ public class SaveMediaQuery {
     private Boolean audit;
 
     /**
+     * Comma-separated list of tags to be set on the asset.
+     */
+    @ApiField
+    private String tags;
+
+    /**
      * Dictionary with metaproperty options to set on the asset upon upload.
      */
     @ApiField(name = "metaproperty", decoder = MetapropertyAttributesDecoder.class)
@@ -58,6 +64,11 @@ public class SaveMediaQuery {
 
     public SaveMediaQuery setAudit(final Boolean audit) {
         this.audit = audit;
+        return this;
+    }
+
+    public SaveMediaQuery setTags(final String tags) {
+        this.tags = tags;
         return this;
     }
 

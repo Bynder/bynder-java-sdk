@@ -115,7 +115,7 @@ public class AppSample {
     public void uploadFile(final String uploadPath) {
         assetService.getBrands().singleOrError().map(RXUtils::getResponseBody).flatMap(brands ->
                 assetService.uploadFile(
-                        new NewAssetUploadQuery(uploadPath, brands.get(0).getId())
+                        (NewAssetUploadQuery) (new NewAssetUploadQuery(uploadPath, brands.get(0).getId())).setTags(Arrays.asList("tag1", "tag2"))
                 )
         ).flatMap(saveMediaResponse -> {
             LOG.info("New asset successfully created: " + saveMediaResponse.getMediaId());
@@ -137,7 +137,7 @@ public class AppSample {
                     LOG.error("New asset version could not be fetched after trying 5 times.")
             ).singleOrError();
         }).flatMapCompletable(media -> {
-            LOG.info("New asset version could be fetched: " + media.getId() + " " + media.getName());
+            LOG.info("New asset version could be fetched: " + media.getId() + " " + media.getName() + " " + media.getTags());
             return assetService.deleteMedia(new MediaDeleteQuery(media.getId())).map(RXUtils::ensureSuccessResponse).ignoreElements();
         }).blockingAwait();
     }

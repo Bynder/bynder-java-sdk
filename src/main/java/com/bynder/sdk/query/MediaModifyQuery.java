@@ -66,6 +66,12 @@ public class MediaModifyQuery {
     private String limitedDate;
 
     /**
+     * Tags new value.
+     */
+    @ApiField
+    private String tags;
+
+    /**
      * Dictionary with (metaproperty) options to set on the asset.
      */
     @ApiField(name = "metaproperty", decoder = MetapropertyAttributesDecoder.class)
@@ -121,6 +127,15 @@ public class MediaModifyQuery {
 
     public MediaModifyQuery setLimitedDate(final String limitedDate) {
         this.limitedDate = limitedDate;
+        return this;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public MediaModifyQuery setTags(final List<String> tags) {
+        this.tags = String.join(",", tags);
         return this;
     }
 

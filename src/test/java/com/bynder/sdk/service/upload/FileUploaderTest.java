@@ -126,6 +126,7 @@ public class FileUploaderTest {
                 queryDecoder.decode(new SaveMediaQuery()
                         .setName(uploadQuery.getFilename())
                         .setAudit(uploadQuery.isAudit())
+                        .setTags(uploadQuery.getTags())
                         .setMetaproperties(uploadQuery.getMetaproperties())
                         .setBrandId(uploadQuery.getBrandId())
                 )

@@ -111,6 +111,6 @@ public class MediaQueryTest {
         }});
         assertEquals(1, mediaQuery.getMetapropertyOptions().size());
         assertEquals(EXPECTED_METAPROPERTY_OPTION,
-                mediaQuery.getMetapropertyOptions().get(EXPECTED_METAPROPERTY_NAME));
+            mediaQuery.getMetapropertyOptions().get(EXPECTED_METAPROPERTY_NAME));
     }
 }

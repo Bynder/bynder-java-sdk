@@ -75,6 +75,36 @@ public class MediaQuery {
     @ApiField
     private OrderBy orderBy;
     /**
+     * Retrieve assets created after this date.
+     */
+    @ApiField
+    private String dateCreated;
+    /**
+     * Retrieve assets created up until this date.
+     */
+    @ApiField
+    private String dateCreatedTo;
+    /**
+     * Retrieve assets created on this specific date
+     */
+    @ApiField
+    private String dateCreatedOn;
+    /**
+     * Retrieve assets modified after this date.
+     */
+    @ApiField
+    private String dateModified;
+    /**
+     * Retrieve assets modified up until this date.
+     */
+    @ApiField
+    private String dateModifiedTo;
+    /**
+     * Retrieve assets modified on this specific date.
+     */
+    @ApiField
+    private String dateModifiedOn;
+    /**
      * Metaproperty option ids that the media asset has to have.
      */
     @ApiField(name = "property", decoder = MetapropertyParameterDecoder.class)
@@ -167,6 +197,60 @@ public class MediaQuery {
 
     public MediaQuery setOrderBy(final OrderBy orderBy) {
         this.orderBy = orderBy;
+        return this;
+    }
+
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public MediaQuery setDateCreated(final String dateCreated) {
+        this.dateCreated = dateCreated;
+        return this;
+    }
+
+    public String getDateCreatedTo() {
+        return dateCreatedTo;
+    }
+
+    public MediaQuery setDateCreatedTo(final String dateCreatedTo) {
+        this.dateCreatedTo = dateCreatedTo;
+        return this;
+    }
+
+    public String getDateCreatedOn() {
+        return dateCreatedOn;
+    }
+
+    public MediaQuery setDateCreatedOn(final String dateCreatedOn) {
+        this.dateCreatedOn = dateCreatedOn;
+        return this;
+    }
+
+    public String getDateModified() {
+        return dateModified;
+    }
+
+    public MediaQuery setDateModified(final String dateModified) {
+        this.dateModified = dateModified;
+        return this;
+    }
+
+    public String getDateModifiedTo() {
+        return dateModifiedTo;
+    }
+
+    public MediaQuery setDateModifiedTo(final String dateModifiedTo) {
+        this.dateModifiedTo = dateModifiedTo;
+        return this;
+    }
+
+    public String getDateModifiedOn() {
+        return dateModifiedOn;
+    }
+
+    public MediaQuery setDateModifiedOn(final String dateModifiedOn) {
+        this.dateModifiedOn = dateModifiedOn;
         return this;
     }
 

@@ -12,6 +12,7 @@ import com.bynder.sdk.query.decoder.BooleanParameterDecoder;
 import com.bynder.sdk.query.decoder.MetapropertyParameterDecoder;
 import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +39,12 @@ public class MediaQuery {
     @ApiField(decoder = BooleanParameterDecoder.class)
     private Boolean isPublic;
     /**
+     * This property has to be set to 1 (TRUE) for the API to also retrieve media assets marked as
+     * limited.
+     */
+    @ApiField(decoder = BooleanParameterDecoder.class)
+    private Boolean limited;
+    /**
      * Whether to fetch the media item information or not.
      */
     @ApiField(decoder = BooleanParameterDecoder.class)
@@ -53,6 +60,11 @@ public class MediaQuery {
     @ApiField
     private Integer page;
     /**
+     * Comma-separated tags to be retrieved.
+     */
+    @ApiField
+    private String tags;
+    /**
      * Metaproperty option ids that the media asset needs to have at least one of.
      */
     @ApiField(name = "propertyOptionId", decoder = StringArrayParameterDecoder.class)
@@ -62,6 +74,36 @@ public class MediaQuery {
      */
     @ApiField
     private OrderBy orderBy;
+    /**
+     * Retrieve assets created after this date.
+     */
+    @ApiField
+    private String dateCreated;
+    /**
+     * Retrieve assets created up until this date.
+     */
+    @ApiField
+    private String dateCreatedTo;
+    /**
+     * Retrieve assets created on this specific date
+     */
+    @ApiField
+    private String dateCreatedOn;
+    /**
+     * Retrieve assets modified after this date.
+     */
+    @ApiField
+    private String dateModified;
+    /**
+     * Retrieve assets modified up until this date.
+     */
+    @ApiField
+    private String dateModifiedTo;
+    /**
+     * Retrieve assets modified on this specific date.
+     */
+    @ApiField
+    private String dateModifiedOn;
     /**
      * Metaproperty option ids that the media asset has to have.
      */
@@ -95,6 +137,15 @@ public class MediaQuery {
         return this;
     }
 
+    public Boolean getLimited() {
+        return limited;
+    }
+
+    public MediaQuery setLimited(final Boolean limited) {
+        this.limited = limited;
+        return this;
+    }
+
     public Boolean getIncludeMediaItems() {
         return includeMediaItems;
     }
@@ -122,6 +173,15 @@ public class MediaQuery {
         return this;
     }
 
+    public String getTags() {
+        return tags;
+    }
+
+    public MediaQuery setTags(final List<String> tags) {
+        this.tags = String.join(",", tags);
+        return this;
+    }
+
     public String[] getPropertyOptionIds() {
         return propertyOptionIds;
     }
@@ -137,6 +197,60 @@ public class MediaQuery {
 
     public MediaQuery setOrderBy(final OrderBy orderBy) {
         this.orderBy = orderBy;
+        return this;
+    }
+
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public MediaQuery setDateCreated(final String dateCreated) {
+        this.dateCreated = dateCreated;
+        return this;
+    }
+
+    public String getDateCreatedTo() {
+        return dateCreatedTo;
+    }
+
+    public MediaQuery setDateCreatedTo(final String dateCreatedTo) {
+        this.dateCreatedTo = dateCreatedTo;
+        return this;
+    }
+
+    public String getDateCreatedOn() {
+        return dateCreatedOn;
+    }
+
+    public MediaQuery setDateCreatedOn(final String dateCreatedOn) {
+        this.dateCreatedOn = dateCreatedOn;
+        return this;
+    }
+
+    public String getDateModified() {
+        return dateModified;
+    }
+
+    public MediaQuery setDateModified(final String dateModified) {
+        this.dateModified = dateModified;
+        return this;
+    }
+
+    public String getDateModifiedTo() {
+        return dateModifiedTo;
+    }
+
+    public MediaQuery setDateModifiedTo(final String dateModifiedTo) {
+        this.dateModifiedTo = dateModifiedTo;
+        return this;
+    }
+
+    public String getDateModifiedOn() {
+        return dateModifiedOn;
+    }
+
+    public MediaQuery setDateModifiedOn(final String dateModifiedOn) {
+        this.dateModifiedOn = dateModifiedOn;
         return this;
     }
 

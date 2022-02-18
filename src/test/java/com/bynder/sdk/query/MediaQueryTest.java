@@ -14,6 +14,7 @@ import com.bynder.sdk.model.MediaType;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -33,6 +34,8 @@ public class MediaQueryTest {
     public static final OrderBy EXPECTED_ORDER = OrderBy.DATE_CREATED_ASC;
     public static final String EXPECTED_METAPROPERTY_NAME = "metapropertyName";
     public static final String EXPECTED_METAPROPERTY_OPTION = "metapropertyOption";
+    public static final String EXPECTED_TAGS = "tag1,tag2";
+    public static final String EXPECTED_DATE = "2021-12-25T10:30:00Z";
 
     private MediaQuery mediaQuery;
 
@@ -50,6 +53,12 @@ public class MediaQueryTest {
         assertNull(mediaQuery.getPage());
         assertNull(mediaQuery.getPropertyOptionIds());
         assertNull(mediaQuery.getOrderBy());
+        assertNull(mediaQuery.getDateCreated());
+        assertNull(mediaQuery.getDateCreatedOn());
+        assertNull(mediaQuery.getDateCreatedTo());
+        assertNull(mediaQuery.getDateModified());
+        assertNull(mediaQuery.getDateModifiedOn());
+        assertNull(mediaQuery.getDateModifiedTo());
         assertNull(mediaQuery.getMetapropertyOptions());
     }
 
@@ -64,8 +73,32 @@ public class MediaQueryTest {
         mediaQuery.setIsPublic(EXPECTED_BOOLEAN);
         assertEquals(EXPECTED_BOOLEAN, mediaQuery.getIsPublic());
 
+        mediaQuery.setLimited(EXPECTED_BOOLEAN);
+        assertEquals(EXPECTED_BOOLEAN, mediaQuery.getLimited());
+
         mediaQuery.setLimit(EXPECTED_INTEGER);
         assertEquals(EXPECTED_INTEGER, mediaQuery.getLimit().intValue());
+
+        mediaQuery.setTags(Arrays.asList("tag1", "tag2"));
+        assertEquals(EXPECTED_TAGS, mediaQuery.getTags());
+
+        mediaQuery.setDateCreated(EXPECTED_DATE);
+        assertEquals(EXPECTED_DATE, mediaQuery.getDateCreated());
+
+        mediaQuery.setDateCreatedTo(EXPECTED_DATE);
+        assertEquals(EXPECTED_DATE, mediaQuery.getDateCreatedTo());
+
+        mediaQuery.setDateCreatedOn(EXPECTED_DATE);
+        assertEquals(EXPECTED_DATE, mediaQuery.getDateCreatedOn());
+
+        mediaQuery.setDateModified(EXPECTED_DATE);
+        assertEquals(EXPECTED_DATE, mediaQuery.getDateModified());
+
+        mediaQuery.setDateCreatedTo(EXPECTED_DATE);
+        assertEquals(EXPECTED_DATE, mediaQuery.getDateCreatedTo());
+
+        mediaQuery.setDateCreatedOn(EXPECTED_DATE);
+        assertEquals(EXPECTED_DATE, mediaQuery.getDateCreatedOn());
 
         mediaQuery.setPage(EXPECTED_INTEGER);
         assertEquals(EXPECTED_INTEGER, mediaQuery.getPage().intValue());

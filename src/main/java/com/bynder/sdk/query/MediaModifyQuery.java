@@ -54,6 +54,24 @@ public class MediaModifyQuery {
     private String datePublished;
 
     /**
+     * Limited new status.
+     */
+    @ApiField
+    private Boolean limited;
+
+    /**
+     * Date limited new value.
+     */
+    @ApiField
+    private String limitedDate;
+
+    /**
+     * Tags new value.
+     */
+    @ApiField
+    private String tags;
+
+    /**
      * Dictionary with (metaproperty) options to set on the asset.
      */
     @ApiField(name = "metaproperty", decoder = MetapropertyAttributesDecoder.class)
@@ -91,6 +109,33 @@ public class MediaModifyQuery {
 
     public MediaModifyQuery setMetaproperties(List<MetapropertyAttribute> metaproperties) {
         this.metaproperties = metaproperties;
+        return this;
+    }
+
+    public Boolean getLimited() {
+        return limited;
+    }
+
+    public String getLimitedDate() {
+        return limitedDate;
+    }
+
+    public MediaModifyQuery setLimited(final Boolean limited) {
+        this.limited = limited;
+        return this;
+    }
+
+    public MediaModifyQuery setLimitedDate(final String limitedDate) {
+        this.limitedDate = limitedDate;
+        return this;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public MediaModifyQuery setTags(final List<String> tags) {
+        this.tags = String.join(",", tags);
         return this;
     }
 

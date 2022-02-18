@@ -169,10 +169,11 @@ public class FileUploader {
                 .setMetaproperties(uploadQuery.getMetaproperties());
 
         if (uploadQuery.getMediaId() == null) {
-            // A new asset will be created for the upoaded file.
+            // A new asset will be created for the uploaded file.
             return saveMedia(saveMediaQuery
                     .setBrandId(uploadQuery.getBrandId())
                     .setName(uploadQuery.getFilename())
+                    .setTags(uploadQuery.getTags())
             );
         } else {
             // The uploaded file will be attached to an existing asset.

@@ -124,6 +124,7 @@ public class MediaModifyQuery {
     }
 
     public String getArchiveDate() { return archiveDate; }
+
     public Boolean getLimited() {
         return limited;
     }

@@ -82,5 +82,9 @@ public final class Utils {
         config.load(is);
         return config;
     }
+       public static String getFileNameWithoutExtension(String filename) {
+        String extPattern = "(?<!^)[.]" + (true ? ".*" : "[^.]*$");
+        return filename.replaceAll(extPattern, "");
+    }
 
 }

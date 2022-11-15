@@ -172,7 +172,7 @@ public class FileUploader {
             // A new asset will be created for the uploaded file.
             return saveMedia(saveMediaQuery
                     .setBrandId(uploadQuery.getBrandId())
-                    .setName(uploadQuery.getFilename())
+                    .setName(uploadQuery.getCustomFilename())
                     .setTags(uploadQuery.getTags())
             );
         } else {

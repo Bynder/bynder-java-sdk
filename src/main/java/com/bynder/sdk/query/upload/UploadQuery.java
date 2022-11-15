@@ -20,7 +20,14 @@ public class UploadQuery {
     /**
      * File path of the file we want to upload.
      */
-    private final String filepath;
+    private String filepath;
+
+
+    /**
+     * File name of the file we want to upload.
+     */
+    private String filename;
+    private String customFileName;
 
     /**
      * Brand id where we want to store the file.
@@ -57,8 +64,31 @@ public class UploadQuery {
         return filepath;
     }
 
+    public UploadQuery setFilepath(final String filePath) {
+        this.filepath = filePath;
+        return this;
+    }
+
     public String getFilename() {
-        return Paths.get(filepath).getFileName().toString();
+            return Paths.get(filepath).getFileName().toString();
+    }
+
+    public UploadQuery setFileName(final String filename) {
+        this.filename = filename;
+        return this;
+    }
+
+    public String getCustomFilename() {
+        if (this.customFileName == null) {
+            return Paths.get(filepath).getFileName().toString();
+        } else {
+            return this.customFileName;
+        }
+    }
+
+    public UploadQuery setCustomFilename(String customFileName) {
+        this.customFileName = customFileName;
+        return this;
     }
 
     public String getBrandId() {

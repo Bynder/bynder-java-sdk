@@ -70,7 +70,7 @@ public class UploadQuery {
     }
 
     public String getFilename() {
-            return Paths.get(filepath).getFileName().toString();
+        return Paths.get(filepath).getFileName().toString();
     }
 
     public UploadQuery setFileName(final String filename) {

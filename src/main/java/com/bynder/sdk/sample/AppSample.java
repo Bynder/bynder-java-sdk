@@ -14,8 +14,10 @@ import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.MediaType;
 import com.bynder.sdk.model.oauth.RefreshTokenCallback;
 import com.bynder.sdk.model.oauth.Token;
+import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.query.MediaQuery;
 import com.bynder.sdk.query.OrderBy;
+import com.bynder.sdk.query.upload.UploadQuery;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.service.oauth.OAuthService;
@@ -60,6 +62,12 @@ public class AppSample {
         for (Media media : mediaList) {
             LOG.info(media.getName());
         }
+
+        // Upload a file
+        String filePath = "your-absolute-filepath";
+        String brandId = "your-brand-id";
+        UploadQuery uploadQuery = new UploadQuery(filePath, brandId);
+        SaveMediaResponse saveMediaResponse = assetService.uploadFile(uploadQuery).blockingSingle();
 
         // Optional: define callback function to be triggered after access token is auto
         // refreshed

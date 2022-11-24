@@ -167,12 +167,15 @@ public class FileUploader {
         SaveMediaQuery saveMediaQuery = new SaveMediaQuery(importId)
                 .setAudit(uploadQuery.isAudit())
                 .setMetaproperties(uploadQuery.getMetaproperties());
+        String fileName = uploadQuery.getName();
+        if (fileName == null)
+            fileName = uploadQuery.getFilename();
 
         if (uploadQuery.getMediaId() == null) {
             // A new asset will be created for the uploaded file.
             return saveMedia(saveMediaQuery
                     .setBrandId(uploadQuery.getBrandId())
-                    .setName(uploadQuery.getFilename())
+                    .setName(fileName)
                     .setTags(uploadQuery.getTags())
             );
         } else {

@@ -48,6 +48,11 @@ public class UploadQuery {
      */
     private List<MetapropertyAttribute> metaproperties;
 
+    /**
+     * Name of the file to upload
+     */
+    private String name;
+
     public UploadQuery(final String filepath, final String brandId) {
         this.filepath = filepath;
         this.brandId = brandId;
@@ -69,6 +74,10 @@ public class UploadQuery {
         return mediaId;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public UploadQuery setMediaId(final String mediaId) {
         this.mediaId = mediaId;
         return this;
@@ -80,6 +89,11 @@ public class UploadQuery {
 
     public UploadQuery setAudit(final Boolean audit) {
         this.audit = audit;
+        return this;
+    }
+
+    public UploadQuery setName(final String name) {
+        this.name = name;
         return this;
     }
 

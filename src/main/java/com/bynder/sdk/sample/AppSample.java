@@ -67,6 +67,8 @@ public class AppSample {
         String filePath = "your-absolute-filepath";
         String brandId = "your-brand-id";
         UploadQuery uploadQuery = new UploadQuery(filePath, brandId);
+        // Add the filename you want specifiy in this manner
+        uploadQuery.setName("your-filename");
         SaveMediaResponse saveMediaResponse = assetService.uploadFile(uploadQuery).blockingSingle();
 
         // Optional: define callback function to be triggered after access token is auto

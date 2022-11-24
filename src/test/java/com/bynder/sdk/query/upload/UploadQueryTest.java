@@ -22,6 +22,7 @@ public class UploadQueryTest {
     public static final String EXPECTED_OPTION_NAME = "optionName";
     public static final Boolean EXPECTED_AUDIT = Boolean.TRUE;
     public static final String EXPECTED_TAGS = "tag1,tag2";
+    public static final String EXPECTED_NAME = "name";
     public static final List<MetapropertyAttribute> EXPECTED_METAPROPERTIES = new ArrayList<>();
     public static final MetapropertyAttribute EXPECTED_METAPROPERTY = new MetapropertyAttribute(EXPECTED_METAPROPERTY_ID, new String[]{EXPECTED_OPTION_NAME});
     static {
@@ -36,6 +37,7 @@ public class UploadQueryTest {
         uploadQuery.setAudit(EXPECTED_AUDIT);
         uploadQuery.setTags(Arrays.asList("tag1", "tag2"));
         uploadQuery.addMetaproperty(EXPECTED_METAPROPERTY_ID, EXPECTED_OPTION_NAME);
+        uploadQuery.setName(EXPECTED_NAME);
 
         assertTrue(EXPECTED_METAPROPERTY.equals(uploadQuery.getMetaproperties().get(0)));
         assertEquals(EXPECTED_FILE_PATH, uploadQuery.getFilepath());
@@ -43,6 +45,7 @@ public class UploadQueryTest {
         assertEquals(EXPECTED_MEDIA_ID, uploadQuery.getMediaId());
         assertEquals(EXPECTED_AUDIT, uploadQuery.isAudit());
         assertEquals(EXPECTED_TAGS, uploadQuery.getTags());
+        assertEquals(EXPECTED_NAME, uploadQuery.getName());
     }
     
         @Test

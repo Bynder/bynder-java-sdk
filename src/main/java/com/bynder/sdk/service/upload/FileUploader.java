@@ -88,6 +88,25 @@ public class FileUploader {
         );
     }
 
+    public Single<UploadAdditionalMediaResponse> uploadAdditionalFile(final UploadQuery uploadQuery) {
+        return getClosestS3Endpoint().flatMap(awsBucket -> {
+            String filename = uploadQuery.getFilename();
+            AmazonS3Service amazonS3Service = AmazonS3Service.Builder.create(awsBucket);
+            return getUploadInformation(new RequestUploadQuery(filename))
+                    .flatMap(uploadRequest -> uploadChunk(
+                            amazonS3Service,
+                            uploadRequest,
+                            uploadQuery,
+                            filename
+                    ).count().flatMap(chunkCount -> finaliseUploadAdditional(new FinaliseUploadAdditionalQuery(
+                            uploadRequest.getS3File().getUploadId(),
+                            uploadRequest.getS3File().getTargetId(),
+                            uploadRequest.getS3Filename(),
+                            chunkCount
+                    ), uploadQuery.getMediaId())));
+        });
+    }
+
     /**
      * Uploads a file with the information specified in the query parameter
      * while providing information on the progress of the upload via the Observable returned.
@@ -216,6 +235,11 @@ public class FileUploader {
         Map<String, String> params = queryDecoder.decode(finaliseUploadQuery);
         return bynderApi.finaliseUpload(params).singleOrError().map(RXUtils::getResponseBody)
                 .map(FinaliseResponse::getImportId);
+    }
+
+    private Single<UploadAdditionalMediaResponse> finaliseUploadAdditional(final FinaliseUploadAdditionalQuery finaliseUploadQuery, String mediaId) {
+        Map<String, String> params = queryDecoder.decode(finaliseUploadQuery);
+        return bynderApi.finaliseUploadAdditional(mediaId, params).singleOrError().map(RXUtils::getResponseBody);
     }
 
     /**

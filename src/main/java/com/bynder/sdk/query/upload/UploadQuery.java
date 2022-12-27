@@ -51,7 +51,9 @@ public class UploadQuery {
     /**
      * Name of the file to upload
      */
-    private String name;
+    private String assetName;
+
+    private String fileName;
 
     public UploadQuery(final String filepath, final String brandId) {
         this.filepath = filepath;
@@ -63,7 +65,7 @@ public class UploadQuery {
     }
 
     public String getFilename() {
-        return Paths.get(filepath).getFileName().toString();
+        return (fileName == null) ? Paths.get(filepath).getFileName().toString() : fileName;
     }
 
     public String getBrandId() {
@@ -74,8 +76,8 @@ public class UploadQuery {
         return mediaId;
     }
 
-    public String getName() {
-        return name;
+    public String getAssetName() {
+        return (assetName == null) ? getFilename() : assetName;
     }
 
     public UploadQuery setMediaId(final String mediaId) {
@@ -92,8 +94,13 @@ public class UploadQuery {
         return this;
     }
 
-    public UploadQuery setName(final String name) {
-        this.name = name;
+    public UploadQuery setAssetName(final String assetName) {
+        this.assetName = assetName;
+        return this;
+    }
+
+    public UploadQuery setFileName(final String fileName) {
+        this.fileName = fileName;
         return this;
     }
 

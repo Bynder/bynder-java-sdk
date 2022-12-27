@@ -23,10 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 public class UploadSample {
 
@@ -61,7 +58,7 @@ public class UploadSample {
     private static List<UploadAsset> scanUploadAssets() throws IOException {
         List<UploadAsset> uploadAssets = new ArrayList<>();
 
-        File rootFolder = new File("uploadAssets");
+        File rootFolder = new File("sampleFiles/uploadAssets");
         for (File assetFolder : Objects.requireNonNull(rootFolder.listFiles())) {
             if (assetFolder.isDirectory()) {
                 UploadAsset uploadAsset = new UploadAsset();
@@ -103,6 +100,13 @@ public class UploadSample {
                                     if ("metaproperty".equals(metadata[0])) {
                                         uploadAsset.metaproperties.add(metadata[1]);
                                     }
+                                    if ("fileNameMapping".equals(metadata[0])) {
+                                        StringTokenizer mappings = new StringTokenizer(metadata[1], ";");
+                                        while (mappings.hasMoreElements()) {
+                                            String[] fileNameMap = mappings.nextToken().split("=");
+                                            uploadAsset.fileNameMapping.put(fileNameMap[0], fileNameMap[1]);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -122,22 +126,35 @@ public class UploadSample {
     private static Observable<String> handleUploadAsset(AssetService assetService, UploadAsset uploadAsset) {
         LOG.info("Start upload of asset: " + uploadAsset.sourceFolderName);
 
-        return assetService.uploadFile(new UploadQuery(uploadAsset.originalAssetPath, uploadAsset.brandId))
-                .flatMap(response -> {
-                    LOG.info("Uploaded original: " + uploadAsset.assetName + ", assigned id=" +  response.getMediaId());
-
+        UploadQuery originalAssetUpload = new UploadQuery(uploadAsset.originalAssetPath, uploadAsset.brandId);
+        String originalFileName = uploadAsset.fileNameMapping.get(originalAssetUpload.getFilename());
+        if (originalFileName != null) {
+            originalAssetUpload.setFileName(originalFileName);
+        }
+        if (uploadAsset.assetName != null) {
+            originalAssetUpload.setAssetName(uploadAsset.assetName);
+        }
+        for (String metaproperty : uploadAsset.metaproperties) {
+            String[] metapropertyValue = metaproperty.split("=");
+            originalAssetUpload.addMetaproperty(metapropertyValue[0], metapropertyValue[1].split(","));
+        }
+        return assetService.uploadFile(originalAssetUpload).flatMap(response -> {
+                    LOG.info("Uploaded original: " + uploadAsset.originalAssetPath + ", assigned id=" +  response.getMediaId());
                     return Observable.just(response.getMediaId());
                 }).flatMap(mediaId -> {
                     if (!uploadAsset.additionalAssetPaths.isEmpty()) {
                         List<Observable<UploadAdditionalMediaResponse>> assetsUploaderList = new ArrayList<>();
                         for (String path : uploadAsset.additionalAssetPaths) {
                             LOG.info("Start upload of additional: " + path + " for asset=" + uploadAsset.assetName);
-                            assetsUploaderList.add(assetService.uploadAdditionalFile(
-                                    new UploadQuery(path, uploadAsset.brandId).setMediaId(mediaId))
-                                    .onErrorReturn(error -> {
-                                        LOG.error("An error has occurred for additional media of asset:" + uploadAsset.assetName + ", error=" + error.toString());
-                                        return new UploadAdditionalMediaResponse();
-                                    }));
+                            UploadQuery addAssetUpload = new UploadQuery(path, uploadAsset.brandId).setMediaId(mediaId);
+                            String addFileName = uploadAsset.fileNameMapping.get(addAssetUpload.getFilename());
+                            if (addFileName != null) {
+                                addAssetUpload.setFileName(addFileName);
+                            }
+                            assetsUploaderList.add(assetService.uploadAdditionalFile(addAssetUpload).onErrorReturn(error -> {
+                                LOG.error("An error has occurred for additional media of asset:" + uploadAsset.assetName + ", error=" + error.toString());
+                                return new UploadAdditionalMediaResponse();
+                            }));
                         }
 
                         Observable.zip(assetsUploaderList, objects -> {
@@ -151,22 +168,6 @@ public class UploadSample {
                         });
                     }
                     return Observable.just(mediaId);
-                }).flatMap(mediaId -> {
-                    List<MetapropertyAttribute> metapropertyAttributes = new ArrayList<>();
-                    for (String metaproperty : uploadAsset.metaproperties) {
-                        String[] metapropertyValue = metaproperty.split("=");
-                        metapropertyAttributes.add(new MetapropertyAttribute(metapropertyValue[0], metapropertyValue[1].split(",")));
-                    }
-
-                    return assetService.modifyMedia(new MediaModifyQuery(mediaId)
-                            .setMetaproperties(metapropertyAttributes)
-                            .setName(uploadAsset.assetName)).flatMap(responseModify -> {
-                                if (responseModify.code() >= 400) {
-                                    throw new Exception(responseModify.toString());
-                                }
-                                LOG.info("Finished upload of asset: " + uploadAsset.assetName + " with id=" + mediaId);
-                                return Observable.just(mediaId);
-                    });
                 }).onErrorReturn(error -> {
                     LOG.error("An error has occurred for asset:" + uploadAsset.assetName + ", error=" + error.toString());
                     return "ERROR for asset:" + uploadAsset.assetName;
@@ -178,14 +179,15 @@ public class UploadSample {
         private String assetName;
         private String brandId;
         private final List<String> metaproperties;
+        private final Map<String, String> fileNameMapping;
         private String originalAssetPath;
         private final List<String> additionalAssetPaths;
 
         private UploadAsset() {
             this.sourceFolderName = null;
             this.assetName = null;
-            this.brandId = "F7487E09-C40C-4BC6-971DCA9302BA3406";
             this.metaproperties = new ArrayList<>();
+            this.fileNameMapping = new HashMap<>();
             this.originalAssetPath = null;
             this.additionalAssetPaths = new ArrayList<>();
         }

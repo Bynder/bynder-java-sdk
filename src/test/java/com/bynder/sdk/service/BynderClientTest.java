@@ -48,5 +48,6 @@ public class BynderClientTest {
         assertNotNull(bynderClient.getOAuthService());
         assertNotNull(bynderClient.getAssetService());
         assertNotNull(bynderClient.getCollectionService());
+        assertNotNull(bynderClient.getWorkflowService());
     }
 }

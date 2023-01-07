@@ -310,7 +310,7 @@ public interface BynderApi {
     Observable<Response<Void>> deleteCampaign(@Path("id") String campaignId);
 
     @GET("/api/workflow/presets/job/{id}/")
-    Observable<Response<JobPreset>> getJobPreset(@Path("id") String jobPresetId);
+    Observable<Response<JobPresetContainer>> getJobPreset(@Path("id") String jobPresetId);
 
     @GET("/api/workflow/jobs/")
     Observable<Response<List<Job>>> getJobs(@QueryMap Map<String, String> params);

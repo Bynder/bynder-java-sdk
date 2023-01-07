@@ -1,9 +1,15 @@
+/*
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for full license
+ * information.
+ */
 package com.bynder.sdk.query.workflow;
 
 import com.bynder.sdk.model.workflow.JobStatus;
 import com.bynder.sdk.query.OrderBy;
 import com.bynder.sdk.query.decoder.ApiField;
-import com.bynder.sdk.query.decoder.MetapropertyAttributesDecoder;
+import com.bynder.sdk.query.decoder.StringArrayParameterDecoder;
 
 public class JobQuery {
 
@@ -27,10 +33,10 @@ public class JobQuery {
 	@ApiField
 	private String deadlineTo;
 
-	@ApiField(name = "responsibleIDs", decoder = MetapropertyAttributesDecoder.class)
-	private String[] responsibleIss;
+	@ApiField(name = "responsibleIDs", decoder = StringArrayParameterDecoder.class)
+	private String[] responsibleIds;
 
-	@ApiField(name = "accountableIDs", decoder = MetapropertyAttributesDecoder.class)
+	@ApiField(name = "accountableIDs", decoder = StringArrayParameterDecoder.class)
 	private String[] accountableIds;
 
 	@ApiField
@@ -111,12 +117,12 @@ public class JobQuery {
 		return this;
 	}
 
-	public String[] getResponsibleIss() {
-		return responsibleIss;
+	public String[] getResponsibleIds() {
+		return responsibleIds;
 	}
 
-	public JobQuery setResponsibleIss(String... responsibleIss) {
-		this.responsibleIss = responsibleIss;
+	public JobQuery setResponsibleIds(String... responsibleIds) {
+		this.responsibleIds = responsibleIds;
 		return this;
 	}
 

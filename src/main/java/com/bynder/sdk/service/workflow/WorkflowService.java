@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for full license
+ * information.
+ */
 package com.bynder.sdk.service.workflow;
 
 import com.bynder.sdk.api.BynderApi;
@@ -21,7 +27,7 @@ public interface WorkflowService {
 	
 	Observable<Response<Void>> deleteCampaign(CampaignQuery campaignQuery);
 
-    Observable<Response<JobPreset>> getJobPreset(JobPresetQuery jobPresetQuery);
+    Observable<Response<JobPresetContainer>> getJobPreset(JobPresetQuery jobPresetQuery);
 
     Observable<Response<List<Job>>> getJobs(JobQuery jobQuery);
 

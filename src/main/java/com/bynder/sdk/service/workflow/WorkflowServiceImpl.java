@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2019 Bynder B.V. All rights reserved.
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for full license
+ * information.
+ */
 package com.bynder.sdk.service.workflow;
 
 import com.bynder.sdk.api.BynderApi;
@@ -47,7 +53,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 	}
 
 	@Override
-	public Observable<Response<JobPreset>> getJobPreset(JobPresetQuery jobPresetQuery) {
+	public Observable<Response<JobPresetContainer>> getJobPreset(JobPresetQuery jobPresetQuery) {
 		return bynderApi.getJobPreset(jobPresetQuery.getId());
 	}
 

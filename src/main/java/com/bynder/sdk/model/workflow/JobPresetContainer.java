@@ -6,14 +6,11 @@
  */
 package com.bynder.sdk.model.workflow;
 
-import com.google.gson.annotations.SerializedName;
+public class JobPresetContainer {
 
-public class WorkflowAssetbankMetaproperty {
+    private JobPreset preset;
 
-	@SerializedName(value = "cf_id")
-	private String id;
-	
-	public String getId() {
-		return id;
-	}
+    public JobPreset getPreset() {
+        return preset;
+    }
 }

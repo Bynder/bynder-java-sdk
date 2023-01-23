@@ -8,10 +8,7 @@ package com.bynder.sdk.api;
 
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.*;
-import com.bynder.sdk.model.upload.FinaliseResponse;
-import com.bynder.sdk.model.upload.PollStatus;
-import com.bynder.sdk.model.upload.SaveMediaResponse;
-import com.bynder.sdk.model.upload.UploadRequest;
+import com.bynder.sdk.model.upload.*;
 import io.reactivex.Observable;
 import retrofit2.Response;
 import retrofit2.http.*;
@@ -271,6 +268,11 @@ public interface BynderApi {
     @FormUrlEncoded
     @POST("/api/v4/upload/")
     Observable<Response<FinaliseResponse>> finaliseUpload(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("/api/v4/media/{id}/save/additional/")
+    Observable<Response<UploadAdditionalMediaResponse>> finaliseUploadAdditional(@Path("id") String mediaId,
+                                                                                 @FieldMap Map<String, String> params);
 
     /**
      * Gets poll processing status of finalised files.

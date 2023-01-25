@@ -17,15 +17,15 @@ import java.util.List;
 
 public interface WorkflowService {
 
-	Observable<Response<List<Campaign>>> getAllCampaigns();
-	
+    Observable<Response<List<Campaign>>> getAllCampaigns();
+
     Observable<Response<Campaign>> getCampaign(CampaignQuery campaignQuery);
-    
+
     Observable<Response<CampaignId>> createCampaign(CampaignDataQuery campaignDataQuery);
-	
-	Observable<Response<CampaignId>> modifyCampaign(CampaignQuery campaignQuery, CampaignDataQuery campaignDataQuery);
-	
-	Observable<Response<Void>> deleteCampaign(CampaignQuery campaignQuery);
+
+    Observable<Response<CampaignId>> modifyCampaign(CampaignQuery campaignQuery, CampaignDataQuery campaignDataQuery);
+
+    Observable<Response<Void>> deleteCampaign(CampaignQuery campaignQuery);
 
     Observable<Response<JobPresetContainer>> getJobPreset(JobPresetQuery jobPresetQuery);
 
@@ -44,12 +44,12 @@ public interface WorkflowService {
     Observable<Response<Void>> deleteJob(JobQuery jobQuery);
 
     Observable<Response<List<WorkflowMetaproperty>>> getAllWorkflowMetaproperties();
-	
-	Observable<Response<WorkflowMetaproperty>> getWorkflowMetaproperty(WorkflowMetapropertyQuery workflowMetapropertyQuery);
-	
-	Observable <Response<List<WorkflowUser>>> getAllWorkflowUsers();
-	
-	Observable <Response<List<WorkflowGroup>>> getAllWorkflowGroups();
+
+    Observable<Response<WorkflowMetaproperty>> getWorkflowMetaproperty(WorkflowMetapropertyQuery workflowMetapropertyQuery);
+
+    Observable<Response<List<WorkflowUser>>> getAllWorkflowUsers();
+
+    Observable<Response<List<WorkflowGroup>>> getAllWorkflowGroups();
 
     Observable<Response<WorkflowGroup>> getWorkflowGroup(WorkflowGroupQuery workflowGroupQuery);
 
@@ -59,7 +59,7 @@ public interface WorkflowService {
 
     Observable<Response<Void>> deleteWorkflowGroup(WorkflowGroupQuery workflowGroupQuery);
 
-	/**
+    /**
      * Builder class used to create a new instance of {@link WorkflowService}.
      */
     class Builder {

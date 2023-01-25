@@ -9,6 +9,7 @@ package com.bynder.sdk.service.asset;
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
+import com.bynder.sdk.model.upload.UploadAdditionalMediaResponse;
 import com.bynder.sdk.model.upload.UploadProgress;
 import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
@@ -129,6 +130,8 @@ public interface AssetService {
      * @return {@link Observable} with the {@link SaveMediaResponse} information.
      */
     Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
+
+    Observable<UploadAdditionalMediaResponse> uploadAdditionalFile(UploadQuery uploadQuery);
 
     /**
      * Uploads a file with Progress Report.

@@ -9,6 +9,7 @@ package com.bynder.sdk.service.asset;
 import com.bynder.sdk.api.BynderApi;
 import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
+import com.bynder.sdk.model.upload.UploadAdditionalMediaResponse;
 import com.bynder.sdk.model.upload.UploadProgress;
 import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
@@ -167,6 +168,11 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public Observable<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
         return fileUploader.uploadFile(uploadQuery).toObservable();
+    }
+
+    @Override
+    public Observable<UploadAdditionalMediaResponse> uploadAdditionalFile(final UploadQuery uploadQuery) {
+        return fileUploader.uploadAdditionalFile(uploadQuery).toObservable();
     }
 
     /**

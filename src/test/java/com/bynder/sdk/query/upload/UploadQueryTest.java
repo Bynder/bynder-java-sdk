@@ -15,14 +15,15 @@ import static org.junit.Assert.assertTrue;
  */
 public class UploadQueryTest {
 
-    public static final String EXPECTED_FILE_PATH = "filePath";
+    public static final String EXPECTED_FILE_PATH = "filePath/fileName";
     public static final String EXPECTED_BRAND_ID = "brandId";
     public static final String EXPECTED_MEDIA_ID = "mediaId";
     public static final String EXPECTED_METAPROPERTY_ID = "metapropertyId";
     public static final String EXPECTED_OPTION_NAME = "optionName";
     public static final Boolean EXPECTED_AUDIT = Boolean.TRUE;
     public static final String EXPECTED_TAGS = "tag1,tag2";
-    public static final String EXPECTED_NAME = "name";
+    public static final String EXPECTED_FILE_NAME = "fileName";
+    public static final String EXPECTED_ASSET_NAME = "assetName";
     public static final List<MetapropertyAttribute> EXPECTED_METAPROPERTIES = new ArrayList<>();
     public static final MetapropertyAttribute EXPECTED_METAPROPERTY = new MetapropertyAttribute(EXPECTED_METAPROPERTY_ID, new String[]{EXPECTED_OPTION_NAME});
     static {
@@ -37,7 +38,6 @@ public class UploadQueryTest {
         uploadQuery.setAudit(EXPECTED_AUDIT);
         uploadQuery.setTags(Arrays.asList("tag1", "tag2"));
         uploadQuery.addMetaproperty(EXPECTED_METAPROPERTY_ID, EXPECTED_OPTION_NAME);
-        uploadQuery.setName(EXPECTED_NAME);
 
         assertTrue(EXPECTED_METAPROPERTY.equals(uploadQuery.getMetaproperties().get(0)));
         assertEquals(EXPECTED_FILE_PATH, uploadQuery.getFilepath());
@@ -45,7 +45,42 @@ public class UploadQueryTest {
         assertEquals(EXPECTED_MEDIA_ID, uploadQuery.getMediaId());
         assertEquals(EXPECTED_AUDIT, uploadQuery.isAudit());
         assertEquals(EXPECTED_TAGS, uploadQuery.getTags());
-        assertEquals(EXPECTED_NAME, uploadQuery.getName());
+        assertEquals(EXPECTED_FILE_NAME, uploadQuery.getFilename());
+        assertEquals(EXPECTED_FILE_NAME, uploadQuery.getAssetName());
+    }
+
+    @Test
+    public void testCustomAssetNameOnly() {
+        UploadQuery uploadQuery = new UploadQuery(EXPECTED_FILE_PATH, EXPECTED_BRAND_ID);
+        uploadQuery.setAssetName(EXPECTED_ASSET_NAME);
+
+        assertEquals(EXPECTED_FILE_PATH, uploadQuery.getFilepath());
+        assertEquals(EXPECTED_BRAND_ID, uploadQuery.getBrandId());
+        assertEquals(EXPECTED_FILE_NAME, uploadQuery.getFilename());
+        assertEquals(EXPECTED_ASSET_NAME, uploadQuery.getAssetName());
+    }
+
+    @Test
+    public void testCustomFileNameOnly() {
+        UploadQuery uploadQuery = new UploadQuery(EXPECTED_FILE_PATH, EXPECTED_BRAND_ID);
+        uploadQuery.setFileName(EXPECTED_FILE_NAME);
+
+        assertEquals(EXPECTED_FILE_PATH, uploadQuery.getFilepath());
+        assertEquals(EXPECTED_BRAND_ID, uploadQuery.getBrandId());
+        assertEquals(EXPECTED_FILE_NAME, uploadQuery.getFilename());
+        assertEquals(EXPECTED_FILE_NAME, uploadQuery.getAssetName());
+    }
+
+    @Test
+    public void testCustomAssetAndFileName() {
+        UploadQuery uploadQuery = new UploadQuery(EXPECTED_FILE_PATH, EXPECTED_BRAND_ID);
+        uploadQuery.setFileName(EXPECTED_FILE_NAME);
+        uploadQuery.setAssetName(EXPECTED_ASSET_NAME);
+
+        assertEquals(EXPECTED_FILE_PATH, uploadQuery.getFilepath());
+        assertEquals(EXPECTED_BRAND_ID, uploadQuery.getBrandId());
+        assertEquals(EXPECTED_FILE_NAME, uploadQuery.getFilename());
+        assertEquals(EXPECTED_ASSET_NAME, uploadQuery.getAssetName());
     }
     
         @Test

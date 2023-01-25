@@ -54,6 +54,9 @@ public class BynderClientImpl implements BynderClient {
      */
     private CollectionService collectionService;
 
+    /**
+     * Instance of {@link WorkflowService}.
+     */
     private WorkflowService workflowService;
 
     /**

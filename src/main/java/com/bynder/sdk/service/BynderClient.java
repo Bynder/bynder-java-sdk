@@ -53,6 +53,12 @@ public interface BynderClient {
      */
     Observable<Response<List<Derivative>>> getDerivatives();
 
+     /**
+     * Gets an instance of the workflow service to interact with the workflows in your Bynder
+     * portal.
+     *
+     * @return Instance of {@link WorkflowService}.
+     */
     WorkflowService getWorkflowService();
 
     /**

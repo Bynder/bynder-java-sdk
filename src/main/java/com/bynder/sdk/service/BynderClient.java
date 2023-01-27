@@ -12,6 +12,7 @@ import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.service.collection.CollectionService;
 import com.bynder.sdk.service.oauth.OAuthService;
+import com.bynder.sdk.service.workflow.WorkflowService;
 import io.reactivex.Observable;
 import retrofit2.Response;
 
@@ -51,6 +52,14 @@ public interface BynderClient {
      * @return Observable with the list of {@link Derivative}.
      */
     Observable<Response<List<Derivative>>> getDerivatives();
+
+     /**
+     * Gets an instance of the workflow service to interact with the workflows in your Bynder
+     * portal.
+     *
+     * @return Instance of {@link WorkflowService}.
+     */
+    WorkflowService getWorkflowService();
 
     /**
      * Builder class used to create a new instance of {@link BynderClient} using

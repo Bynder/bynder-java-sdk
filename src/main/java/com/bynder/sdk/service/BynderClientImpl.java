@@ -15,6 +15,7 @@ import com.bynder.sdk.query.decoder.QueryDecoder;
 import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.service.collection.CollectionService;
 import com.bynder.sdk.service.oauth.OAuthService;
+import com.bynder.sdk.service.workflow.WorkflowService;
 import io.reactivex.Observable;
 import retrofit2.Response;
 
@@ -52,6 +53,11 @@ public class BynderClientImpl implements BynderClient {
      * Instance of {@link CollectionService}.
      */
     private CollectionService collectionService;
+
+    /**
+     * Instance of {@link WorkflowService}.
+     */
+    private WorkflowService workflowService;
 
     /**
      * Initialises a new instance of the class.
@@ -105,5 +111,14 @@ public class BynderClientImpl implements BynderClient {
     @Override
     public Observable<Response<List<Derivative>>> getDerivatives() {
         return bynderApi.getDerivatives();
+    }
+
+    @Override
+    public WorkflowService getWorkflowService() {
+        if (workflowService == null) {
+            workflowService = WorkflowService.Builder.create(bynderApi, queryDecoder);
+        }
+
+        return workflowService;
     }
 }

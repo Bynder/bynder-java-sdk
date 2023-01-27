@@ -8,7 +8,10 @@ package com.bynder.sdk.api;
 
 import com.bynder.sdk.model.Tag;
 import com.bynder.sdk.model.*;
+import com.bynder.sdk.model.workflow.*;
+import com.bynder.sdk.query.workflow.*;
 import com.bynder.sdk.model.upload.*;
+
 import io.reactivex.Observable;
 import retrofit2.Response;
 import retrofit2.http.*;
@@ -293,4 +296,68 @@ public interface BynderApi {
     @FormUrlEncoded
     @POST("/api/v4/media/save/")
     Observable<Response<SaveMediaResponse>> saveMedia(@FieldMap Map<String, String> params);
+
+    @GET("/api/workflow/campaigns/")
+    Observable<Response<List<Campaign>>> getAllCampaigns();
+
+    @GET("/api/workflow/campaigns/{id}/")
+    Observable<Response<Campaign>> getCampaign(@Path("id") String campaignId);
+
+    @POST("/api/workflow/campaigns/")
+    Observable<Response<CampaignId>> createCampaign(@Body CampaignDataQuery body);
+
+    @PUT("/api/workflow/campaigns/{id}/")
+    Observable<Response<CampaignId>> modifyCampaign(@Path("id") String campaignId, @Body CampaignDataQuery body);
+
+    @DELETE("/api/workflow/campaigns/{id}/")
+    Observable<Response<Void>> deleteCampaign(@Path("id") String campaignId);
+
+    @GET("/api/workflow/presets/job/{id}/")
+    Observable<Response<JobPresetContainer>> getJobPreset(@Path("id") String jobPresetId);
+
+    @GET("/api/workflow/jobs/")
+    Observable<Response<List<Job>>> getJobs(@QueryMap Map<String, String> params);
+
+    @GET("/api/workflow/campaigns/{id}/jobs/")
+    Observable<Response<List<Job>>> getCampaignJobs(@Path("id") String campaignId, @QueryMap Map<String, String> params);
+
+    @GET("/api/workflow/jobs/{id}/")
+    Observable<Response<Job>> getJob(@Path("id") String jobId);
+
+    @GET("/api/workflow/jobs/{id}/media/")
+    Observable<Response<List<JobMedia>>> getJobMedia(@Path("id") String jobId);
+
+    @POST("/api/workflow/jobs/")
+    Observable<Response<JobActionResponse>> createJob(@Body JobCreateQuery body);
+
+    @PUT("/api/workflow/jobs/{id}/")
+    Observable<Response<JobActionResponse>> modifyJob(@Path("id") String jobId, @Body JobModifyQuery body);
+
+    @DELETE("/api/workflow/jobs/{id}/")
+    Observable<Response<Void>> deleteJob(@Path("id") String jobId);
+
+    @GET("api/workflow/metaproperties/")
+    Observable<Response<List<WorkflowMetaproperty>>> getAllWorkflowMetaproperties();
+
+    @GET("api/workflow/metaproperties/{id}/")
+    Observable<Response<WorkflowMetaproperty>> getWorkflowMetaproperty(@Path("id") String metapropertyId);
+
+    @GET("api/workflow/users/")
+    Observable<Response<List<WorkflowUser>>> getAllWorkflowUsers();
+
+    @GET("api/workflow/groups/")
+    Observable<Response<List<WorkflowGroup>>> getAllWorkflowGroups();
+
+    @GET("api/workflow/groups/{id}/")
+    Observable<Response<WorkflowGroup>> getWorkflowGroup(@Path("id") String groupId);
+
+    @POST("api/workflow/groups/")
+    Observable<Response<WorkflowGroup>> createWorkflowGroup(@Body WorkflowGroupDataQuery body);
+
+    @PUT("api/workflow/groups/{id}/")
+    Observable<Response<WorkflowGroup>> updateWorkflowGroup(@Path("id") String groupId,
+                                                            @Body WorkflowGroupDataQuery body);
+
+    @DELETE("api/workflow/groups/{id}/")
+    Observable<Response<Void>> deleteWorkflowGroup(@Path("id") String groupId);
 }

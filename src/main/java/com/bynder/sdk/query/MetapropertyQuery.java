@@ -26,6 +26,18 @@ public class MetapropertyQuery {
      */
     @ApiField
     private MediaType type;
+    /**
+     * Make it possible to get metaproperties without options, to avoid possible timeout if the number
+     *  of metapropertiy/options is very large (e.g. with Stockholm National Museum taxonomies)
+     * @author Colin Manning - zetcom
+     */
+    @ApiField
+    private Boolean options;
+    /**
+     * The id of a Metaproperty, to get the information for one specific metaproperty
+     * @author Colin Manning - zetcom
+     */    @ApiField
+    private String id;
 
     public Boolean getCount() {
         return count;
@@ -42,6 +54,23 @@ public class MetapropertyQuery {
 
     public MetapropertyQuery setType(final MediaType type) {
         this.type = type;
+        return this;
+    }
+
+    public Boolean getOptions() {
+        return options;
+    }
+
+    public MetapropertyQuery setOptions(final Boolean options) {
+        this.options = options;
+        return this;
+    }
+    public String getId() {
+        return id;
+    }
+
+    public MetapropertyQuery setId(final String id) {
+        this.id = id;
         return this;
     }
 }

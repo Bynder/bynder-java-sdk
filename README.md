@@ -9,7 +9,7 @@ The main goal of this SDK is to speed up the integration of Bynder customers who
 
 ## Current status
 
-At the moment this SDK provides a default library with the following methods:
+At the moment the SDK provides a default library with the following methods:
 
 #### Bynder Service
 

@@ -34,10 +34,13 @@ public class MetapropertyQuery {
     @ApiField
     private Boolean options;
     /**
-     * The id of a Metaproperty, to get the information for one specific metaproperty
+     * A collection id of a Metaproperty, to get the information for specific metaproperties
+     * Most common use case will be to fetch a single metaproperty,
+     * but we need to use "ids" and not "id" to get a Map back or else the API breaks
      * @author Colin Manning - zetcom
-     */    @ApiField
-    private String id;
+     */
+    @ApiField
+    private String ids;
 
     public Boolean getCount() {
         return count;
@@ -65,12 +68,12 @@ public class MetapropertyQuery {
         this.options = options;
         return this;
     }
-    public String getId() {
-        return id;
+    public String getIds() {
+        return ids;
     }
 
-    public MetapropertyQuery setId(final String id) {
-        this.id = id;
+    public MetapropertyQuery setIds(final String ids) {
+        this.ids = ids;
         return this;
     }
 }

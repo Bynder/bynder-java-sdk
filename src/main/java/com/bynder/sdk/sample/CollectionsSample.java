@@ -37,10 +37,11 @@ public class CollectionsSample {
         // Initialize collection service
         CollectionService collectionService = client.getCollectionService();
 
-        // get collections
-        CollectionQuery collectionQuery = new CollectionQuery();
+        // get collections with limit and page
+        CollectionQuery collectionQuery = new CollectionQuery().setLimit(10).setPage(1);
         List<Collection> collections = collectionService.getCollections(collectionQuery).blockingSingle().body();
         for (Collection collectionResult : collections) {
+            LOG.info("collection: ");
             LOG.info(collectionResult.getId());
             LOG.info(collectionResult.getName());
             LOG.info(collectionResult.getDescription());
@@ -49,12 +50,18 @@ public class CollectionsSample {
         // add collection
         CollectionCreateQuery createCollectionQuery = new CollectionCreateQuery("New Collection 1234");
         collectionService.createCollection(createCollectionQuery).blockingSingle();
-        //
+
+        // get collections with added collection
         List<Collection> updatedCollections = collectionService.getCollections(collectionQuery).blockingSingle().body();
         for (Collection collectionResult : collections) {
+            LOG.info("collection: ");
             LOG.info(collectionResult.getId());
             LOG.info(collectionResult.getName());
             LOG.info(collectionResult.getDescription());
         }
+
+        // TODO addMediaToCollection
+        // TODO removeMediaFromCollection
+        // TODO shareCollection
     }
 }

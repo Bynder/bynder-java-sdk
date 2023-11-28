@@ -37,6 +37,7 @@ public class BrandsSample {
 
         // Call the API to request for brands
         List<Brand> brands = assetService.getBrands().blockingSingle().body();
+        LOG.info("brands");
         for (Brand brand : brands) {
             LOG.info(brand.getName());
             LOG.info(brand.getDescription());

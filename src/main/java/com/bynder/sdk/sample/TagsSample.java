@@ -33,11 +33,12 @@ public class TagsSample {
 
         AssetService assetService = client.getAssetService();
 
-        // get tags
+        // get tags and media count for each tag
         List<Tag> assetTags = assetService.getTags().blockingSingle().body();
         for (Tag assetTag : assetTags) {
             LOG.info(assetTag.getId());
             LOG.info(assetTag.getTag());
+            LOG.info(String.valueOf(assetTag.getMediaCount()));
         }
     }
 }

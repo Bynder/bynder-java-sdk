@@ -36,15 +36,16 @@ public class CollectionsSample {
         // Initialize collection service
         CollectionService collectionService = client.getCollectionService();
 
-        // get collections
-        CollectionQuery collectionQuery = new CollectionQuery();
+        // get collections with limit
+        CollectionQuery collectionQuery = new CollectionQuery().setLimit(20);
         List<Collection> collections = collectionService.getCollections(collectionQuery).blockingSingle().body();
         if (collections != null && !collections.isEmpty()) {
             for (Collection collectionResult : collections) {
-                LOG.info("collection: ");
-                LOG.info(collectionResult.getId());
-                LOG.info(collectionResult.getName());
-                LOG.info(collectionResult.getDescription());
+                LOG.info("Collection ID: " + collectionResult.getId());
+                LOG.info("Collection Name: " + collectionResult.getName());
+                LOG.info("Collection Description: " + collectionResult.getDescription());
+                LOG.info("Collection Media Count: " + collectionResult.getMediaCount());
+                LOG.info("Collection Date Created: " + collectionResult.getDateCreated());
             }
         }
 
@@ -53,8 +54,8 @@ public class CollectionsSample {
         CollectionInfoQuery collectionInfoQuery = new CollectionInfoQuery(collectionInfoId);
         Collection collectionInfo = collectionService.getCollectionInfo(collectionInfoQuery).blockingSingle().body();
         if (collectionInfo != null) {
-            LOG.info("collection info name: " + collectionInfo.getName());
-            LOG.info("collection description: " + collectionInfo.getDescription());
+            LOG.info("Collection Info Name: " + collectionInfo.getName());
+            LOG.info("Collection Info Description: " + collectionInfo.getDescription());
         }
 
         // create collection
@@ -69,40 +70,38 @@ public class CollectionsSample {
         List<Collection> updatedCollections = collectionService.getCollections(collectionQuery).blockingSingle().body();
         if (updatedCollections != null && !updatedCollections.isEmpty()) {
             for (Collection collectionResult : updatedCollections) {
-                LOG.info("collection: ");
-                LOG.info(collectionResult.getId());
-                LOG.info(collectionResult.getName());
-                LOG.info(collectionResult.getDescription());
+                LOG.info("Collection ID: " + collectionResult.getId());
+                LOG.info("Collection Name: " + collectionResult.getName());
+                LOG.info("Collection Description: " + collectionResult.getDescription());
+                LOG.info("Collection Media Count: " + collectionResult.getMediaCount());
+                LOG.info("Collection Date Created: " + collectionResult.getDateCreated());
             }
         }
 
-        // TODO resolve collection methods
-
         // share collection to recipients
         String shareCollectionId = appProperties.getProperty("SHARE_COLLECTION_ID");
-        LOG.info("trying to share collection id: " + shareCollectionId);
-        String[] shareCollectionRecipients = new String[] {"alex.hong@bynder.com"};
-        CollectionRecipientRight recipientRight = CollectionRecipientRight.EDIT;
-        CollectionShareQuery collectionShareQuery = new CollectionShareQuery(shareCollectionId, shareCollectionRecipients, recipientRight)
+        LOG.info("sharing collection id: " + shareCollectionId);
+        String collectionShareRecipient = appProperties.getProperty("COLLECTION_SHARE_RECIPIENT");
+        String[] shareCollectionRecipients = new String[] {collectionShareRecipient};
+
+        // allow recipient to view, login required false, send email with message "test"
+        CollectionShareQuery collectionShareQuery = new CollectionShareQuery(shareCollectionId, shareCollectionRecipients, CollectionRecipientRight.VIEW)
                 .setLoginRequired(false)
                 .setSendMail(true)
                 .setMessage("test");
-        collectionService.shareCollection(collectionShareQuery).blockingSingle();
+        collectionService.shareCollection(collectionShareQuery);
 
         // addMediaToCollection
         String addMediaToCollectionId = appProperties.getProperty("ADD_MEDIA_TO_COLLECTION_COLLECTION_ID");
         String mediaIdToAdd = appProperties.getProperty("ADD_MEDIA_TO_COLLECTION_MEDIA_ID");
         String[] addMediaIds = new String[] {mediaIdToAdd};
 
-        for (String mediaId : addMediaIds) {
-            LOG.info("test: " + mediaId);
-        }
-
         LOG.info("adding media ids: " + mediaIdToAdd);
         CollectionAddMediaQuery collectionAddMediaQuery = new CollectionAddMediaQuery(addMediaToCollectionId, addMediaIds);
         collectionService.addMediaToCollection(collectionAddMediaQuery).blockingSingle();
 
 
+        // get info about collection that had media added
         CollectionInfoQuery addMediaCollectionInfoQuery = new CollectionInfoQuery(addMediaToCollectionId);
         List<String> mediaIdsFromCollection = collectionService.getCollectionMediaIds(addMediaCollectionInfoQuery).blockingSingle().body();
         for (String mediaId : mediaIdsFromCollection) {
@@ -117,6 +116,7 @@ public class CollectionsSample {
         CollectionRemoveMediaQuery collectionRemoveMediaQuery = new CollectionRemoveMediaQuery(removeFromCollectionId, removeMediaIds);
         collectionService.removeMediaFromCollection(collectionRemoveMediaQuery).blockingSingle();
 
+        // get updated media ids from collection after removal
         CollectionInfoQuery removeMediaCollectionInfoQuery = new CollectionInfoQuery(removeFromCollectionId);
         List<String> mediaIdsFromCollectionAfterRemoval = collectionService.getCollectionMediaIds(removeMediaCollectionInfoQuery).blockingSingle().body();
         for (String mediaId : mediaIdsFromCollectionAfterRemoval) {

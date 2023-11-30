@@ -8,12 +8,10 @@ import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.util.Utils;
 
 import java.io.IOException;
-import java.lang.Integer;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -35,12 +33,15 @@ public class UsageSample {
         // Initialize asset service
         AssetService assetService = client.getAssetService();
 
-        UsageQuery usageQuery= new UsageQuery();
+        String mediaIdForAssetUsage = appProperties.getProperty("MEDIA_ID_FOR_ASSET_USAGE");
+        UsageQuery usageQuery= new UsageQuery().setAssetId(mediaIdForAssetUsage);
         List<Usage> assetUsages = assetService.getUsage(usageQuery).blockingSingle().body();
 
-        // TODO use asset usage
-        for (Usage assetUsage : assetUsages) {
-            LOG.info(assetUsage.getAssetId());
+        if (assetUsages != null && !assetUsages.isEmpty()) {
+            for (Usage assetUsage : assetUsages) {
+                LOG.info("Asset Usage ID: " + assetUsage.getId());
+                LOG.info(assetUsage.getAssetId());
+            }
         }
     }
 }

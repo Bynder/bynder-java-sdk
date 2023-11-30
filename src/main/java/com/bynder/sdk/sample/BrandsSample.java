@@ -37,10 +37,12 @@ public class BrandsSample {
 
         // Call the API to request for brands
         List<Brand> brands = assetService.getBrands().blockingSingle().body();
-        LOG.info("brands");
-        for (Brand brand : brands) {
-            LOG.info(brand.getName());
-            LOG.info(brand.getDescription());
+        if (brands != null && !brands.isEmpty()) {
+            for (Brand brand : brands) {
+                LOG.info("Brand ID: " + brand.getId());
+                LOG.info("Brand Name: " + brand.getName());
+                LOG.info("Brand Description: " + brand.getDescription());
+            }
         }
     }
 }

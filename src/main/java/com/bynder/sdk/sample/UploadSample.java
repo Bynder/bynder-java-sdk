@@ -40,14 +40,14 @@ public class UploadSample {
         // Call the API to request for brands
         String brandId = "";
         List<Brand> brands = assetService.getBrands().blockingSingle().body();
-        if (!brands.isEmpty()) {
+        if (brands != null && !brands.isEmpty()) {
             brandId = brands.get(0).getId();
         }
 
         String filePath = "src/main/java/com/bynder/sdk/sample/testasset.png";
         LOG.info(filePath);
         UploadQuery uploadQuery = new UploadQuery(filePath, brandId);
-        // Add the filename you want specify in this manner
+        // Add the filename you want to specify in this manner
         uploadQuery.setFileName("testasset.png");
         SaveMediaResponse saveMediaResponse = assetService.uploadFile(uploadQuery).blockingSingle();
         LOG.info(saveMediaResponse.getMediaId());

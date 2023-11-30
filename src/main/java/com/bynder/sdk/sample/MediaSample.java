@@ -43,28 +43,38 @@ public class MediaSample {
         // Call the API to request for media assets
         MediaQuery mediaQuery =  new MediaQuery().setType(MediaType.IMAGE).setOrderBy(OrderBy.NAME_DESC).setLimit(10).setPage(1);
         List<Media> mediaList = assetService.getMediaList(mediaQuery).blockingSingle().body();
-        for (Media media : mediaList) {
-            LOG.info(media.getId());
-            LOG.info(media.getName());
+        if (mediaList != null && !mediaList.isEmpty()) {
+            for (Media media : mediaList) {
+                LOG.info(media.getId());
+                LOG.info(media.getName());
+            }
         }
 
-        if (!mediaList.isEmpty()) {
-            // get media info for single asset
-            String mediaId = mediaList.get(0).getId();
-            MediaInfoQuery mediaInfoQuery = new MediaInfoQuery(mediaId);
-            Media foundMedia = assetService.getMediaInfo(mediaInfoQuery).blockingSingle().body();
+        // get media info for single asset
+        String mediaIdInfo = appProperties.getProperty("MEDIA_ID_FOR_INFO");
+        MediaInfoQuery mediaInfoQuery = new MediaInfoQuery(mediaIdInfo);
+        Media foundMedia = assetService.getMediaInfo(mediaInfoQuery).blockingSingle().body();
+        if (foundMedia != null) {
             LOG.info("get media info result: ");
-            LOG.info(foundMedia.getId());
-            LOG.info(foundMedia.getName());
+            LOG.info("Media ID: " + foundMedia.getId());
+            LOG.info("Media Name: " + foundMedia.getName());
+            LOG.info("Media Brand ID: " + foundMedia.getBrandId());
+        }
 
-            // modify name of asset
-            MediaModifyQuery modifyQuery = new MediaModifyQuery(mediaId).setName("New Name");
-            assetService.modifyMedia(modifyQuery).blockingSingle();
+        // modify name of asset
+        String mediaIdForRename = appProperties.getProperty("MEDIA_ID_FOR_RENAME");
+        MediaModifyQuery modifyQuery = new MediaModifyQuery(mediaIdForRename)
+                .setName("New Name Updated")
+                .setDescription("Test Updated Description");
+        assetService.modifyMedia(modifyQuery).blockingSingle();
 
-            Media updatedFoundMedia = assetService.getMediaInfo(mediaInfoQuery).blockingSingle().body();
+        MediaInfoQuery mediaInfoQueryRename = new MediaInfoQuery(mediaIdForRename);
+        Media updatedFoundMedia = assetService.getMediaInfo(mediaInfoQueryRename).blockingSingle().body();
+        if (updatedFoundMedia != null) {
             LOG.info("get updated media info result: ");
             LOG.info(updatedFoundMedia.getId());
             LOG.info(updatedFoundMedia.getName());
+            LOG.info(updatedFoundMedia.getDescription());
         }
     }
 }

@@ -36,22 +36,23 @@ public class SmartFiltersSample {
         AssetService assetService = client.getAssetService();
 
         List<Smartfilter> smartFilters = assetService.getSmartfilters().blockingSingle().body();
-        for (Smartfilter smartFilter : smartFilters) {
-            LOG.info(smartFilter.getId());
-            // smart filter metaproperties
-            List<String> smartFilterMetaproperties = smartFilter.getMetaproperties();
-            if (!smartFilterMetaproperties.isEmpty()) {
-                LOG.info("smart filter metaproperty ids:");
-                for (String metaproperty : smartFilterMetaproperties) {
-                    LOG.info(metaproperty);
+        if (smartFilters != null && !smartFilters.isEmpty()) {
+            for (Smartfilter smartFilter : smartFilters) {
+                LOG.info("Smart Filter ID: " + smartFilter.getId());
+                // smart filter metaproperties
+                List<String> smartFilterMetaproperties = smartFilter.getMetaproperties();
+                if (!smartFilterMetaproperties.isEmpty()) {
+                    LOG.info("smart filter metaproperty ids:");
+                    for (String metaproperty : smartFilterMetaproperties) {
+                        LOG.info("Smart Filter Metaproperty ID: " + metaproperty);
+                    }
                 }
-            }
 
-            // labels
-            Map<String, String> smartFilterLabels = smartFilter.getLabels();
-            for (Map.Entry<String, String> entry : smartFilterLabels.entrySet()) {
-                LOG.info("smart filter label: ");
-                LOG.info(entry.getKey() + " " + entry.getValue());
+                // smart filter labels
+                Map<String, String> smartFilterLabels = smartFilter.getLabels();
+                for (Map.Entry<String, String> entry : smartFilterLabels.entrySet()) {
+                    LOG.info("smart filter label: " + entry.getKey() + " " + entry.getValue());
+                }
             }
         }
     }

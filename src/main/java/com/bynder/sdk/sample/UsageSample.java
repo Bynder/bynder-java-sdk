@@ -1,4 +1,4 @@
-package com.bynder.sdk.model;
+package com.bynder.sdk.sample;
 
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.model.Usage;

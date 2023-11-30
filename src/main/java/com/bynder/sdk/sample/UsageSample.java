@@ -2,6 +2,8 @@ package com.bynder.sdk.sample;
 
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.model.Usage;
+import com.bynder.sdk.query.UsageCreateQuery;
+import com.bynder.sdk.query.UsageDeleteQuery;
 import com.bynder.sdk.query.UsageQuery;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.service.asset.AssetService;
@@ -33,15 +35,33 @@ public class UsageSample {
         // Initialize asset service
         AssetService assetService = client.getAssetService();
 
+        // create usage
         String mediaIdForAssetUsage = appProperties.getProperty("MEDIA_ID_FOR_ASSET_USAGE");
+        String integrationIdForAssetUsage = appProperties.getProperty("INTEGRATION_ID_FOR_ASSET_USAGE");
+
+        UsageCreateQuery usageCreateQuery = new UsageCreateQuery(integrationIdForAssetUsage, mediaIdForAssetUsage);
+        Usage createdAssetUsage = assetService.createUsage(usageCreateQuery).blockingSingle().body();
+        if (createdAssetUsage != null) {
+            LOG.info("Asset Usage ID: " + createdAssetUsage.getId());
+            LOG.info("Asset Usage Asset ID: " + createdAssetUsage.getAssetId());
+        }
+
+        // get asset usages
         UsageQuery usageQuery= new UsageQuery().setAssetId(mediaIdForAssetUsage);
         List<Usage> assetUsages = assetService.getUsage(usageQuery).blockingSingle().body();
 
         if (assetUsages != null && !assetUsages.isEmpty()) {
+            String deleteAssetUsageId = "";
             for (Usage assetUsage : assetUsages) {
                 LOG.info("Asset Usage ID: " + assetUsage.getId());
+                deleteAssetUsageId = assetUsage.getAssetId();
                 LOG.info(assetUsage.getAssetId());
             }
+
+            // delete asset usage
+            UsageDeleteQuery usageDeleteQuery = new UsageDeleteQuery(integrationIdForAssetUsage, deleteAssetUsageId);
+            LOG.info("Deleting asset usage id: " + deleteAssetUsageId);
+            assetService.deleteUsage(usageDeleteQuery);
         }
     }
 }

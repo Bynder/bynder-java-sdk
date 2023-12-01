@@ -196,7 +196,8 @@ Response<List<Media>> mediaResponse = assetService.getMediaList(new MediaQuery()
 
 ### Sample Files Functionality Testing
 
-Classes within `sample` contain code to execute corresponding functionalities. The purpose is to demonstrate how methods are called and provide a convenient method to execute functions.
+Classes within `sample` contain code to execute corresponding functionalities. The purpose is to demonstrate how methods 
+are called and provide a convenient method to execute functions.
 
 Within `src/main/resources` create an `app.properties` file. This file will be referenced from sample files. 
 
@@ -204,7 +205,7 @@ Make sure all values are populated correctly before running sample files.
 
 Example `app.properties` file content:
 
-```
+```java
 # permanent token if using permanent token auth
 PERMANENT_TOKEN=<your auth permanent token>
 # portal url
@@ -240,7 +241,7 @@ INTEGRATION_ID_FOR_ASSET_USAGE=0191a303-9d99-433e-ada4-d244f37e1d7d
 ```
 Within each sample file, OAuth credentials are read in from `app.properties`. 
 This will prompt the browser to open to retrieve an access code and then redirected to the redirect URI. 
-Access code is then provided from terminal prompt to retrieve an access token for API calls afterwards.
+Access code is then provided to terminal prompt to retrieve an access token for API calls afterward.
 
 
 #### Maven
@@ -257,7 +258,7 @@ mvn clean install -Dgpg.skip -Dmaven.javadoc.skip
 Execute `BrandsSample.java` file with command
 
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.bynder.sdk.sample.BrandsSample"
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.BrandsSample
 ```
 
 Methods Used:
@@ -268,7 +269,7 @@ Methods Used:
 Execute `CollectionsSample.java` file with command
 
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.bynder.sdk.sample.CollectionsSample"
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.CollectionsSample
 ```
 
 Methods Used:
@@ -285,7 +286,7 @@ Methods Used:
 Execute `MediaSample.java` file with command
 
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.bynder.sdk.sample.MediaSample"
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.MediaSample
 ```
 
 Methods Used:
@@ -302,7 +303,7 @@ Methods Used:
 Execute `MetapropertiesSample.java` file with command
 
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.bynder.sdk.sample.MetapropertiesSample"
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.MetapropertiesSample
 ```
 
 Methods Used:
@@ -313,7 +314,7 @@ Methods Used:
 Execute `SmartFiltersSample.java` file with command
 
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.bynder.sdk.sample.SmartFiltersSample"
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.SmartFiltersSample
 ```
 
 Methods Used:
@@ -326,19 +327,18 @@ Methods Used:
 Execute `TagsSample.java` file with command
 
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.bynder.sdk.sample.TagsSample"
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.TagsSample
 ```
 
 Methods Used:
 * getTags()
-* 
 
 #### Upload Sample
 
 Execute `UploadSample.java` file with command
 
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.bynder.sdk.sample.UploadSample"
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.UploadSample
 ```
 
 Methods Used:
@@ -349,7 +349,7 @@ Methods Used:
 Execute `UsageSample.java` file with command
 
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.bynder.sdk.sample.UsageSample"
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.UsageSample
 ```
 Methods Used:
 * createUsage(usageCreateQuery)

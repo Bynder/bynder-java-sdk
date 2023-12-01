@@ -111,5 +111,11 @@ public class MediaSample {
             LOG.info(updatedFoundMedia.getName());
             LOG.info(updatedFoundMedia.getDescription());
         }
+
+        // remove media
+        String mediaToRemove = appProperties.getProperty("MEDIA_ID_FOR_REMOVAL");
+        MediaDeleteQuery mediaDeleteQuery = new MediaDeleteQuery(mediaToRemove);
+        LOG.info("Removing media id: " + mediaToRemove);
+        assetService.deleteMedia(mediaDeleteQuery).blockingSingle();
     }
 }

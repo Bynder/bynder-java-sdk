@@ -114,7 +114,7 @@ public class CollectionsSample {
                 .setLoginRequired(false)
                 .setSendMail(true)
                 .setMessage("test");
-        collectionService.shareCollection(collectionShareQuery);
+        collectionService.shareCollection(collectionShareQuery).blockingSingle();
 
         // addMediaToCollection
         String addMediaToCollectionId = appProperties.getProperty("ADD_MEDIA_TO_COLLECTION_COLLECTION_ID");
@@ -129,8 +129,10 @@ public class CollectionsSample {
         // get info about collection that had media added
         CollectionInfoQuery addMediaCollectionInfoQuery = new CollectionInfoQuery(addMediaToCollectionId);
         List<String> mediaIdsFromCollection = collectionService.getCollectionMediaIds(addMediaCollectionInfoQuery).blockingSingle().body();
-        for (String mediaId : mediaIdsFromCollection) {
-            LOG.info("media id: " + mediaId);
+        if (mediaIdsFromCollection != null && !mediaIdsFromCollection.isEmpty()) {
+            for (String mediaId : mediaIdsFromCollection) {
+                LOG.info("media id: " + mediaId);
+            }
         }
 
         // removeMediaFromCollection
@@ -139,13 +141,15 @@ public class CollectionsSample {
         String[] removeMediaIds = new String[] {mediaIdToRemove};
         LOG.info("removing media ids: " + mediaIdToRemove);
         CollectionRemoveMediaQuery collectionRemoveMediaQuery = new CollectionRemoveMediaQuery(removeFromCollectionId, removeMediaIds);
-        collectionService.removeMediaFromCollection(collectionRemoveMediaQuery).blockingSingle();
+        collectionService.removeMediaFromCollection(collectionRemoveMediaQuery);
 
         // get updated media ids from collection after removal
         CollectionInfoQuery removeMediaCollectionInfoQuery = new CollectionInfoQuery(removeFromCollectionId);
         List<String> mediaIdsFromCollectionAfterRemoval = collectionService.getCollectionMediaIds(removeMediaCollectionInfoQuery).blockingSingle().body();
-        for (String mediaId : mediaIdsFromCollectionAfterRemoval) {
-            LOG.info("media id: " + mediaId);
+        if (mediaIdsFromCollectionAfterRemoval != null && !mediaIdsFromCollectionAfterRemoval.isEmpty()) {
+            for (String mediaId : mediaIdsFromCollectionAfterRemoval) {
+                LOG.info("media id: " + mediaId);
+            }
         }
     }
 }

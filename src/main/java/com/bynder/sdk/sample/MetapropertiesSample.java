@@ -1,21 +1,25 @@
 package com.bynder.sdk.sample;
 
 import com.bynder.sdk.configuration.Configuration;
+import com.bynder.sdk.configuration.HttpConnectionSettings;
+import com.bynder.sdk.configuration.OAuthSettings;
 import com.bynder.sdk.model.Metaproperty;
 import com.bynder.sdk.model.MetapropertyOption;
 import com.bynder.sdk.query.MetapropertyQuery;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.service.asset.AssetService;
+import com.bynder.sdk.service.oauth.OAuthService;
 import com.bynder.sdk.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 public class MetapropertiesSample {
     private static final Logger LOG = LoggerFactory.getLogger(MetapropertiesSample.class);
@@ -26,11 +30,32 @@ public class MetapropertiesSample {
          */
         Properties appProperties = Utils.loadConfig("app");
 
-        // Initialize BynderClient with a permanent token
+        // Initialize BynderClient with OAuth
+        OAuthSettings oAuthSettings = new OAuthSettings(appProperties.getProperty("CLIENT_ID"), appProperties.getProperty("CLIENT_SECRET"), new URI(appProperties.getProperty("REDIRECT_URI")));
         BynderClient client = BynderClient.Builder.create(
                 new Configuration.Builder(new URL(appProperties.getProperty("BASE_URL")))
-                        .setPermanentToken(appProperties.getProperty("PERMANENT_TOKEN")).build());
+                        .setOAuthSettings(oAuthSettings)
+                        .setHttpConnectionSettings(new HttpConnectionSettings()).build());
+        List<String> scopes = Arrays.asList("offline", "asset:read", "asset:write", "asset.usage:read",
+                "asset.usage:write", "collection:read", "collection:write", "meta.assetbank:read",
+                "meta.assetbank:write", "meta.workflow:read");
 
+        // Initialize OAuthService
+        OAuthService oauthService = client.getOAuthService();
+        URL authorizationUrl = oauthService.getAuthorizationUrl("state example", scopes);
+
+        // Open browser with authorization URL
+        Desktop desktop = Desktop.getDesktop();
+        desktop.browse(authorizationUrl.toURI());
+
+        // Ask for the code returned in the redirect URI
+        System.out.println("Insert the code: ");
+        Scanner scanner = new Scanner(System.in);
+        String code = scanner.nextLine();
+        scanner.close();
+
+        // Get the access token
+        oauthService.getAccessToken(code, scopes).blockingSingle();
 
         // Initialize asset service
         AssetService assetService = client.getAssetService();

@@ -3,6 +3,7 @@ package com.bynder.sdk.sample;
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.configuration.OAuthSettings;
+import com.bynder.sdk.model.Derivative;
 import com.bynder.sdk.model.DownloadUrl;
 import com.bynder.sdk.model.Media;
 import com.bynder.sdk.model.MediaType;
@@ -67,13 +68,21 @@ public class MediaSample {
         // Initialize asset service
         AssetService assetService = client.getAssetService();
 
+        // get derivatives
+        List<Derivative> derivatives = client.getDerivatives().blockingSingle().body();
+        if (derivatives != null && !derivatives.isEmpty()) {
+            for (Derivative derivative : derivatives) {
+                LOG.info("Derivative Prefix: " + derivative.getPrefix());
+            }
+        }
+
         // Call the API to request for media assets
         MediaQuery mediaQuery =  new MediaQuery().setType(MediaType.IMAGE).setOrderBy(OrderBy.NAME_DESC).setLimit(10).setPage(1);
         List<Media> mediaList = assetService.getMediaList(mediaQuery).blockingSingle().body();
         if (mediaList != null && !mediaList.isEmpty()) {
             for (Media media : mediaList) {
-                LOG.info(media.getId());
-                LOG.info(media.getName());
+                LOG.info("Media ID: " + media.getId());
+                LOG.info("Media Name: " + media.getName());
             }
         }
 

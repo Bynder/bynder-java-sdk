@@ -297,6 +297,7 @@ Methods Used:
 * modifyMedia(modifyQuery)
 * getMediaInfo(mediaInfoQueryRename)
 * deleteMedia(mediaDeleteQuery)
+* getDerivatives()
 
 #### Metaproperties Sample
 

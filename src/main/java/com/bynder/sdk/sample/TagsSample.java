@@ -69,5 +69,6 @@ public class TagsSample {
                 LOG.info("Asset Tag Media Count: " + assetTag.getMediaCount());
             }
         }
+        System.exit(0);
     }
 }

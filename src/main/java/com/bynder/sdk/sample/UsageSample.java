@@ -93,5 +93,6 @@ public class UsageSample {
             LOG.info("Deleting asset usage id: " + deleteAssetUsageId);
             assetService.deleteUsage(usageDeleteQuery);
         }
+        System.exit(0);
     }
 }

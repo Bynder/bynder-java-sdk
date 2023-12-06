@@ -80,5 +80,6 @@ public class UploadSample {
         if (saveMediaResponse.getSuccess()) {
             LOG.info("Asset Uploaded Successfully: " + saveMediaResponse.getMediaId());
         }
+        System.exit(0);
     }
 }

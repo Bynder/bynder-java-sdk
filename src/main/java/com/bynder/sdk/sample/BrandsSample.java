@@ -4,6 +4,7 @@ import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.configuration.OAuthSettings;
 import com.bynder.sdk.model.Brand;
+import com.bynder.sdk.model.oauth.Token;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.service.oauth.OAuthService;
@@ -73,5 +74,6 @@ public class BrandsSample {
                 LOG.info("Brand Description: " + brand.getDescription());
             }
         }
+        System.exit(0);
     }
 }

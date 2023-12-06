@@ -81,5 +81,6 @@ public class SmartFiltersSample {
                 }
             }
         }
+        System.exit(0);
     }
 }

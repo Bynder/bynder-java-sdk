@@ -126,5 +126,6 @@ public class MediaSample {
         MediaDeleteQuery mediaDeleteQuery = new MediaDeleteQuery(mediaToRemove);
         LOG.info("Removing media id: " + mediaToRemove);
         assetService.deleteMedia(mediaDeleteQuery).blockingSingle();
+        System.exit(0);
     }
 }

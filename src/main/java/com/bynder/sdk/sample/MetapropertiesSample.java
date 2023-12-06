@@ -87,5 +87,6 @@ public class MetapropertiesSample {
                 }
             }
         }
+        System.exit(0);
     }
 }

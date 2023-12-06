@@ -151,5 +151,6 @@ public class CollectionsSample {
                 LOG.info("media id: " + mediaId);
             }
         }
+        System.exit(0);
     }
 }

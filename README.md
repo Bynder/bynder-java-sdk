@@ -193,3 +193,166 @@ Response<List<Tag>> tagsResponse = assetService.getTags().blockingSingle();
 // Get media (request with query)
 Response<List<Media>> mediaResponse = assetService.getMediaList(new MediaQuery().setType(MediaType.IMAGE).setLimit(100).setPage(1)).blockingSingle();
 ```
+
+### Sample Files Functionality Testing
+
+Classes within `sample` contain code to execute corresponding functionalities. The purpose is to demonstrate how methods 
+are called and provide a convenient method to execute functions.
+
+Within `src/main/resources` create an `app.properties` file. This file will be referenced from sample files. 
+
+Make sure all values are populated correctly before running sample files.
+
+Example `app.properties` file content:
+
+```java
+# permanent token if using permanent token auth
+PERMANENT_TOKEN=<your auth permanent token>
+# portal url
+BASE_URL=https://portal.bynder.com
+# OAuth info
+REDIRECT_URI=https://google.com
+CLIENT_ID=<your OAuth2 client id>
+CLIENT_SECRET=<your OAuth2 client secret>
+# media id for info
+MEDIA_ID_FOR_INFO=5B8357A7-5DEB-4BC7-9CFBDEE1ECE120A9
+# media id for renaming
+MEDIA_ID_FOR_RENAME=5B8357A7-5DEB-4BC7-9CFBDEE1ECE120A9
+# media id for removal
+MEDIA_ID_FOR_REMOVAL=946A1800-6298-4201-AEB8F2830B07400E
+# collection id to get info for
+GET_COLLECTION_INFO_ID=615F03BB-D986-4786-B2C085D2F0718230
+# collection id to share
+SHARE_COLLECTION_ID=615F03BB-D986-4786-B2C085D2F0718230
+# recipient to receive shared collection
+COLLECTION_SHARE_RECIPIENT=recipient@mail.com
+# media id to add to collection
+ADD_MEDIA_TO_COLLECTION_MEDIA_ID=C078E8EE-C13A-4DA5-86EC8D6F335364EB
+# collection id for media to be added to
+ADD_MEDIA_TO_COLLECTION_COLLECTION_ID=615F03BB-D986-4786-B2C085D2F0718230
+# collection id to remove asset from
+REMOVE_FROM_COLLECTION_ID=615F03BB-D986-4786-B2C085D2F0718230
+# media id to remove from collection
+REMOVE_MEDIA_ID_FROM_COLLECTION=C078E8EE-C13A-4DA5-86EC8D6F335364EB
+# media id used for creating asset usage
+MEDIA_ID_FOR_ASSET_USAGE=C078E8EE-C13A-4DA5-86EC8D6F335364EB
+# integration id used for asset usage
+INTEGRATION_ID_FOR_ASSET_USAGE=0191a303-9d99-433e-ada4-d244f37e1d7d
+```
+Within each sample file, OAuth credentials are read in from `app.properties`. 
+This will prompt the browser to open to retrieve an access code and then redirected to the redirect URI. 
+Access code is then provided to terminal prompt to retrieve an access token for API calls afterward.
+
+
+#### Maven
+
+Make sure `mvn` CLI is installed.
+
+From root directory, dependencies can be installed from `pom.xml` using command:
+```bash
+mvn clean install -Dgpg.skip -Dmaven.javadoc.skip
+```
+
+#### Brands Sample
+
+Execute `BrandsSample.java` file with command
+
+```bash
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.BrandsSample
+```
+
+Methods Used:
+* getBrands()
+
+#### Collections Sample
+
+Execute `CollectionsSample.java` file with command
+
+```bash
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.CollectionsSample
+```
+
+Methods Used:
+* getCollections(collectionQuery)
+* getCollectionInfo(collectionInfoQuery)
+* createCollection(createCollectionQuery)
+* shareCollection(collectionShareQuery)
+* addMediaToCollection(collectionAddMediaQuery)
+* getCollectionMediaIds(addMediaCollectionInfoQuery)
+* removeMediaFromCollection(collectionRemoveMediaQuery)
+
+#### Media Sample
+
+Execute `MediaSample.java` file with command
+
+```bash
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.MediaSample
+```
+
+Methods Used:
+
+* getMediaList(mediaQuery)
+* getMediaInfo(mediaInfoQuery)
+* getMediaDownloadUrl(mediaDownloadQuery)
+* modifyMedia(modifyQuery)
+* getMediaInfo(mediaInfoQueryRename)
+* deleteMedia(mediaDeleteQuery)
+* getDerivatives()
+
+#### Metaproperties Sample
+
+Execute `MetapropertiesSample.java` file with command
+
+```bash
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.MetapropertiesSample
+```
+
+Methods Used:
+* getMetaproperties(metapropertyQuery)
+
+#### Smart Filters Sample
+
+Execute `SmartFiltersSample.java` file with command
+
+```bash
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.SmartFiltersSample
+```
+
+Methods Used:
+* getSmartfilters()
+* smartFilter.getMetaproperties()
+* smartFilter.getLabels()
+
+#### Tags Sample
+
+Execute `TagsSample.java` file with command
+
+```bash
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.TagsSample
+```
+
+Methods Used:
+* getTags()
+
+#### Upload Sample
+
+Execute `UploadSample.java` file with command
+
+```bash
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.UploadSample
+```
+
+Methods Used:
+* uploadFile(uploadQuery)
+
+#### Usage Sample
+
+Execute `UsageSample.java` file with command
+
+```bash
+mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.UsageSample
+```
+Methods Used:
+* createUsage(usageCreateQuery)
+* getUsage(usageQuery)
+* deleteUsage(usageDeleteQuery)

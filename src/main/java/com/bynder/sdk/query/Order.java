@@ -22,4 +22,5 @@ public enum Order {
     @Override
     public String toString() {
         return name;
-    }}
+    }
+}

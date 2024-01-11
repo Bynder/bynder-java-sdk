@@ -11,17 +11,17 @@ package com.bynder.sdk.query;
  */
 public enum OrderField {
 
-	DATE_CREATED("media.dateCreated"), DATE_REMOVED("media.dateRemoved"), NAME("media.name"),
-	USERNAME("media.username");
+    DATE_CREATED("media.dateCreated"), DATE_REMOVED("media.dateRemoved"), NAME("media.name"),
+    USERNAME("media.username");
 
-	private final String name;
+    private final String name;
 
-	OrderField(final String name) {
-		this.name = name;
-	}
+    OrderField(final String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 }

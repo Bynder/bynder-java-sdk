@@ -19,11 +19,11 @@ import org.junit.Test;
  */
 public class OrderFieldTest {
 
-	@Test
-	public void enumValuesForOrderField() {
-		assertEquals("media.dateCreated", OrderField.DATE_CREATED.toString());
-		assertEquals("media.dateRemoved", OrderField.DATE_REMOVED.toString());
-		assertEquals("media.name", OrderField.NAME.toString());
-		assertEquals("media.username", OrderField.USERNAME.toString());
-	}
+    @Test
+    public void enumValuesForOrderField() {
+        assertEquals("media.dateCreated", OrderField.DATE_CREATED.toString());
+        assertEquals("media.dateRemoved", OrderField.DATE_REMOVED.toString());
+        assertEquals("media.name", OrderField.NAME.toString());
+        assertEquals("media.username", OrderField.USERNAME.toString());
+    }
 }

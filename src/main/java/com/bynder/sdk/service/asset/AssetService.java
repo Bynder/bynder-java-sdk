@@ -25,150 +25,150 @@ import java.util.Map;
  */
 public interface AssetService {
 
-	/**
-	 * Get Brands.
-	 *
-	 * @return {@link Observable} with list of {@link Brand}.
-	 */
-	Observable<Response<List<Brand>>> getBrands();
+    /**
+     * Get Brands.
+     *
+     * @return {@link Observable} with list of {@link Brand}.
+     */
+    Observable<Response<List<Brand>>> getBrands();
 
-	/**
-	 * Get Tags.
-	 *
-	 * @return {@link Observable} with list of {@link Tag}.
-	 */
-	Observable<Response<List<Tag>>> getTags();
+    /**
+     * Get Tags.
+     *
+     * @return {@link Observable} with list of {@link Tag}.
+     */
+    Observable<Response<List<Tag>>> getTags();
 
-	/**
-	 * Get Metaproperties.
-	 *
-	 * @param metapropertyQuery Information about if media count should be included
-	 *                          in the metaproperty options or not.
-	 * @return {@link Observable} with Map of String, {@link Metaproperty} key/value
-	 *         pairs.
-	 */
-	Observable<Response<Map<String, Metaproperty>>> getMetaproperties(MetapropertyQuery metapropertyQuery);
+    /**
+     * Get Metaproperties.
+     *
+     * @param metapropertyQuery Information about if media count should be included
+     *                          in the metaproperty options or not.
+     * @return {@link Observable} with Map of String, {@link Metaproperty} key/value
+     *         pairs.
+     */
+    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(MetapropertyQuery metapropertyQuery);
 
-	/**
-	 * Gets a list of media using query information.
-	 *
-	 * @param mediaQuery Information to correctly filter/paginate media.
-	 * @return {@link Observable} with list of {@link Media}.
-	 */
-	Observable<Response<List<Media>>> getMediaList(MediaQuery mediaQuery);
+    /**
+     * Gets a list of media using query information.
+     *
+     * @param mediaQuery Information to correctly filter/paginate media.
+     * @return {@link Observable} with list of {@link Media}.
+     */
+    Observable<Response<List<Media>>> getMediaList(MediaQuery mediaQuery);
 
-	/**
-	 * Gets all the information for a specific media. This is needed to get the
-	 * media items of a media asset.
-	 *
-	 * @param mediaInfoQuery Information about the media we want to get the
-	 *                       information from.
-	 * @return {@link Observable} with {@link Media} information.
-	 */
-	Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery);
+    /**
+     * Gets all the information for a specific media. This is needed to get the
+     * media items of a media asset.
+     *
+     * @param mediaInfoQuery Information about the media we want to get the
+     *                       information from.
+     * @return {@link Observable} with {@link Media} information.
+     */
+    Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery);
 
-	/**
-	 * Modifies the metadata of a media asset.
-	 *
-	 * @param mediaModifyQuery Information with the media asset metadata new values
-	 *                         to be modified.
-	 * @return {@link Observable} with the request {@link Response} information.
-	 */
-	Observable<Response<Void>> modifyMedia(MediaModifyQuery mediaModifyQuery);
+    /**
+     * Modifies the metadata of a media asset.
+     *
+     * @param mediaModifyQuery Information with the media asset metadata new values
+     *                         to be modified.
+     * @return {@link Observable} with the request {@link Response} information.
+     */
+    Observable<Response<Void>> modifyMedia(MediaModifyQuery mediaModifyQuery);
 
-	/**
-	 * Deletes a media asset.
-	 *
-	 * @param mediaDeleteQuery Information to identify the media asset we want to
-	 *                         delete.
-	 * @return {@link Observable} with the request {@link Response} information.
-	 */
-	Observable<Response<Void>> deleteMedia(MediaDeleteQuery mediaDeleteQuery);
+    /**
+     * Deletes a media asset.
+     *
+     * @param mediaDeleteQuery Information to identify the media asset we want to
+     *                         delete.
+     * @return {@link Observable} with the request {@link Response} information.
+     */
+    Observable<Response<Void>> deleteMedia(MediaDeleteQuery mediaDeleteQuery);
 
-	/**
-	 * Gets the download file URL for a specific media asset file. If the media item
-	 * id was not specified, it will return the download URL of the media specified
-	 * by media id.
-	 *
-	 * @param mediaDownloadQuery Information with the media we want to get the URL
-	 *                           from.
-	 * @return {@link Observable} with the {@link DownloadUrl} information of the
-	 *         media asset file.
-	 */
-	Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDownloadQuery);
+    /**
+     * Gets the download file URL for a specific media asset file. If the media item
+     * id was not specified, it will return the download URL of the media specified
+     * by media id.
+     *
+     * @param mediaDownloadQuery Information with the media we want to get the URL
+     *                           from.
+     * @return {@link Observable} with the {@link DownloadUrl} information of the
+     *         media asset file.
+     */
+    Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDownloadQuery);
 
-	/**
-	 * Creates a usage record for a media asset.
-	 *
-	 * @param usageCreateQuery Information about the asset usage we want to create.
-	 * @return {@link Observable} with {@link Usage} information.
-	 */
-	Observable<Response<Usage>> createUsage(UsageCreateQuery usageCreateQuery);
+    /**
+     * Creates a usage record for a media asset.
+     *
+     * @param usageCreateQuery Information about the asset usage we want to create.
+     * @return {@link Observable} with {@link Usage} information.
+     */
+    Observable<Response<Usage>> createUsage(UsageCreateQuery usageCreateQuery);
 
-	/**
-	 * Gets all the media assets usage records.
-	 *
-	 * @param usageQuery Information about the asset usage we want to get the
-	 *                   information from.
-	 * @return {@link Observable} with list of {@link Usage}.
-	 */
-	Observable<Response<List<Usage>>> getUsage(UsageQuery usageQuery);
+    /**
+     * Gets all the media assets usage records.
+     *
+     * @param usageQuery Information about the asset usage we want to get the
+     *                   information from.
+     * @return {@link Observable} with list of {@link Usage}.
+     */
+    Observable<Response<List<Usage>>> getUsage(UsageQuery usageQuery);
 
-	/**
-	 * Deletes a usage record of a media asset.
-	 *
-	 * @param usageDeleteQuery Information about the asset usage we want to delete.
-	 * @return {@link Observable} with the request {@link Response} information.
-	 */
-	Observable<Response<Void>> deleteUsage(UsageDeleteQuery usageDeleteQuery);
+    /**
+     * Deletes a usage record of a media asset.
+     *
+     * @param usageDeleteQuery Information about the asset usage we want to delete.
+     * @return {@link Observable} with the request {@link Response} information.
+     */
+    Observable<Response<Void>> deleteUsage(UsageDeleteQuery usageDeleteQuery);
 
-	/**
-	 * Get Smartfilters.
-	 *
-	 * @return {@link Observable} with List of {@link Smartfilter};
-	 */
-	Observable<Response<List<Smartfilter>>> getSmartfilters();
+    /**
+     * Get Smartfilters.
+     *
+     * @return {@link Observable} with List of {@link Smartfilter};
+     */
+    Observable<Response<List<Smartfilter>>> getSmartfilters();
 
-	/**
-	 * Uploads a file with the information specified in the query parameter.
-	 *
-	 * @param uploadQuery Upload query with the information to upload the file.
-	 * @return {@link Observable} with the {@link SaveMediaResponse} information.
-	 */
-	Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
+    /**
+     * Uploads a file with the information specified in the query parameter.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     * @return {@link Observable} with the {@link SaveMediaResponse} information.
+     */
+    Observable<SaveMediaResponse> uploadFile(UploadQuery uploadQuery);
 
-	Observable<UploadAdditionalMediaResponse> uploadAdditionalFile(UploadQuery uploadQuery);
+    Observable<UploadAdditionalMediaResponse> uploadAdditionalFile(UploadQuery uploadQuery);
 
-	/**
-	 * Uploads a file with Progress Report.
-	 *
-	 * @param uploadQuery Upload query with the information to upload the file.
-	 * @return {@link Observable} with the {@link UploadProgress} information.
-	 */
-	Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
+    /**
+     * Uploads a file with Progress Report.
+     *
+     * @param uploadQuery Upload query with the information to upload the file.
+     * @return {@link Observable} with the {@link UploadProgress} information.
+     */
+    Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
 
-	/**
-	 * Get a list of recently removed assets. <br>
-	 * <br>
-	 * Warning: You can only retrieve the removed assets from the last 30 days.<br>
-	 * Warning: Requires the trash.assets security role.
-	 * 
-	 * @param deletedMediaQuery Information about the deleted media we want to get
-	 *                          the information from.
-	 * @return {@link Observable} with list of {@link DeletedMedia}
-	 */
-	Observable<Response<List<DeletedMedia>>> getRecentlyRemovedMediaList(DeletedMediaQuery deletedMediaQuery);
+    /**
+     * Get a list of recently removed assets. <br>
+     * <br>
+     * Warning: You can only retrieve the removed assets from the last 30 days.<br>
+     * Warning: Requires the trash.assets security role.
+     * 
+     * @param deletedMediaQuery Information about the deleted media we want to get
+     *                          the information from.
+     * @return {@link Observable} with list of {@link DeletedMedia}
+     */
+    Observable<Response<List<DeletedMedia>>> getRecentlyRemovedMediaList(DeletedMediaQuery deletedMediaQuery);
 
-	/**
-	 * Builder class used to create a new instance of {@link AssetService}.
-	 */
-	class Builder {
+    /**
+     * Builder class used to create a new instance of {@link AssetService}.
+     */
+    class Builder {
 
-		private Builder() {
-		}
+        private Builder() {
+        }
 
-		public static AssetService create(final BynderApi bynderApi, final QueryDecoder queryDecoder) {
-			return new AssetServiceImpl(bynderApi, queryDecoder);
-		}
-	}
+        public static AssetService create(final BynderApi bynderApi, final QueryDecoder queryDecoder) {
+            return new AssetServiceImpl(bynderApi, queryDecoder);
+        }
+    }
 }

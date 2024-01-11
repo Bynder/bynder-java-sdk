@@ -139,12 +139,12 @@ public class AssetServiceImplTest {
         verify(bynderApi, times(1)).getSmartfilters();
     }
 
-	@Test
-	public void getRecentlyRemovedMediaList() throws Exception {
-		DeletedMediaQuery deletedMediaQuery = new DeletedMediaQuery();
-		assetService.getRecentlyRemovedMediaList(deletedMediaQuery);
-		
-		verify(bynderApi, times(1)).getRecentlyRemovedMediaList(anyMap());
+    @Test
+    public void getRecentlyRemovedMediaList() throws Exception {
+        DeletedMediaQuery deletedMediaQuery = new DeletedMediaQuery();
+        assetService.getRecentlyRemovedMediaList(deletedMediaQuery);
+        
+        verify(bynderApi, times(1)).getRecentlyRemovedMediaList(anyMap());
         verify(queryDecoder, times(1)).decode(deletedMediaQuery);
-	}
+    }
 }

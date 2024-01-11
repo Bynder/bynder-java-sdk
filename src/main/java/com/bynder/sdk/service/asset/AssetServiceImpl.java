@@ -186,9 +186,9 @@ public class AssetServiceImpl implements AssetService {
     /**
      * Check {@link AssetService} for more information.
      */
-	@Override
-	public Observable<Response<List<DeletedMedia>>> getRecentlyRemovedMediaList(final DeletedMediaQuery deletedMediaQuery) {
-		Map<String, String> params = queryDecoder.decode(deletedMediaQuery);
-		return bynderApi.getRecentlyRemovedMediaList(params);
-	}
+    @Override
+    public Observable<Response<List<DeletedMedia>>> getRecentlyRemovedMediaList(final DeletedMediaQuery deletedMediaQuery) {
+        Map<String, String> params = queryDecoder.decode(deletedMediaQuery);
+        return bynderApi.getRecentlyRemovedMediaList(params);
+    }
 }

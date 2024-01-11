@@ -23,7 +23,7 @@ public class DeletedMediaQueryTest {
 
     public static final int EXPECTED_INTEGER = 1;
     public static final Order EXPECTED_ORDER = Order.ASC;
-    public static final OrderField EXPECTED_FIELD =  OrderField.NAME;
+    public static final OrderField EXPECTED_FIELD = OrderField.NAME;
     public static final String EXPECTED_DATE = "2021-12-25T10:30:00Z";
 
     private DeletedMediaQuery deletedMediaQuery;

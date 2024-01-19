@@ -42,12 +42,12 @@ public interface AssetService {
     /**
      * Get Metaproperties.
      *
-     * @param metapropertyQuery Information about if media count should be included in the
-     * metaproperty options or not.
-     * @return {@link Observable} with Map of String, {@link Metaproperty} key/value pairs.
+     * @param metapropertyQuery Information about if media count should be included
+     *                          in the metaproperty options or not.
+     * @return {@link Observable} with Map of String, {@link Metaproperty} key/value
+     *         pairs.
      */
-    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(
-        MetapropertyQuery metapropertyQuery);
+    Observable<Response<Map<String, Metaproperty>>> getMetaproperties(MetapropertyQuery metapropertyQuery);
 
     /**
      * Gets a list of media using query information.
@@ -58,10 +58,11 @@ public interface AssetService {
     Observable<Response<List<Media>>> getMediaList(MediaQuery mediaQuery);
 
     /**
-     * Gets all the information for a specific media. This is needed to get the media items of a
-     * media asset.
+     * Gets all the information for a specific media. This is needed to get the
+     * media items of a media asset.
      *
-     * @param mediaInfoQuery Information about the media we want to get the information from.
+     * @param mediaInfoQuery Information about the media we want to get the
+     *                       information from.
      * @return {@link Observable} with {@link Media} information.
      */
     Observable<Response<Media>> getMediaInfo(MediaInfoQuery mediaInfoQuery);
@@ -69,8 +70,8 @@ public interface AssetService {
     /**
      * Modifies the metadata of a media asset.
      *
-     * @param mediaModifyQuery Information with the media asset metadata new values to be
-     * modified.
+     * @param mediaModifyQuery Information with the media asset metadata new values
+     *                         to be modified.
      * @return {@link Observable} with the request {@link Response} information.
      */
     Observable<Response<Void>> modifyMedia(MediaModifyQuery mediaModifyQuery);
@@ -78,17 +79,21 @@ public interface AssetService {
     /**
      * Deletes a media asset.
      *
-     * @param mediaDeleteQuery Information to identify the media asset we want to delete.
+     * @param mediaDeleteQuery Information to identify the media asset we want to
+     *                         delete.
      * @return {@link Observable} with the request {@link Response} information.
      */
     Observable<Response<Void>> deleteMedia(MediaDeleteQuery mediaDeleteQuery);
 
     /**
-     * Gets the download file URL for a specific media asset file. If the media item id was not
-     * specified, it will return the download URL of the media specified by media id.
+     * Gets the download file URL for a specific media asset file. If the media item
+     * id was not specified, it will return the download URL of the media specified
+     * by media id.
      *
-     * @param mediaDownloadQuery Information with the media we want to get the URL from.
-     * @return {@link Observable} with the {@link DownloadUrl} information of the media asset file.
+     * @param mediaDownloadQuery Information with the media we want to get the URL
+     *                           from.
+     * @return {@link Observable} with the {@link DownloadUrl} information of the
+     *         media asset file.
      */
     Observable<Response<DownloadUrl>> getMediaDownloadUrl(MediaDownloadQuery mediaDownloadQuery);
 
@@ -103,7 +108,8 @@ public interface AssetService {
     /**
      * Gets all the media assets usage records.
      *
-     * @param usageQuery Information about the asset usage we want to get the information from.
+     * @param usageQuery Information about the asset usage we want to get the
+     *                   information from.
      * @return {@link Observable} with list of {@link Usage}.
      */
     Observable<Response<List<Usage>>> getUsage(UsageQuery usageQuery);
@@ -142,6 +148,18 @@ public interface AssetService {
     Observable<UploadProgress> uploadFileWithProgress(UploadQuery uploadQuery);
 
     /**
+     * Get a list of recently removed assets. <br>
+     * <br>
+     * Warning: You can only retrieve the removed assets from the last 30 days.<br>
+     * Warning: Requires the trash.assets security role.
+     * 
+     * @param deletedMediaQuery Information about the deleted media we want to get
+     *                          the information from.
+     * @return {@link Observable} with list of {@link DeletedMedia}
+     */
+    Observable<Response<List<DeletedMedia>>> getRecentlyRemovedMediaList(DeletedMediaQuery deletedMediaQuery);
+
+    /**
      * Builder class used to create a new instance of {@link AssetService}.
      */
     class Builder {
@@ -149,8 +167,7 @@ public interface AssetService {
         private Builder() {
         }
 
-        public static AssetService create(final BynderApi bynderApi,
-            final QueryDecoder queryDecoder) {
+        public static AssetService create(final BynderApi bynderApi, final QueryDecoder queryDecoder) {
             return new AssetServiceImpl(bynderApi, queryDecoder);
         }
     }

@@ -360,4 +360,8 @@ public interface BynderApi {
 
     @DELETE("api/workflow/groups/{id}/")
     Observable<Response<Void>> deleteWorkflowGroup(@Path("id") String groupId);
+    
+    @GET("api/trash/media/")
+    Observable<Response<List<DeletedMedia>>> getRecentlyRemovedMediaList(@QueryMap Map<String, String> params);
+    
 }

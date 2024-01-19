@@ -182,4 +182,13 @@ public class AssetServiceImpl implements AssetService {
     public Observable<UploadProgress> uploadFileWithProgress(final UploadQuery uploadQuery) {
         return fileUploader.uploadFileWithProgress(uploadQuery);
     }
+
+    /**
+     * Check {@link AssetService} for more information.
+     */
+    @Override
+    public Observable<Response<List<DeletedMedia>>> getRecentlyRemovedMediaList(final DeletedMediaQuery deletedMediaQuery) {
+        Map<String, String> params = queryDecoder.decode(deletedMediaQuery);
+        return bynderApi.getRecentlyRemovedMediaList(params);
+    }
 }

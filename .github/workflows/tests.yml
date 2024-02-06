@@ -2,6 +2,10 @@ name: Tests
 
 on: [ push, pull_request_target ]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
 
   test:

@@ -18,6 +18,7 @@ jobs:
       - name: Set up JDK 8
         uses: actions/setup-java@v4
         with:
+          distribution: 'zulu'
           java-version: 8
       - name: Maven Package
         run: mvn clean install -Dgpg.skip -Dmaven.javadoc.skip -Dmaven.test.skip

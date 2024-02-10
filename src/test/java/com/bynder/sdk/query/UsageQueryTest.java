@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNull;
 public class UsageQueryTest {
 
     public static final String EXPECTED_ASSET_ID = "assetId";
+    public static final String EXPECTED_URI = "uri";
 
     private UsageQuery usageQuery;
 
@@ -39,5 +40,11 @@ public class UsageQueryTest {
     public void setAssetIdForUsageQuery() {
         usageQuery.setAssetId(EXPECTED_ASSET_ID);
         assertEquals(EXPECTED_ASSET_ID, usageQuery.getAssetId());
+    }
+
+    @Test
+    public void setUriForUsageQuery() {
+        usageQuery.setUri(EXPECTED_URI);
+        assertEquals(EXPECTED_URI, usageQuery.getUri());
     }
 }

@@ -34,6 +34,7 @@ public class UsageQueryTest {
     @Test
     public void initializeEmptyUsageQuery() {
         assertNull(usageQuery.getAssetId());
+        assertNull(usageQuery.getUri());
     }
 
     @Test

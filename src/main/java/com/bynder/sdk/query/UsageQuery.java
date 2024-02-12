@@ -19,12 +19,27 @@ public class UsageQuery {
     @ApiField(name = "asset_id")
     private String assetId;
 
+    /**
+     * Uri of the asset
+     */
+    @ApiField(name = "uri")
+    private String uri;
+
     public String getAssetId() {
         return assetId;
     }
 
     public UsageQuery setAssetId(final String assetId) {
         this.assetId = assetId;
+        return this;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public UsageQuery setUri(final String uri) {
+        this.uri = uri;
         return this;
     }
 }

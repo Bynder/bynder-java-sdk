@@ -1,23 +1,27 @@
 package com.bynder.sdk.util;
 
-import com.bynder.sdk.exception.HttpResponseException;
-import io.reactivex.Observable;
-import okhttp3.MediaType;
-import okhttp3.ResponseBody;
-import org.junit.Before;
-import org.junit.Test;
-import retrofit2.Response;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.bynder.sdk.exception.HttpResponseException;
+
+import io.reactivex.Observable;
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 public class RXUtilsTest {
 
@@ -93,10 +97,10 @@ public class RXUtilsTest {
     }
 
     @Test
-    public void readFile() throws IOException {
-        String path = ClassLoader.getSystemResource("config.properties").getPath();
+    public void readFile() throws IOException, URISyntaxException {
+        URI path = ClassLoader.getSystemResource("config.properties").toURI();
         byte[] expected = Files.readAllBytes(Paths.get(path));
-        byte[] actual = RXUtils.readFile(path).blockingGet();
+        byte[] actual = RXUtils.readFile(Paths.get(path).toString()).blockingGet();
         assertArrayEquals(expected, actual);
     }
 

@@ -120,6 +120,11 @@ public class Media {
      * versions equal to true.
      */
     private List<MediaItem> mediaItems;
+    /**
+     * Custom properties not having an PropertyOption. Key is the property name and
+     * value the value(s) of that property.
+     */
+    private Map<String, List<String>> customMetaproperties;
 
     public String getId() {
         return id;
@@ -215,5 +220,9 @@ public class Media {
 
     public List<MediaItem> getMediaItems() {
         return mediaItems;
+    }
+
+    public Map<String, List<String>> getCustomMetaproperties() {
+        return customMetaproperties;
     }
 }

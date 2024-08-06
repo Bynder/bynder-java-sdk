@@ -34,7 +34,7 @@ public class BynderClientTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Mockito.when(configuration.getBaseUrl()).thenReturn(new URL(BASE_URL));
         Mockito.when(configuration.getHttpConnectionSettings())
             .thenReturn(new HttpConnectionSettings());

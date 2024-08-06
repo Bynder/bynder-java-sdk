@@ -61,7 +61,7 @@ public class OAuthServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(oauthClient.getAccessToken(anyMap())).thenReturn(Observable.just(Response.success(token)));
         when(configuration.getBaseUrl()).thenReturn(new URL(EXPECTED_BASE_URL));
         when(configuration.getOAuthSettings()).thenReturn(oAuthSettings);

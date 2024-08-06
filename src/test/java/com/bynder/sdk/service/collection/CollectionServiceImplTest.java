@@ -38,7 +38,7 @@ public class CollectionServiceImplTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         collectionService = CollectionService.Builder.create(bynderApi, queryDecoder);
     }
 

@@ -37,7 +37,7 @@ public class AssetServiceImplTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         assetService = AssetService.Builder.create(bynderApi, queryDecoder);
     }
 

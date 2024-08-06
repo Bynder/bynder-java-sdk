@@ -6,14 +6,21 @@
  */
 package com.bynder.sdk.api;
 
+import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
 import com.bynder.sdk.configuration.Configuration;
 import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.exception.BynderRuntimeException;
+import com.bynder.sdk.model.Media;
 import com.bynder.sdk.service.BynderClient;
 import com.bynder.sdk.util.BooleanTypeAdapter;
+import com.bynder.sdk.util.MediaTypeAdapter;
 import com.bynder.sdk.util.StringConverterFactory;
 import com.bynder.sdk.util.Utils;
 import com.google.gson.GsonBuilder;
+
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
 import okhttp3.Request;
@@ -21,10 +28,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import java.io.IOException;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Factory to create API clients.
@@ -51,6 +54,7 @@ public class ApiFactory {
                 .addConverterFactory(GsonConverterFactory.create(
                         new GsonBuilder()
                                 .registerTypeAdapter(Boolean.class, new BooleanTypeAdapter())
+                                .registerTypeAdapter(Media.class, new MediaTypeAdapter())
                                 .create())
                 )
                 .client(createOkHttpClient(configuration))

@@ -33,7 +33,7 @@ public class FileUploader {
     /**
      * Max polling iterations to wait for the file to be converted.
      */
-    private static final int MAX_POLLING_ITERATIONS = 60;
+    private static final int MAX_POLLING_ITERATIONS = 120;
 
     /**
      * Idle time between polling iterations.

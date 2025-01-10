@@ -102,6 +102,27 @@ public class OAuthServiceImpl implements OAuthService {
      * Check {@link OAuthService} for more information.
      */
     @Override
+    public Observable<Token> getAccessTokenClientCredentials(final List<String> scopes) {
+        // use grant type client credentials
+        TokenQuery tokenQuery = new TokenQuery(configuration.getOAuthSettings().getClientId(),
+                configuration.getOAuthSettings().getClientSecret(), null,
+                GrantType.CLIENT_CREDENTIALS, String.join(" ", scopes), null);
+
+        Map<String, String> params = queryDecoder.decode(tokenQuery);
+        Observable<Response<Token>> accessTokenObservable = oauthClient.getAccessToken(params);
+
+        return accessTokenObservable.map(response -> {
+            Token token = response.body();
+            token.setAccessTokenExpiration();
+            configuration.getOAuthSettings().setToken(token);
+            return token;
+        });
+    }
+
+    /**
+     * Check {@link OAuthService} for more information.
+     */
+    @Override
     public Observable<Token> refreshAccessToken() {
         TokenQuery tokenQuery = new TokenQuery(configuration.getOAuthSettings().getClientId(),
             configuration.getOAuthSettings().getClientSecret(), GrantType.REFRESH_TOKEN,

@@ -96,6 +96,14 @@ public class OAuthServiceImplTest {
     }
 
     @Test
+    public void getAccessTokenClientCredentials() {
+        oAuthService.getAccessTokenClientCredentials(EXPECTED_SCOPES);
+
+        verify(oauthClient, times(1)).getAccessToken(anyMap());
+        verify(queryDecoder, times(1)).decode(any());
+    }
+
+    @Test
     public void getRefreshToken() {
         oAuthService.refreshAccessToken();
 

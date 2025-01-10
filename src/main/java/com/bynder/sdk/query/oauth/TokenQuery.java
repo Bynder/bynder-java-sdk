@@ -34,8 +34,8 @@ public class TokenQuery {
     @ApiField(name = "redirect_uri")
     private URI redirectUri;
     /**
-     * The authorization grant type. Possible values: {@link GrantType#AUTHORIZATION_CODE} and
-     * {@link GrantType#REFRESH_TOKEN}.
+     * The authorization grant type. Possible values: {@link GrantType#AUTHORIZATION_CODE}
+     * ,{@link GrantType#REFRESH_TOKEN} and {@link GrantType#CLIENT_CREDENTIALS}.
      */
     @ApiField(name = "grant_type")
     private GrantType grantType;

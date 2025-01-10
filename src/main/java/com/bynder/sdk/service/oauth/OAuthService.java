@@ -50,6 +50,13 @@ public interface OAuthService {
     Observable<Token> getAccessToken(final String code, final List<String> scopes);
 
     /**
+     * Gets an access token using the client credentials authorization grant.
+     * @param scopes
+     * @return {@link Observable} with {@link Token} information.
+     */
+    Observable<Token> getAccessTokenClientCredentials(final List<String> scopes);
+
+    /**
      * Gets a new access token using the refresh token.
      *
      * @return {@link Observable} with {@link Token} information.

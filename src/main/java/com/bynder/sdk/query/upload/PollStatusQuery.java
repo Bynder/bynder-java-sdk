@@ -21,7 +21,10 @@ public class PollStatusQuery {
     private final String[] items;
 
     public PollStatusQuery(final String[] items) {
-        this.items = items;
+        this.items = new String[items.length];
+        for(int i = 0; i < items.length; i++) {
+            this.items[i] = items[i].replace("/", "");
+        }
     }
 
     public String[] getItems() {

@@ -16,6 +16,8 @@ import com.bynder.sdk.util.RXUtils;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,6 +29,9 @@ import java.util.concurrent.TimeUnit;
  * Class used to upload files to Bynder.
  */
 public class FileUploader {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FileUploader.class);
+
 
     private static final int MAX_CHUNK_SIZE = 1024 * 1024 * 5;
 
@@ -160,6 +165,7 @@ public class FileUploader {
      * Check {@link BynderApi#getPollStatus} for more information.
      */
     private Completable pollProcessing(final String importId) {
+        LOG.info("Polling status for importId: " + importId);
         return getPollStatus(new PollStatusQuery(importId.split(",")))
                 .delay(POLLING_IDLE_TIME, TimeUnit.MILLISECONDS)
                 .repeat()
@@ -244,8 +250,15 @@ public class FileUploader {
      */
     private Single<PollStatus> getPollStatus(final PollStatusQuery pollStatusQuery) {
         Map<String, String> params = queryDecoder.decode(pollStatusQuery);
-        return bynderApi.getPollStatus(params).singleOrError().map(RXUtils::getResponseBody);
-    }
+        LOG.info("Polling status for: " + params);
+        return bynderApi.getPollStatus(params)
+                .doOnNext(response -> {
+                    if (response.raw() != null && response.raw().request() != null) {
+                        LOG.info("Request URL for poll: " + response.raw().request().url());
+                    }
+                })
+                .singleOrError()
+                .map(RXUtils::getResponseBody);    }
 
     /**
      * Check {@link BynderApi#saveMedia(Map)} for more information.

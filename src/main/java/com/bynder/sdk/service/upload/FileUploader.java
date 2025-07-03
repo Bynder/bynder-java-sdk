@@ -258,7 +258,8 @@ public class FileUploader {
                     }
                 })
                 .singleOrError()
-                .map(RXUtils::getResponseBody);    }
+                .map(RXUtils::getResponseBody);
+    }
 
     /**
      * Check {@link BynderApi#saveMedia(Map)} for more information.

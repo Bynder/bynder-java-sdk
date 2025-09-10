@@ -6,7 +6,6 @@
  */
 package com.bynder.sdk.model;
 
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -17,25 +16,25 @@ public class CollectionCover {
     /**
      * Thumbnail URL.
      */
-    private URL thumbnail;
+    private String thumbnail;
     /**
      * Thumbnails URLs.
      */
-    private List<URL> thumbnails;
+    private List<String> thumbnails;
     /**
      * Cover large version URL.
      */
-    private URL large;
+    private String large;
 
-    public URL getThumbnail() {
+    public String getThumbnail() {
         return thumbnail;
     }
 
-    public List<URL> getThumbnails() {
+    public List<String> getThumbnails() {
         return thumbnails;
     }
 
-    public URL getLarge() {
+    public String getLarge() {
         return large;
     }
 }

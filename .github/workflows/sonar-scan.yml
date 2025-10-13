@@ -10,7 +10,7 @@ on:
 
 jobs:
   sonar-scan:
-    runs-on: bynder-arc
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

@@ -55,6 +55,11 @@ public class UploadQuery {
 
     private String fileName;
 
+    /**
+     * Flags if the media asset should be public or not.
+     */
+    private Boolean isPublic;
+
     public UploadQuery(final String filepath, final String brandId) {
         this.filepath = filepath;
         this.brandId = brandId;
@@ -80,6 +85,10 @@ public class UploadQuery {
         return (assetName == null) ? getFilename() : assetName;
     }
 
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+
     public UploadQuery setMediaId(final String mediaId) {
         this.mediaId = mediaId;
         return this;
@@ -101,6 +110,11 @@ public class UploadQuery {
 
     public UploadQuery setFileName(final String fileName) {
         this.fileName = fileName;
+        return this;
+    }
+
+    public UploadQuery setIsPublic(final Boolean isPublic) {
+        this.isPublic = isPublic;
         return this;
     }
 

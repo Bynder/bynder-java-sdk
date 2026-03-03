@@ -37,9 +37,10 @@ public class UploadQueryTest {
         uploadQuery.setMediaId(EXPECTED_MEDIA_ID);
         uploadQuery.setAudit(EXPECTED_AUDIT);
         uploadQuery.setTags(Arrays.asList("tag1", "tag2"));
+        uploadQuery.setIsPublic(true);
         uploadQuery.addMetaproperty(EXPECTED_METAPROPERTY_ID, EXPECTED_OPTION_NAME);
 
-        assertTrue(EXPECTED_METAPROPERTY.equals(uploadQuery.getMetaproperties().get(0)));
+        assertEquals(EXPECTED_METAPROPERTY, uploadQuery.getMetaproperties().get(0));
         assertEquals(EXPECTED_FILE_PATH, uploadQuery.getFilepath());
         assertEquals(EXPECTED_BRAND_ID, uploadQuery.getBrandId());
         assertEquals(EXPECTED_MEDIA_ID, uploadQuery.getMediaId());
@@ -47,6 +48,7 @@ public class UploadQueryTest {
         assertEquals(EXPECTED_TAGS, uploadQuery.getTags());
         assertEquals(EXPECTED_FILE_NAME, uploadQuery.getFilename());
         assertEquals(EXPECTED_FILE_NAME, uploadQuery.getAssetName());
+        assertEquals(true, uploadQuery.getIsPublic());
     }
 
     @Test
@@ -83,7 +85,7 @@ public class UploadQueryTest {
         assertEquals(EXPECTED_ASSET_NAME, uploadQuery.getAssetName());
     }
     
-        @Test
+    @Test
     public void testAddMetaproperty_multioption() {
         String[] EXPECTED_METAPROPERTY_OPTIONS =  new String[]{"EXPECTED_OPTION_1", "EXPECTED_OPTION_2"};
         UploadQuery uploadQuery = new UploadQuery(EXPECTED_FILE_PATH, EXPECTED_BRAND_ID);
@@ -94,5 +96,13 @@ public class UploadQueryTest {
 
         assertEquals(EXPECTED_METAPROPERTY_OPTIONS.length, actualOptions.length);
         assertEquals(EXPECTED_METAPROPERTY_OPTIONS[0], actualOptions[0]);
+    }
+
+    @Test
+    public void testIsPublicDefaultValue() {
+        UploadQuery uploadQuery = new UploadQuery(EXPECTED_FILE_PATH, EXPECTED_BRAND_ID);
+        assertEquals(false, uploadQuery.getIsPublic());
+        uploadQuery.setIsPublic(true);
+        assertEquals(true, uploadQuery.getIsPublic());
     }
 }

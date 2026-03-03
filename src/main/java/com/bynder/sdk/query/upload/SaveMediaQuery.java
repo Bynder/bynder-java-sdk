@@ -54,6 +54,13 @@ public class SaveMediaQuery {
     @ApiField
     private String tags;
 
+
+    /**
+     * Flags if media asset should be set to public
+     */
+    @ApiField
+    private Boolean isPublic;
+
     /**
      * Dictionary with (metaproperty) options to set on the asset upon upload.
      */
@@ -92,6 +99,11 @@ public class SaveMediaQuery {
 
     public SaveMediaQuery setMetaproperties(List<MetapropertyAttribute> metaproperties) {
         this.metaproperties = metaproperties;
+        return this;
+    }
+
+    public SaveMediaQuery setIsPublic(final boolean isPublic) {
+        this.isPublic = isPublic;
         return this;
     }
 

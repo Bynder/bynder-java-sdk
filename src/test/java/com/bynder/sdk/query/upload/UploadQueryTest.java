@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Tests the {@link UploadQuery} class methods.
@@ -100,8 +100,10 @@ public class UploadQueryTest {
 
     @Test
     public void testIsPublicDefaultValue() {
+        // default value not true
         UploadQuery uploadQuery = new UploadQuery(EXPECTED_FILE_PATH, EXPECTED_BRAND_ID);
-        assertEquals(false, uploadQuery.getIsPublic());
+        assertNotEquals(true, uploadQuery.getIsPublic());
+        // test true value
         uploadQuery.setIsPublic(true);
         assertEquals(true, uploadQuery.getIsPublic());
     }

@@ -191,6 +191,7 @@ public class FileUploader {
     private Single<SaveMediaResponse> saveUploadedMedia(final String importId, final UploadQuery uploadQuery) {
         SaveMediaQuery saveMediaQuery = new SaveMediaQuery(importId)
                 .setAudit(uploadQuery.isAudit())
+                .setIsPublic(uploadQuery.getIsPublic())
                 .setMetaproperties(uploadQuery.getMetaproperties());
 
         if (uploadQuery.getMediaId() == null) {

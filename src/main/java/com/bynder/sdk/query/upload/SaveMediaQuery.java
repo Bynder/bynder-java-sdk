@@ -102,7 +102,7 @@ public class SaveMediaQuery {
         return this;
     }
 
-    public SaveMediaQuery setIsPublic(final boolean isPublic) {
+    public SaveMediaQuery setIsPublic(final Boolean isPublic) {
         this.isPublic = isPublic;
         return this;
     }

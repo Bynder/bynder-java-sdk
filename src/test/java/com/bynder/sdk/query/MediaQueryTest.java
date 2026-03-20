@@ -36,6 +36,7 @@ public class MediaQueryTest {
     public static final String EXPECTED_METAPROPERTY_OPTION = "metapropertyOption";
     public static final String EXPECTED_TAGS = "tag1,tag2";
     public static final String EXPECTED_DATE = "2021-12-25T10:30:00Z";
+    public static final String EXPECTED_COLLECTION = "325af206-08ad-48f4-a2c3-1321a160b66d";
 
     private MediaQuery mediaQuery;
 
@@ -60,6 +61,7 @@ public class MediaQueryTest {
         assertNull(mediaQuery.getDateModifiedOn());
         assertNull(mediaQuery.getDateModifiedTo());
         assertNull(mediaQuery.getMetapropertyOptions());
+        assertNull(mediaQuery.getCollectionId());
     }
 
     @Test
@@ -117,5 +119,8 @@ public class MediaQueryTest {
         assertEquals(1, mediaQuery.getMetapropertyOptions().size());
         assertEquals(EXPECTED_METAPROPERTY_OPTION,
             mediaQuery.getMetapropertyOptions().get(EXPECTED_METAPROPERTY_NAME));
+
+        mediaQuery.setCollectionId(EXPECTED_COLLECTION);
+        assertEquals(EXPECTED_COLLECTION, mediaQuery.getCollectionId());
     }
 }

@@ -109,6 +109,11 @@ public class MediaQuery {
      */
     @ApiField(name = "property", decoder = MetapropertyParameterDecoder.class)
     private Map<String, String> metapropertyOptions;
+    /**
+     * Retrieve assets that are assigned to a specific collection.
+     */
+    @ApiField
+    private String collectionId;
 
     public MediaType getType() {
         return type;
@@ -260,6 +265,15 @@ public class MediaQuery {
 
     public MediaQuery setMetapropertyOptions(final Map<String, String> metapropertyOptions) {
         this.metapropertyOptions = metapropertyOptions;
+        return this;
+    }
+
+    public String getCollectionId() {
+        return collectionId;
+    }
+
+    public MediaQuery setCollectionId(String collectionId) {
+        this.collectionId = collectionId;
         return this;
     }
 }

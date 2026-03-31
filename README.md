@@ -291,7 +291,8 @@ mvn compile exec:java -Dexec.mainClass=com.bynder.sdk.sample.MediaSample
 
 Methods Used:
 
-* getMediaList(mediaQuery)
+* getMediaList(mediaQuery) - basic query with type and ordering
+* getMediaList(mediaQueryByCollection) - filtering by collection ID
 * getMediaInfo(mediaInfoQuery)
 * getMediaDownloadUrl(mediaDownloadQuery)
 * modifyMedia(modifyQuery)

@@ -86,6 +86,23 @@ public class MediaSample {
             }
         }
 
+        // Call the API to request for media assets filtered by collection ID
+        String collectionIdForFilter = appProperties.getProperty("GET_COLLECTION_INFO_ID");
+        MediaQuery mediaQueryByCollection = new MediaQuery()
+                .setCollectionId(collectionIdForFilter)
+                .setLimit(10)
+                .setPage(1);
+        List<Media> mediaListFromCollection = assetService.getMediaList(mediaQueryByCollection).blockingSingle().body();
+        if (mediaListFromCollection != null && !mediaListFromCollection.isEmpty()) {
+            LOG.info("Media assets filtered by collection ID: " + collectionIdForFilter);
+            for (Media media : mediaListFromCollection) {
+                LOG.info("Media ID: " + media.getId());
+                LOG.info("Media Name: " + media.getName());
+            }
+        } else {
+            LOG.info("No media found in collection: " + collectionIdForFilter);
+        }
+
         // get media info for single asset
         String mediaIdInfo = appProperties.getProperty("MEDIA_ID_FOR_INFO");
         MediaInfoQuery mediaInfoQuery = new MediaInfoQuery(mediaIdInfo);

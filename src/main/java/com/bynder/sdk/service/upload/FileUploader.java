@@ -213,7 +213,6 @@ public class FileUploader {
      * @return {@link Single} with the {@link SaveMediaResponse} information.
      */
     private Single<SaveMediaResponse> saveUploadedMedia(final String importId, final UploadQuery uploadQuery) {
-        LOG.info("saving media");
         SaveMediaQuery saveMediaQuery = new SaveMediaQuery(importId)
                 .setAudit(uploadQuery.isAudit())
                 .setIsPublic(uploadQuery.getIsPublic())

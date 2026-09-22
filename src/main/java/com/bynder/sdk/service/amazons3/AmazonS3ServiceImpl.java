@@ -8,6 +8,7 @@ package com.bynder.sdk.service.amazons3;
 
 import com.bynder.sdk.api.AmazonS3Api;
 import com.bynder.sdk.api.ApiFactory;
+import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.model.upload.MultipartParameters;
 import com.bynder.sdk.util.Indexed;
 import com.bynder.sdk.util.RXUtils;
@@ -36,7 +37,18 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
      * @param bucket AWS bucket with the URL to upload the part to.
      */
     public AmazonS3ServiceImpl(final String bucket) {
-        amazonS3Api = ApiFactory.createAmazonS3Client(bucket);
+        this(bucket, new HttpConnectionSettings());
+    }
+
+    /**
+     * Initialises a new instance of the class.
+     *
+     * @param bucket AWS bucket with the URL to upload the part to.
+     * @param httpConnectionSettings HTTP connection settings (e.g. timeouts) to apply to the
+     * client used to upload file chunks to Amazon S3.
+     */
+    public AmazonS3ServiceImpl(final String bucket, final HttpConnectionSettings httpConnectionSettings) {
+        amazonS3Api = ApiFactory.createAmazonS3Client(bucket, httpConnectionSettings);
     }
 
     /**

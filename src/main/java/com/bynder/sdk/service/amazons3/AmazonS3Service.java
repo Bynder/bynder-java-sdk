@@ -6,6 +6,7 @@
  */
 package com.bynder.sdk.service.amazons3;
 
+import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.model.upload.MultipartParameters;
 import com.bynder.sdk.service.asset.AssetService;
 import com.bynder.sdk.util.Indexed;
@@ -43,7 +44,14 @@ public interface AmazonS3Service {
         }
 
         public static AmazonS3Service create(final String bucket) {
-            return new AmazonS3ServiceImpl(bucket);
+            return new AmazonS3ServiceImpl(bucket, new HttpConnectionSettings());
+        }
+
+        public static AmazonS3Service create(
+                final String bucket,
+                final HttpConnectionSettings httpConnectionSettings
+        ) {
+            return new AmazonS3ServiceImpl(bucket, httpConnectionSettings);
         }
     }
 }

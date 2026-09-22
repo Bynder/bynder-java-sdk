@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNull;
  */
 public class HttpConnectionSettingsTest {
 
-    public static final int EXPECTED_TIMEOUT_SECONDS = 30;
+    public static final int EXPECTED_TIMEOUT_SECONDS = 60;
     public static final boolean EXPECTED_RETRY_ON_CONNECTION_FAILURE = true;
     public static final boolean EXPECTED_LOGGING_INTERCEPTOR_ENABLED = false;
 

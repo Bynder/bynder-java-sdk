@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +61,28 @@ public class RXUtilsTest {
         List<Indexed<String>> actual = RXUtils.mapWithIndex(observable)
                 .toList().blockingGet();
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mapWithIndexDoesNotEagerlyDrainSource() {
+        // Regression test: mapWithIndex must pair each item with its index as it is emitted,
+        // without buffering the whole source upfront (which previously caused an
+        // OutOfMemoryError when indexing large file chunk streams).
+        AtomicInteger generatedCount = new AtomicInteger();
+        Observable<Integer> source = Observable.generate(emitter -> {
+            int count = generatedCount.incrementAndGet();
+            if (count > 5) {
+                emitter.onComplete();
+            } else {
+                emitter.onNext(count);
+            }
+        });
+
+        Indexed<Integer> first = RXUtils.mapWithIndex(source).blockingFirst();
+
+        assertEquals(1, generatedCount.get());
+        assertEquals(1, first.getValue().intValue());
+        assertEquals(0, first.getIndex());
     }
 
     @Test

@@ -7,6 +7,7 @@
 package com.bynder.sdk.service.upload;
 
 import com.bynder.sdk.api.BynderApi;
+import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.exception.BynderUploadException;
 import com.bynder.sdk.model.upload.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
@@ -56,14 +57,37 @@ public class FileUploader {
     private final QueryDecoder queryDecoder;
 
     /**
+     * HTTP connection settings (e.g. timeouts) applied to the client used to upload file chunks
+     * to Amazon S3.
+     */
+    private final HttpConnectionSettings httpConnectionSettings;
+
+    /**
      * Creates a new instance of the class.
      *
      * @param bynderApi    Instance to handle the HTTP communication with the Bynder API.
      * @param queryDecoder Query decoder.
      */
     public FileUploader(final BynderApi bynderApi, final QueryDecoder queryDecoder) {
+        this(bynderApi, queryDecoder, new HttpConnectionSettings());
+    }
+
+    /**
+     * Creates a new instance of the class.
+     *
+     * @param bynderApi    Instance to handle the HTTP communication with the Bynder API.
+     * @param queryDecoder Query decoder.
+     * @param httpConnectionSettings HTTP connection settings (e.g. timeouts) to apply to the
+     * client used to upload file chunks to Amazon S3.
+     */
+    public FileUploader(
+            final BynderApi bynderApi,
+            final QueryDecoder queryDecoder,
+            final HttpConnectionSettings httpConnectionSettings
+    ) {
         this.bynderApi = bynderApi;
         this.queryDecoder = queryDecoder;
+        this.httpConnectionSettings = httpConnectionSettings;
     }
 
     /**
@@ -75,7 +99,7 @@ public class FileUploader {
     public Single<SaveMediaResponse> uploadFile(final UploadQuery uploadQuery) {
         return getClosestS3Endpoint().flatMap(awsBucket -> {
             String filename = uploadQuery.getFilename();
-            AmazonS3Service amazonS3Service = AmazonS3Service.Builder.create(awsBucket);
+            AmazonS3Service amazonS3Service = AmazonS3Service.Builder.create(awsBucket, httpConnectionSettings);
             return getUploadInformation(new RequestUploadQuery(filename))
                     .flatMap(uploadRequest -> uploadChunk(
                             amazonS3Service,
@@ -96,7 +120,7 @@ public class FileUploader {
     public Single<UploadAdditionalMediaResponse> uploadAdditionalFile(final UploadQuery uploadQuery) {
         return getClosestS3Endpoint().flatMap(awsBucket -> {
             String filename = uploadQuery.getFilename();
-            AmazonS3Service amazonS3Service = AmazonS3Service.Builder.create(awsBucket);
+            AmazonS3Service amazonS3Service = AmazonS3Service.Builder.create(awsBucket, httpConnectionSettings);
             return getUploadInformation(new RequestUploadQuery(filename))
                     .flatMap(uploadRequest -> uploadChunk(
                             amazonS3Service,
@@ -122,7 +146,7 @@ public class FileUploader {
     public Observable<UploadProgress> uploadFileWithProgress(final UploadQuery uploadQuery) {
         String filename = uploadQuery.getFilename();
         return getClosestS3Endpoint().flatMapObservable(awsBucket -> {
-            AmazonS3Service amazonS3Service = AmazonS3Service.Builder.create(awsBucket);
+            AmazonS3Service amazonS3Service = AmazonS3Service.Builder.create(awsBucket, httpConnectionSettings);
             return getUploadInformation(new RequestUploadQuery(filename))
                     .flatMapObservable(uploadRequest -> uploadChunk(
                             amazonS3Service,
@@ -144,7 +168,7 @@ public class FileUploader {
         return RXUtils.mapWithIndex(
                 RXUtils.readFileChunks(uploadQuery.getFilepath(), MAX_CHUNK_SIZE),
                 1
-        ).flatMapSingle(chunk -> amazonS3Service.uploadPartToAmazon(
+        ).concatMapSingle(chunk -> amazonS3Service.uploadPartToAmazon(
                 chunk,
                 filename,
                 (int) ((fileSize - 1) / MAX_CHUNK_SIZE + 1),

@@ -17,7 +17,7 @@ import javax.net.ssl.X509TrustManager;
  */
 public class HttpConnectionSettings {
 
-    public static final int DEFAULT_TIMEOUT_SECONDS = 30;
+    public static final int DEFAULT_TIMEOUT_SECONDS = 60;
 
     /**
      * Read timeout in seconds.

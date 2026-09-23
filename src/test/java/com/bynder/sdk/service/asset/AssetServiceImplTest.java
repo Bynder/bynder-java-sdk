@@ -11,6 +11,7 @@
 package com.bynder.sdk.service.asset;
 
 import com.bynder.sdk.api.BynderApi;
+import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.query.*;
 import com.bynder.sdk.query.decoder.QueryDecoder;
 import org.junit.Before;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +41,18 @@ public class AssetServiceImplTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         assetService = AssetService.Builder.create(bynderApi, queryDecoder);
+    }
+
+    @Test
+    public void createWithHttpConnectionSettings() {
+        AssetService serviceWithSettings = AssetService.Builder.create(
+            bynderApi, queryDecoder, new HttpConnectionSettings()
+        );
+
+        assertNotNull(serviceWithSettings);
+
+        serviceWithSettings.getBrands();
+        verify(bynderApi, times(1)).getBrands();
     }
 
     @Test

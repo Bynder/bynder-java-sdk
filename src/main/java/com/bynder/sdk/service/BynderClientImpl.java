@@ -90,7 +90,11 @@ public class BynderClientImpl implements BynderClient {
     @Override
     public AssetService getAssetService() {
         if (assetService == null) {
-            assetService = AssetService.Builder.create(bynderApi, queryDecoder);
+            assetService = AssetService.Builder.create(
+                    bynderApi,
+                    queryDecoder,
+                    configuration.getHttpConnectionSettings()
+            );
         }
 
         return assetService;

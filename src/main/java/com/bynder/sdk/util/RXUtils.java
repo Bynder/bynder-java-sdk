@@ -9,6 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Utilities to make working with ReactiveX more convenient.
@@ -24,10 +25,8 @@ public class RXUtils {
      * @return observable that emits indexed items
      */
     public static <T> Observable<Indexed<T>> mapWithIndex(Observable<T> observable, int startFrom) {
-        return observable.zipWith(
-                Observable.range(startFrom, Integer.MAX_VALUE - startFrom),
-                Indexed::new
-        );
+        AtomicInteger index = new AtomicInteger(startFrom);
+        return observable.map(item -> new Indexed<>(item, index.getAndIncrement()));
     }
 
     /**

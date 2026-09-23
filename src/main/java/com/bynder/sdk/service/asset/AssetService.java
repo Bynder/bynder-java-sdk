@@ -7,6 +7,7 @@
 package com.bynder.sdk.service.asset;
 
 import com.bynder.sdk.api.BynderApi;
+import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.model.upload.UploadAdditionalMediaResponse;
@@ -169,6 +170,14 @@ public interface AssetService {
 
         public static AssetService create(final BynderApi bynderApi, final QueryDecoder queryDecoder) {
             return new AssetServiceImpl(bynderApi, queryDecoder);
+        }
+
+        public static AssetService create(
+                final BynderApi bynderApi,
+                final QueryDecoder queryDecoder,
+                final HttpConnectionSettings httpConnectionSettings
+        ) {
+            return new AssetServiceImpl(bynderApi, queryDecoder, httpConnectionSettings);
         }
     }
 }

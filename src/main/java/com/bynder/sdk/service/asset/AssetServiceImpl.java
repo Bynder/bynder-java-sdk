@@ -7,6 +7,7 @@
 package com.bynder.sdk.service.asset;
 
 import com.bynder.sdk.api.BynderApi;
+import com.bynder.sdk.configuration.HttpConnectionSettings;
 import com.bynder.sdk.model.*;
 import com.bynder.sdk.model.upload.SaveMediaResponse;
 import com.bynder.sdk.model.upload.UploadAdditionalMediaResponse;
@@ -46,9 +47,25 @@ public class AssetServiceImpl implements AssetService {
      * @param queryDecoder Query decoder.
      */
     public AssetServiceImpl(final BynderApi bynderApi, final QueryDecoder queryDecoder) {
+        this(bynderApi, queryDecoder, new HttpConnectionSettings());
+    }
+
+    /**
+     * Initialises a new instance of the class.
+     *
+     * @param bynderApi Instance to handle the HTTP communication with the Bynder API.
+     * @param queryDecoder Query decoder.
+     * @param httpConnectionSettings HTTP connection settings (e.g. timeouts) to apply to the
+     * client used to upload file chunks to Amazon S3.
+     */
+    public AssetServiceImpl(
+            final BynderApi bynderApi,
+            final QueryDecoder queryDecoder,
+            final HttpConnectionSettings httpConnectionSettings
+    ) {
         this.bynderApi = bynderApi;
         this.queryDecoder = queryDecoder;
-        this.fileUploader = new FileUploader(bynderApi, queryDecoder);
+        this.fileUploader = new FileUploader(bynderApi, queryDecoder, httpConnectionSettings);
     }
 
     /**

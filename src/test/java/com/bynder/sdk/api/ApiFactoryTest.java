@@ -53,6 +53,15 @@ public class ApiFactoryTest {
     }
 
     @Test
+    public void createAmazonS3ClientWithHttpConnectionSettings() {
+        AmazonS3Api amazonS3Api = ApiFactory.createAmazonS3Client(
+            BASE_URL,
+            new HttpConnectionSettings(null, null, null, 120, 120, true)
+        );
+        assertNotNull(amazonS3Api);
+    }
+
+    @Test
     public void createOAuthClient() {
         OAuthApi oAuthApi = ApiFactory.createOAuthClient(BASE_URL);
         assertNotNull(oAuthApi);

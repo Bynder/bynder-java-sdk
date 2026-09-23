@@ -69,9 +69,30 @@ public class ApiFactory {
      * @return Implementation instance of the {@link OAuthApi} interface.
      */
     public static AmazonS3Api createAmazonS3Client(final String bucket) {
+        return createAmazonS3Client(bucket, new HttpConnectionSettings());
+    }
+
+    /**
+     * Creates an implementation of the Bynder OAuth2 endpoints defined in the {@link OAuthApi}
+     * interface.
+     *
+     * @param bucket AWS bucket URL.
+     * @param httpConnectionSettings HTTP connection settings (e.g. timeouts) to apply to the
+     * client used to upload file chunks to Amazon S3.
+     * @return Implementation instance of the {@link OAuthApi} interface.
+     */
+    public static AmazonS3Api createAmazonS3Client(
+            final String bucket,
+            final HttpConnectionSettings httpConnectionSettings
+    ) {
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+        setHttpConnectionSettings(httpClientBuilder, httpConnectionSettings);
+        addUserAgentHeader(httpClientBuilder);
+
         return new Retrofit.Builder()
                 .baseUrl(bucket)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(httpClientBuilder.build())
                 .build().create(AmazonS3Api.class);
     }
 
@@ -103,7 +124,7 @@ public class ApiFactory {
         } else {
             setPermanentTokenInterceptor(httpClientBuilder, configuration);
         }
-        setHttpConnectionSettings(httpClientBuilder, configuration);
+        setHttpConnectionSettings(httpClientBuilder, configuration.getHttpConnectionSettings());
         addUserAgentHeader(httpClientBuilder);
         return httpClientBuilder.build();
     }
@@ -162,15 +183,13 @@ public class ApiFactory {
      * Sets the HTTP connection settings for the HTTP client.
      *
      * @param httpClientBuilder Builder instance of the HTTP client.
-     * @param configuration HTTP connection settings for the HTTP communication with
+     * @param httpConnectionSettings HTTP connection settings for the HTTP communication with
      * Bynder.
      */
     private static void setHttpConnectionSettings(
             final Builder httpClientBuilder,
-            final Configuration configuration
+            final HttpConnectionSettings httpConnectionSettings
     ) {
-        HttpConnectionSettings httpConnectionSettings = configuration.getHttpConnectionSettings();
-
         if (httpConnectionSettings.isLoggingInterceptorEnabled()) {
             httpClientBuilder.addInterceptor(
                     new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)

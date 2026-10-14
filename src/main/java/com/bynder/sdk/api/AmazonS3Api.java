@@ -29,6 +29,11 @@ public interface AmazonS3Api {
      * @return {@link Single} with the {@link Response}.
      */
     @Multipart
-    @POST("/")
+    // Use "." (relative) rather than "/" so the upload posts to the full base URL returned by
+    // getClosestS3Endpoint(), including any path. A leading "/" is resolved as an absolute path and
+    // would drop the base URL's path (e.g. posting to the host root instead of
+    // ".../api/1/boss/v4upload/"). For bucket-root S3 endpoints both resolve the same; "." also
+    // works when the endpoint is served behind a path.
+    @POST(".")
     Single<Response<Void>> uploadPartToAmazon(@PartMap Map<String, RequestBody> params);
 }

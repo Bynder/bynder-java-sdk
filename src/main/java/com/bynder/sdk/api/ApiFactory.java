@@ -7,6 +7,7 @@
 package com.bynder.sdk.api;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +24,7 @@ import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -88,6 +90,9 @@ public class ApiFactory {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
         setHttpConnectionSettings(httpClientBuilder, httpConnectionSettings);
         addUserAgentHeader(httpClientBuilder);
+        // S3 can send an HTTP/2 "NO_ERROR" stream reset on multipart part uploads, which okhttp
+        // surfaces as a StreamResetException. Pin this client to HTTP/1.1 to avoid it.
+        httpClientBuilder.protocols(Arrays.asList(Protocol.HTTP_1_1));
 
         return new Retrofit.Builder()
                 .baseUrl(bucket)
